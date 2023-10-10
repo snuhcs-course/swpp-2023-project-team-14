@@ -24,7 +24,7 @@ val poppins = FontFamily(
     Font(R.font.poppins_bold_italic, FontWeight.Bold, FontStyle.Italic),
     Font(R.font.poppins_extra_light_italic, FontWeight.ExtraLight, FontStyle.Italic),
     Font(R.font.poppins_semi_bold_italic, FontWeight.SemiBold, FontStyle.Italic),
-    Font(R.font.poppins_thin_italic, FontWeight.Thin, FontStyle.Italic),
+    Font(R.font.poppins_thin_italic, FontWeight.Thin, FontStyle.Italic)
 )
 
 // Set of Material typography styles to start with
