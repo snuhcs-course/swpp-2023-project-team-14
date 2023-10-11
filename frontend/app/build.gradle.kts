@@ -66,6 +66,8 @@ dependencies {
     implementation("androidx.collection:collection-ktx:1.3.0")
     implementation("androidx.room:room-ktx:2.5.2")
     implementation("androidx.work:work-runtime-ktx:2.8.1")
+    implementation("com.google.android.material:material:1.11.0-alpha03")
+    implementation("com.github.GrenderG:Toasty:1.5.2")
 
     testImplementation("junit:junit:4.13.2")
 
