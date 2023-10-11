@@ -3,4 +3,4 @@ from django.apps import AppConfig
 
 class DurationConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'duration'
+    name = 'Duration'
