@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.example.haengsha.ui.screens.ScreenNavigate
 import com.example.haengsha.ui.theme.HaengshaTheme
-import com.example.haengsha.ui.uiComponents.ToastPreview
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,7 +20,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ToastPreview()
+                    //ToastPreview()
+                    /* TODO HaengshaApp() */
+                    ScreenNavigate()
                 }
             }
         }
