@@ -34,6 +34,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.Routes
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.CommonBlueButton
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
@@ -104,7 +105,8 @@ fun LoginScreen(navController: NavHostController) {
             modifier = Modifier
                 .border(
                     BorderStroke(width = 0.1.dp, color = Color.Black),
-                    shape = shapeRoundCornerUnified)
+                    shape = shapeRoundCornerUnified
+                )
                 .width(300.dp)
         ) {
             TextField(
@@ -128,9 +130,11 @@ fun LoginScreen(navController: NavHostController) {
         TextField(
             label = { Text(text = "Password", style = stylePlaceHolders) },
             colors = colorPlaceHolder,
-            modifier = Modifier.border(
-                BorderStroke(width = 0.1.dp, color = Color.Black),
-                shape = shapeRoundCornerUnified,)
+            modifier = Modifier
+                .border(
+                    BorderStroke(width = 0.1.dp, color = Color.Black),
+                    shape = shapeRoundCornerUnified,
+                )
                 .width(300.dp),
             value = password.value,
             visualTransformation = PasswordVisualTransformation(),
@@ -138,27 +142,9 @@ fun LoginScreen(navController: NavHostController) {
             onValueChange = { password.value = it })
 
         Spacer(modifier = Modifier.height(20.dp))
-        Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
-            Button(
-                onClick = { navController.navigate(Routes.Home.route) },
-                shape = shapeRoundCornerUnified,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                colors = ButtonDefaults.buttonColors(ButtonBlue),
-            ) {
-                Text(
-                    text = "로그인하기",
-                    style = TextStyle(
-                        fontSize = 24.sp,
-                        fontFamily = poppins,
-                        color = Color.White,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                )
-            }
+        CommonBlueButton(text = "로그인하기"){
+            navController.navigate(Routes.Home.route)
         }
-
         Spacer(modifier = Modifier.height(20.dp))
         ClickableText(
             text = AnnotatedString("아이디/비밀번호 찾기"),
