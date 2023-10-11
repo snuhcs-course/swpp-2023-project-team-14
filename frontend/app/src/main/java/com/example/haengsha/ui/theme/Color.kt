@@ -10,7 +10,7 @@ val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
-// Theme 설정 필요할 때 사용
+/* Theme 설정 필요할 때 사용
 val ModalTitleBlue = Color(0xFF006382)  // 모달의 굵은 글씨 색깔
 val ToastBlue = Color(0xFF84AEFF)       // 토스트의 배경색
 val ButtonBlue = Color(0xFF0089ED)      // 행샤 공통 버튼의 활성화 배경색
@@ -33,3 +33,4 @@ val RecommendModalColor = Color(0xFFFCFFEB) // 홈화면의 맞춤 추천 모달
 
 val PlaceholderGrey = Color(0xFFADB5BD) // 입력창의 placeholder 텍스트 색
 val BackgroundGrey = Color(0xFFF1F1F1)  // placeholder가 있는 입력창의 배경색
+*/
