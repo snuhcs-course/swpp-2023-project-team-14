@@ -1,6 +1,6 @@
 from django.db import models
-from user.models import PersonalUser
-from duration.models import Duration
+from User.models import PersonalUser
+from Duration.models import Duration
 # Create your models here.
 class Post(models.Model):
   title = models.CharField(max_length=30)
@@ -13,14 +13,12 @@ class Post(models.Model):
   event_duration = models.ManyToManyField(Duration, blank=True, related_name='duration_events', through='EventDuration')
 
 class Like(models.Model):
-  class Like(models.Model):
-    user = models.ForeignKey(PersonalUser, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+  user = models.ForeignKey(PersonalUser, on_delete=models.CASCADE)
+  post = models.ForeignKey(Post, on_delete=models.CASCADE)
   
 class Interest(models.Model):
-  class Interest(models.Model):
-    user = models.ForeignKey(PersonalUser, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+  user = models.ForeignKey(PersonalUser, on_delete=models.CASCADE)
+  post = models.ForeignKey(Post, on_delete=models.CASCADE)
 
 class EventDuration(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
