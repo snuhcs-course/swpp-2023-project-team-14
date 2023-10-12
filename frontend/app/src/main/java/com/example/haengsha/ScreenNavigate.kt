@@ -1,10 +1,12 @@
-package com.example.haengsha.ui.screens
+package com.example.haengsha
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.haengsha.Routes
+import com.example.haengsha.ui.screens.HomeScreen
+import com.example.haengsha.ui.screens.LoginScreen
+import com.example.haengsha.ui.screens.SignupScreen
 
 @Composable
 fun ScreenNavigate() {
@@ -32,4 +34,12 @@ fun ScreenNavigate() {
             HomeScreen(navController = navController)
         }
     }
+}
+
+sealed class Routes(val route: String) {
+    object SignUp : Routes("SignUp")
+    object ForgotPassword : Routes("ForgotPassword")
+    object Login : Routes("Login")
+    object Dashboard : Routes("Dashboard")
+    object Home : Routes("Home")
 }
