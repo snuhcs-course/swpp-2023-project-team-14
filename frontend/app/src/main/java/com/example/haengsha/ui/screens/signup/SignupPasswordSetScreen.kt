@@ -100,7 +100,7 @@ fun SignupPasswordSetScreen(context: Context) {
                                 true
                             ).show()
                         } else {
-                            /* TODO 다음 페이지 넘어가기 */
+                            /* TODO 비밀번호 임시 저장 & 다음 페이지 넘어가기 */
                         }
                     }
                 })

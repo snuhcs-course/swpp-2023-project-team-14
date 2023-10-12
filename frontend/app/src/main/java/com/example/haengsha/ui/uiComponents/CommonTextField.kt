@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -31,14 +30,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.FieldStrokeRed
+import com.example.haengsha.ui.theme.HaengshaGrey
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
 import es.dmoral.toasty.Toasty
 
 @Composable
 fun commonTextField(
-    isError: Boolean = false,
-    placeholder: String = ""
+    isError: Boolean,
+    placeholder: String
 ): String {
     var input by rememberSaveable { mutableStateOf("") }
 
@@ -63,7 +63,7 @@ fun commonTextField(
         singleLine = true,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = FieldStrokeBlue,
-            unfocusedBorderColor = Color(0xFFADADAD),
+            unfocusedBorderColor = HaengshaGrey,
             errorBorderColor = FieldStrokeRed
         )
     )
@@ -72,9 +72,9 @@ fun commonTextField(
 
 @Composable
 fun suffixTextField(
-    isError: Boolean = false,
-    placeholder: String = "",
-    suffix: String = ""
+    isError: Boolean,
+    placeholder: String,
+    suffix: String
 ): String {
     var input by rememberSaveable { mutableStateOf("") }
 
@@ -109,7 +109,7 @@ fun suffixTextField(
         singleLine = true,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = FieldStrokeBlue,
-            unfocusedBorderColor = Color(0xFFADADAD),
+            unfocusedBorderColor = HaengshaGrey,
             errorBorderColor = FieldStrokeRed
         )
     )
@@ -118,7 +118,7 @@ fun suffixTextField(
 
 @Composable
 fun passwordTextField(
-    isEmptyError: Boolean = false,
+    isEmptyError: Boolean,
     placeholder: String = "",
     context: Context
 ): String {
@@ -174,7 +174,7 @@ fun passwordTextField(
         singleLine = true,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = FieldStrokeBlue,
-            unfocusedBorderColor = Color(0xFFADADAD),
+            unfocusedBorderColor = HaengshaGrey,
             errorBorderColor = FieldStrokeRed
         )
     )
@@ -211,7 +211,7 @@ fun passwordCheckTextField(
         singleLine = true,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = FieldStrokeBlue,
-            unfocusedBorderColor = Color(0xFFADADAD),
+            unfocusedBorderColor = HaengshaGrey,
             errorBorderColor = FieldStrokeRed
         )
     )
@@ -226,6 +226,6 @@ fun CommonTextFieldPreview() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        commonTextField()
+        commonTextField(false, "placeholder")
     }
 }
