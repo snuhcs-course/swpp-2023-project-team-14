@@ -1,15 +1,14 @@
-package com.example.haengsha.ui.screens
+package com.example.haengsha.ui.screens.signup
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun SignupTypeScreen() {
-
+fun SignupScreen() {
 }
 
 @Preview(showBackground = true)
 @Composable
-fun SignupTypeScreenPreview() {
-    SignupTypeScreen()
+fun SignupScreenPreview() {
+    SignupScreen()
 }
