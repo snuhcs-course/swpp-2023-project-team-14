@@ -20,14 +20,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.haengsha.R
+import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
 import com.example.haengsha.ui.uiComponents.commonTextField
@@ -107,7 +106,7 @@ fun SignupEmailVerificationScreen(context: Context) {
                     fontWeight = FontWeight.Normal,
                     fontSize = 11.sp,
                     textAlign = TextAlign.End,
-                    color = colorResource(id = R.color.FieldStrokeBlue)
+                    color = FieldStrokeBlue
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))
@@ -136,7 +135,7 @@ fun SignupEmailVerificationScreen(context: Context) {
                     fontWeight = FontWeight.Normal,
                     fontSize = 11.sp,
                     textAlign = TextAlign.End,
-                    color = colorResource(id = R.color.FieldStrokeBlue)
+                    color = FieldStrokeBlue
                 )
             }
             Spacer(modifier = Modifier.height(50.dp))

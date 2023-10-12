@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -30,7 +29,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.haengsha.R
+import com.example.haengsha.ui.theme.FieldStrokeBlue
+import com.example.haengsha.ui.theme.FieldStrokeRed
+import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
 import es.dmoral.toasty.Toasty
 
@@ -51,7 +52,7 @@ fun commonTextField(
                 fontFamily = poppins,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Light,
-                color = colorResource(id = R.color.PlaceholderGrey),
+                color = PlaceholderGrey,
             )
         },
         isError = isError,
@@ -61,9 +62,9 @@ fun commonTextField(
         ),
         singleLine = true,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = colorResource(id = R.color.FieldStrokeBlue),
+            focusedBorderColor = FieldStrokeBlue,
             unfocusedBorderColor = Color(0xFFADADAD),
-            errorBorderColor = colorResource(id = R.color.FieldStrokeRed)
+            errorBorderColor = FieldStrokeRed
         )
     )
     return input
@@ -87,7 +88,7 @@ fun suffixTextField(
                 fontFamily = poppins,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Light,
-                color = colorResource(id = R.color.PlaceholderGrey),
+                color = PlaceholderGrey,
             )
         },
         suffix = {
@@ -97,7 +98,7 @@ fun suffixTextField(
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Light,
                 fontStyle = FontStyle.Italic,
-                color = colorResource(id = R.color.PlaceholderGrey),
+                color = PlaceholderGrey,
             )
         },
         isError = isError,
@@ -107,9 +108,9 @@ fun suffixTextField(
         ),
         singleLine = true,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = colorResource(id = R.color.FieldStrokeBlue),
+            focusedBorderColor = FieldStrokeBlue,
             unfocusedBorderColor = Color(0xFFADADAD),
-            errorBorderColor = colorResource(id = R.color.FieldStrokeRed)
+            errorBorderColor = FieldStrokeRed
         )
     )
     return input
@@ -153,7 +154,7 @@ fun passwordTextField(
                 fontFamily = poppins,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Light,
-                color = colorResource(id = R.color.PlaceholderGrey),
+                color = PlaceholderGrey
             )
         },
         isError = isError,
@@ -172,9 +173,9 @@ fun passwordTextField(
         ),
         singleLine = true,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = colorResource(id = R.color.FieldStrokeBlue),
+            focusedBorderColor = FieldStrokeBlue,
             unfocusedBorderColor = Color(0xFFADADAD),
-            errorBorderColor = colorResource(id = R.color.FieldStrokeRed)
+            errorBorderColor = FieldStrokeRed
         )
     )
     return input
@@ -198,7 +199,7 @@ fun passwordCheckTextField(
                 fontFamily = poppins,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Light,
-                color = colorResource(id = R.color.PlaceholderGrey),
+                color = PlaceholderGrey,
             )
         },
         isError = isError,
@@ -209,9 +210,9 @@ fun passwordCheckTextField(
         ),
         singleLine = true,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = colorResource(id = R.color.FieldStrokeBlue),
+            focusedBorderColor = FieldStrokeBlue,
             unfocusedBorderColor = Color(0xFFADADAD),
-            errorBorderColor = colorResource(id = R.color.FieldStrokeRed)
+            errorBorderColor = FieldStrokeRed
         )
     )
     return input
