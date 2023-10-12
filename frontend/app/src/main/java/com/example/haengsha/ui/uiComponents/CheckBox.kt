@@ -17,21 +17,3 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-@Composable
-fun checkBox(color: Color): Boolean {
-    var isChecked by rememberSaveable { mutableStateOf(false) }
-    Box(
-        modifier = Modifier
-            .size(25.dp)
-            .background(color = color)
-            .clickable { isChecked = !isChecked },
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = Icons.Default.Check,
-            contentDescription = "check icon",
-            tint = Color.White
-        )
-    }
-    return isChecked
-}

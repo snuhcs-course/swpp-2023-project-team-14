@@ -10,7 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.haengsha.ui.screens.signup.SignupPasswordSetScreen
+import com.example.haengsha.ui.screens.signup.SignupAgreementScreen
 import com.example.haengsha.ui.theme.HaengshaTheme
 
 class MainActivity : ComponentActivity() {
@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {
-                        SignupPasswordSetScreen(context = context)
+                        SignupAgreementScreen()
                     }
                 }
             }
