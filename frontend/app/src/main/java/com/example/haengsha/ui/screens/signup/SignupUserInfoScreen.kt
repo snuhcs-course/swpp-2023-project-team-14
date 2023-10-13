@@ -31,11 +31,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.compose.FieldStrokeBlue
+import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
 import com.example.haengsha.ui.uiComponents.commonTextField
-import com.example.haengsha.ui.uiComponents.exposedDropDown
+import com.example.haengsha.ui.uiComponents.dropDown
+import com.example.haengsha.ui.uiComponents.multiSelectDropDown
 import es.dmoral.toasty.Toasty
 
 @Composable
@@ -43,7 +44,7 @@ fun SignupUserInfoScreen(context: Context) {
     var nickname by rememberSaveable { mutableStateOf("") }
     var college by rememberSaveable { mutableStateOf("") }
     var studentId by rememberSaveable { mutableStateOf("") }
-    var interest by rememberSaveable { mutableStateOf("") }
+    var interest by rememberSaveable { mutableStateOf(listOf("")) }
     var isNicknameError by rememberSaveable { mutableStateOf(false) }
     var isNicknameChecked by rememberSaveable { mutableStateOf(false) }
 
@@ -134,7 +135,7 @@ fun SignupUserInfoScreen(context: Context) {
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(10.dp))
-            college = exposedDropDown("학과")
+            college = dropDown("학과")
             Spacer(modifier = Modifier.height(50.dp))
             Text(
                 modifier = Modifier.width(270.dp),
@@ -147,7 +148,7 @@ fun SignupUserInfoScreen(context: Context) {
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(10.dp))
-            studentId = exposedDropDown("학번")
+            studentId = dropDown("학번")
             Spacer(modifier = Modifier.height(50.dp))
             Text(
                 modifier = Modifier.width(270.dp),
@@ -160,12 +161,12 @@ fun SignupUserInfoScreen(context: Context) {
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(10.dp))
-            interest = exposedDropDown("나의 관심 분야")
+            interest = multiSelectDropDown("나의 관심 분야")
             Spacer(modifier = Modifier.height(50.dp))
             CommonBlueButton(
                 text = "다음",
                 onClick = {
-                    if (nickname == "" || college == "" || studentId == "" || interest == "") {
+                    if (nickname == "" || college == "" || studentId == "" || interest == { "" }) {
                         Toasty
                             .error(context, "정보 입력을 완료해주세요!", Toast.LENGTH_SHORT, true)
                             .show()

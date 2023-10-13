@@ -34,9 +34,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.example.compose.ButtonBlue
-import com.example.compose.ButtonGrey
-import com.example.compose.HaengshaGrey
+import com.example.haengsha.ui.theme.ButtonBlue
+import com.example.haengsha.ui.theme.ButtonGrey
+import com.example.haengsha.ui.theme.HaengshaGrey
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CheckBox
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
