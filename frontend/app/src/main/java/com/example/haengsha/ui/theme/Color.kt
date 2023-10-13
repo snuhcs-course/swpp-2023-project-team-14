@@ -1,4 +1,4 @@
-package com.example.compose
+package com.example.haengsha.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
@@ -31,7 +31,7 @@ val BackgroundGrey = Color(0xFFF1F1F1)  // placeholder가 있는 입력창의 �
 // 행샤 테마 색상
 val md_theme_light_primary = Color(0xFF005AC1)
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)
-val md_theme_light_primaryContainer = Color(0xFFD8E2FF)
+val md_theme_light_primaryContainer = Color(0xFFE6EBFC)
 val md_theme_light_onPrimaryContainer = Color(0xFF001A41)
 val md_theme_light_secondary = Color(0xFF005FB0)
 val md_theme_light_onSecondary = Color(0xFFFFFFFF)

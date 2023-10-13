@@ -29,10 +29,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.compose.FieldStrokeBlue
-import com.example.compose.FieldStrokeRed
-import com.example.compose.HaengshaGrey
-import com.example.compose.PlaceholderGrey
+import com.example.haengsha.ui.theme.FieldStrokeBlue
+import com.example.haengsha.ui.theme.FieldStrokeRed
+import com.example.haengsha.ui.theme.HaengshaGrey
+import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
 import es.dmoral.toasty.Toasty
 

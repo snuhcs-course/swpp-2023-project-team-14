@@ -22,8 +22,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.compose.ModalButtonBlue
-import com.example.compose.ModalButtonRed
+import com.example.haengsha.ui.theme.ModalButtonBlue
+import com.example.haengsha.ui.theme.ModalButtonRed
 import com.example.haengsha.ui.theme.poppins
 
 @Composable

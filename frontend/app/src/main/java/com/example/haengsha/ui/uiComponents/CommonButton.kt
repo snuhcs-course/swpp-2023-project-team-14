@@ -20,8 +20,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.compose.ButtonBlue
-import com.example.compose.ButtonGrey
+import com.example.haengsha.ui.theme.ButtonBlue
+import com.example.haengsha.ui.theme.ButtonGrey
 import com.example.haengsha.ui.theme.poppins
 
 @Composable
