@@ -13,9 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,10 +34,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.example.haengsha.ui.theme.ButtonBlue
-import com.example.haengsha.ui.theme.ButtonGrey
-import com.example.haengsha.ui.theme.HaengshaGrey
+import com.example.compose.ButtonBlue
+import com.example.compose.ButtonGrey
+import com.example.compose.HaengshaGrey
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.CheckBox
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
 import com.example.haengsha.ui.uiComponents.CommonGreyButton
 import com.example.haengsha.ui.uiComponents.PrivacyPolicyModalText
@@ -257,22 +255,6 @@ fun SignupAgreementScreen() {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun CheckBox(color: Color) {
-    Box(
-        modifier = Modifier
-            .size(25.dp)
-            .background(color = color),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = Icons.Default.Check,
-            contentDescription = "check icon",
-            tint = Color.White
-        )
     }
 }
 
