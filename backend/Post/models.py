@@ -1,6 +1,6 @@
 from django.db import models
-from User.models import PersonalUser
-from Duration.models import Duration
+from user.models import PersonalUser
+from duration.models import Duration
 # Create your models here.
 class Post(models.Model):
   title = models.CharField(max_length=30)
