@@ -44,11 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Post.apps.PostConfig',
-    'User.apps.UserConfig',
-    'Favorite.apps.FavoriteConfig',
-    'Duration.apps.DurationConfig',
-    'Comment.apps.CommentConfig'
+    'post.apps.PostConfig',
+    'user.apps.UserConfig',
+    'favorite.apps.FavoriteConfig',
+    'duration.apps.DurationConfig',
+    'comment.apps.CommentConfig'
 ]
 
 MIDDLEWARE = [
@@ -96,7 +96,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = 'User.PersonalUser'
+AUTH_USER_MODEL = 'user.PersonalUser'
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
