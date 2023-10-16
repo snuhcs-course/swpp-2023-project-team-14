@@ -6,7 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.ui.screens.HomeScreen
 import com.example.haengsha.ui.screens.LoginScreen
-import com.example.haengsha.ui.screens.SignupScreen
+import com.example.haengsha.ui.screens.signup.SignupTypeScreen
 
 @Composable
 fun ScreenNavigate() {
@@ -19,7 +19,7 @@ fun ScreenNavigate() {
         }
 
         composable(Routes.SignUp.route) {
-            SignupScreen(navController = navController)
+            SignupTypeScreen(navController = navController)
         }
         /*
         composable(Routes.ForgotPassword.route) { navBackStack ->
