@@ -12,3 +12,5 @@ class Comment(models.Model):
 class CommentLike(models.Model):
   user = models.ForeignKey(PersonalUser, on_delete=models.CASCADE)
   comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+
+# create dev branch(ignore this comment)
