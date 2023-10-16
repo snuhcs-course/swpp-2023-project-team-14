@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -36,8 +37,8 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun SignupEmailVerificationScreen(context: Context) {
-    var isCodeSent by rememberSaveable { mutableStateOf(0) }
-    var codeExpireTime by rememberSaveable { mutableStateOf(180) }
+    var isCodeSent by rememberSaveable { mutableIntStateOf(0) }
+    var codeExpireTime by rememberSaveable { mutableIntStateOf(180) }
     val codeExpireMinute = String.format("%02d", codeExpireTime / 60)
     val codeExpireSecond = String.format("%02d", codeExpireTime % 60)
     var emailInput: String by rememberSaveable { mutableStateOf("") }
@@ -160,7 +161,7 @@ fun SignupEmailVerificationScreen(context: Context) {
                         ).show()
                     } else {
                         /* TODO 인증번호 확인
-                        *   if 맞으면 다음 화면
+                        *   if 맞으면 다음 화면 & 이메일 임시 저장
                         *   else 다르면 isCodeError = true */
                     }
                 })
