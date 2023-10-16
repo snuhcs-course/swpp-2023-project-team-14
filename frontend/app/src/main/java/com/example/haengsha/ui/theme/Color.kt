@@ -2,15 +2,7 @@ package com.example.haengsha.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
-
-// Theme 설정 필요할 때 사용
+// 행샤 커스텀 색상
 val ModalTitleBlue = Color(0xFF006382)  // 모달의 굵은 글씨 색깔
 val ToastBlue = Color(0xFF84AEFF)       // 토스트의 배경색
 val ButtonBlue = Color(0xFF0089ED)      // 행샤 공통 버튼의 활성화 배경색
@@ -32,5 +24,72 @@ val HomeBackgroundColor = Color(0xFFFAFFF8) // 홈화면 배경색
 val RecommendModalColor = Color(0xFFFCFFEB) // 홈화면의 맞춤 추천 모달 배경색
 
 val HaengshaGrey = Color(0xFFADADAD)    // 행샤 공통 회색
+val HaengshaBlue = Color(0xFF4285F4)    // 행샤 공통 파란색
 val PlaceholderGrey = Color(0xFFADB5BD) // 입력창의 placeholder 텍스트 색
 val BackgroundGrey = Color(0xFFF1F1F1)  // placeholder가 있는 입력창의 배경색
+
+// 행샤 테마 색상
+val md_theme_light_primary = Color(0xFF005AC1)
+val md_theme_light_onPrimary = Color(0xFFFFFFFF)
+val md_theme_light_primaryContainer = Color(0xFFE6EBFC)
+val md_theme_light_onPrimaryContainer = Color(0xFF001A41)
+val md_theme_light_secondary = Color(0xFF005FB0)
+val md_theme_light_onSecondary = Color(0xFFFFFFFF)
+val md_theme_light_secondaryContainer = Color(0xFFD5E3FF)
+val md_theme_light_onSecondaryContainer = Color(0xFF001C3B)
+val md_theme_light_tertiary = Color(0xFF006687)
+val md_theme_light_onTertiary = Color(0xFFFFFFFF)
+val md_theme_light_tertiaryContainer = Color(0xFFC1E8FF)
+val md_theme_light_onTertiaryContainer = Color(0xFF001E2B)
+val md_theme_light_error = Color(0xFFBA1A1A)
+val md_theme_light_errorContainer = Color(0xFFFFDAD6)
+val md_theme_light_onError = Color(0xFFFFFFFF)
+val md_theme_light_onErrorContainer = Color(0xFF410002)
+val md_theme_light_background = Color(0xFFF8FDFF)
+val md_theme_light_onBackground = Color(0xFF001F25)
+val md_theme_light_surface = Color(0xFFF8FDFF)
+val md_theme_light_onSurface = Color(0xFF001F25)
+val md_theme_light_surfaceVariant = Color(0xFFE1E2EC)
+val md_theme_light_onSurfaceVariant = Color(0xFF44474F)
+val md_theme_light_outline = Color(0xFF74777F)
+val md_theme_light_inverseOnSurface = Color(0xFFD6F6FF)
+val md_theme_light_inverseSurface = Color(0xFF00363F)
+val md_theme_light_inversePrimary = Color(0xFFADC6FF)
+val md_theme_light_shadow = Color(0xFF000000)
+val md_theme_light_surfaceTint = Color(0xFF005AC1)
+val md_theme_light_outlineVariant = Color(0xFFC4C6D0)
+val md_theme_light_scrim = Color(0xFF000000)
+
+val md_theme_dark_primary = Color(0xFFADC6FF)
+val md_theme_dark_onPrimary = Color(0xFF002E69)
+val md_theme_dark_primaryContainer = Color(0xFF004494)
+val md_theme_dark_onPrimaryContainer = Color(0xFFD8E2FF)
+val md_theme_dark_secondary = Color(0xFFA6C8FF)
+val md_theme_dark_onSecondary = Color(0xFF00315F)
+val md_theme_dark_secondaryContainer = Color(0xFF004787)
+val md_theme_dark_onSecondaryContainer = Color(0xFFD5E3FF)
+val md_theme_dark_tertiary = Color(0xFF73D1FF)
+val md_theme_dark_onTertiary = Color(0xFF003548)
+val md_theme_dark_tertiaryContainer = Color(0xFF004D67)
+val md_theme_dark_onTertiaryContainer = Color(0xFFC1E8FF)
+val md_theme_dark_error = Color(0xFFFFB4AB)
+val md_theme_dark_errorContainer = Color(0xFF93000A)
+val md_theme_dark_onError = Color(0xFF690005)
+val md_theme_dark_onErrorContainer = Color(0xFFFFDAD6)
+val md_theme_dark_background = Color(0xFF001F25)
+val md_theme_dark_onBackground = Color(0xFFA6EEFF)
+val md_theme_dark_surface = Color(0xFF001F25)
+val md_theme_dark_onSurface = Color(0xFFA6EEFF)
+val md_theme_dark_surfaceVariant = Color(0xFF44474F)
+val md_theme_dark_onSurfaceVariant = Color(0xFFC4C6D0)
+val md_theme_dark_outline = Color(0xFF8E9099)
+val md_theme_dark_inverseOnSurface = Color(0xFF001F25)
+val md_theme_dark_inverseSurface = Color(0xFFA6EEFF)
+val md_theme_dark_inversePrimary = Color(0xFF005AC1)
+val md_theme_dark_shadow = Color(0xFF000000)
+val md_theme_dark_surfaceTint = Color(0xFFADC6FF)
+val md_theme_dark_outlineVariant = Color(0xFF44474F)
+val md_theme_dark_scrim = Color(0xFF000000)
+
+
+val seed = Color(0xFF4285F4)

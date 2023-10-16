@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
@@ -61,6 +62,7 @@ fun commonTextField(
             imeAction = ImeAction.Done
         ),
         singleLine = true,
+        shape = RoundedCornerShape(10.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = FieldStrokeBlue,
             unfocusedBorderColor = HaengshaGrey,
@@ -79,7 +81,8 @@ fun suffixTextField(
     var input by rememberSaveable { mutableStateOf("") }
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        modifier = Modifier
+            .size(width = 270.dp, height = 60.dp),
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -107,6 +110,7 @@ fun suffixTextField(
             imeAction = ImeAction.Done
         ),
         singleLine = true,
+        shape = RoundedCornerShape(10.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = FieldStrokeBlue,
             unfocusedBorderColor = HaengshaGrey,
@@ -172,6 +176,7 @@ fun passwordTextField(
             }
         ),
         singleLine = true,
+        shape = RoundedCornerShape(10.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = FieldStrokeBlue,
             unfocusedBorderColor = HaengshaGrey,
@@ -209,6 +214,7 @@ fun passwordCheckTextField(
             imeAction = ImeAction.Done
         ),
         singleLine = true,
+        shape = RoundedCornerShape(10.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = FieldStrokeBlue,
             unfocusedBorderColor = HaengshaGrey,
