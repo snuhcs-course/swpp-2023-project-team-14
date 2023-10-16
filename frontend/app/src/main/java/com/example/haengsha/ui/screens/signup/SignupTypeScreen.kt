@@ -15,12 +15,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.R
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
 
 @Composable
-fun SignupTypeScreen() {
+fun SignupTypeScreen(navController: NavHostController) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -70,5 +72,5 @@ fun SignupTypeScreen() {
 @Preview(showBackground = true)
 @Composable
 fun SignupTypeScreenPreview() {
-    SignupTypeScreen()
+    SignupTypeScreen(rememberNavController())
 }
