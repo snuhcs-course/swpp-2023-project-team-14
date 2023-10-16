@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
@@ -20,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -31,14 +31,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.FieldStrokeRed
+import com.example.haengsha.ui.theme.HaengshaGrey
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
 import es.dmoral.toasty.Toasty
 
 @Composable
 fun commonTextField(
-    isError: Boolean = false,
-    placeholder: String = ""
+    isError: Boolean,
+    placeholder: String
 ): String {
     var input by rememberSaveable { mutableStateOf("") }
 
@@ -61,9 +62,10 @@ fun commonTextField(
             imeAction = ImeAction.Done
         ),
         singleLine = true,
+        shape = RoundedCornerShape(10.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = FieldStrokeBlue,
-            unfocusedBorderColor = Color(0xFFADADAD),
+            unfocusedBorderColor = HaengshaGrey,
             errorBorderColor = FieldStrokeRed
         )
     )
@@ -72,14 +74,15 @@ fun commonTextField(
 
 @Composable
 fun suffixTextField(
-    isError: Boolean = false,
-    placeholder: String = "",
-    suffix: String = ""
+    isError: Boolean,
+    placeholder: String,
+    suffix: String
 ): String {
     var input by rememberSaveable { mutableStateOf("") }
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        modifier = Modifier
+            .size(width = 270.dp, height = 60.dp),
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -107,9 +110,10 @@ fun suffixTextField(
             imeAction = ImeAction.Done
         ),
         singleLine = true,
+        shape = RoundedCornerShape(10.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = FieldStrokeBlue,
-            unfocusedBorderColor = Color(0xFFADADAD),
+            unfocusedBorderColor = HaengshaGrey,
             errorBorderColor = FieldStrokeRed
         )
     )
@@ -118,7 +122,7 @@ fun suffixTextField(
 
 @Composable
 fun passwordTextField(
-    isEmptyError: Boolean = false,
+    isEmptyError: Boolean,
     placeholder: String = "",
     context: Context
 ): String {
@@ -172,9 +176,10 @@ fun passwordTextField(
             }
         ),
         singleLine = true,
+        shape = RoundedCornerShape(10.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = FieldStrokeBlue,
-            unfocusedBorderColor = Color(0xFFADADAD),
+            unfocusedBorderColor = HaengshaGrey,
             errorBorderColor = FieldStrokeRed
         )
     )
@@ -209,9 +214,10 @@ fun passwordCheckTextField(
             imeAction = ImeAction.Done
         ),
         singleLine = true,
+        shape = RoundedCornerShape(10.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = FieldStrokeBlue,
-            unfocusedBorderColor = Color(0xFFADADAD),
+            unfocusedBorderColor = HaengshaGrey,
             errorBorderColor = FieldStrokeRed
         )
     )
@@ -226,6 +232,6 @@ fun CommonTextFieldPreview() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        commonTextField()
+        commonTextField(false, "placeholder")
     }
 }

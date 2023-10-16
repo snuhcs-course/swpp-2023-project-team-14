@@ -1,6 +1,5 @@
 package com.example.haengsha.ui.uiComponents
 
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,7 +40,7 @@ fun OrganizerSignupInstructionText() {
 @Composable
 fun TermsOfUseScreenText() {
     Text(
-        modifier = Modifier.size(width = 300.dp, height = 540.dp),
+        modifier = Modifier.width(300.dp),
         text = buildAnnotatedString {
             withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("1. 목적") }
             append("\n본 약관은 \'행샤\'(이하 \"조직\")에서 제공하는 커뮤니티 서비스(이하 \"서비스\")의 이용과 관련하여 조직과 이용자의 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다. \n\n")
@@ -79,7 +78,7 @@ fun TermsOfUseScreenText() {
 @Composable
 fun TermsOfUseModalText() {
     Text(
-        modifier = Modifier.size(width = 240.dp, height = 320.dp),
+        modifier = Modifier.width(240.dp),
         text = buildAnnotatedString {
             withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("1. 목적") }
             append("\n본 약관은 \'행샤\'(이하 \"조직\")에서 제공하는 커뮤니티 서비스(이하 \"서비스\")의 이용과 관련하여 조직과 이용자의 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다. \n\n")
@@ -117,7 +116,7 @@ fun TermsOfUseModalText() {
 @Composable
 fun PrivacyPolicyScreenText() {
     Text(
-        modifier = Modifier.size(width = 300.dp, height = 540.dp),
+        modifier = Modifier.width(300.dp),
         text = buildAnnotatedString {
             append("본 개인정보 수집 및 처리 방침은 \'행샤\'(이하 \"조직\")에서 운영하는 커뮤니티 서비스(이하 \"서비스\")에 적용됩니다. \n\n")
 
@@ -142,7 +141,7 @@ fun PrivacyPolicyScreenText() {
 @Composable
 fun PrivacyPolicyModalText() {
     Text(
-        modifier = Modifier.size(width = 240.dp, height = 320.dp),
+        modifier = Modifier.width(240.dp),
         text = buildAnnotatedString {
             append("본 개인정보 수집 및 처리 방침은 \'행샤\'(이하 \"조직\")에서 운영하는 커뮤니티 서비스(이하 \"서비스\")에 적용됩니다. \n\n")
 

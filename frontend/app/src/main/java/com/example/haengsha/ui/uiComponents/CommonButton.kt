@@ -47,13 +47,12 @@ fun CommonBlueButton(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun CommonGreyButton(text: String, onClick: () -> Unit) {
+fun CommonGreyButton(text: String) {
     Box(
         modifier = Modifier
             .size(width = 270.dp, height = 50.dp)
             .shadow(elevation = 8.dp, shape = RoundedCornerShape(10.dp))
-            .background(color = ButtonGrey)
-            .clickable(onClick = onClick),
+            .background(color = ButtonGrey),
         contentAlignment = Alignment.Center
     ) {
         Text(
@@ -79,6 +78,6 @@ fun CommonButtonPreview() {
         horizontalArrangement = Arrangement.Center
     ) {
         CommonBlueButton("다음") {/**/ }
-        CommonGreyButton("비활성화") {/**/ }
+        CommonGreyButton("비활성화")
     }
 }

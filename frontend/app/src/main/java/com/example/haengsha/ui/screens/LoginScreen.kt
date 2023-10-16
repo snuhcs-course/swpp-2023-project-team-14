@@ -30,9 +30,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.Routes
 import com.example.haengsha.ui.theme.ButtonBlue
+import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
-import com.example.haengsha.ui.uiComponents.commonTextField
+import com.example.haengsha.ui.uiComponents.passwordTextField
 import com.example.haengsha.ui.uiComponents.suffixTextField
 import es.dmoral.toasty.Toasty
 
@@ -86,10 +87,28 @@ fun LoginScreen(navController: NavHostController) {
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(10.dp))
-            passwordInput = commonTextField(
-                isError = isPasswordError,
-                placeholder = "비밀번호"
+            passwordInput = passwordTextField( //TODO : 불필요한 로직 없애기
+                isEmptyError = isPasswordError,
+                placeholder = "비밀번호",
+                context = context
             )
+            Spacer(modifier = Modifier.height(10.dp))
+            Box(
+                modifier = Modifier
+                    .width(270.dp)
+                    .height(20.dp)
+                    .clickable { navController.navigate(Routes.ForgotPassword.route) }
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxSize(),
+                    text = "아이디/비밀번호 찾기",
+                    fontFamily = poppins,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 11.sp,
+                    textAlign = TextAlign.End,
+                    color = FieldStrokeBlue
+                )
+            }
             Spacer(modifier = Modifier.height(50.dp))
             CommonBlueButton(text = "로그인하기",
                 onClick = {
@@ -115,23 +134,7 @@ fun LoginScreen(navController: NavHostController) {
                     }
                 })
             Spacer(modifier = Modifier.height(45.dp))
-            Box(
-                modifier = Modifier
-                    .width(270.dp)
-                    .height(20.dp)
-                    .clickable { navController.navigate(Routes.ForgotPassword.route) }
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxSize(),
-                    text = AnnotatedString("아이디/비밀번호 찾기"),
-                    fontFamily = poppins,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 15.sp,
-                    textAlign = TextAlign.Center,
-                    textDecoration = TextDecoration.Underline,
-                    color = ButtonBlue
-                )
-            }
+
             Box(
                 modifier = Modifier
                     .width(270.dp)
