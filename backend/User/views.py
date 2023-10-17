@@ -79,11 +79,12 @@ def verify_snu_email(request):
 @api_view(['POST'])
 def verify_code(request):
     email = request.data.get('email')
-    entered_code = request.data.get('code')
-    stored_code = cache.get(email)
+    entered_code = str(request.data.get('code'))
+    stored_code = str(cache.get(email))
+    
     if entered_code == stored_code:
         cache.delete(email)
-        return Response({'message': 'Authentication code verified successfully.'}, status=status.HTTP_201_UNAUTHORIZED)
+        return Response({'message': 'Authentication code verified successfully.'}, status=status.HTTP_200_OK)
     else:
         return Response({'message': 'The authentication code is invalid or has expired.'}, status=status.HTTP_401_UNAUTHORIZED)
     
