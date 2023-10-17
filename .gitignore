@@ -1,5 +1,8 @@
+
 .env
 .vscode/
+
+
 *.iml
 .gradle
 /local.properties
@@ -15,8 +18,10 @@
 .externalNativeBuild
 .cxx
 local.properties
+
 # Created by https://www.toptal.com/developers/gitignore/api/django
 # Edit at https://www.toptal.com/developers/gitignore?templates=django
+
 
 ### Django ###
 *.log
@@ -188,4 +193,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+
 # End of https://www.toptal.com/developers/gitignore/api/django
+
