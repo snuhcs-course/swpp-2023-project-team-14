@@ -33,6 +33,7 @@ import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
+import com.example.haengsha.ui.uiComponents.MessageDialog
 import com.example.haengsha.ui.uiComponents.passwordTextField
 import com.example.haengsha.ui.uiComponents.suffixTextField
 import es.dmoral.toasty.Toasty
@@ -44,6 +45,14 @@ fun LoginScreen(navController: NavHostController) {
     var passwordInput: String by rememberSaveable { mutableStateOf("") }
     var isEmailError by rememberSaveable { mutableStateOf(false) }
     var isPasswordError by rememberSaveable { mutableStateOf(false) }
+    var isLoginFailedDialogVisible by rememberSaveable { mutableStateOf(false) }
+    fun showLoginFailedDialog() {
+        isLoginFailedDialogVisible = true
+    }
+
+    fun hideLoginFailedDialog() {
+        isLoginFailedDialogVisible = false
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -97,7 +106,7 @@ fun LoginScreen(navController: NavHostController) {
                 modifier = Modifier
                     .width(270.dp)
                     .height(20.dp)
-                    .clickable { navController.navigate(Routes.ForgotPassword.route) }
+                    .clickable { navController.navigate(Routes.FindPassword.route) }
             ) {
                 Text(
                     modifier = Modifier.fillMaxSize(),
@@ -130,11 +139,18 @@ fun LoginScreen(navController: NavHostController) {
                         ).show()
                     } else {
                         /* TODO 로그인 로직*/
-                        navController.navigate(Routes.Home.route)
+                        showLoginFailedDialog()
+                        //navController.navigate(Routes.Home.route)
                     }
                 })
+            if (isLoginFailedDialogVisible) {
+                MessageDialog(
+                    onDismissRequest = { hideLoginFailedDialog() },
+                    onClick = { hideLoginFailedDialog() },
+                    text = "로그인 정보를 확인해주세요."
+                )
+            }
             Spacer(modifier = Modifier.height(45.dp))
-
             Box(
                 modifier = Modifier
                     .width(270.dp)
@@ -155,6 +171,7 @@ fun LoginScreen(navController: NavHostController) {
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
