@@ -1,4 +1,4 @@
-package com.example.haengsha.ui.screens.signup
+package com.example.haengsha.ui.screens.findPassword
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -21,10 +21,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.ui.theme.poppins
-import com.example.haengsha.ui.uiComponents.OrganizerSignupInstructionText
+import com.example.haengsha.ui.uiComponents.OrganizerFindPasswordInstructionText
 
 @Composable
-fun SignUpOrganizerScreen() {
+fun FindPasswordOrganizerScreen(navController: NavHostController) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -40,13 +40,13 @@ fun SignUpOrganizerScreen() {
                 fontWeight = FontWeight.Normal
             )
             Spacer(modifier = Modifier.height(30.dp))
-            OrganizerSignupInstructionText()
+            OrganizerFindPasswordInstructionText()
             Spacer(modifier = Modifier.height(60.dp))
             Box(
                 modifier = Modifier
                     .width(270.dp)
                     .height(20.dp)
-                    .clickable { /* TODO 이전 화면으로 돌아가기 */ }
+                    .clickable { navController.popBackStack() }
             ) {
                 Text(
                     modifier = Modifier.fillMaxSize(),
@@ -64,6 +64,6 @@ fun SignUpOrganizerScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun SignUpOrganizerScreenPreview() {
-    SignUpOrganizerScreen()
+fun FindPasswordOrganizerScreenPreview() {
+    FindPasswordOrganizerScreen(rememberNavController())
 }

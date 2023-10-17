@@ -38,6 +38,32 @@ fun OrganizerSignupInstructionText() {
 }
 
 @Composable
+fun OrganizerFindPasswordInstructionText() {
+    Text(
+        modifier = Modifier.width(300.dp),
+        text = buildAnnotatedString {
+            append("단체 계정의 로그인 정보를 찾고 싶으시다면 \n")
+            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("haengsha@gmail.com") }
+            append("으로 아래 사항을 준수하여 이메일로 보내주세요. \n\n")
+
+            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("형식") }
+            append("\n제목 앞에 [행샤 단체 계정 찾기]을 기재해주세요. \n\n")
+
+            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("내용") }
+            append("\n1. 단체명 \n2. 단체장 이름 \n3. 단체를 증명할 수 있는 서류, 사진(pdf, jpg, png) \n\n")
+
+            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("상기 내용을 이메일에 반드시 포함해주세요.") }
+            append("\n\n단체 증빙에는 평균 2~3일이 소요되며, 인증 절차 종료 후 이메일 회신을 통해 결과를 알려드립니다.")
+
+        },
+        fontFamily = poppins,
+        fontSize = 15.sp,
+        fontWeight = FontWeight.Normal
+    )
+}
+
+
+@Composable
 fun TermsOfUseScreenText() {
     Text(
         modifier = Modifier.width(300.dp),
