@@ -2,7 +2,6 @@ import uuid
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.forms import ChoiceField
 
 # Create your models here.
 class PersonalUser(AbstractUser):
