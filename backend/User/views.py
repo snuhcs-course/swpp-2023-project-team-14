@@ -34,10 +34,8 @@ def signin(request):
 def signup(request):
     role = request.data.get('role')
     if role == PersonalUser.USER:
-        request.session['role'] = role
         return Response({'redirect': 'User authentication page, go to signup/verify_snu_email.'}, status=status.HTTP_200_OK)
     elif role == PersonalUser.GROUP:   
-        request.session['role'] = role
         return Response({'redirect': 'Group authentication page.'}, status=status.HTTP_200_OK)
     else:
         return Response({'message': 'Role must be either User or Group.'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -59,7 +57,7 @@ def verify_snu_email(request):
     email = request.data.get('email')
     if not email:
         return Response({'message': 'The email field is required.'}, status=status.HTTP_401_UNAUTHORIZED)
-    # check if email does not already exist in db
+    
     if PersonalUser.objects.filter(email=email):
         return Response({'message': 'A user account with the given email already exists.'}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -70,7 +68,7 @@ def verify_snu_email(request):
     send_code_to_email(email, code) 
 
     # Store the code temporarily, associating it with the user's email
-    request.session['email'] = email  
+    # request.session['email'] = email  
     cache.set(email, code, timeout=3600)  # Store code for 1 hour
 
     # Inform the user that a code has been sent
@@ -80,7 +78,7 @@ def verify_snu_email(request):
 # the frontend must send code 
 @api_view(['POST'])
 def verify_code(request):
-    email = request.session.get('email')
+    email = request.data.get('email')
     entered_code = request.data.get('code')
     stored_code = cache.get(email)
     if entered_code == stored_code:
@@ -116,8 +114,7 @@ def verify_password(request):
 
 @api_view(['POST'])
 def create_profile(request):
-    nickname = request.data.get('nickname')
-    # nickname: 2-10 characters. Need to check for duplicates. 
+    nickname = request.data.get('nickname') 
     length = len(nickname)
     if length < 2 or length > 10:
         return Response({'message': 'The nickname must be at least 2 characters and at most 10 characters long.'}, status=status.HTTP_401_UNAUTHORIZED) 
@@ -129,56 +126,45 @@ def create_profile(request):
     if not major in valid_major_choices:
         return Response({'message': 'Invalid major.'}, status=status.HTTP_401_UNAUTHORIZED) 
 
-    # grade
     grade = request.data.get('grade')
     valid_grade_choices = [choice[0] for choice in PersonalUser.GRADE_CHOICES]
     if not grade in valid_grade_choices:
         return Response({'message': 'Invalid grade.'}, status=status.HTTP_401_UNAUTHORIZED) 
 
-    # interest
     interest = request.data.get('interest')
     valid_interest_choices = [choice[0] for choice in PersonalUser.INTEREST_CHOICES]
     if not interest in valid_interest_choices:
         return Response({'message': 'Invalid interest.'}, status=status.HTTP_401_UNAUTHORIZED) 
 
-    request.session['nickname'] = nickname
-    request.session['major'] = major
-    request.session['grade'] = grade
-    request.session['interest'] = interest
     return Response({'message': 'Successfully finished inputting user info.'}, status=status.HTTP_200_OK) 
 
 
 @api_view(['POST'])
 def agree_to_terms(request): 
-    # post: agreed string
-    # response: create user. 
     email = request.data.get('email')
-    check_agreed = request.data.get('terms_status')
     password = request.data.get('password')
-    if check_agreed == 'agree':
-        print(request.session.get('nickname'))
-        print(request.session.get('email'))
-        print(request.session.get('role'))
-        print(request.session.get('major'))
-        print(request.session.get('grade'))
-        print(request.session.get('interest'))
-        personal_user = PersonalUser(
-            nickname=request.session.get('nickname'),
-            email=email,
-            password=password,
-            role=str(request.session.get('role')),
-            major=str(request.session.get('major')),
-            grade=str(request.session.get('grade')),
-            interest=request.session.get('interest')
-        )
-        personal_user.save()
-        try:
-            token = Token.objects.create(user=personal_user) 
-            request.session.flush()
-            return Response({'token': token.key}, status=status.HTTP_200_OK) 
-        except Exception as _:
-            return Response({'error': 'An error occurred while creating the user'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    nickname = request.data.get('nickname')
+    email = request.data.get('email')
+    role = request.data.get('role')
+    major = request.data.get('major')
+    grade = request.data.get('grade')
+    interest = request.data.get('interest')
         
-    else:
-        return Response({'message': 'The user must agree to all terms and conditions in order to create a user account.'}, status=status.HTTP_401_UNAUTHORIZED) 
+    personal_user = PersonalUser(
+        nickname=nickname,
+        email=email,
+        password=password,
+        role=role,
+        major=major,
+        grade=grade,
+        interest=interest
+    )
+    personal_user.save()
+    try:
+        token = Token.objects.create(user=personal_user) 
+        request.session.flush()
+        return Response({'token': token.key}, status=status.HTTP_200_OK) 
+    except Exception as _:
+        return Response({'error': 'An error occurred while creating the user'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
