@@ -144,7 +144,6 @@ def agree_to_terms(request):
     email = request.data.get('email')
     password = request.data.get('password')
     nickname = request.data.get('nickname')
-    email = request.data.get('email')
     role = request.data.get('role')
     major = request.data.get('major')
     grade = request.data.get('grade')
@@ -162,7 +161,6 @@ def agree_to_terms(request):
     personal_user.save()
     try:
         token = Token.objects.create(user=personal_user) 
-        request.session.flush()
         return Response({'token': token.key}, status=status.HTTP_200_OK) 
     except Exception as _:
         return Response({'error': 'An error occurred while creating the user'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

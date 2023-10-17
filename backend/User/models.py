@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.forms import ChoiceField
@@ -43,5 +45,9 @@ class PersonalUser(AbstractUser):
   major = models.CharField(max_length=20, choices=MAJOR_CHOICES, default='Business')
   grade = models.CharField(max_length=10, choices=GRADE_CHOICES, default='23')
   interest = models.CharField(max_length=10, choices=INTEREST_CHOICES, default='music')
+
+  def save(self, *args, **kwargs):
+    self.username = self.email 
+    super(PersonalUser, self).save(*args, **kwargs)
 
   
