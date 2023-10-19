@@ -44,7 +44,7 @@ def generate_unique_code():
 
 def send_code_to_email(email, code):
     subject = 'Haengsha: Your email verification code'
-    message = f'Your verification code is: {code}.\nPlease use this to finish the verification process within 1 hour.'
+    message = f'Your verification code is: {code}.\nPlease use this to finish the verification process within 3 minutes.'
     from_email = config('EMAIL_HOST_USER')
     recipient_list = [email]
 
