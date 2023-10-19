@@ -5,6 +5,8 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class PersonalUser(AbstractUser):
+  USER = 'User'
+  GROUP = 'Group'
   ROLE_CHOICES = (
     ('User', 'User'),
     ('Group', 'Group'),
