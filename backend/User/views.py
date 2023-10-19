@@ -28,9 +28,7 @@ def signin(request):
     except Exception as _:
         return Response({'message': 'An error occurred while logging in the user.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-@api_view(['POST']) 
-# post: role.
-# role = 'User' or 'Group'    
+@api_view(['POST'])  
 def signup(request):
     role = request.data.get('role')
     if role == PersonalUser.USER:
@@ -61,21 +59,12 @@ def verify_snu_email(request):
     if PersonalUser.objects.filter(email=email):
         return Response({'message': 'A user account with the given email already exists.'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    # Generate a unique code for verification
     code = generate_unique_code() 
-
-    # Send the code to the user's email address
     send_code_to_email(email, code) 
+    cache.set(email, code, timeout=180)  # Store code for 3 minutes
 
-    # Store the code temporarily, associating it with the user's email
-    # request.session['email'] = email  
-    cache.set(email, code, timeout=3600)  # Store code for 1 hour
-
-    # Inform the user that a code has been sent
     return Response({'message': 'A verification code has been sent to your email. Please enter it to verify your account.'}, status=status.HTTP_200_OK)
 
-# in the frontend, we are on the same SNU Email 인증 page. 
-# the frontend must send code 
 @api_view(['POST'])
 def verify_code(request):
     email = request.data.get('email')
