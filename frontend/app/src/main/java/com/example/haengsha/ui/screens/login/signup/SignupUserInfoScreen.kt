@@ -188,7 +188,9 @@ fun SignupUserInfoScreen(
                                 .error(loginContext, "닉네임 중복 확인을 해주세요!", Toast.LENGTH_SHORT, true)
                                 .show()
                         } else {/* TODO 정보들 임시 저장 & 다음 페이지 넘어가기 */
-                            loginNavController.navigate(LoginRoute.SignupComplete.route)
+                            loginNavController.navigate(LoginRoute.SignupComplete.route) {
+                                popUpTo(LoginRoute.Login.route) { inclusive = false }
+                            }
                         }
                     }
                 })

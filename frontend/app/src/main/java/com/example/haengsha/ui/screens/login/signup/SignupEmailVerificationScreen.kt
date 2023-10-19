@@ -16,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,14 +45,14 @@ fun SignupEmailVerificationScreen(
     loginNavBack: () -> Unit,
     loginContext: Context
 ) {
-    var isCodeSent by rememberSaveable { mutableIntStateOf(0) }
-    var codeExpireTime by rememberSaveable { mutableIntStateOf(180) }
+    var isCodeSent by remember { mutableIntStateOf(0) }
+    var codeExpireTime by remember { mutableIntStateOf(180) }
     val codeExpireMinute = String.format("%02d", codeExpireTime / 60)
     val codeExpireSecond = String.format("%02d", codeExpireTime % 60)
     var emailInput: String by rememberSaveable { mutableStateOf("") }
-    var codeInput: String by rememberSaveable { mutableStateOf("") }
-    var isEmailError by rememberSaveable { mutableStateOf(false) }
-    var isCodeError by rememberSaveable { mutableStateOf(false) }
+    var codeInput: String by remember { mutableStateOf("") }
+    var isEmailError by remember { mutableStateOf(false) }
+    var isCodeError by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = isCodeSent) {
         codeExpireTime = 180
@@ -172,7 +173,6 @@ fun SignupEmailVerificationScreen(
                         /* TODO 인증번호 확인
                         *   if 맞으면 다음 화면 & 이메일 임시 저장
                         *   else 다르면 isCodeError = true */
-                        // TODO 일단 팀 미팅용 임시 내비게이션
                         loginNavController.navigate(LoginRoute.SignupPassword.route)
                     }
                 })

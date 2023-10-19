@@ -13,8 +13,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -31,9 +31,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.LoginRoute
-import com.example.haengsha.model.route.MainRoute
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.FieldStrokeBlue
+import com.example.haengsha.ui.theme.md_theme_light_outline
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
 import com.example.haengsha.ui.uiComponents.ConfirmOnlyDialog
@@ -47,14 +47,11 @@ fun LoginScreen(
     loginNavController: NavHostController,
     loginContext: Context
 ) {
-    /* TODO 랩 미팅 간 내비게이션 보여주기 위한 temp 변수 */
-    var temp: Int by rememberSaveable { mutableIntStateOf(0) }
-
     var emailInput: String by rememberSaveable { mutableStateOf("") }
-    var passwordInput: String by rememberSaveable { mutableStateOf("") }
-    var isEmailError by rememberSaveable { mutableStateOf(false) }
-    var isPasswordError by rememberSaveable { mutableStateOf(false) }
-    var isLoginFailedDialogVisible by rememberSaveable { mutableStateOf(false) }
+    var passwordInput: String by remember { mutableStateOf("") }
+    var isEmailError by remember { mutableStateOf(false) }
+    var isPasswordError by remember { mutableStateOf(false) }
+    var isLoginFailedDialogVisible by remember { mutableStateOf(false) }
     fun showLoginFailedDialog() {
         isLoginFailedDialogVisible = true
     }
@@ -146,10 +143,10 @@ fun LoginScreen(
                             true
                         ).show()
                     } else {
-                        /* TODO 로그인 로직 */
-                        if (temp == 0) showLoginFailedDialog()
-                        else mainNavController.navigate(MainRoute.Home.route)
-                        temp++
+                        /* TODO 로그인 로직
+                        if (정보 확인 실패) { showLoginFailedDialog() }
+                        else { mainNavController.navigate(MainRoute.Home.route) }
+                         */
                     }
                 })
             if (isLoginFailedDialogVisible) {
@@ -160,6 +157,14 @@ fun LoginScreen(
                 )
             }
             Spacer(modifier = Modifier.height(45.dp))
+            Text(
+                text = "No Account?",
+                fontFamily = poppins,
+                fontWeight = FontWeight.Light,
+                fontSize = 12.sp,
+                color = md_theme_light_outline
+            )
+            Spacer(modifier = Modifier.height(5.dp))
             Box(
                 modifier = Modifier
                     .width(270.dp)

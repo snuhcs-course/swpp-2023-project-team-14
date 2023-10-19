@@ -54,7 +54,7 @@ fun SignupCompleteScreen(
         Spacer(modifier = Modifier.height(100.dp))
         CommonBlueButton(text = "로그인 하러 가기") {
             loginNavController.navigate(LoginRoute.Login.route) {
-                popUpTo(LoginRoute.Login.route) { inclusive = true }
+                popUpTo(LoginRoute.SignupComplete.route) { inclusive = true }
             }
         }
     }

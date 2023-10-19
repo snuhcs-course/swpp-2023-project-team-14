@@ -40,7 +40,7 @@ fun SignupTypeScreen(
     ) {
         items(1) {
             Text(
-                modifier = Modifier.width(300.dp),
+                modifier = Modifier.width(320.dp),
                 text = "개인 유저 가입하기",
                 fontFamily = poppins,
                 fontSize = 18.sp,
@@ -48,7 +48,7 @@ fun SignupTypeScreen(
             )
             Spacer(modifier = Modifier.height(20.dp))
             Text(
-                modifier = Modifier.width(300.dp),
+                modifier = Modifier.width(320.dp),
                 text = stringResource(id = R.string.personal_signup_guide),
                 fontFamily = poppins,
                 fontSize = 15.sp,
@@ -60,7 +60,7 @@ fun SignupTypeScreen(
             }
             Spacer(modifier = Modifier.height(75.dp))
             Text(
-                modifier = Modifier.width(300.dp),
+                modifier = Modifier.width(320.dp),
                 text = "단체 유저 가입하기",
                 fontFamily = poppins,
                 fontSize = 18.sp,
@@ -68,13 +68,13 @@ fun SignupTypeScreen(
             )
             Spacer(modifier = Modifier.height(20.dp))
             Text(
-                modifier = Modifier.width(300.dp),
+                modifier = Modifier.width(320.dp),
                 text = stringResource(id = R.string.organizer_signup_guide),
                 fontFamily = poppins,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Normal
             )
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(30.dp))
             CommonBlueButton(text = "단체 유저 가입하기") {
                 loginNavController.navigate(LoginRoute.SignupOrganizer.route)
             }
