@@ -1,4 +1,4 @@
-package com.example.haengsha.ui.screens.signup
+package com.example.haengsha.ui.screens.login.findPassword
 
 import android.content.Context
 import android.widget.Toast
@@ -25,14 +25,21 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
 import com.example.haengsha.ui.uiComponents.passwordCheckTextField
-import com.example.haengsha.ui.uiComponents.passwordTextField
+import com.example.haengsha.ui.uiComponents.passwordSetField
 import es.dmoral.toasty.Toasty
 
 @Composable
-fun SignupPasswordSetScreen(context: Context) {
+fun PasswordResetScreen(
+    loginNavController: NavController,
+    loginNavBack: () -> Unit,
+    loginContext: Context
+) {
     var passwordInput: String by rememberSaveable { mutableStateOf("") }
     var passwordCheckInput: String by rememberSaveable { mutableStateOf("") }
     var isPasswordError by rememberSaveable { mutableStateOf(false) }
@@ -47,7 +54,7 @@ fun SignupPasswordSetScreen(context: Context) {
         items(1) {
             Text(
                 modifier = Modifier.width(270.dp),
-                text = "비밀번호 설정",
+                text = "비밀번호 재설정",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Medium,
                 fontSize = 24.sp
@@ -55,16 +62,16 @@ fun SignupPasswordSetScreen(context: Context) {
             Spacer(modifier = Modifier.height(45.dp))
             Text(
                 modifier = Modifier.width(270.dp),
-                text = "비밀번호를 입력하세요. (영문+숫자 4 ~ 10자)",
+                text = "새 비밀번호를 입력하세요. (영문+숫자 4 ~ 10자)",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(10.dp))
-            passwordInput = passwordTextField(
+            passwordInput = passwordSetField(
                 isEmptyError = isPasswordError,
                 placeholder = "Password",
-                context = context
+                context = loginContext
             )
             Spacer(modifier = Modifier.height(50.dp))
             Text(
@@ -81,12 +88,12 @@ fun SignupPasswordSetScreen(context: Context) {
             )
             Spacer(modifier = Modifier.height(50.dp))
             CommonBlueButton(
-                text = "다음",
+                text = "변경 완료하기",
                 onClick = {
                     if (passwordInput.trimStart() == "") {
                         isPasswordError = true
                         Toasty.error(
-                            context,
+                            loginContext,
                             "비밀번호를 입력해주세요",
                             Toast.LENGTH_SHORT,
                             true
@@ -95,13 +102,14 @@ fun SignupPasswordSetScreen(context: Context) {
                         if (passwordCheckInput != passwordInput) {
                             isPasswordCheckError = true
                             Toasty.error(
-                                context,
+                                loginContext,
                                 "비밀번호를 확인해주세요",
                                 Toast.LENGTH_SHORT,
                                 true
                             ).show()
                         } else {
-                            /* TODO 비밀번호 임시 저장 & 다음 페이지 넘어가기 */
+                            /* TODO 저장했던 이메일 & 새 비밀번호 서버에 전송, 비번 재설정 */
+                            loginNavController.navigate(LoginRoute.FindPasswordComplete.route)
                         }
                     }
                 })
@@ -110,9 +118,7 @@ fun SignupPasswordSetScreen(context: Context) {
                 modifier = Modifier
                     .width(270.dp)
                     .height(20.dp)
-                    .clickable {
-                        /* TODO 이전 화면으로 돌아가기 */
-                    }
+                    .clickable { loginNavBack() }
             ) {
                 Text(
                     modifier = Modifier.fillMaxSize(),
@@ -130,6 +136,6 @@ fun SignupPasswordSetScreen(context: Context) {
 
 @Preview(showBackground = true)
 @Composable
-fun SignupPasswordSetScreenPreview() {
-    SignupPasswordSetScreen(context = LocalContext.current)
+fun PasswordResetScreenPreview() {
+    PasswordResetScreen(rememberNavController(), {}, loginContext = LocalContext.current)
 }

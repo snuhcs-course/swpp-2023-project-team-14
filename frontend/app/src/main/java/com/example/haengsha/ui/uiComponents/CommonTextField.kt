@@ -74,15 +74,19 @@ fun commonTextField(
 
 @Composable
 fun suffixTextField(
-    isError: Boolean,
+    isEmptyError: Boolean,
     placeholder: String,
     suffix: String
 ): String {
     var input by rememberSaveable { mutableStateOf("") }
+    var isError by rememberSaveable { mutableStateOf(false) }
+
+    isError = if (isEmptyError) {
+        input.trimStart() == ""
+    } else false
 
     OutlinedTextField(
-        modifier = Modifier
-            .size(width = 270.dp, height = 60.dp),
+        modifier = Modifier.size(width = 270.dp, height = 60.dp),
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -122,6 +126,48 @@ fun suffixTextField(
 
 @Composable
 fun passwordTextField(
+    isEmptyError: Boolean,
+    placeholder: String = "",
+): String {
+    var input by rememberSaveable { mutableStateOf("") }
+    var isError by rememberSaveable { mutableStateOf(false) }
+
+    isError = if (isEmptyError) {
+        input.trimStart() == ""
+    } else false
+
+    OutlinedTextField(
+        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        value = input,
+        onValueChange = { input = it },
+        placeholder = {
+            Text(
+                text = placeholder,
+                fontFamily = poppins,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Light,
+                color = PlaceholderGrey
+            )
+        },
+        isError = isError,
+        visualTransformation = PasswordVisualTransformation(),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Done
+        ),
+        singleLine = true,
+        shape = RoundedCornerShape(10.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = FieldStrokeBlue,
+            unfocusedBorderColor = HaengshaGrey,
+            errorBorderColor = FieldStrokeRed
+        )
+    )
+    return input
+}
+
+@Composable
+fun passwordSetField(
     isEmptyError: Boolean,
     placeholder: String = "",
     context: Context
@@ -194,8 +240,7 @@ fun passwordCheckTextField(
     var input by rememberSaveable { mutableStateOf("") }
 
     OutlinedTextField(
-        modifier = Modifier
-            .size(width = 270.dp, height = 60.dp),
+        modifier = Modifier.size(width = 270.dp, height = 60.dp),
         value = input,
         onValueChange = { input = it },
         placeholder = {

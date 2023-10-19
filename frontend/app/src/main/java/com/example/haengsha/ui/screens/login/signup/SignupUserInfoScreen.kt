@@ -1,4 +1,4 @@
-package com.example.haengsha.ui.screens.signup
+package com.example.haengsha.ui.screens.login.signup
 
 import android.content.Context
 import android.widget.Toast
@@ -31,6 +31,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
@@ -40,7 +43,11 @@ import com.example.haengsha.ui.uiComponents.multiSelectDropDown
 import es.dmoral.toasty.Toasty
 
 @Composable
-fun SignupUserInfoScreen(context: Context) {
+fun SignupUserInfoScreen(
+    loginNavController: NavController,
+    loginNavBack: () -> Unit,
+    loginContext: Context
+) {
     var nickname by rememberSaveable { mutableStateOf("") }
     var college by rememberSaveable { mutableStateOf("") }
     var studentId by rememberSaveable { mutableStateOf("") }
@@ -96,12 +103,17 @@ fun SignupUserInfoScreen(context: Context) {
                             if (whitespacePattern.matches(nickname)) {
                                 isNicknameError = true
                                 Toasty
-                                    .error(context, "공백은 앞뒤에 올 수 없습니다", Toast.LENGTH_SHORT, true)
+                                    .error(
+                                        loginContext,
+                                        "공백은 앞뒤에 올 수 없습니다",
+                                        Toast.LENGTH_SHORT,
+                                        true
+                                    )
                                     .show()
                             } else if (!lengthPattern.matches(nickname)) {
                                 isNicknameError = true
                                 Toasty
-                                    .error(context, "길이 제한을 초과했습니다", Toast.LENGTH_SHORT, true)
+                                    .error(loginContext, "길이 제한을 초과했습니다", Toast.LENGTH_SHORT, true)
                                     .show()
                             } else {
                                 isNicknameError = false
@@ -168,14 +180,15 @@ fun SignupUserInfoScreen(context: Context) {
                 onClick = {
                     if (nickname == "" || college == "" || studentId == "" || interest == { "" }) {
                         Toasty
-                            .error(context, "정보 입력을 완료해주세요!", Toast.LENGTH_SHORT, true)
+                            .error(loginContext, "정보 입력을 완료해주세요!", Toast.LENGTH_SHORT, true)
                             .show()
                     } else {
                         if (!isNicknameChecked || isNicknameError) {
                             Toasty
-                                .error(context, "닉네임 중복 확인을 해주세요!", Toast.LENGTH_SHORT, true)
+                                .error(loginContext, "닉네임 중복 확인을 해주세요!", Toast.LENGTH_SHORT, true)
                                 .show()
                         } else {/* TODO 정보들 임시 저장 & 다음 페이지 넘어가기 */
+                            loginNavController.navigate(LoginRoute.SignupComplete.route)
                         }
                     }
                 })
@@ -184,9 +197,7 @@ fun SignupUserInfoScreen(context: Context) {
                 modifier = Modifier
                     .width(270.dp)
                     .height(20.dp)
-                    .clickable {
-                        /* TODO 이전 화면으로 돌아가기 */
-                    }
+                    .clickable { loginNavBack() }
             ) {
                 Text(
                     modifier = Modifier.fillMaxSize(),
@@ -205,5 +216,5 @@ fun SignupUserInfoScreen(context: Context) {
 @Preview(showBackground = true)
 @Composable
 fun SignupUserInfoScreenPreview() {
-    SignupUserInfoScreen(LocalContext.current)
+    SignupUserInfoScreen(rememberNavController(), {}, loginContext = LocalContext.current)
 }

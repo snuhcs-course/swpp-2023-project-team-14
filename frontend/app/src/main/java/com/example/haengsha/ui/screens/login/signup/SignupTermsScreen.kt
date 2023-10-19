@@ -1,4 +1,4 @@
-package com.example.haengsha.ui.screens.signup
+package com.example.haengsha.ui.screens.login.signup
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,6 +34,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.ButtonGrey
 import com.example.haengsha.ui.theme.HaengshaGrey
@@ -45,7 +48,10 @@ import com.example.haengsha.ui.uiComponents.PrivacyPolicyModalText
 import com.example.haengsha.ui.uiComponents.TermsOfUseModalText
 
 @Composable
-fun SignupAgreementScreen() {
+fun SignupTermsScreen(
+    loginNavController: NavController,
+    loginNavBack: () -> Unit
+) {
     var isAllChecked by rememberSaveable { mutableStateOf(false) }
     var isTermsChecked by rememberSaveable { mutableStateOf(false) }
     var isPolicyChecked by rememberSaveable { mutableStateOf(false) }
@@ -193,6 +199,7 @@ fun SignupAgreementScreen() {
                         text = "동의 후 회원가입",
                         onClick = {
                             /*TODO 버튼 누르면 임시 저장했던 가입 정보 전부 DB에 저장*/
+                            loginNavController.navigate(LoginRoute.SignupComplete.route)
                         }
                     )
                 } else CommonGreyButton(text = "동의 후 회원가입")
@@ -201,9 +208,7 @@ fun SignupAgreementScreen() {
                     modifier = Modifier
                         .width(270.dp)
                         .height(20.dp)
-                        .clickable {
-                            /* TODO 이전 화면으로 돌아가기 */
-                        }
+                        .clickable { loginNavBack() }
                 ) {
                     Text(
                         modifier = Modifier.fillMaxSize(),
@@ -298,6 +303,6 @@ fun AgreementModal(text: String) {
 
 @Preview(showBackground = true)
 @Composable
-fun SignupAgreementScreenPreview() {
-    SignupAgreementScreen()
+fun SignupTermsScreenPreview() {
+    SignupTermsScreen(rememberNavController()) {}
 }
