@@ -1,4 +1,4 @@
-package com.example.haengsha.ui.screens.signup
+package com.example.haengsha.ui.screens.login.signup
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,11 +19,16 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
 
 @Composable
-fun SignupCompleteScreen() {
+fun SignupCompleteScreen(
+    loginNavController: NavController
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -47,12 +52,16 @@ fun SignupCompleteScreen() {
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(100.dp))
-        CommonBlueButton(text = "행샤 둘러보기") { /* TODO 홈 페이지 접속 */ }
+        CommonBlueButton(text = "로그인 하러 가기") {
+            loginNavController.navigate(LoginRoute.Login.route) {
+                popUpTo(LoginRoute.Login.route) { inclusive = true }
+            }
+        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewSignupCompleteScreen() {
-    SignupCompleteScreen()
+    SignupCompleteScreen(rememberNavController())
 }

@@ -1,4 +1,4 @@
-package com.example.haengsha.ui.screens.signup
+package com.example.haengsha.ui.screens.login.findPassword
 
 import android.content.Context
 import android.widget.Toast
@@ -27,16 +27,24 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
+import com.example.haengsha.ui.uiComponents.ConfirmOnlyDialog
 import com.example.haengsha.ui.uiComponents.commonTextField
 import com.example.haengsha.ui.uiComponents.suffixTextField
 import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.delay
 
 @Composable
-fun SignupEmailVerificationScreen(context: Context) {
+fun FindPasswordScreen(
+    loginNavController: NavHostController,
+    loginNavBack: () -> Unit,
+    loginContext: Context
+) {
     var isCodeSent by rememberSaveable { mutableIntStateOf(0) }
     var codeExpireTime by rememberSaveable { mutableIntStateOf(180) }
     val codeExpireMinute = String.format("%02d", codeExpireTime / 60)
@@ -45,7 +53,14 @@ fun SignupEmailVerificationScreen(context: Context) {
     var codeInput: String by rememberSaveable { mutableStateOf("") }
     var isEmailError by rememberSaveable { mutableStateOf(false) }
     var isCodeError by rememberSaveable { mutableStateOf(false) }
+    var isEmailNotFoundDialogVisible by rememberSaveable { mutableStateOf(false) }
+    fun showEmailNotFoundDialog() {
+        isEmailNotFoundDialogVisible = true
+    }
 
+    fun hideEmailNotFoundDialog() {
+        isEmailNotFoundDialogVisible = false
+    }
     LaunchedEffect(key1 = isCodeSent) {
         codeExpireTime = 180
         while (codeExpireTime > 0) {
@@ -78,7 +93,7 @@ fun SignupEmailVerificationScreen(context: Context) {
             )
             Spacer(modifier = Modifier.height(10.dp))
             emailInput = suffixTextField(
-                isError = isEmailError,
+                isEmptyError = isEmailError,
                 placeholder = "SNU Email",
                 suffix = "@snu.ac.kr"
             )
@@ -91,11 +106,23 @@ fun SignupEmailVerificationScreen(context: Context) {
                         if (emailInput.trimStart() == "") {
                             isEmailError = true
                             Toasty
-                                .error(context, "이메일을 입력해주세요", Toast.LENGTH_SHORT, true)
+                                .error(loginContext, "이메일을 입력해주세요", Toast.LENGTH_SHORT, true)
                                 .show()
-                        } else isEmailError = false
-                        /* TODO 인증번호 발송 */
-                        isCodeSent++
+                        } else {
+                            /* TODO 서버 계정 정보 확인
+                            * if(계정이 없으면) {
+                            *   isEmailError = true
+                            *   showEmailNotFoundDialog()                            *
+                            * }
+                            * */
+                            showEmailNotFoundDialog()
+                            /* TODO 인증번호 발송
+                            * else {
+                            *   isEmailError = false
+                            *   isCodeSent++
+                            * }
+                            * */
+                        }
                     },
             ) {
                 Text(
@@ -108,6 +135,13 @@ fun SignupEmailVerificationScreen(context: Context) {
                     fontSize = 11.sp,
                     textAlign = TextAlign.End,
                     color = FieldStrokeBlue
+                )
+            }
+            if (isEmailNotFoundDialogVisible) {
+                ConfirmOnlyDialog(
+                    onDismissRequest = { hideEmailNotFoundDialog() },
+                    onClick = { hideEmailNotFoundDialog() },
+                    text = "등록되지 않은 계정입니다."
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))
@@ -145,7 +179,7 @@ fun SignupEmailVerificationScreen(context: Context) {
                     if (emailInput.trimStart() == "") {
                         isEmailError = true
                         Toasty.error(
-                            context,
+                            loginContext,
                             "이메일을 입력해주세요",
                             Toast.LENGTH_SHORT,
                             true
@@ -154,7 +188,7 @@ fun SignupEmailVerificationScreen(context: Context) {
                         isEmailError = false
                         isCodeError = true
                         Toasty.error(
-                            context,
+                            loginContext,
                             "인증번호를 확인해주세요",
                             Toast.LENGTH_SHORT,
                             true
@@ -163,6 +197,8 @@ fun SignupEmailVerificationScreen(context: Context) {
                         /* TODO 인증번호 확인
                         *   if 맞으면 다음 화면 & 이메일 임시 저장
                         *   else 다르면 isCodeError = true */
+                        // TODO 일단 팀 미팅용 임시 내비게이션
+                        loginNavController.navigate(LoginRoute.FindPasswordReset.route)
                     }
                 })
             Spacer(modifier = Modifier.height(45.dp))
@@ -170,7 +206,24 @@ fun SignupEmailVerificationScreen(context: Context) {
                 modifier = Modifier
                     .width(270.dp)
                     .height(20.dp)
-                    .clickable { /* TODO 이전 화면으로 돌아가기 */ }
+                    .clickable { loginNavController.navigate(LoginRoute.FindPasswordOrganizer.route) }
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxSize(),
+                    text = "단체 계정 아이디/비밀번호 찾기",
+                    fontFamily = poppins,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 15.sp,
+                    textAlign = TextAlign.Center,
+                    textDecoration = TextDecoration.Underline
+                )
+            }
+            Spacer(modifier = Modifier.height(45.dp))
+            Box(
+                modifier = Modifier
+                    .width(270.dp)
+                    .height(20.dp)
+                    .clickable { loginNavBack() }
             ) {
                 Text(
                     modifier = Modifier.fillMaxSize(),
@@ -188,6 +241,6 @@ fun SignupEmailVerificationScreen(context: Context) {
 
 @Preview(showBackground = true)
 @Composable
-fun SignupEmailVerificationScreenPreview() {
-    SignupEmailVerificationScreen(context = LocalContext.current)
+fun FindPasswordScreenPreview() {
+    FindPasswordScreen(rememberNavController(), {}, loginContext = LocalContext.current)
 }

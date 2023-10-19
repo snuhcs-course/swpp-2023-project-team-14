@@ -1,4 +1,4 @@
-package com.example.haengsha.ui.screens.findPassword
+package com.example.haengsha.ui.screens.login.findPassword
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -18,13 +18,11 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.OrganizerFindPasswordInstructionText
 
 @Composable
-fun FindPasswordOrganizerScreen(navController: NavHostController) {
+fun FindPasswordOrganizerScreen(loginNavBack: () -> Unit) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -46,7 +44,7 @@ fun FindPasswordOrganizerScreen(navController: NavHostController) {
                 modifier = Modifier
                     .width(270.dp)
                     .height(20.dp)
-                    .clickable { navController.popBackStack() }
+                    .clickable { loginNavBack() }
             ) {
                 Text(
                     modifier = Modifier.fillMaxSize(),
@@ -65,5 +63,5 @@ fun FindPasswordOrganizerScreen(navController: NavHostController) {
 @Preview(showBackground = true)
 @Composable
 fun FindPasswordOrganizerScreenPreview() {
-    FindPasswordOrganizerScreen(rememberNavController())
+    FindPasswordOrganizerScreen {}
 }

@@ -1,4 +1,4 @@
-package com.example.haengsha.ui.screens.findPassword
+package com.example.haengsha.ui.screens.login.findPassword
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,12 +21,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.haengsha.Routes
+import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
 
 @Composable
-fun FindPasswordCompleteScreen(navController: NavController) {
+fun FindPasswordCompleteScreen(loginNavController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -50,9 +50,10 @@ fun FindPasswordCompleteScreen(navController: NavController) {
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(100.dp))
-        CommonBlueButton(text = "로그인하기") {
-            navController.navigate(Routes.Login.route)
-
+        CommonBlueButton(text = "로그인 하러 가기") {
+            loginNavController.navigate(LoginRoute.Login.route) {
+                popUpTo(LoginRoute.Login.route) { inclusive = true }
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.haengsha.ui.screens.signup
+package com.example.haengsha.ui.screens.login.signup
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -24,7 +24,7 @@ import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.OrganizerSignupInstructionText
 
 @Composable
-fun SignUpOrganizerScreen() {
+fun SignUpOrganizerScreen(loginNavBack: () -> Unit) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -46,7 +46,7 @@ fun SignUpOrganizerScreen() {
                 modifier = Modifier
                     .width(270.dp)
                     .height(20.dp)
-                    .clickable { /* TODO 이전 화면으로 돌아가기 */ }
+                    .clickable { loginNavBack() }
             ) {
                 Text(
                     modifier = Modifier.fillMaxSize(),
@@ -65,5 +65,5 @@ fun SignUpOrganizerScreen() {
 @Preview(showBackground = true)
 @Composable
 fun SignUpOrganizerScreenPreview() {
-    SignUpOrganizerScreen()
+    SignUpOrganizerScreen {}
 }

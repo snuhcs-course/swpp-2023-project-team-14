@@ -26,7 +26,7 @@ import com.example.haengsha.ui.theme.md_theme_light_tertiary
 import com.example.haengsha.ui.theme.poppins
 
 @Composable
-fun MessageDialog(
+fun ConfirmOnlyDialog(
     onDismissRequest: () -> Unit,
     onClick: () -> Unit,
     text: String
@@ -75,5 +75,5 @@ fun MessageDialog(
 @Preview(showBackground = true)
 @Composable
 fun MessageDialogPreview() {
-    MessageDialog(onDismissRequest = { /*TODO*/ }, onClick = { /*TODO*/ }, text = "HI")
+    ConfirmOnlyDialog(onDismissRequest = {}, onClick = {}, text = "HI")
 }

@@ -1,4 +1,4 @@
-package com.example.haengsha.ui.screens.findPassword
+package com.example.haengsha.ui.screens.login.signup
 
 import android.content.Context
 import android.widget.Toast
@@ -27,15 +27,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.haengsha.Routes
+import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
 import com.example.haengsha.ui.uiComponents.passwordCheckTextField
-import com.example.haengsha.ui.uiComponents.passwordTextField
+import com.example.haengsha.ui.uiComponents.passwordSetField
 import es.dmoral.toasty.Toasty
 
 @Composable
-fun PasswordResetScreen(navController: NavController, context: Context) {
+fun SignupPasswordSetScreen(
+    loginNavController: NavController,
+    loginNavBack: () -> Unit,
+    loginContext: Context
+) {
     var passwordInput: String by rememberSaveable { mutableStateOf("") }
     var passwordCheckInput: String by rememberSaveable { mutableStateOf("") }
     var isPasswordError by rememberSaveable { mutableStateOf(false) }
@@ -50,7 +54,7 @@ fun PasswordResetScreen(navController: NavController, context: Context) {
         items(1) {
             Text(
                 modifier = Modifier.width(270.dp),
-                text = "비밀번호 재설정",
+                text = "비밀번호 설정",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Medium,
                 fontSize = 24.sp
@@ -64,10 +68,10 @@ fun PasswordResetScreen(navController: NavController, context: Context) {
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(10.dp))
-            passwordInput = passwordTextField(
+            passwordInput = passwordSetField(
                 isEmptyError = isPasswordError,
                 placeholder = "Password",
-                context = context
+                context = loginContext
             )
             Spacer(modifier = Modifier.height(50.dp))
             Text(
@@ -84,12 +88,12 @@ fun PasswordResetScreen(navController: NavController, context: Context) {
             )
             Spacer(modifier = Modifier.height(50.dp))
             CommonBlueButton(
-                text = "변경 완료하기",
+                text = "다음",
                 onClick = {
                     if (passwordInput.trimStart() == "") {
                         isPasswordError = true
                         Toasty.error(
-                            context,
+                            loginContext,
                             "비밀번호를 입력해주세요",
                             Toast.LENGTH_SHORT,
                             true
@@ -98,14 +102,14 @@ fun PasswordResetScreen(navController: NavController, context: Context) {
                         if (passwordCheckInput != passwordInput) {
                             isPasswordCheckError = true
                             Toasty.error(
-                                context,
+                                loginContext,
                                 "비밀번호를 확인해주세요",
                                 Toast.LENGTH_SHORT,
                                 true
                             ).show()
                         } else {
                             /* TODO 비밀번호 임시 저장 & 다음 페이지 넘어가기 */
-                            navController.navigate(Routes.FindPasswordComplete.route)
+                            loginNavController.navigate(LoginRoute.SignupUserInfo.route)
                         }
                     }
                 })
@@ -114,9 +118,7 @@ fun PasswordResetScreen(navController: NavController, context: Context) {
                 modifier = Modifier
                     .width(270.dp)
                     .height(20.dp)
-                    .clickable {
-                        navController.popBackStack()
-                    }
+                    .clickable { loginNavBack() }
             ) {
                 Text(
                     modifier = Modifier.fillMaxSize(),
@@ -134,6 +136,6 @@ fun PasswordResetScreen(navController: NavController, context: Context) {
 
 @Preview(showBackground = true)
 @Composable
-fun PasswordResetScreenPreview() {
-    PasswordResetScreen(rememberNavController(), context = LocalContext.current)
+fun SignupPasswordSetScreenPreview() {
+    SignupPasswordSetScreen(rememberNavController(), {}, loginContext = LocalContext.current)
 }
