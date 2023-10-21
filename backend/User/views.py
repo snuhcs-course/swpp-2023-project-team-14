@@ -92,6 +92,12 @@ def verify_password(request):
     else:
         return Response({'message': 'The password and the confirmation password do not match.'}, status=status.HTTP_400_BAD_REQUEST) 
 
+@api_view(['POST'])
+def check_nickname(request):
+    nickname = request.data.get('nickname')
+    if PersonalUser.objects.filter(nickname=nickname):
+        return Response({'message': 'The nickname is already taken'}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'message': 'The nickname can be used'}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def signup(request):
@@ -101,9 +107,7 @@ def signup(request):
     nickname = request.data.get('nickname') 
     length = len(nickname)
     if length < 2 or length > 10:
-        return Response({'message': 'The nickname must be at least 2 characters and at most 10 characters long.'}, status=status.HTTP_401_UNAUTHORIZED) 
-    if PersonalUser.objects.filter(nickname=nickname):
-        return Response({'message': 'The nickname is already taken.'}, status=status.HTTP_400_BAD_REQUEST) 
+        return Response({'message': 'The nickname must be at least 2 characters and at most 10 characters long.'}, status=status.HTTP_400_BAD_REQUEST) 
 
     major = request.data.get('major')
     valid_major_choices = [choice[0] for choice in PersonalUser.MAJOR_CHOICES]
