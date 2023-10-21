@@ -19,25 +19,16 @@ def signin(request):
 
     try:
         user = authenticate(username=email, password=password)
-        if user:
+        if user is not None:
             token, _ = Token.objects.get_or_create(user=user)
             return Response({'token': token.key,
+                             'role': user.role,
                             'message': 'The user has successfully logged in.'})
         else:
             return Response({'message': 'There is no account with the given email or password.'}, status=status.HTTP_401_UNAUTHORIZED)
     except Exception as _:
         return Response({'message': 'An error occurred while logging in the user.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-@api_view(['POST'])  
-def signup(request):
-    role = request.data.get('role')
-    if role == PersonalUser.USER:
-        return Response({'redirect': 'User authentication page, go to signup/verify_snu_email.'}, status=status.HTTP_200_OK)
-    elif role == PersonalUser.GROUP:   
-        return Response({'redirect': 'Group authentication page.'}, status=status.HTTP_200_OK)
-    else:
-        return Response({'message': 'Role must be either User or Group.'}, status=status.HTTP_400_BAD_REQUEST)
-    
+   
 def generate_unique_code():
     auth_code = uuid.uuid4()
     return auth_code
@@ -103,7 +94,10 @@ def verify_password(request):
 
 
 @api_view(['POST'])
-def create_profile(request):
+def signup(request):
+    email = request.data.get('email')
+    password = request.data.get('password')
+    role = request.data.get('role')
     nickname = request.data.get('nickname') 
     length = len(nickname)
     if length < 2 or length > 10:
@@ -126,33 +120,20 @@ def create_profile(request):
     if not interest in valid_interest_choices:
         return Response({'message': 'Invalid interest.'}, status=status.HTTP_400_BAD_REQUEST) 
 
-    return Response({'message': 'Successfully finished inputting user info.'}, status=status.HTTP_200_OK) 
-
-
-@api_view(['POST'])
-def agree_to_terms(request): 
-    email = request.data.get('email')
-    password = request.data.get('password')
-    nickname = request.data.get('nickname')
-    role = request.data.get('role')
-    major = request.data.get('major')
-    grade = request.data.get('grade')
-    interest = request.data.get('interest')
-        
     personal_user = PersonalUser(
         nickname=nickname,
         email=email,
-        password=password,
         role=role,
         major=major,
         grade=grade,
         interest=interest
     )
+    personal_user.set_password(password)
     personal_user.save()
     try:
-        token = Token.objects.create(user=personal_user) 
-        return Response({'token': token.key}, status=status.HTTP_200_OK) 
-    except Exception as _:
+        return Response({'message': 'created user account'}, status=status.HTTP_200_OK) 
+    except Exception as e:
+        print(e)
         return Response({'error': 'An error occurred while creating the user'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
