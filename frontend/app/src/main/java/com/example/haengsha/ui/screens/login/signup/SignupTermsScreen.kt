@@ -1,5 +1,7 @@
 package com.example.haengsha.ui.screens.login.signup
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +17,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -31,13 +35,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.LoginRoute
+import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.viewModel.login.LoginViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.ButtonGrey
 import com.example.haengsha.ui.theme.HaengshaGrey
@@ -47,12 +51,17 @@ import com.example.haengsha.ui.uiComponents.CommonBlueButton
 import com.example.haengsha.ui.uiComponents.CommonGreyButton
 import com.example.haengsha.ui.uiComponents.PrivacyPolicyModalText
 import com.example.haengsha.ui.uiComponents.TermsOfUseModalText
+import es.dmoral.toasty.Toasty
 
 @Composable
 fun SignupTermsScreen(
+    loginViewModel: LoginViewModel,
+    loginUiState: LoginUiState,
     loginNavController: NavController,
-    loginNavBack: () -> Unit
+    loginNavBack: () -> Unit,
+    loginContext: Context
 ) {
+    var signupRegisterTrigger by remember { mutableIntStateOf(0) }
     var isAllChecked by rememberSaveable { mutableStateOf(false) }
     var isTermsChecked by rememberSaveable { mutableStateOf(false) }
     var isPolicyChecked by rememberSaveable { mutableStateOf(false) }
@@ -199,8 +208,12 @@ fun SignupTermsScreen(
                     CommonBlueButton(
                         text = "동의 후 회원가입",
                         onClick = {
-                            /*TODO 버튼 누르면 임시 저장했던 가입 정보 전부 DB에 저장*/
-                            loginNavController.navigate(LoginRoute.SignupComplete.route)
+                            signupRegisterTrigger++
+                            //TODO signupViewModel 만들어서 request body 채우기
+                            loginViewModel.signupRegister(
+                                "테스트", "test@snu.ac.kr", "qwer1234", "User",
+                                "컴퓨터공학부", "22학번", "음악, 댄스, 사교"
+                            )
                         }
                     )
                 } else CommonGreyButton(text = "동의 후 회원가입")
@@ -262,6 +275,48 @@ fun SignupTermsScreen(
             }
         }
     }
+
+    if (signupRegisterTrigger > 0) {
+        LaunchedEffect(key1 = loginUiState) {
+            when (loginUiState) {
+                is LoginUiState.Success -> {
+                    loginNavController.navigate(LoginRoute.SignupComplete.route) {
+                        popUpTo(LoginRoute.Login.route) { inclusive = false }
+                    }
+                }
+
+                is LoginUiState.HttpError -> {
+                    Toasty
+                        .error(
+                            loginContext,
+                            loginUiState.message,
+                            Toast.LENGTH_SHORT,
+                            true
+                        )
+                        .show()
+                }
+
+                is LoginUiState.NetworkError -> {
+                    Toasty
+                        .error(
+                            loginContext,
+                            "인터넷 연결을 확인해주세요",
+                            Toast.LENGTH_SHORT,
+                            true
+                        )
+                        .show()
+                }
+
+                is LoginUiState.Loading -> {
+                    /* Loading State, may add some loading UI or throw error after long time */
+                }
+
+                else -> {
+                    /* Other Success State, do nothing */
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -302,8 +357,8 @@ fun AgreementModal(text: String) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun SignupTermsScreenPreview() {
-    SignupTermsScreen(rememberNavController()) {}
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun SignupTermsScreenPreview() {
+//    SignupTermsScreen(rememberNavController()) {}
+//}

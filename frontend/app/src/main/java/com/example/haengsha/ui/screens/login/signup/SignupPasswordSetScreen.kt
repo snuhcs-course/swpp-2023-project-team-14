@@ -62,7 +62,7 @@ fun SignupPasswordSetScreen(
             Spacer(modifier = Modifier.height(45.dp))
             Text(
                 modifier = Modifier.width(270.dp),
-                text = "비밀번호를 입력하세요. (영문+숫자 4 ~ 10자)",
+                text = "비밀번호를 입력하세요. (영문+숫자 4~10자)",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp

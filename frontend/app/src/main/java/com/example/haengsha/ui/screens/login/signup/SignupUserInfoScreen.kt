@@ -14,26 +14,27 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.LoginRoute
+import com.example.haengsha.model.uiState.login.LoginUiState
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
@@ -44,10 +45,13 @@ import es.dmoral.toasty.Toasty
 
 @Composable
 fun SignupUserInfoScreen(
+    checkNickname: (String) -> Unit,
+    loginUiState: LoginUiState,
     loginNavController: NavController,
     loginNavBack: () -> Unit,
     loginContext: Context
 ) {
+    var checkNicknameTrigger by remember { mutableIntStateOf(0) }
     var nickname by rememberSaveable { mutableStateOf("") }
     var college by rememberSaveable { mutableStateOf("") }
     var studentId by rememberSaveable { mutableStateOf("") }
@@ -116,15 +120,8 @@ fun SignupUserInfoScreen(
                                     .error(loginContext, "길이 제한을 초과했습니다", Toast.LENGTH_SHORT, true)
                                     .show()
                             } else {
-                                isNicknameError = false
-                                /* TODO 중복확인
-                                if (서버 응답 == 중복) {
-                                    isNicknameError = true
-                                    Toasty
-                                        .error(context, "이미 있는 닉네임입니다!", Toast.LENGTH_SHORT, true)
-                                        .show()
-                                } else isNicknameError = false
-                                */
+                                checkNicknameTrigger++
+                                checkNickname(nickname)
                             }
                         },
                     text = "중복 확인",
@@ -188,9 +185,7 @@ fun SignupUserInfoScreen(
                                 .error(loginContext, "닉네임 중복 확인을 해주세요!", Toast.LENGTH_SHORT, true)
                                 .show()
                         } else {/* TODO 정보들 임시 저장 & 다음 페이지 넘어가기 */
-                            loginNavController.navigate(LoginRoute.SignupComplete.route) {
-                                popUpTo(LoginRoute.Login.route) { inclusive = false }
-                            }
+                            loginNavController.navigate(LoginRoute.SignupTerms.route)
                         }
                     }
                 })
@@ -213,10 +208,49 @@ fun SignupUserInfoScreen(
             }
         }
     }
+
+    if (checkNicknameTrigger > 0) {
+        LaunchedEffect(key1 = loginUiState) {
+            when (loginUiState) {
+                is LoginUiState.Success -> {
+                    isNicknameError = false
+                    Toasty
+                        .success(loginContext, "사용 가능한 닉네임입니다", Toast.LENGTH_SHORT, true)
+                        .show()
+                }
+
+                is LoginUiState.HttpError -> {
+                    isNicknameError = true
+                    Toasty
+                        .warning(loginContext, "이미 존재하는 닉네임입니다", Toast.LENGTH_SHORT, true)
+                        .show()
+                }
+
+                is LoginUiState.NetworkError -> {
+                    Toasty
+                        .error(
+                            loginContext,
+                            "인터넷 연결을 확인해주세요",
+                            Toast.LENGTH_SHORT,
+                            true
+                        )
+                        .show()
+                }
+
+                is LoginUiState.Loading -> {
+                    /* Loading State, may add some loading UI or throw error after long time */
+                }
+
+                else -> {
+                    /* Other Success State, do nothing */
+                }
+            }
+        }
+    }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun SignupUserInfoScreenPreview() {
-    SignupUserInfoScreen(rememberNavController(), {}, loginContext = LocalContext.current)
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun SignupUserInfoScreenPreview() {
+//    SignupUserInfoScreen(rememberNavController(), {}, loginContext = LocalContext.current)
+//}

@@ -12,23 +12,23 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.LoginRoute
+import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.viewModel.login.LoginViewModel
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
 import com.example.haengsha.ui.uiComponents.passwordCheckTextField
@@ -37,10 +37,13 @@ import es.dmoral.toasty.Toasty
 
 @Composable
 fun PasswordResetScreen(
+    loginViewModel: LoginViewModel,
+    loginUiState: LoginUiState,
     loginNavController: NavController,
     loginNavBack: () -> Unit,
     loginContext: Context
 ) {
+    var resetPasswordTrigger by remember { mutableIntStateOf(0) }
     var passwordInput: String by remember { mutableStateOf("") }
     var passwordCheckInput: String by remember { mutableStateOf("") }
     var isPasswordError by remember { mutableStateOf(false) }
@@ -109,10 +112,13 @@ fun PasswordResetScreen(
                                 true
                             ).show()
                         } else {
-                            /* TODO 저장했던 이메일 & 새 비밀번호 서버에 전송, 비번 재설정 */
-                            loginNavController.navigate(LoginRoute.FindPasswordComplete.route) {
-                                popUpTo(LoginRoute.Login.route) { inclusive = false }
-                            }
+                            resetPasswordTrigger++
+                            loginViewModel.findChangePassword(
+                                // TODO Signup ViewModel 만들어서 email 채우기
+                                email = "",
+                                passwordInput,
+                                passwordCheckInput
+                            )
                         }
                     }
                 })
@@ -135,10 +141,52 @@ fun PasswordResetScreen(
             }
         }
     }
+
+    if (resetPasswordTrigger > 0) {
+        LaunchedEffect(key1 = loginUiState) {
+            when (loginUiState) {
+                is LoginUiState.Success -> {
+                    loginNavController.navigate(LoginRoute.FindPasswordComplete.route) {
+                        popUpTo(LoginRoute.Login.route) { inclusive = false }
+                    }
+                }
+
+                is LoginUiState.HttpError -> {
+                    Toasty
+                        .error(
+                            loginContext,
+                            loginUiState.message,
+                            Toast.LENGTH_SHORT,
+                            true
+                        )
+                        .show()
+                }
+
+                is LoginUiState.NetworkError -> {
+                    Toasty
+                        .error(
+                            loginContext,
+                            "인터넷 연결을 확인해주세요",
+                            Toast.LENGTH_SHORT,
+                            true
+                        )
+                        .show()
+                }
+
+                is LoginUiState.Loading -> {
+                    /* Loading State, may add some loading UI or throw error after long time */
+                }
+
+                else -> {
+                    /* Other Success State, do nothing */
+                }
+            }
+        }
+    }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PasswordResetScreenPreview() {
-    PasswordResetScreen(rememberNavController(), {}, loginContext = LocalContext.current)
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun PasswordResetScreenPreview() {
+//    PasswordResetScreen(rememberNavController(), {}, loginContext = LocalContext.current)
+//}
