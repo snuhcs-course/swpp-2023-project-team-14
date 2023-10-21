@@ -12,25 +12,27 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.LoginRoute
+import com.example.haengsha.model.route.MainRoute
+import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.viewModel.login.LoginViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.md_theme_light_outline
@@ -45,20 +47,16 @@ import es.dmoral.toasty.Toasty
 fun LoginScreen(
     mainNavController: NavHostController,
     loginNavController: NavHostController,
+    loginViewModel: LoginViewModel,
+    loginUiState: LoginUiState,
     loginContext: Context
 ) {
+    var loginTrigger by remember { mutableIntStateOf(0) }
     var emailInput: String by rememberSaveable { mutableStateOf("") }
     var passwordInput: String by remember { mutableStateOf("") }
     var isEmailError by remember { mutableStateOf(false) }
     var isPasswordError by remember { mutableStateOf(false) }
     var isLoginFailedDialogVisible by remember { mutableStateOf(false) }
-    fun showLoginFailedDialog() {
-        isLoginFailedDialogVisible = true
-    }
-
-    fun hideLoginFailedDialog() {
-        isLoginFailedDialogVisible = false
-    }
 
     LazyColumn(
         modifier = Modifier
@@ -143,16 +141,15 @@ fun LoginScreen(
                             true
                         ).show()
                     } else {
-                        /* TODO 로그인 로직
-                        if (정보 확인 실패) { showLoginFailedDialog() }
-                        else { mainNavController.navigate(MainRoute.Home.route) }
-                         */
+                        loginTrigger++
+                        loginViewModel.loginSuccess("$emailInput@snu.ac.kr", passwordInput)
+                        // loginViewModel.loginFail("$emailInput@snu.ac.kr", passwordInput)
                     }
                 })
             if (isLoginFailedDialogVisible) {
                 ConfirmOnlyDialog(
-                    onDismissRequest = { hideLoginFailedDialog() },
-                    onClick = { hideLoginFailedDialog() },
+                    onDismissRequest = { isLoginFailedDialogVisible = false },
+                    onClick = { isLoginFailedDialogVisible = false },
                     text = "로그인 정보를 확인해주세요."
                 )
             }
@@ -184,10 +181,47 @@ fun LoginScreen(
             }
         }
     }
+
+    if (loginTrigger > 0) {
+        LaunchedEffect(key1 = loginUiState) {
+            when (loginUiState) {
+                is LoginUiState.LoginSuccess -> {
+                    // TODO 로그인 성공 시 토큰 및 유저 유형 저장
+                    mainNavController.navigate(MainRoute.Home.route) {
+                        popUpTo(LoginRoute.Login.route) { inclusive = true }
+                        popUpTo(MainRoute.Login.route) { inclusive = true }
+                    }
+                }
+
+                is LoginUiState.HttpError -> {
+                    isLoginFailedDialogVisible = true
+                }
+
+                is LoginUiState.NetworkError -> {
+                    Toasty
+                        .error(
+                            loginContext,
+                            "인터넷 연결을 확인해주세요",
+                            Toast.LENGTH_SHORT,
+                            true
+                        )
+                        .show()
+                }
+
+                is LoginUiState.Loading -> {
+                    /* Loading State, may add some loading UI or throw error after long time */
+                }
+
+                else -> {
+                    /* Other Success State, do nothing */
+                }
+            }
+        }
+    }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    LoginScreen(rememberNavController(), rememberNavController(), LocalContext.current)
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun LoginScreenPreview() {
+//    LoginScreen(rememberNavController(), rememberNavController(), LocalContext.current)
+//}

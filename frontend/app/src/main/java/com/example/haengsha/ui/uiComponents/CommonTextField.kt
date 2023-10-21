@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -79,7 +80,7 @@ fun suffixTextField(
     suffix: String
 ): String {
     var input by rememberSaveable { mutableStateOf("") }
-    var isError by rememberSaveable { mutableStateOf(false) }
+    var isError by remember { mutableStateOf(false) }
 
     isError = if (isEmptyError) {
         input.trimStart() == ""
@@ -129,8 +130,8 @@ fun passwordTextField(
     isEmptyError: Boolean,
     placeholder: String = "",
 ): String {
-    var input by rememberSaveable { mutableStateOf("") }
-    var isError by rememberSaveable { mutableStateOf(false) }
+    var input by remember { mutableStateOf("") }
+    var isError by remember { mutableStateOf(false) }
 
     isError = if (isEmptyError) {
         input.trimStart() == ""
@@ -172,11 +173,11 @@ fun passwordSetField(
     placeholder: String = "",
     context: Context
 ): String {
-    var input by rememberSaveable { mutableStateOf("") }
+    var input by remember { mutableStateOf("") }
     val textField = FocusRequester()
     val pattern = "^(?=.*[a-zA-Z])(?=.*\\d)[a-zA-Z\\d]{4,10}$".toRegex()
-    var isError by rememberSaveable { mutableStateOf(false) }
-    var isRegexError by rememberSaveable { mutableStateOf(false) }
+    var isError by remember { mutableStateOf(false) }
+    var isRegexError by remember { mutableStateOf(false) }
 
     isError = if (isEmptyError) { // 비밀번호 입력 안 하고 다음 버튼 눌러서 에러 난 후, 비밀번호를 올바르게 입력하는 경우 핸들링
         if (input.trimStart() == "") true
@@ -237,7 +238,7 @@ fun passwordCheckTextField(
     isError: Boolean = false,
     placeholder: String = ""
 ): String {
-    var input by rememberSaveable { mutableStateOf("") }
+    var input by remember { mutableStateOf("") }
 
     OutlinedTextField(
         modifier = Modifier.size(width = 270.dp, height = 60.dp),
