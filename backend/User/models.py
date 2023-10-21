@@ -41,14 +41,15 @@ class PersonalUser(AbstractUser):
     ('religion', '종교')
   )
   nickname = models.CharField(max_length=10)
-  email = models.EmailField()
-  password = models.CharField(max_length=10)
+  email = models.EmailField(unique=True)
+  password = models.CharField(max_length=200)
   role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='User')
   major = models.CharField(max_length=20, choices=MAJOR_CHOICES, default='Business')
   grade = models.CharField(max_length=10, choices=GRADE_CHOICES, default='23')
   interest = models.CharField(max_length=10, choices=INTEREST_CHOICES, default='music')
 
   def save(self, *args, **kwargs):
+    self.email = self.email.lower()
     self.username = self.email 
     super(PersonalUser, self).save(*args, **kwargs)
 
