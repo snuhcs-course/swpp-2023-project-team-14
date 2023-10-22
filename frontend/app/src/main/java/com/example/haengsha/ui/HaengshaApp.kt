@@ -1,5 +1,7 @@
 package com.example.haengsha.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -17,6 +19,7 @@ import com.example.haengsha.ui.screens.home.Home
 import com.example.haengsha.ui.screens.login.Login
 import com.example.haengsha.ui.screens.setting.Setting
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HaengshaApp() {
     val userViewModel: UserViewModel = viewModel()
@@ -36,7 +39,6 @@ fun HaengshaApp() {
         }
         composable(MainRoute.Home.route) {
             Home(
-                userUiState = userUiState,
                 mainNavController = mainNavController
             )
         }

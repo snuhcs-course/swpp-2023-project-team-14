@@ -58,10 +58,10 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
     implementation("com.google.android.material:material:1.11.0-beta01")
 
     implementation("androidx.navigation:navigation-compose:2.7.4")
+    implementation("androidx.compose.material3:material3-android:1.2.0-alpha09")
     implementation("androidx.navigation:navigation-runtime-ktx:2.7.4")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.4")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.4")
@@ -79,6 +79,14 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
     implementation("com.github.GrenderG:Toasty:1.5.2")
+    // The view calendar library
+    implementation("com.kizitonwose.calendar:view:2.4.0")
+    // The compose calendar library
+    implementation("com.kizitonwose.calendar:compose:2.4.0")
+    implementation("com.google.accompanist:accompanist-pager:0.12.0")
+    implementation("androidx.tv:tv-material:1.0.0-alpha10")
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
+
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
