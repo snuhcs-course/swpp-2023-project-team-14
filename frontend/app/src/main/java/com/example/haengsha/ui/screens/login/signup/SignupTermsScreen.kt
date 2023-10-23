@@ -1,5 +1,7 @@
 package com.example.haengsha.ui.screens.login.signup
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +17,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -31,13 +35,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.LoginRoute
+import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.viewModel.login.LoginViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.ButtonGrey
 import com.example.haengsha.ui.theme.HaengshaGrey
@@ -47,12 +51,17 @@ import com.example.haengsha.ui.uiComponents.CommonBlueButton
 import com.example.haengsha.ui.uiComponents.CommonGreyButton
 import com.example.haengsha.ui.uiComponents.PrivacyPolicyModalText
 import com.example.haengsha.ui.uiComponents.TermsOfUseModalText
+import es.dmoral.toasty.Toasty
 
 @Composable
 fun SignupTermsScreen(
+    loginViewModel: LoginViewModel,
+    loginUiState: LoginUiState,
     loginNavController: NavController,
-    loginNavBack: () -> Unit
+    loginNavBack: () -> Unit,
+    loginContext: Context
 ) {
+    var signupRegisterTrigger by remember { mutableIntStateOf(0) }
     var isAllChecked by rememberSaveable { mutableStateOf(false) }
     var isTermsChecked by rememberSaveable { mutableStateOf(false) }
     var isPolicyChecked by rememberSaveable { mutableStateOf(false) }
@@ -73,15 +82,15 @@ fun SignupTermsScreen(
         ) {
             items(1) {
                 Text(
-                    modifier = Modifier.width(270.dp),
+                    modifier = Modifier.width(300.dp),
                     text = "개인정보 동의",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Medium,
                     fontSize = 24.sp
                 )
-                Spacer(modifier = Modifier.height(45.dp))
+                Spacer(modifier = Modifier.height(60.dp))
                 Row(
-                    modifier = Modifier.width(270.dp),
+                    modifier = Modifier.width(300.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
@@ -96,24 +105,26 @@ fun SignupTermsScreen(
                             }
                         }
                     ) { CheckBox(color = if (isAllChecked) ButtonBlue else ButtonGrey) }
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.width(15.dp))
                     Text(
-                        modifier = Modifier.width(220.dp),
+                        modifier = Modifier
+                            .width(220.dp)
+                            .padding(top = 5.dp),
                         text = "전체 동의",
                         fontFamily = poppins,
                         fontWeight = FontWeight.Medium,
                         fontSize = 16.sp
                     )
                 }
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(30.dp))
                 Box(
                     modifier = Modifier
-                        .size(width = 270.dp, height = 1.dp)
+                        .size(width = 300.dp, height = 1.dp)
                         .background(color = HaengshaGrey)
                 )
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(45.dp))
                 Row(
-                    modifier = Modifier.width(270.dp),
+                    modifier = Modifier.width(300.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -128,8 +139,9 @@ fun SignupTermsScreen(
                         ) {
                             CheckBox(color = if (isTermsChecked) ButtonBlue else ButtonGrey)
                         }
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(modifier = Modifier.width(15.dp))
                         Text(
+                            modifier = Modifier.padding(top = 5.dp),
                             text = buildAnnotatedString {
                                 append("서비스 이용약관 (필수) ")
                                 withStyle(SpanStyle(color = Color.Red)) { append("*") }
@@ -143,6 +155,7 @@ fun SignupTermsScreen(
                         modifier = Modifier.clickable { isTermsModal = true }
                     ) {
                         Text(
+                            modifier = Modifier.padding(top = 5.dp),
                             text = "보기",
                             fontFamily = poppins,
                             fontWeight = FontWeight.Normal,
@@ -151,9 +164,9 @@ fun SignupTermsScreen(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(40.dp))
+                Spacer(modifier = Modifier.height(50.dp))
                 Row(
-                    modifier = Modifier.width(270.dp),
+                    modifier = Modifier.width(300.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -168,8 +181,9 @@ fun SignupTermsScreen(
                         ) {
                             CheckBox(color = if (isPolicyChecked) ButtonBlue else ButtonGrey)
                         }
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(modifier = Modifier.width(15.dp))
                         Text(
+                            modifier = Modifier.padding(top = 5.dp),
                             text = buildAnnotatedString {
                                 append("개인정보 수집 및 처리 방침 (필수) ")
                                 withStyle(SpanStyle(color = Color.Red)) { append("*") }
@@ -183,6 +197,7 @@ fun SignupTermsScreen(
                         modifier = Modifier.clickable { isPolicyModal = true }
                     ) {
                         Text(
+                            modifier = Modifier.padding(top = 5.dp),
                             text = "보기",
                             fontFamily = poppins,
                             fontWeight = FontWeight.Normal,
@@ -194,13 +209,17 @@ fun SignupTermsScreen(
 
                 if (isTermsChecked && isPolicyChecked) isAllChecked = true
 
-                Spacer(modifier = Modifier.height(80.dp))
+                Spacer(modifier = Modifier.height(120.dp))
                 if (isTermsChecked && isPolicyChecked) {
                     CommonBlueButton(
                         text = "동의 후 회원가입",
                         onClick = {
-                            /*TODO 버튼 누르면 임시 저장했던 가입 정보 전부 DB에 저장*/
-                            loginNavController.navigate(LoginRoute.SignupComplete.route)
+                            signupRegisterTrigger++
+                            //TODO signupViewModel 만들어서 request body 채우기
+                            loginViewModel.signupRegister(
+                                "테스트", "test@snu.ac.kr", "qwer1234", "User",
+                                "컴퓨터공학부", "22학번", "음악, 댄스, 사교"
+                            )
                         }
                     )
                 } else CommonGreyButton(text = "동의 후 회원가입")
@@ -226,7 +245,7 @@ fun SignupTermsScreen(
         if (isTermsModal || isPolicyModal) {
             LazyColumn(
                 modifier = Modifier
-                    .size(width = 300.dp, height = 500.dp)
+                    .size(width = 340.dp, height = 580.dp)
                     .shadow(elevation = 10.dp, shape = RoundedCornerShape(5.dp))
                     .background(Color.White)
                     .zIndex(1f),
@@ -237,12 +256,12 @@ fun SignupTermsScreen(
                     else AgreementModal(text = "개인정보 수집 및 처리 방침 (필수)")
                     Box(
                         modifier = Modifier
-                            .size(width = 260.dp, height = 1.dp)
+                            .size(width = 300.dp, height = 1.dp)
                             .background(color = Color(0xFFF1F1F1))
                     )
                     Box(
                         modifier = Modifier
-                            .size(width = 260.dp, height = 40.dp)
+                            .size(width = 300.dp, height = 60.dp)
                             .clickable {
                                 isTermsModal = false
                                 isPolicyModal = false
@@ -262,19 +281,61 @@ fun SignupTermsScreen(
             }
         }
     }
+
+    if (signupRegisterTrigger > 0) {
+        LaunchedEffect(key1 = loginUiState) {
+            when (loginUiState) {
+                is LoginUiState.Success -> {
+                    loginNavController.navigate(LoginRoute.SignupComplete.route) {
+                        popUpTo(LoginRoute.Login.route) { inclusive = false }
+                    }
+                }
+
+                is LoginUiState.HttpError -> {
+                    Toasty
+                        .error(
+                            loginContext,
+                            loginUiState.message,
+                            Toast.LENGTH_SHORT,
+                            true
+                        )
+                        .show()
+                }
+
+                is LoginUiState.NetworkError -> {
+                    Toasty
+                        .error(
+                            loginContext,
+                            "인터넷 연결을 확인해주세요",
+                            Toast.LENGTH_SHORT,
+                            true
+                        )
+                        .show()
+                }
+
+                is LoginUiState.Loading -> {
+                    /* Loading State, may add some loading UI or throw error after long time */
+                }
+
+                else -> {
+                    /* Other Success State, do nothing */
+                }
+            }
+        }
+    }
 }
 
 @Composable
 fun AgreementModal(text: String) {
     LazyColumn(
         modifier = Modifier
-            .size(width = 300.dp, height = 460.dp)
+            .size(width = 340.dp, height = 520.dp)
             .padding(top = 25.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         items(1) {
             Text(
-                modifier = Modifier.width(260.dp),
+                modifier = Modifier.width(300.dp),
                 text = text,
                 fontFamily = poppins,
                 fontWeight = FontWeight.Bold,
@@ -283,14 +344,14 @@ fun AgreementModal(text: String) {
             Spacer(modifier = Modifier.height(15.dp))
             Box(
                 modifier = Modifier
-                    .size(width = 260.dp, height = 380.dp)
+                    .size(width = 300.dp, height = 420.dp)
                     .clip(shape = RoundedCornerShape(10.dp))
                     .background(color = Color(0xFFF1F1F1))
             ) {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(10.dp)
+                        .padding(15.dp)
                 ) {
                     items(1) {
                         if (text == "서비스 이용약관 (필수)") TermsOfUseModalText()
@@ -302,8 +363,8 @@ fun AgreementModal(text: String) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun SignupTermsScreenPreview() {
-    SignupTermsScreen(rememberNavController()) {}
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun SignupTermsScreenPreview() {
+//    SignupTermsScreen(rememberNavController()) {}
+//}
