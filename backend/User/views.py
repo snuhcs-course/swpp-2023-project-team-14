@@ -100,6 +100,7 @@ def change_password(request):
     if not user:
         return Response({'message': 'The user does not exist.'}, status=status.HTTP_400_BAD_REQUEST) 
 
+    user = PersonalUser.objects.get(email=email)
     password = request.data.get('password')
     if len(password) < 4 or len(password) > 10:
         return Response({'message': 'The password must have at least 4 characters and at most 10 characters.'}, status=status.HTTP_400_BAD_REQUEST) 
@@ -114,7 +115,7 @@ def change_password(request):
     if password == password_confirm:
         user.set_password(password)
         user.save()
-        return Response({'message': 'Successfully created password.'}, status=status.HTTP_200_OK) 
+        return Response({'message': 'Successfully reset password.'}, status=status.HTTP_200_OK) 
     else:
         return Response({'message': 'The password and the confirmation password do not match.'}, status=status.HTTP_400_BAD_REQUEST) 
 
