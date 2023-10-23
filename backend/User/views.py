@@ -96,6 +96,10 @@ def change_password(request):
         return any(character.isdigit() for character in s)
     
     email = request.data.get('email')
+    user = PersonalUser.objects.filter(email=email)
+    if not user:
+        return Response({'message': 'The user does not exist.'}, status=status.HTTP_400_BAD_REQUEST) 
+
     password = request.data.get('password')
     if len(password) < 4 or len(password) > 10:
         return Response({'message': 'The password must have at least 4 characters and at most 10 characters.'}, status=status.HTTP_400_BAD_REQUEST) 
@@ -108,7 +112,6 @@ def change_password(request):
     
     password_confirm = request.data.get('password_confirm')
     if password == password_confirm:
-        user = PersonalUser.objects.filter(email=email)
         user.set_password(password)
         user.save()
         return Response({'message': 'Successfully created password.'}, status=status.HTTP_200_OK) 
