@@ -87,14 +87,15 @@ def verify_code(request):
         return Response({'message': 'The authentication code is invalid or has expired.'}, status=status.HTTP_401_UNAUTHORIZED)
     
 @api_view(['POST'])
-# for signup
-def verify_password(request):
+# when user is attempting to log in, the user must change the password 
+def change_password(request):
     def contains_alpha(s):
         return any(character.isalpha() for character in s)
     
     def contains_number(s):
         return any(character.isdigit() for character in s)
     
+    email = request.data.get('email')
     password = request.data.get('password')
     if len(password) < 4 or len(password) > 10:
         return Response({'message': 'The password must have at least 4 characters and at most 10 characters.'}, status=status.HTTP_400_BAD_REQUEST) 
@@ -107,6 +108,9 @@ def verify_password(request):
     
     password_confirm = request.data.get('password_confirm')
     if password == password_confirm:
+        user = PersonalUser.objects.filter(email=email)
+        user.set_password(password)
+        user.save()
         return Response({'message': 'Successfully created password.'}, status=status.HTTP_200_OK) 
     else:
         return Response({'message': 'The password and the confirmation password do not match.'}, status=status.HTTP_400_BAD_REQUEST) 
