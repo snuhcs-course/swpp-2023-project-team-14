@@ -21,31 +21,34 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.LoginRoute
+import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.viewModel.login.LoginViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
 import com.example.haengsha.ui.uiComponents.ConfirmOnlyDialog
-import com.example.haengsha.ui.uiComponents.commonTextField
+import com.example.haengsha.ui.uiComponents.codeVerifyField
 import com.example.haengsha.ui.uiComponents.suffixTextField
 import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.delay
 
 @Composable
 fun FindPasswordScreen(
+    loginViewModel: LoginViewModel,
+    loginUiState: LoginUiState,
     loginNavController: NavHostController,
     loginNavBack: () -> Unit,
     loginContext: Context
 ) {
+    var emailVerifyTrigger by remember { mutableIntStateOf(0) }
+    var codeVerifyTrigger by remember { mutableIntStateOf(0) }
     var isCodeSent by remember { mutableIntStateOf(0) }
     var codeExpireTime by remember { mutableIntStateOf(180) }
     val codeExpireMinute = String.format("%02d", codeExpireTime / 60)
@@ -55,13 +58,7 @@ fun FindPasswordScreen(
     var isEmailError by remember { mutableStateOf(false) }
     var isCodeError by remember { mutableStateOf(false) }
     var isEmailNotFoundDialogVisible by remember { mutableStateOf(false) }
-    fun showEmailNotFoundDialog() {
-        isEmailNotFoundDialogVisible = true
-    }
 
-    fun hideEmailNotFoundDialog() {
-        isEmailNotFoundDialogVisible = false
-    }
     LaunchedEffect(key1 = isCodeSent) {
         codeExpireTime = 180
         while (codeExpireTime > 0) {
@@ -110,19 +107,9 @@ fun FindPasswordScreen(
                                 .error(loginContext, "이메일을 입력해주세요", Toast.LENGTH_SHORT, true)
                                 .show()
                         } else {
-                            /* TODO 서버 계정 정보 확인
-                            * if(계정이 없으면) {
-                            *   isEmailError = true
-                            *   showEmailNotFoundDialog()                            *
-                            * }
-                            * */
-                            showEmailNotFoundDialog()
-                            /* TODO 인증번호 발송
-                            * else {
-                            *   isEmailError = false
-                            *   isCodeSent++
-                            * }
-                            * */
+                            isEmailError = false
+                            emailVerifyTrigger++
+                            loginViewModel.findEmailVerify(emailInput)
                         }
                     },
             ) {
@@ -140,8 +127,8 @@ fun FindPasswordScreen(
             }
             if (isEmailNotFoundDialogVisible) {
                 ConfirmOnlyDialog(
-                    onDismissRequest = { hideEmailNotFoundDialog() },
-                    onClick = { hideEmailNotFoundDialog() },
+                    onDismissRequest = { isEmailNotFoundDialogVisible = false },
+                    onClick = { isEmailNotFoundDialogVisible = false },
                     text = "등록되지 않은 계정입니다."
                 )
             }
@@ -154,7 +141,7 @@ fun FindPasswordScreen(
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(10.dp))
-            codeInput = commonTextField(
+            codeInput = codeVerifyField(
                 isError = isCodeError,
                 placeholder = "인증번호 6자리"
             )
@@ -195,9 +182,8 @@ fun FindPasswordScreen(
                             true
                         ).show()
                     } else {
-                        /* TODO 인증번호 확인
-                        *   if 맞으면 다음 화면 & 이메일 임시 저장
-                        *   else 다르면 isCodeError = true */
+                        codeVerifyTrigger++
+                        loginViewModel.loginCodeVerify(emailInput, codeInput)
                     }
                 })
             Spacer(modifier = Modifier.height(45.dp))
@@ -236,10 +222,99 @@ fun FindPasswordScreen(
             }
         }
     }
+
+    if (emailVerifyTrigger > 0) {
+        LaunchedEffect(key1 = loginUiState) {
+            when (loginUiState) {
+                is LoginUiState.Success -> {
+                    Toasty
+                        .success(
+                            loginContext,
+                            "인증코드가 발송되었습니다",
+                            Toast.LENGTH_SHORT,
+                            true
+                        )
+                        .show()
+                    isCodeSent++
+                    emailVerifyTrigger = 0
+                }
+
+                is LoginUiState.HttpError -> {
+                    isEmailError = true
+                    isEmailNotFoundDialogVisible = true
+                    emailVerifyTrigger = 0
+                }
+
+                is LoginUiState.NetworkError -> {
+                    Toasty
+                        .error(
+                            loginContext,
+                            "인터넷 연결을 확인해주세요",
+                            Toast.LENGTH_SHORT,
+                            true
+                        )
+                        .show()
+                    emailVerifyTrigger = 0
+                }
+
+                is LoginUiState.Loading -> {
+                    /* Loading State, may add some loading UI or throw error after long time */
+                }
+
+                else -> {
+                    /* Other Success State, do nothing */
+                }
+            }
+        }
+    }
+
+    if (codeVerifyTrigger > 0) {
+        LaunchedEffect(key1 = loginUiState) {
+            when (loginUiState) {
+                is LoginUiState.Success -> {
+                    loginNavController.navigate(LoginRoute.FindPasswordReset.route)
+                    codeVerifyTrigger = 0
+                }
+
+                is LoginUiState.HttpError -> {
+                    Toasty
+                        .error(
+                            loginContext,
+                            loginUiState.message,
+                            Toast.LENGTH_SHORT,
+                            true
+                        )
+                        .show()
+                    isCodeError = true
+                    codeVerifyTrigger = 0
+                }
+
+                is LoginUiState.NetworkError -> {
+                    Toasty
+                        .error(
+                            loginContext,
+                            "인터넷 연결을 확인해주세요",
+                            Toast.LENGTH_SHORT,
+                            true
+                        )
+                        .show()
+                    codeVerifyTrigger = 0
+                }
+
+                is LoginUiState.Loading -> {
+                    /* Loading State, may add some loading UI or throw error after long time */
+                }
+
+                else -> {
+                    /* Other Success State, do nothing */
+                }
+            }
+        }
+    }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun FindPasswordScreenPreview() {
-    FindPasswordScreen(rememberNavController(), {}, loginContext = LocalContext.current)
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun FindPasswordScreenPreview() {
+//    FindPasswordScreen(rememberNavController(), {}, loginContext = LocalContext.current)
+//}

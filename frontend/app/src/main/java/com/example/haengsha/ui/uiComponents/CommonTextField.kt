@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -73,13 +74,49 @@ fun commonTextField(
 }
 
 @Composable
+fun codeVerifyField(
+    isError: Boolean,
+    placeholder: String
+): String {
+    var input by remember { mutableStateOf("") }
+
+    OutlinedTextField(
+        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        value = input,
+        onValueChange = { if (input.length <= 5) input = it },
+        placeholder = {
+            Text(
+                text = placeholder,
+                fontFamily = poppins,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Light,
+                color = PlaceholderGrey,
+            )
+        },
+        isError = isError,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done
+        ),
+        singleLine = true,
+        shape = RoundedCornerShape(10.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = FieldStrokeBlue,
+            unfocusedBorderColor = HaengshaGrey,
+            errorBorderColor = FieldStrokeRed
+        )
+    )
+    return input
+}
+
+@Composable
 fun suffixTextField(
     isEmptyError: Boolean,
     placeholder: String,
     suffix: String
 ): String {
     var input by rememberSaveable { mutableStateOf("") }
-    var isError by rememberSaveable { mutableStateOf(false) }
+    var isError by remember { mutableStateOf(false) }
 
     isError = if (isEmptyError) {
         input.trimStart() == ""
@@ -110,7 +147,7 @@ fun suffixTextField(
         },
         isError = isError,
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
+            keyboardType = KeyboardType.Email,
             imeAction = ImeAction.Done
         ),
         singleLine = true,
@@ -129,8 +166,8 @@ fun passwordTextField(
     isEmptyError: Boolean,
     placeholder: String = "",
 ): String {
-    var input by rememberSaveable { mutableStateOf("") }
-    var isError by rememberSaveable { mutableStateOf(false) }
+    var input by remember { mutableStateOf("") }
+    var isError by remember { mutableStateOf(false) }
 
     isError = if (isEmptyError) {
         input.trimStart() == ""
@@ -152,7 +189,7 @@ fun passwordTextField(
         isError = isError,
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
+            keyboardType = KeyboardType.Password,
             imeAction = ImeAction.Done
         ),
         singleLine = true,
@@ -172,11 +209,11 @@ fun passwordSetField(
     placeholder: String = "",
     context: Context
 ): String {
-    var input by rememberSaveable { mutableStateOf("") }
+    var input by remember { mutableStateOf("") }
     val textField = FocusRequester()
     val pattern = "^(?=.*[a-zA-Z])(?=.*\\d)[a-zA-Z\\d]{4,10}$".toRegex()
-    var isError by rememberSaveable { mutableStateOf(false) }
-    var isRegexError by rememberSaveable { mutableStateOf(false) }
+    var isError by remember { mutableStateOf(false) }
+    var isRegexError by remember { mutableStateOf(false) }
 
     isError = if (isEmptyError) { // 비밀번호 입력 안 하고 다음 버튼 눌러서 에러 난 후, 비밀번호를 올바르게 입력하는 경우 핸들링
         if (input.trimStart() == "") true
@@ -210,7 +247,7 @@ fun passwordSetField(
         isError = isError,
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
+            keyboardType = KeyboardType.Password,
             imeAction = ImeAction.Done
         ),
         keyboardActions = KeyboardActions(
@@ -237,7 +274,7 @@ fun passwordCheckTextField(
     isError: Boolean = false,
     placeholder: String = ""
 ): String {
-    var input by rememberSaveable { mutableStateOf("") }
+    var input by remember { mutableStateOf("") }
 
     OutlinedTextField(
         modifier = Modifier.size(width = 270.dp, height = 60.dp),
@@ -255,7 +292,7 @@ fun passwordCheckTextField(
         isError = isError,
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
+            keyboardType = KeyboardType.Password,
             imeAction = ImeAction.Done
         ),
         singleLine = true,
