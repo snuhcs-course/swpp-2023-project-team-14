@@ -102,6 +102,7 @@ def change_password(request):
 
     user = PersonalUser.objects.get(email=email)
     password = request.data.get('password')
+    
     if len(password) < 4 or len(password) > 10:
         return Response({'message': 'The password must have at least 4 characters and at most 10 characters.'}, status=status.HTTP_400_BAD_REQUEST) 
     if not password.isalnum():
