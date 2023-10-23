@@ -33,7 +33,8 @@ import com.example.haengsha.model.viewModel.login.LoginViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
-import com.example.haengsha.ui.uiComponents.commonTextField
+import com.example.haengsha.ui.uiComponents.ConfirmOnlyDialog
+import com.example.haengsha.ui.uiComponents.codeVerifyField
 import com.example.haengsha.ui.uiComponents.suffixTextField
 import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.delay
@@ -56,6 +57,7 @@ fun SignupEmailVerificationScreen(
     var codeInput: String by remember { mutableStateOf("") }
     var isEmailError by remember { mutableStateOf(false) }
     var isCodeError by remember { mutableStateOf(false) }
+    var isEmailAlreadyExistDialogVisible by remember { mutableStateOf(false) }
 
     LazyColumn(
         modifier = Modifier
@@ -115,6 +117,13 @@ fun SignupEmailVerificationScreen(
                     color = FieldStrokeBlue
                 )
             }
+            if (isEmailAlreadyExistDialogVisible) {
+                ConfirmOnlyDialog(
+                    onDismissRequest = { isEmailAlreadyExistDialogVisible = false },
+                    onClick = { isEmailAlreadyExistDialogVisible = false },
+                    text = "이미 가입한 계정입니다."
+                )
+            }
             Spacer(modifier = Modifier.height(20.dp))
             Text(
                 modifier = Modifier.width(270.dp),
@@ -124,7 +133,7 @@ fun SignupEmailVerificationScreen(
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(10.dp))
-            codeInput = commonTextField(
+            codeInput = codeVerifyField(
                 isError = isCodeError,
                 placeholder = "인증번호 6자리"
             )
@@ -204,7 +213,7 @@ fun SignupEmailVerificationScreen(
                     Toasty
                         .success(
                             loginContext,
-                            loginUiState.message,
+                            "인증코드가 발송되었습니다.",
                             Toast.LENGTH_SHORT,
                             true
                         )
@@ -214,15 +223,19 @@ fun SignupEmailVerificationScreen(
                 }
 
                 is LoginUiState.HttpError -> {
-                    // TODO 이미 존재하는 계정이 회원가입 할 때 findPassword처럼 dialog 띄우기
-                    Toasty
-                        .error(
-                            loginContext,
-                            loginUiState.message,
-                            Toast.LENGTH_SHORT,
-                            true
-                        )
-                        .show()
+                    if (loginUiState.message.contains("exist")) {
+                        isEmailAlreadyExistDialogVisible = true
+                    } else {
+                        Toasty
+                            .error(
+                                loginContext,
+                                loginUiState.message,
+                                Toast.LENGTH_SHORT,
+                                true
+                            )
+                            .show()
+                    }
+                    isEmailError = true
                     emailVerifyTrigger = 0
                 }
 

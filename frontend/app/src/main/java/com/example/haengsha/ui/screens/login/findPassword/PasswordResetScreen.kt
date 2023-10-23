@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -64,13 +65,16 @@ fun PasswordResetScreen(
                 fontSize = 24.sp
             )
             Spacer(modifier = Modifier.height(45.dp))
-            Text(
-                modifier = Modifier.width(270.dp),
-                text = "새 비밀번호를 입력하세요. (영문+숫자 4 ~ 10자)",
-                fontFamily = poppins,
-                fontWeight = FontWeight.Normal,
-                fontSize = 14.sp
-            )
+            Row {
+                Spacer(modifier = Modifier.width(50.dp))
+                Text(
+                    modifier = Modifier.width(320.dp),
+                    text = "새 비밀번호를 입력하세요. (영문+숫자 4~10자)",
+                    fontFamily = poppins,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 14.sp
+                )
+            }
             Spacer(modifier = Modifier.height(10.dp))
             passwordInput = passwordSetField(
                 isEmptyError = isPasswordError,

@@ -2,7 +2,6 @@ package com.example.haengsha.ui.uiComponents
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -30,8 +29,6 @@ import androidx.compose.ui.unit.sp
 import com.example.haengsha.model.dataSource.SignupInfo
 import com.example.haengsha.ui.theme.HaengshaGrey
 import com.example.haengsha.ui.theme.PlaceholderGrey
-import com.example.haengsha.ui.theme.md_theme_dark_background
-import com.example.haengsha.ui.theme.md_theme_dark_primaryContainer
 import com.example.haengsha.ui.theme.md_theme_light_background
 import com.example.haengsha.ui.theme.md_theme_light_primaryContainer
 import com.example.haengsha.ui.theme.poppins
@@ -39,8 +36,6 @@ import com.example.haengsha.ui.theme.poppins
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun dropDown(category: String): String {
-    val darkTheme: Boolean = isSystemInDarkTheme()
-
     val options =
         if (category == "학과") {
             SignupInfo.college
@@ -95,7 +90,7 @@ fun dropDown(category: String): String {
             )
             ExposedDropdownMenu(
                 modifier = Modifier.background(
-                    color = if (darkTheme) md_theme_dark_background else md_theme_light_background,
+                    color = md_theme_light_background,
                 ),
                 expanded = expanded,
                 onDismissRequest = {
@@ -122,8 +117,6 @@ fun dropDown(category: String): String {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun multiSelectDropDown(category: String): List<String> {
-    val darkTheme: Boolean = isSystemInDarkTheme()
-
     val options = SignupInfo.interest
     var expanded by rememberSaveable { mutableStateOf(false) }
     var selectedOptionText by rememberSaveable { mutableStateOf(listOf("")) }
@@ -184,7 +177,7 @@ fun multiSelectDropDown(category: String): List<String> {
             ExposedDropdownMenu(
                 modifier = Modifier
                     .background(
-                        color = if (darkTheme) md_theme_dark_background else md_theme_light_background,
+                        color = md_theme_light_background,
                     ),
                 expanded = expanded,
                 onDismissRequest = {
@@ -206,8 +199,7 @@ fun multiSelectDropDown(category: String): List<String> {
                             .background(
                                 color =
                                 if (isSelected) {
-                                    if (darkTheme) md_theme_dark_primaryContainer
-                                    else md_theme_light_primaryContainer
+                                    md_theme_light_primaryContainer
                                 } else Color.Transparent
                             ),
                         text = { Text(selectionOption) },

@@ -74,6 +74,42 @@ fun commonTextField(
 }
 
 @Composable
+fun codeVerifyField(
+    isError: Boolean,
+    placeholder: String
+): String {
+    var input by remember { mutableStateOf("") }
+
+    OutlinedTextField(
+        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        value = input,
+        onValueChange = { if (input.length <= 5) input = it },
+        placeholder = {
+            Text(
+                text = placeholder,
+                fontFamily = poppins,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Light,
+                color = PlaceholderGrey,
+            )
+        },
+        isError = isError,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done
+        ),
+        singleLine = true,
+        shape = RoundedCornerShape(10.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = FieldStrokeBlue,
+            unfocusedBorderColor = HaengshaGrey,
+            errorBorderColor = FieldStrokeRed
+        )
+    )
+    return input
+}
+
+@Composable
 fun suffixTextField(
     isEmptyError: Boolean,
     placeholder: String,
@@ -111,7 +147,7 @@ fun suffixTextField(
         },
         isError = isError,
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
+            keyboardType = KeyboardType.Email,
             imeAction = ImeAction.Done
         ),
         singleLine = true,
@@ -153,7 +189,7 @@ fun passwordTextField(
         isError = isError,
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
+            keyboardType = KeyboardType.Password,
             imeAction = ImeAction.Done
         ),
         singleLine = true,
@@ -211,7 +247,7 @@ fun passwordSetField(
         isError = isError,
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
+            keyboardType = KeyboardType.Password,
             imeAction = ImeAction.Done
         ),
         keyboardActions = KeyboardActions(
@@ -256,7 +292,7 @@ fun passwordCheckTextField(
         isError = isError,
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
+            keyboardType = KeyboardType.Password,
             imeAction = ImeAction.Done
         ),
         singleLine = true,

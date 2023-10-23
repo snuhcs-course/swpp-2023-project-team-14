@@ -136,7 +136,7 @@ fun SignupUserInfoScreen(
             Text(
                 modifier = Modifier.width(270.dp),
                 text = buildAnnotatedString {
-                    append("학과를 선택하세요.")
+                    append("학과를 선택하세요. ")
                     withStyle(SpanStyle(color = Color.Red)) { append("*") }
                 },
                 fontFamily = poppins,
@@ -149,7 +149,7 @@ fun SignupUserInfoScreen(
             Text(
                 modifier = Modifier.width(270.dp),
                 text = buildAnnotatedString {
-                    append("학번을 선택하세요.")
+                    append("학번을 선택하세요. ")
                     withStyle(SpanStyle(color = Color.Red)) { append("*") }
                 },
                 fontFamily = poppins,
@@ -162,7 +162,7 @@ fun SignupUserInfoScreen(
             Text(
                 modifier = Modifier.width(270.dp),
                 text = buildAnnotatedString {
-                    append("관심사를 선택하세요.")
+                    append("관심사를 선택하세요. (중복 선택 가능) ")
                     withStyle(SpanStyle(color = Color.Red)) { append("*") }
                 },
                 fontFamily = poppins,
@@ -184,7 +184,11 @@ fun SignupUserInfoScreen(
                             Toasty
                                 .error(loginContext, "닉네임 중복 확인을 해주세요!", Toast.LENGTH_SHORT, true)
                                 .show()
-                        } else {/* TODO 정보들 임시 저장 & 다음 페이지 넘어가기 */
+                        } else {
+                            /*
+                            TODO 정보들 임시 저장 & 다음 페이지 넘어가기 
+                             만약 이전 화면으로 돌아와서 닉네임 수정했으면, viewmodel에 저장했던 값이랑 비교해서 바뀐 걸 확인 후 isNicknameChecked = false로 변경
+                             */
                             loginNavController.navigate(LoginRoute.SignupTerms.route)
                         }
                     }
