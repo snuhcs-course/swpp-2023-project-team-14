@@ -82,15 +82,15 @@ fun SignupTermsScreen(
         ) {
             items(1) {
                 Text(
-                    modifier = Modifier.width(270.dp),
+                    modifier = Modifier.width(300.dp),
                     text = "개인정보 동의",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Medium,
                     fontSize = 24.sp
                 )
-                Spacer(modifier = Modifier.height(45.dp))
+                Spacer(modifier = Modifier.height(60.dp))
                 Row(
-                    modifier = Modifier.width(270.dp),
+                    modifier = Modifier.width(300.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
@@ -105,24 +105,26 @@ fun SignupTermsScreen(
                             }
                         }
                     ) { CheckBox(color = if (isAllChecked) ButtonBlue else ButtonGrey) }
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.width(15.dp))
                     Text(
-                        modifier = Modifier.width(220.dp),
+                        modifier = Modifier
+                            .width(220.dp)
+                            .padding(top = 5.dp),
                         text = "전체 동의",
                         fontFamily = poppins,
                         fontWeight = FontWeight.Medium,
                         fontSize = 16.sp
                     )
                 }
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(30.dp))
                 Box(
                     modifier = Modifier
-                        .size(width = 270.dp, height = 1.dp)
+                        .size(width = 300.dp, height = 1.dp)
                         .background(color = HaengshaGrey)
                 )
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(45.dp))
                 Row(
-                    modifier = Modifier.width(270.dp),
+                    modifier = Modifier.width(300.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -137,8 +139,9 @@ fun SignupTermsScreen(
                         ) {
                             CheckBox(color = if (isTermsChecked) ButtonBlue else ButtonGrey)
                         }
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(modifier = Modifier.width(15.dp))
                         Text(
+                            modifier = Modifier.padding(top = 5.dp),
                             text = buildAnnotatedString {
                                 append("서비스 이용약관 (필수) ")
                                 withStyle(SpanStyle(color = Color.Red)) { append("*") }
@@ -152,6 +155,7 @@ fun SignupTermsScreen(
                         modifier = Modifier.clickable { isTermsModal = true }
                     ) {
                         Text(
+                            modifier = Modifier.padding(top = 5.dp),
                             text = "보기",
                             fontFamily = poppins,
                             fontWeight = FontWeight.Normal,
@@ -160,9 +164,9 @@ fun SignupTermsScreen(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(40.dp))
+                Spacer(modifier = Modifier.height(50.dp))
                 Row(
-                    modifier = Modifier.width(270.dp),
+                    modifier = Modifier.width(300.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -177,8 +181,9 @@ fun SignupTermsScreen(
                         ) {
                             CheckBox(color = if (isPolicyChecked) ButtonBlue else ButtonGrey)
                         }
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(modifier = Modifier.width(15.dp))
                         Text(
+                            modifier = Modifier.padding(top = 5.dp),
                             text = buildAnnotatedString {
                                 append("개인정보 수집 및 처리 방침 (필수) ")
                                 withStyle(SpanStyle(color = Color.Red)) { append("*") }
@@ -192,6 +197,7 @@ fun SignupTermsScreen(
                         modifier = Modifier.clickable { isPolicyModal = true }
                     ) {
                         Text(
+                            modifier = Modifier.padding(top = 5.dp),
                             text = "보기",
                             fontFamily = poppins,
                             fontWeight = FontWeight.Normal,
@@ -203,7 +209,7 @@ fun SignupTermsScreen(
 
                 if (isTermsChecked && isPolicyChecked) isAllChecked = true
 
-                Spacer(modifier = Modifier.height(80.dp))
+                Spacer(modifier = Modifier.height(120.dp))
                 if (isTermsChecked && isPolicyChecked) {
                     CommonBlueButton(
                         text = "동의 후 회원가입",
@@ -239,7 +245,7 @@ fun SignupTermsScreen(
         if (isTermsModal || isPolicyModal) {
             LazyColumn(
                 modifier = Modifier
-                    .size(width = 300.dp, height = 500.dp)
+                    .size(width = 340.dp, height = 580.dp)
                     .shadow(elevation = 10.dp, shape = RoundedCornerShape(5.dp))
                     .background(Color.White)
                     .zIndex(1f),
@@ -250,12 +256,12 @@ fun SignupTermsScreen(
                     else AgreementModal(text = "개인정보 수집 및 처리 방침 (필수)")
                     Box(
                         modifier = Modifier
-                            .size(width = 260.dp, height = 1.dp)
+                            .size(width = 300.dp, height = 1.dp)
                             .background(color = Color(0xFFF1F1F1))
                     )
                     Box(
                         modifier = Modifier
-                            .size(width = 260.dp, height = 40.dp)
+                            .size(width = 300.dp, height = 60.dp)
                             .clickable {
                                 isTermsModal = false
                                 isPolicyModal = false
@@ -323,13 +329,13 @@ fun SignupTermsScreen(
 fun AgreementModal(text: String) {
     LazyColumn(
         modifier = Modifier
-            .size(width = 300.dp, height = 460.dp)
+            .size(width = 340.dp, height = 520.dp)
             .padding(top = 25.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         items(1) {
             Text(
-                modifier = Modifier.width(260.dp),
+                modifier = Modifier.width(300.dp),
                 text = text,
                 fontFamily = poppins,
                 fontWeight = FontWeight.Bold,
@@ -338,14 +344,14 @@ fun AgreementModal(text: String) {
             Spacer(modifier = Modifier.height(15.dp))
             Box(
                 modifier = Modifier
-                    .size(width = 260.dp, height = 380.dp)
+                    .size(width = 300.dp, height = 420.dp)
                     .clip(shape = RoundedCornerShape(10.dp))
                     .background(color = Color(0xFFF1F1F1))
             ) {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(10.dp)
+                        .padding(15.dp)
                 ) {
                     items(1) {
                         if (text == "서비스 이용약관 (필수)") TermsOfUseModalText()

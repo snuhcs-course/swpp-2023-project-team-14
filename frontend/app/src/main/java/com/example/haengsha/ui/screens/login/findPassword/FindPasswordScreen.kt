@@ -34,7 +34,7 @@ import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
 import com.example.haengsha.ui.uiComponents.ConfirmOnlyDialog
-import com.example.haengsha.ui.uiComponents.commonTextField
+import com.example.haengsha.ui.uiComponents.codeVerifyField
 import com.example.haengsha.ui.uiComponents.suffixTextField
 import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.delay
@@ -107,6 +107,7 @@ fun FindPasswordScreen(
                                 .error(loginContext, "이메일을 입력해주세요", Toast.LENGTH_SHORT, true)
                                 .show()
                         } else {
+                            isEmailError = false
                             emailVerifyTrigger++
                             loginViewModel.findEmailVerify(emailInput)
                         }
@@ -140,7 +141,7 @@ fun FindPasswordScreen(
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(10.dp))
-            codeInput = commonTextField(
+            codeInput = codeVerifyField(
                 isError = isCodeError,
                 placeholder = "인증번호 6자리"
             )
@@ -226,7 +227,14 @@ fun FindPasswordScreen(
         LaunchedEffect(key1 = loginUiState) {
             when (loginUiState) {
                 is LoginUiState.Success -> {
-                    isEmailError = false
+                    Toasty
+                        .success(
+                            loginContext,
+                            "인증코드가 발송되었습니다",
+                            Toast.LENGTH_SHORT,
+                            true
+                        )
+                        .show()
                     isCodeSent++
                     emailVerifyTrigger = 0
                 }
