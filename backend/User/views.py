@@ -42,7 +42,8 @@ def send_code_to_email(email, code):
     send_mail(subject, message, from_email, recipient_list)
 
 @api_view(['POST'])
-def verify_snu_email(request):
+# for verifying email accounts during signup
+def verify_snu_email_signup(request):
     email = request.data.get('email')
     if not email:
         return Response({'message': 'The email field is required.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -57,6 +58,23 @@ def verify_snu_email(request):
     return Response({'message': 'A verification code has been sent to your email. Please enter it to verify your account.'}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
+# for verifying email accounts while users are signed in
+def verify_email_signin(request):
+    email = request.data.get('email')
+    if not email:
+        return Response({'message': 'The email field is required.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if not PersonalUser.objects.filter(email=email):
+        return Response({'message': 'A user account with the given email does not exist.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+    code = generate_unique_code() 
+    send_code_to_email(email, code) 
+    cache.set(email, code, timeout=180)  # Store code for 3 minutes
+
+    return Response({'message': 'A verification code has been sent to your email. Please enter it to verify your account.'}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
 def verify_code(request):
     email = request.data.get('email')
     entered_code = str(request.data.get('code'))
@@ -69,6 +87,7 @@ def verify_code(request):
         return Response({'message': 'The authentication code is invalid or has expired.'}, status=status.HTTP_401_UNAUTHORIZED)
     
 @api_view(['POST'])
+# for signup
 def verify_password(request):
     def contains_alpha(s):
         return any(character.isalpha() for character in s)
