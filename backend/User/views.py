@@ -33,7 +33,7 @@ def signin(request):
 # role = 'User' or 'Group'    
 def signup(request):
     role = request.data.get('role')
-    if role == PersonalUser.USER:
+    if role == PersonalUser.USER:  
         return Response({'redirect': 'User authentication page, go to signup/verify_snu_email.'}, status=status.HTTP_200_OK)
     elif role == PersonalUser.GROUP:   
         return Response({'redirect': 'Group authentication page.'}, status=status.HTTP_200_OK)
