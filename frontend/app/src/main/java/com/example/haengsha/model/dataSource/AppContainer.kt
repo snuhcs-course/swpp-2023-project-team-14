@@ -17,11 +17,11 @@ class HaengshaAppContainer : AppContainer {
         .baseUrl(baseUrl)
         .build()
 
-    private val retrofitService: LoginApiService by lazy {
+    private val retrofitLoginService: LoginApiService by lazy {
         retrofit.create(LoginApiService::class.java)
     }
 
     override val loginDataRepository: LoginDataRepository by lazy {
-        NetworkLoginDataRepository(retrofitService)
+        NetworkLoginDataRepository(retrofitLoginService)
     }
 }

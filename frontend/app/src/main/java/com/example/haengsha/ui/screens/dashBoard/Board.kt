@@ -6,9 +6,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.BoardRoute
+import com.example.haengsha.model.uiState.UserUiState
 
 @Composable
-fun Board(mainNavController: NavController) {
+fun Board(userUiState: UserUiState, mainNavController: NavController) {
     val boardNavController = rememberNavController()
 
     NavHost(

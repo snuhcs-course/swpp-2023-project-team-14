@@ -41,6 +41,7 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.uiState.login.SignupUiState
 import com.example.haengsha.model.viewModel.login.LoginViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.ButtonGrey
@@ -57,6 +58,8 @@ import es.dmoral.toasty.Toasty
 fun SignupTermsScreen(
     loginViewModel: LoginViewModel,
     loginUiState: LoginUiState,
+    signupStateReset: () -> Unit,
+    signupUiState: SignupUiState,
     loginNavController: NavController,
     loginNavBack: () -> Unit,
     loginContext: Context
@@ -214,12 +217,16 @@ fun SignupTermsScreen(
                     CommonBlueButton(
                         text = "동의 후 회원가입",
                         onClick = {
-                            signupRegisterTrigger++
-                            //TODO signupViewModel 만들어서 request body 채우기
                             loginViewModel.signupRegister(
-                                "테스트", "test@snu.ac.kr", "qwer1234", "User",
-                                "컴퓨터공학부", "22학번", "음악, 댄스, 사교"
+                                email = signupUiState.email,
+                                password = signupUiState.password,
+                                nickname = signupUiState.nickname,
+                                role = "User",
+                                major = signupUiState.major,
+                                grade = signupUiState.grade,
+                                interest = signupUiState.interest
                             )
+                            signupRegisterTrigger++
                         }
                     )
                 } else CommonGreyButton(text = "동의 후 회원가입")
@@ -286,6 +293,7 @@ fun SignupTermsScreen(
         LaunchedEffect(key1 = loginUiState) {
             when (loginUiState) {
                 is LoginUiState.Success -> {
+                    signupStateReset()
                     loginNavController.navigate(LoginRoute.SignupComplete.route) {
                         popUpTo(LoginRoute.Login.route) { inclusive = false }
                     }

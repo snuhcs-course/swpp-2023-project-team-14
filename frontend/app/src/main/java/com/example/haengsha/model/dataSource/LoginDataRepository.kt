@@ -18,8 +18,7 @@ import com.example.haengsha.model.network.dataModel.SignupRegisterResponse
 import retrofit2.http.Body
 
 interface LoginDataRepository {
-    suspend fun loginSuccess(@Body loginRequest: LoginRequest): LoginResponse
-    suspend fun loginFail(@Body loginRequest: LoginRequest): LoginResponse
+    suspend fun login(@Body loginRequest: LoginRequest): LoginResponse
     suspend fun loginCodeVerify(@Body loginCodeVerifyRequest: LoginCodeVerifyRequest): LoginCodeVerificationResponse
     suspend fun signupEmailVerify(@Body signupEmailVerifyRequest: SignupEmailVerifyRequest): SignupEmailVerificationResponse
     suspend fun signupRegister(@Body signupRegisterRequest: SignupRegisterRequest): SignupRegisterResponse
@@ -31,14 +30,10 @@ interface LoginDataRepository {
 class NetworkLoginDataRepository(
     private val loginApiService: LoginApiService
 ) : LoginDataRepository {
-    override suspend fun loginSuccess(loginRequest: LoginRequest): LoginResponse {
-        return loginApiService.loginSuccess(loginRequest)
+    override suspend fun login(loginRequest: LoginRequest): LoginResponse {
+        return loginApiService.login(loginRequest)
     }
-
-    override suspend fun loginFail(loginRequest: LoginRequest): LoginResponse {
-        return loginApiService.loginFail(loginRequest)
-    }
-
+    
     override suspend fun loginCodeVerify(loginCodeVerifyRequest: LoginCodeVerifyRequest): LoginCodeVerificationResponse {
         return loginApiService.loginCodeVerify(loginCodeVerifyRequest)
     }

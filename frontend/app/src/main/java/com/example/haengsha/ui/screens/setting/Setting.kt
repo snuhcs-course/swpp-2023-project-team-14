@@ -6,11 +6,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.haengsha.model.route.MainRoute
 import com.example.haengsha.model.route.SettingRoute
+import com.example.haengsha.model.uiState.UserUiState
+import com.example.haengsha.model.viewModel.UserViewModel
 
 @Composable
-fun Setting(mainNavController: NavController) {
+fun Setting(
+    userViewModel: UserViewModel,
+    userUiState: UserUiState,
+    mainNavController: NavController
+) {
     val settingNavController = rememberNavController()
     val settingBackStackEntry = settingNavController.currentBackStackEntryAsState()
 
