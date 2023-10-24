@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.uiState.login.SignupUiState
 import com.example.haengsha.model.viewModel.login.LoginViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
@@ -43,6 +44,8 @@ import kotlinx.coroutines.delay
 fun SignupEmailVerificationScreen(
     loginViewModel: LoginViewModel,
     loginUiState: LoginUiState,
+    signupEmailUpdate: (String) -> Unit,
+    signupUiState: SignupUiState,
     loginNavController: NavController,
     loginNavBack: () -> Unit,
     loginContext: Context
@@ -121,7 +124,7 @@ fun SignupEmailVerificationScreen(
                 ConfirmOnlyDialog(
                     onDismissRequest = { isEmailAlreadyExistDialogVisible = false },
                     onClick = { isEmailAlreadyExistDialogVisible = false },
-                    text = "이미 가입한 계정입니다."
+                    text = "이미 가입된 계정입니다."
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))
@@ -266,6 +269,7 @@ fun SignupEmailVerificationScreen(
         LaunchedEffect(key1 = loginUiState) {
             when (loginUiState) {
                 is LoginUiState.Success -> {
+                    signupEmailUpdate(emailInput)
                     loginNavController.navigate(LoginRoute.SignupPassword.route)
                 }
 

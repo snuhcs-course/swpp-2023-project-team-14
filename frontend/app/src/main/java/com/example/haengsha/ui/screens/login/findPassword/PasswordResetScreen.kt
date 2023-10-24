@@ -28,7 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haengsha.model.route.LoginRoute
+import com.example.haengsha.model.uiState.login.FindPasswordUiState
 import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.viewModel.login.FindPasswordViewModel
 import com.example.haengsha.model.viewModel.login.LoginViewModel
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
@@ -40,6 +42,8 @@ import es.dmoral.toasty.Toasty
 fun PasswordResetScreen(
     loginViewModel: LoginViewModel,
     loginUiState: LoginUiState,
+    findPasswordViewModel: FindPasswordViewModel,
+    findPasswordUiState: FindPasswordUiState,
     loginNavController: NavController,
     loginNavBack: () -> Unit,
     loginContext: Context
@@ -118,8 +122,7 @@ fun PasswordResetScreen(
                         } else {
                             resetPasswordTrigger++
                             loginViewModel.findChangePassword(
-                                // TODO Signup ViewModel 만들어서 email 채우기
-                                email = "",
+                                email = findPasswordUiState.email,
                                 passwordInput,
                                 passwordCheckInput
                             )
@@ -150,6 +153,7 @@ fun PasswordResetScreen(
         LaunchedEffect(key1 = loginUiState) {
             when (loginUiState) {
                 is LoginUiState.Success -> {
+                    findPasswordViewModel.resetFindPasswordData()
                     loginNavController.navigate(LoginRoute.FindPasswordComplete.route) {
                         popUpTo(LoginRoute.Login.route) { inclusive = false }
                     }
