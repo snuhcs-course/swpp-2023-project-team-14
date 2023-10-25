@@ -32,10 +32,13 @@ SECRET_KEY =env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['ec2-43-201-28-141.ap-northeast-2.compute.amazonaws.com',
+                 'localhost', '127.0.0.1']
 
 
 # Application definition
+CORS_ALLOWED_ORIGINS = []
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -49,18 +52,20 @@ INSTALLED_APPS = [
     'favorite.apps.FavoriteConfig',
     'duration.apps.DurationConfig',
     'comment.apps.CommentConfig',
+    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
