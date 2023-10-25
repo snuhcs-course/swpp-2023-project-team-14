@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+      - backend/server
+      - dev
+      
 
 jobs:
   build:
