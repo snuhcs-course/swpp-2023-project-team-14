@@ -1,0 +1,108 @@
+# This file may be used to create an environment using:
+# $ conda create --name <env> --file <this file>
+# platform: osx-64
+aiohttp==3.8.6
+aiosignal==1.3.1
+appnope==0.1.3
+asgiref==3.5.2
+asttokens==2.4.0
+async-timeout==4.0.3
+attrs==23.1.0
+backcall==0.2.0
+# backports==1.0
+# backports-functools-lru-cache==1.6.5
+# backports.functools_lru_cache==1.6.5
+# blas==1.0
+# bzip2==1.0.8
+# ca-certificates==2023.7.22
+certifi==2023.7.22
+charset-normalizer==3.3.0
+comm==0.1.4
+contourpy==1.1.1
+cycler==0.12.1
+debugpy==1.6.7
+decorator==5.1.1
+django==4.1
+django-environ==0.11.2
+djangorestframework==3.14.0
+exceptiongroup==1.1.3
+executing==1.2.0
+fonttools==4.43.1
+frozenlist==1.4.0
+idna==3.4
+importlib-metadata==6.8.0
+ipykernel==6.25.2
+ipython
+jedi==0.19.1
+joblib==1.2.0
+jupyter-client==8.4.0
+jupyter_core==5.4.0
+kiwisolver==1.4.5
+# libcxx==14.0.6
+# libffi==3.4.4
+# libgfortran==5.0.0
+# libgfortran5==11.3.0
+# libopenblas==0.3.21
+# libsodium==1.0.18
+# llvm-openmp==14.0.6 
+matplotlib
+matplotlib-inline==0.1.6
+multidict==6.0.4
+# mysql-connector-c==6.1.11
+mysqlclient==2.0.3
+# ncurses==6.4
+nest-asyncio==1.5.8
+numpy
+# numpy-base==1.24.3
+openai==0.28.1
+# openssl==1.1.1w
+packaging==23.2
+pandas
+parso==0.8.3
+pexpect==4.8.0
+pickleshare==0.7.5
+pillow==10.0.1
+pip==23.2.1
+platformdirs==3.11.0
+plotly==5.17.0
+prompt-toolkit==3.0.39
+psutil==5.9.5
+ptyprocess==0.7.0
+pure-eval==0.2.2
+pygments==2.16.1
+pynacl
+pyparsing==3.1.1
+# python==3.11.5
+python-dateutil==2.8.2
+python-decouple==3.8
+python-dotenv==1.0.0
+# python_abi==3.11
+pytz==2023.3.post1
+pyzmq==24.0.1
+# readline==8.2
+regex==2023.10.3
+requests==2.31.0
+scikit-learn==1.3.0
+scipy
+setuptools==68.0.0
+six==1.16.0
+# sqlite==3.41.2
+sqlparse==0.4.4
+stack-data==0.6.2
+tenacity==8.2.3
+threadpoolctl==2.2.0
+tiktoken==0.5.1
+# tk==8.6.12
+tornado==6.3.3
+tqdm==4.66.1
+traitlets==5.11.2
+typing-extensions==4.8.0
+tzdata==2023.3
+urllib3==2.0.6
+wcwidth==0.2.8
+wheel==0.41.2
+# xz==5.4.2
+yarl==1.9.2
+# zeromq==4.3.4
+zipp==3.17.0
+# zlib==1.2.13
