@@ -19,15 +19,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
@@ -37,6 +34,7 @@ import es.dmoral.toasty.Toasty
 
 @Composable
 fun SignupPasswordSetScreen(
+    signupPasswordUpdate: (String) -> Unit,
     loginNavController: NavController,
     loginNavBack: () -> Unit,
     loginContext: Context
@@ -112,7 +110,7 @@ fun SignupPasswordSetScreen(
                                 true
                             ).show()
                         } else {
-                            /* TODO 비밀번호 임시 저장 & 다음 페이지 넘어가기 */
+                            signupPasswordUpdate(passwordInput)
                             loginNavController.navigate(LoginRoute.SignupUserInfo.route)
                         }
                     }
@@ -138,8 +136,8 @@ fun SignupPasswordSetScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun SignupPasswordSetScreenPreview() {
-    SignupPasswordSetScreen(rememberNavController(), {}, loginContext = LocalContext.current)
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun SignupPasswordSetScreenPreview() {
+//    SignupPasswordSetScreen(rememberNavController(), {}, loginContext = LocalContext.current)
+//}

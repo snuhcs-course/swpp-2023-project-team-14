@@ -18,25 +18,22 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface LoginApiService {
-    @POST("signin/success")
-    suspend fun loginSuccess(@Body loginRequest: LoginRequest): LoginResponse
+    @POST("signin")
+    suspend fun login(@Body loginRequest: LoginRequest): LoginResponse
 
-    @POST("signin/noregist")
-    suspend fun loginFail(@Body loginRequest: LoginRequest): LoginResponse
-
-    @POST("verify_code/success")
+    @POST("verify_code")
     suspend fun loginCodeVerify(@Body loginCodeVerifyRequest: LoginCodeVerifyRequest): LoginCodeVerificationResponse
 
-    @POST("signup/verify_snu_email/success")
+    @POST("verify_snu_email")
     suspend fun signupEmailVerify(@Body signupEmailVerifyRequest: SignupEmailVerifyRequest): SignupEmailVerificationResponse
 
-    @POST("signup/success")
+    @POST("signup")
     suspend fun signupRegister(@Body signupRegisterRequest: SignupRegisterRequest): SignupRegisterResponse
 
-    @POST("check_nickname/success")
+    @POST("check_nickname")
     suspend fun checkNickname(@Body checkNicknameRequest: CheckNicknameRequest): CheckNicknameResponse
 
-    @POST("find/verify_email/success")
+    @POST("find/verify_email")
     suspend fun findEmailVerify(@Body findEmailVerifyRequest: FindEmailVerifyRequest): FindEmailVerificationResponse
 
     @POST("find/change_password")
