@@ -11,7 +11,7 @@ interface AppContainer {
 }
 
 class HaengshaAppContainer : AppContainer {
-    private val baseUrl = "https://4a02234b-9fc4-4609-8008-2e56e217c5e6.mock.pstmn.io"
+    private val baseUrl = "http://ec2-43-201-28-141.ap-northeast-2.compute.amazonaws.com:8080/"
     private val retrofit = Retrofit.Builder()
         .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
         .baseUrl(baseUrl)
