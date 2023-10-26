@@ -37,12 +37,12 @@ class LoginViewModel(private val loginDataRepository: LoginDataRepository) : Vie
         }
     }
 
-    fun loginSuccess(email: String, password: String) {
+    fun login(email: String, password: String) {
         viewModelScope.launch {
             loginUiState = LoginUiState.Loading
             loginUiState = try {
                 val loginSuccessResult =
-                    loginDataRepository.loginSuccess(LoginRequest(email, password))
+                    loginDataRepository.login(LoginRequest(email, password))
                 LoginUiState.LoginSuccess(
                     loginSuccessResult.token,
                     loginSuccessResult.role,
@@ -56,26 +56,7 @@ class LoginViewModel(private val loginDataRepository: LoginDataRepository) : Vie
             }
         }
     }
-
-    fun loginFail(email: String, password: String) {
-        viewModelScope.launch {
-            loginUiState = LoginUiState.Loading
-            loginUiState = try {
-                val loginFailResult = loginDataRepository.loginFail(LoginRequest(email, password))
-                LoginUiState.LoginSuccess(
-                    loginFailResult.token,
-                    loginFailResult.role,
-                    loginFailResult.message
-                )
-            } catch (e: HttpException) {
-                val errorMessage = e.response()?.errorBody()?.string() ?: "입력한 정보를 확인해주세요"
-                LoginUiState.HttpError(errorMessage)
-            } catch (e: IOException) {
-                LoginUiState.NetworkError
-            }
-        }
-    }
-
+    
     fun loginCodeVerify(email: String, code: String) {
         viewModelScope.launch {
             loginUiState = LoginUiState.Loading

@@ -83,7 +83,7 @@ fun codeVerifyField(
     OutlinedTextField(
         modifier = Modifier.size(width = 270.dp, height = 60.dp),
         value = input,
-        onValueChange = { if (input.length <= 5) input = it },
+        onValueChange = { if (it.length <= 6) input = it },
         placeholder = {
             Text(
                 text = placeholder,

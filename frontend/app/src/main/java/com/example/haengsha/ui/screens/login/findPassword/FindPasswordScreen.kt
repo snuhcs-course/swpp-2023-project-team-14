@@ -43,6 +43,7 @@ import kotlinx.coroutines.delay
 fun FindPasswordScreen(
     loginViewModel: LoginViewModel,
     loginUiState: LoginUiState,
+    findPasswordEmailUpdate: (String) -> Unit,
     loginNavController: NavHostController,
     loginNavBack: () -> Unit,
     loginContext: Context
@@ -240,8 +241,19 @@ fun FindPasswordScreen(
                 }
 
                 is LoginUiState.HttpError -> {
+                    if (loginUiState.message.contains("exist")) {
+                        isEmailNotFoundDialogVisible = true
+                    } else {
+                        Toasty
+                            .error(
+                                loginContext,
+                                loginUiState.message,
+                                Toast.LENGTH_SHORT,
+                                true
+                            )
+                            .show()
+                    }
                     isEmailError = true
-                    isEmailNotFoundDialogVisible = true
                     emailVerifyTrigger = 0
                 }
 
@@ -272,6 +284,7 @@ fun FindPasswordScreen(
         LaunchedEffect(key1 = loginUiState) {
             when (loginUiState) {
                 is LoginUiState.Success -> {
+                    findPasswordEmailUpdate(emailInput)
                     loginNavController.navigate(LoginRoute.FindPasswordReset.route)
                     codeVerifyTrigger = 0
                 }

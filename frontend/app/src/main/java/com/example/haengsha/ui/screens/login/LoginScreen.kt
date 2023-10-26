@@ -31,7 +31,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.route.MainRoute
+import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.viewModel.UserViewModel
 import com.example.haengsha.model.viewModel.login.LoginViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.FieldStrokeBlue
@@ -45,6 +47,8 @@ import es.dmoral.toasty.Toasty
 
 @Composable
 fun LoginScreen(
+    userUiState: UserUiState,
+    userViewModel: UserViewModel,
     mainNavController: NavHostController,
     loginNavController: NavHostController,
     loginViewModel: LoginViewModel,
@@ -84,7 +88,7 @@ fun LoginScreen(
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(10.dp))
-            emailInput = suffixTextField( // TODO imeAction '다음'으로 변경
+            emailInput = suffixTextField(
                 isEmptyError = isEmailError,
                 placeholder = "SNU Email",
                 suffix = "@snu.ac.kr"
@@ -142,8 +146,7 @@ fun LoginScreen(
                         ).show()
                     } else {
                         loginTrigger++
-                        loginViewModel.loginSuccess("$emailInput@snu.ac.kr", passwordInput)
-                        // loginViewModel.loginFail("$emailInput@snu.ac.kr", passwordInput)
+                        loginViewModel.login("$emailInput@snu.ac.kr", passwordInput)
                     }
                 })
             if (isLoginFailedDialogVisible) {
@@ -186,7 +189,8 @@ fun LoginScreen(
         LaunchedEffect(key1 = loginUiState) {
             when (loginUiState) {
                 is LoginUiState.LoginSuccess -> {
-                    // TODO 로그인 성공 시 토큰 및 유저 유형 저장
+                    userViewModel.updateToken(loginUiState.token)
+                    userViewModel.updateRole(loginUiState.role)
                     mainNavController.navigate(MainRoute.Home.route) {
                         popUpTo(LoginRoute.Login.route) { inclusive = true }
                         popUpTo(MainRoute.Login.route) { inclusive = true }

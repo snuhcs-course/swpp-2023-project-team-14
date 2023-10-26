@@ -8,15 +8,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.uiState.UserUiState
 
 @Composable
-fun Home(mainNavController: NavController) {
-    HomeScreen()
+fun Home(userUiState: UserUiState, mainNavController: NavController) {
+    HomeScreen(userUiState = userUiState)
 }
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(userUiState: UserUiState) {
     /* TODO 여기에 홈 UI 넣기 */
     Box(
         Modifier.fillMaxSize(),
@@ -24,6 +24,7 @@ fun HomeScreen() {
     ) {
         Column {
             Text(text = "This is HomeScreen")
+            Text(text = "User token: ${userUiState.token}")
         }
     }
 }

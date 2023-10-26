@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.viewModel.login.SignupViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
@@ -47,6 +48,8 @@ import es.dmoral.toasty.Toasty
 fun SignupUserInfoScreen(
     checkNickname: (String) -> Unit,
     loginUiState: LoginUiState,
+    signupViewModel: SignupViewModel,
+    signupNickname: String,
     loginNavController: NavController,
     loginNavBack: () -> Unit,
     loginContext: Context
@@ -185,11 +188,29 @@ fun SignupUserInfoScreen(
                                 .error(loginContext, "닉네임 중복 확인을 해주세요!", Toast.LENGTH_SHORT, true)
                                 .show()
                         } else {
-                            /*
-                            TODO 정보들 임시 저장 & 다음 페이지 넘어가기 
-                             만약 이전 화면으로 돌아와서 닉네임 수정했으면, viewmodel에 저장했던 값이랑 비교해서 바뀐 걸 확인 후 isNicknameChecked = false로 변경
-                             */
-                            loginNavController.navigate(LoginRoute.SignupTerms.route)
+                            if (signupNickname != nickname) {
+                                isNicknameChecked = false
+                                Toasty
+                                    .error(
+                                        loginContext,
+                                        "닉네임 중복 확인을 해주세요!",
+                                        Toast.LENGTH_SHORT,
+                                        true
+                                    )
+                                    .show()
+                            } else {
+                                isNicknameChecked = true
+                                signupViewModel.updateMajor(college)
+                                signupViewModel.updateGrade(studentId)
+                                signupViewModel.updateInterest(
+                                    if (interest.size == 1) {
+                                        interest[0]
+                                    } else {
+                                        interest.joinToString(", ").drop(2)
+                                    }
+                                )
+                                loginNavController.navigate(LoginRoute.SignupTerms.route)
+                            }
                         }
                     }
                 })
@@ -218,6 +239,7 @@ fun SignupUserInfoScreen(
             when (loginUiState) {
                 is LoginUiState.Success -> {
                     isNicknameError = false
+                    signupViewModel.updateNickname(nickname)
                     Toasty
                         .success(loginContext, "사용 가능한 닉네임입니다", Toast.LENGTH_SHORT, true)
                         .show()
