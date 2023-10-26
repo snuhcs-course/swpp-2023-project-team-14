@@ -26,7 +26,7 @@ urlpatterns = [
     # 키워드와 날짌 범위 필터를 사용한 URL
     path('keyword/<str:keyword>/date/<str:start_date>/<str:end_date>/', PostListView.as_view(), name='post-filter-keyword-and-date'),
 
-    # 축제 여부와 날짌 범위 필터를 사용한 URL
+    # 축제 여부와 날짜 범위 필터를 사용한 URL
     path('festival/<int:is_festival>/date/<str:start_date>/<str:end_date>/', PostListView.as_view(), name='post-filter-festival-and-date'),
 
     # 모든 필터를 사용한 URL
