@@ -1,9 +1,10 @@
 from rest_framework.views import APIView
-from .models import Post,Like,Favorite,EventDuration,Duration
+from .models import Post,Like,Favorite,Duration,EventDuration
 from rest_framework.response import Response
 from .serializers import Postserializer
 from django.db.models import Count, Q
 from datetime import date
+from rest_framework import status
 # Create your views here.
 # class TodayPostListView(APIView):
 #   def get(self,request):
@@ -35,7 +36,8 @@ class PostListView(APIView):
         # end_date만 있을 경우
         posts = posts.filter(event_durations__event_day__lte=end_date)
 
-    posts = posts.annotate(like_count=Count('like_users')).order_by('-like_count')
+    posts = posts.order_by('-like_count')
+
 
     serializer = Postserializer(posts, many=True)
     return Response(serializer.data, status=200)
@@ -43,10 +45,11 @@ class PostListView(APIView):
   def post(self,request):
     title = request.data.get('title')
     content = request.data.get('content')
+    author = request.user
     place = request.data.get('place')
     image = request.data.get('image')
     is_festival = request.data.get('is_festival')
-    post = Post.objects.create(title=title,content=content,place=place,image=image,is_festival=is_festival)
+    post = Post.objects.create(title=title,content=content,place=place,image=image,is_festival=is_festival,author=author)
     time = request.data.get('time')
     durations = request.data.get('duration')
     for duration_data in durations:
@@ -87,25 +90,41 @@ class PostFavoriteView(APIView):
   
   
 class FavoriteView(APIView):
-  def post(self,request,post_id):
-    post = Post.objects.get(id=post_id)
-    favorite_list = post.favorite_set.filter(user=request.user)
-    if favorite_list.count() > 0:
-      post.favorite_set.get(user=request.user).delete()
-    else:
-      Favorite.objects.create(user=request.user,post=post)
+  def patch(self, request, post_id):
+        post = Post.objects.get(id=post_id)
+        user = request.user
+        favorite_list = post.favorite_set.filter(user=user)
 
-    serializer = Postserializer(post)
-    return Response(serializer.data,status=201)
+        if favorite_list.count() > 0:
+            # 이미 좋아요를 누른 경우, 좋아요 취소
+            favorite_list.delete()
+            post.favorite_count -= 1
+        else:
+            # 아직 좋아요를 누르지 않은 경우, 좋아요 추가
+            Like.objects.create(user=user, post=post)
+            post.favorite_count += 1
+
+        post.save()
+
+        serializer = Postserializer(post)
+        return Response(serializer.data, status=200)
 class LikeView(APIView):
-  def post(self,request,post_id):
-    post = Post.objects.get(id=post_id)
-    like_list = post.like_set.filter(user=request.user)
-    if like_list.count() > 0:
-      post.like_set.get(user=request.user).delete()
-    else:
-      Like.objects.create(user=request.user,post=post)
+      def patch(self, request, post_id):
+        post = Post.objects.get(id=post_id)
+        user = request.user
+        like_list = post.like_set.filter(user=user)
 
-    serializer = Postserializer(post)
-    return Response(serializer.data,status=201)
+        if like_list.count() > 0:
+            # 이미 좋아요를 누른 경우, 좋아요 취소
+            like_list.delete()
+            post.like_count -= 1
+        else:
+            # 아직 좋아요를 누르지 않은 경우, 좋아요 추가
+            Like.objects.create(user=user, post=post)
+            post.like_count += 1
+
+        post.save()
+
+        serializer = Postserializer(post)
+        return Response(serializer.data, status=200)
     
