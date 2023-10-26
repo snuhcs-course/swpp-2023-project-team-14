@@ -32,7 +32,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ec2-user@ec2-43-201-28-141.ap-northeast-2.compute.amazonaws.com',
+ALLOWED_HOSTS = ['ec2-43-201-28-141.ap-northeast-2.compute.amazonaws.com',
                  'localhost', '127.0.0.1']
 
 
