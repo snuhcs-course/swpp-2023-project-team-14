@@ -22,8 +22,7 @@ class PersonalUser(AbstractUser):
     ('NaturalSciences', '자연과학대학'),
   )
   GRADE_CHOICES = (
-    ('16', '16학번 이상'),
-    ('17', '17학번'),
+    ('17', '17학번 이상'),
     ('18', '18학번'),
     ('19', '19학번'),
     ('20', '20학번'),
