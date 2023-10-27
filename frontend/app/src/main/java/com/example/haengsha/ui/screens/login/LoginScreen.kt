@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.route.MainRoute
-import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.login.LoginUiState
 import com.example.haengsha.model.viewModel.UserViewModel
 import com.example.haengsha.model.viewModel.login.LoginViewModel
@@ -47,7 +46,6 @@ import es.dmoral.toasty.Toasty
 
 @Composable
 fun LoginScreen(
-    userUiState: UserUiState,
     userViewModel: UserViewModel,
     mainNavController: NavHostController,
     loginNavController: NavHostController,

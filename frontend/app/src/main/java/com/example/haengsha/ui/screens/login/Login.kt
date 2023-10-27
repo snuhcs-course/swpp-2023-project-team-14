@@ -10,7 +10,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.LoginRoute
-import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.viewModel.UserViewModel
 import com.example.haengsha.model.viewModel.login.FindPasswordViewModel
 import com.example.haengsha.model.viewModel.login.LoginViewModel
@@ -29,7 +28,6 @@ import com.example.haengsha.ui.screens.login.signup.SignupUserInfoScreen
 
 @Composable
 fun Login(
-    userUiState: UserUiState,
     userViewModel: UserViewModel,
     mainNavController: NavHostController
 ) {
@@ -49,7 +47,6 @@ fun Login(
         composable(LoginRoute.Login.route) {
             LoginScreen(
                 userViewModel = userViewModel,
-                userUiState = userUiState,
                 mainNavController = mainNavController,
                 loginNavController = loginNavController,
                 loginViewModel = loginViewModel,
@@ -105,7 +102,6 @@ fun Login(
             SignupEmailVerificationScreen(
                 loginViewModel = loginViewModel,
                 loginUiState = loginUiState,
-                signupUiState = signupUiState,
                 signupEmailUpdate = { signupViewModel.updateEmail(it) },
                 loginNavController = loginNavController,
                 loginNavBack = { loginNavController.popBackStack() },
