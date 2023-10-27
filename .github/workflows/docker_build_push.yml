@@ -7,6 +7,7 @@ on:
       - backend/server
       - dev
       - backend/docker
+      - backend/hotfix
       
 
 jobs:
