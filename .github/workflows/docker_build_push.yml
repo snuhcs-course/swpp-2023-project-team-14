@@ -6,6 +6,7 @@ on:
       - main
       - backend/server
       - dev
+      - backend/docker
       
 
 jobs:
@@ -24,3 +25,12 @@ jobs:
         cd backend
         docker build -t "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest" .
         docker push "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+
+    - name: Stop Docker Container, Clean Up, Pull & Run
+      run: | 
+        ssh -i "./${{ secrets.PEM }}" ${{ secrets.CLOUD_URL }} << EOF
+          docker stop $(docker ps -q)
+          docker system prune -a -f
+          docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+          docker run -d -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+        EOF
