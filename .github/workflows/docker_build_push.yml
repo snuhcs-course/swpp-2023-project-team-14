@@ -6,8 +6,6 @@ on:
       - main
       - backend/server
       - dev
-      - backend/docker
-      - backend/hotfix
       
 
 jobs:
@@ -26,7 +24,7 @@ jobs:
         cd backend
         docker build -t "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest" .
         docker push "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-
+    
     - name: Stop Docker Container, Clean Up, Pull & Run
       run: | 
         set +x
@@ -34,7 +32,10 @@ jobs:
         set -x
         chmod 600 key.pem
         ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
-          docker system prune -a -f
+          echo "Stopping containers..."
+          docker stop $(docker ps -q)
+          sudo fuser -k 8080/tcp || true
+          echo "Pulling new image..."
           docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
           docker run -d -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
         EOF
