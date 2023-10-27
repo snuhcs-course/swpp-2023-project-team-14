@@ -28,7 +28,7 @@ jobs:
 
     - name: Stop Docker Container, Clean Up, Pull & Run
       run: | 
-        ssh -i "./${{ secrets.PEM }}" -o StrictHostKeyChecking=no ${{ secrets.CLOUD_URL }} << EOF
+        ssh -i "./${{ secrets.PEM }}" -o StrictHostKeyChecking=no ec2-user${{ secrets.CLOUD_URL }} << EOF
           docker stop $(docker ps -q)
           docker system prune -a -f
           docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
