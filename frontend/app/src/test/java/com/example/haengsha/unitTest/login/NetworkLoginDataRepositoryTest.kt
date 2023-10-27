@@ -1,15 +1,8 @@
 package com.example.haengsha.unitTest.login
 
-import com.example.haengsha.fakeData.login.FakeLoginDataSource
 import com.example.haengsha.fakeData.login.FakeLoginApiService
+import com.example.haengsha.fakeData.login.FakeLoginDataSource
 import com.example.haengsha.model.dataSource.NetworkLoginDataRepository
-import com.example.haengsha.model.network.dataModel.CheckNicknameRequest
-import com.example.haengsha.model.network.dataModel.FindChangePasswordRequest
-import com.example.haengsha.model.network.dataModel.FindEmailVerifyRequest
-import com.example.haengsha.model.network.dataModel.LoginCodeVerifyRequest
-import com.example.haengsha.model.network.dataModel.LoginRequest
-import com.example.haengsha.model.network.dataModel.SignupEmailVerifyRequest
-import com.example.haengsha.model.network.dataModel.SignupRegisterRequest
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.test.runTest
 import org.junit.Test

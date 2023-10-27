@@ -16,7 +16,7 @@ import com.example.haengsha.model.network.dataModel.SignupRegisterRequest
 import com.example.haengsha.model.network.dataModel.SignupRegisterResponse
 
 object FakeLoginDataSource {
-    const val token = "fakeToken"
+    private const val token = "fakeToken"
     const val role = "fakeRole"
     const val message = "fakeMessage"
     const val email = "fakeEmail"
