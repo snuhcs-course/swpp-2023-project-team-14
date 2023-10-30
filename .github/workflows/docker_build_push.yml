@@ -40,6 +40,12 @@ jobs:
           docker rm $(docker ps -aq)
           # this removes all images
           docker rmi $(docker images -q)
+          echo "Waiting for port to be released..."
+          sleep 10
+          if lsof -i:8080; then
+            echo "Port 8080 is still occupied"
+            exit 1
+          fi 
           sudo fuser -k 8080/tcp || true
           echo "Pulling new image..."
           docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
