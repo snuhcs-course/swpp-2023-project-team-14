@@ -6,6 +6,7 @@ on:
       - main
       - backend/server
       - dev
+      - backend/hotfix
       
 
 jobs:
@@ -32,10 +33,17 @@ jobs:
         set -x
         chmod 600 key.pem
         ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
-          echo "Stopping containers..."
-          docker stop $(docker ps -q)
+          docker stop haeng
+          docker rm haeng
+          docker system prune -a -f
+          echo "Waiting for port to be released..."
+          sleep 10
+          if lsof -i:8080; then
+            echo "Port 8080 is still occupied"
+            exit 1
+          fi 
           sudo fuser -k 8080/tcp || true
           echo "Pulling new image..."
           docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-          docker run -d -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+          docker run -d --name haeng -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
         EOF

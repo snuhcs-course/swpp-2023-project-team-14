@@ -25,19 +25,21 @@ class Postserializer(serializers.ModelSerializer):
     event_durations = EventDurationSerializer(
         many=True, read_only=True, source="eventduration_set"
     )
-    club = UsernicknameSerializer(read_only=True, source="author")
+    author = UsernicknameSerializer(read_only=True)
 
     class Meta:
         model = Post
         fields = (
+            "id",
             "title",
-            "content",
-            "place",
-            "image",
             "is_festival",
-            "like_count",
-            "time",
-            "club",
-            "favorite_count",
+            "author",
             "event_durations",
+            "place",
+            "time",
+            "content",
+            "image",
+            "like_count",
+            "favorite_count",
+            
         )
