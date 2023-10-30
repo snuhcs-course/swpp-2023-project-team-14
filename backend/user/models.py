@@ -42,7 +42,7 @@ class PersonalUser(AbstractUser):
   )
   nickname = models.CharField(max_length=10)
   email = models.EmailField(unique=True)
-  password = models.CharField(max_length=200)
+  password = models.CharField(max_length=500)
   role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='User')
   major = models.CharField(max_length=20, choices=MAJOR_CHOICES, default='Business')
   grade = models.CharField(max_length=10, choices=GRADE_CHOICES, default='23')
