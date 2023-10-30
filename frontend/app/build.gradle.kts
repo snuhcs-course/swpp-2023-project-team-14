@@ -59,7 +59,6 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
 
-    implementation("androidx.compose.material3:material3")
     implementation("com.google.android.material:material:1.11.0-beta01")
     implementation("androidx.compose.material3:material3-android:1.2.0-alpha10")
 
