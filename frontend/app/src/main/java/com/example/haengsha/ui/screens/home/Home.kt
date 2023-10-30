@@ -59,18 +59,18 @@ class SharedViewModel() : ViewModel() {
 
     // Initialize _festivalItems and _academicItems with initial data
     @RequiresApi(Build.VERSION_CODES.O)
-    private val _festivalItems = MutableLiveData<List<EventCardData>>()
+    private val _festivalItems = MutableLiveData<List<EventCardData>?>()
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private val _academicItems = MutableLiveData<List<EventCardData>>()
-
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    val festivalItems: LiveData<List<EventCardData>> = _festivalItems
+    private val _academicItems = MutableLiveData<List<EventCardData>?>()
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    val academicItems: LiveData<List<EventCardData>> = _academicItems
+    val festivalItems: MutableLiveData<List<EventCardData>?> = _festivalItems
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val academicItems: MutableLiveData<List<EventCardData>?> = _academicItems
 
 
     // Update functions to set LiveData properties
@@ -80,12 +80,12 @@ class SharedViewModel() : ViewModel() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateFestivalItems(newItems: List<EventCardData>) {
+    fun updateFestivalItems(newItems: List<EventCardData>?) {
         _festivalItems.value = newItems
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateAcademicItems(newItems: List<EventCardData>) {
+    fun updateAcademicItems(newItems: List<EventCardData>?) {
         _academicItems.value = newItems
     }
 }
@@ -108,6 +108,8 @@ fun HomeScreen(
 ) {
     val eventViewModel: EventViewModel =
         viewModel(factory = EventViewModel.Factory(sharedViewModel))
+    eventViewModel.getEventByDate(eventType = "Academic", LocalDate.now())
+    eventViewModel.getEventByDate(eventType = "Festival", LocalDate.now())
     val currentDate = remember { LocalDate.now() }
     val currentMonth = remember { YearMonth.now() }
     val startDate = remember { currentMonth.minusMonths(100).atStartOfMonth() } // Adjust as needed

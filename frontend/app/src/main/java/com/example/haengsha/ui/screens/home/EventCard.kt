@@ -54,7 +54,7 @@ fun EventCard(
         border = BorderStroke(1.dp, md_theme_light_onSurfaceVariant),
         modifier = Modifier
             .fillMaxWidth()
-            .height(150.dp)
+            .height(200.dp)
             .padding(all = 16.dp),
 
         ) {
@@ -96,6 +96,7 @@ fun EventCard(
                             .align(Alignment.End),
                         textAlign = TextAlign.Right,
                         fontFamily = poppins,
+                        fontSize = 12.sp
                     )
                     Text(
                         text = "♥ $likes", // 좋아요 수 -> Text로 변경

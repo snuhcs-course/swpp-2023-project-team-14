@@ -41,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -49,14 +48,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.tv.material3.ExperimentalTvMaterial3Api
-import androidx.tv.material3.TabRow
 import com.example.haengsha.R
-import com.example.haengsha.model.viewModel.event.EventViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.LikePink
 import com.example.haengsha.ui.theme.md_theme_light_onSurfaceVariant
@@ -87,7 +81,7 @@ data class EventCardData(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate, selectedTabIndex: Int) {
-
+    var itemsToDisplay: List<EventCardData>?
     val academicItems by sharedViewModel.academicItems.observeAsState()
     val festivalItems by sharedViewModel.festivalItems.observeAsState()
     var showDialog by remember { mutableStateOf(false) }
@@ -182,10 +176,15 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate, selectedT
                         Text(text = "맞춤 추천 받기")
                     }
                 }
-                val itemsToDisplay = if (index == 1) festivalItems else academicItems
+                if (index == 1) {
+                    itemsToDisplay = festivalItems
+                    selectedTabIndex = 1
+                } else {
+                    itemsToDisplay = academicItems
+                    selectedTabIndex = 0
+                }
                 //val itemsToDisplay = if (index == 1) festivalItems else academicItems
                 items(itemsToDisplay.orEmpty()) { eventCardData ->
-
                     Box(modifier = Modifier.clickable {
                         showEventCardPopup = true
                         selectedEvent = eventCardData
@@ -219,24 +218,47 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate, selectedT
                     )
                 )
             }, text = {
-                Column(
+                LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    EventCard( // Demo 용으로 필요하면 추가
-                        organizer = "행샤 운영진",
-                        eventTitle = "소개원실 중간발표",
-                        startDate = LocalDate.now(),
-                        endDate = LocalDate.now(),
-                        likes = 500
-                    )
-                    EventCard(
-                        organizer = "컴퓨터공학부",
-                        eventTitle = "졸업논문 발표",
-                        startDate = LocalDate.now(),
-                        endDate = LocalDate.now(),
-                        likes = 500
-                    )
+                    items(1) {
+                        EventCard( // Demo 용으로 필요하면 추가
+                            organizer = "수리과학부",
+                            eventTitle = "수리과학부 강연",
+                            startDate = LocalDate.now().plusDays(5),
+                            endDate = LocalDate.now().plusDays(5),
+                            likes = 28
+                        )
+                        EventCard(
+                            organizer = "데이터사이언스 대학원",
+                            eventTitle = "인공지능의 투명성: 소셜 봇 대응의 최선의 방법",
+                            startDate = LocalDate.now().plusDays(1),
+                            endDate = LocalDate.now().plusDays(1),
+                            likes = 52
+                        )
+                        EventCard(
+                            organizer = "대학생문화원",
+                            eventTitle = "대학생문화원 자살예방교육",
+                            startDate = LocalDate.now().plusDays(3),
+                            endDate = LocalDate.now().plusDays(15),
+                            likes = 11
+                        )
+                        EventCard(
+                            organizer = "통일평화연구원",
+                            eventTitle = "통일평화연구원 통일학포럼",
+                            startDate = LocalDate.now(),
+                            endDate = LocalDate.now().plusDays(1),
+                            likes = 173
+                        )
+                        EventCard(
+                            organizer = "경영학과",
+                            eventTitle = "삼성 파운드리의 현재와 미래",
+                            startDate = LocalDate.now().plusDays(2),
+                            endDate = LocalDate.now().plusDays(2),
+                            likes = 81
+                        )
+                    }
                 }
 
             }, confirmButton = {
