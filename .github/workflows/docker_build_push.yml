@@ -34,12 +34,19 @@ jobs:
         chmod 600 key.pem
         ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
           echo "Stopping containers..."
-          # this stops all containers
-          docker stop $(docker ps -aq)
-          # this removes all containers
-          docker rm $(docker ps -aq)
+          # this stops and removes all containers, if they exist 
+          if [ "$(docker ps -aq)" ]; then
+            docker stop $(docker ps -aq)
+            docker rm $(docker ps -aq)
+          else
+              echo "No containers to stop."
+
           # this removes all images
-          docker rmi $(docker images -q)
+          if [ "$(docker images -q)" ]; then
+            docker rmi -f $(docker images -q)
+          else
+              echo "No images to remove."
+          fi
           echo "Waiting for port to be released..."
           sleep 10
           if lsof -i:8080; then
