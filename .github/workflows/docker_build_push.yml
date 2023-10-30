@@ -34,7 +34,12 @@ jobs:
         chmod 600 key.pem
         ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
           echo "Stopping containers..."
-          docker stop $(docker ps -q)
+          # this stops all containers
+          docker stop $(docker ps -aq)
+          # this removes all containers
+          docker rm $(docker ps -aq)
+          # this removes all images
+          docker rmi $(docker images -q)
           sudo fuser -k 8080/tcp || true
           echo "Pulling new image..."
           docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
