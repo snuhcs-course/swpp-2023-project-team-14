@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.tv.material3.ExperimentalTvMaterial3Api
+import androidx.tv.material3.TabRow
 import com.example.haengsha.R
 import com.example.haengsha.model.viewModel.event.EventViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
@@ -114,11 +116,13 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate, selectedT
 
     Column(modifier = Modifier.fillMaxSize()) {
         // Tab row
-        PrimaryTabRow(selectedTabIndex = selectedTabIndex,
+        PrimaryTabRow(
+            selectedTabIndex = selectedTabIndex,
             contentColor = md_theme_light_onSurfaceVariant,
             indicator = { tabPositions ->
                 TabRowDefaults.PrimaryIndicator(
-                    modifier = Modifier.tabIndicatorOffset(tabPositions[0]), color = HaengshaBlue
+                    modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                    color = HaengshaBlue
                 )
             }) {
             // Tab items
@@ -191,7 +195,7 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate, selectedT
                             eventTitle = eventCardData.eventTitle,
                             startDate = eventCardData.startDate,
                             endDate = eventCardData.endDate,
-                            likes = eventCardData.likes
+                            likes = eventCardData.likes,
                         )
                     }
                 }
@@ -204,24 +208,82 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate, selectedT
                 // Close the dialog when clicked outside
                 showDialog = false
             }, title = {
-                Text(text = "Popup Title")
+                Text(
+                    text = "당신을 위한 오늘의 맞춤 추천입니다!",
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        fontFamily = poppins,
+                        fontWeight = FontWeight(500),
+                        color = Color(0xFF000000),
+                        textAlign = TextAlign.Center,
+                    )
+                )
             }, text = {
-                Text(text = "Here is popup")
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    EventCard( // Demo 용으로 필요하면 추가
+                        organizer = "행샤 운영진",
+                        eventTitle = "소개원실 중간발표",
+                        startDate = LocalDate.now(),
+                        endDate = LocalDate.now(),
+                        likes = 500
+                    )
+                    EventCard(
+                        organizer = "컴퓨터공학부",
+                        eventTitle = "졸업논문 발표",
+                        startDate = LocalDate.now(),
+                        endDate = LocalDate.now(),
+                        likes = 500
+                    )
+                }
+
             }, confirmButton = {
-                Button(onClick = {
-                    // Handle confirm button click
-                    showDialog = false
-                }) {
-                    Text("OK")
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(0.dp)
+                ) {
+                    Button(
+                        onClick = {
+                            showDialog = false
+                        },
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .wrapContentHeight()
+                            .padding(0.dp), // 패딩 제거
+
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(Color.White),
+
+                        ) {
+                        Text(
+                            text = "닫기",
+                            style = TextStyle(
+                                fontSize = 13.sp,
+                                fontFamily = poppins,
+                                fontWeight = FontWeight(500),
+                                color = Color(0xFF000000),
+                                textAlign = TextAlign.Center,
+                                textDecoration = TextDecoration.Underline,
+                            ),
+                            modifier = Modifier.padding(0.dp) // 텍스트 주위의 패딩 제거
+                        )
+                    }
                 }
-            }, dismissButton = {
-                Button(onClick = {
-                    // Handle dismiss button click
-                    showDialog = false
-                }) {
-                    Text("Cancel")
-                }
-            })
+            },
+                modifier = Modifier
+                    .shadow(
+                        elevation = 10.dp,
+                        spotColor = Color(0x40000000),
+                        ambientColor = Color(0x40000000)
+                    )
+                    .width(500.dp)
+                    .height(550.dp)
+                    .background(color = Color(0xFFFFFFFF)),
+                containerColor = Color(0xFFFFFFFF)
+            )
         }
 
         var buttonWidth by remember { mutableStateOf(0.dp) }
