@@ -108,6 +108,8 @@ fun HomeScreen(
 ) {
     val eventViewModel: EventViewModel =
         viewModel(factory = EventViewModel.Factory(sharedViewModel))
+    eventViewModel.getEventByDate(eventType = "Academic", LocalDate.now())
+    eventViewModel.getEventByDate(eventType = "Festival", LocalDate.now())
     val currentDate = remember { LocalDate.now() }
     val currentMonth = remember { YearMonth.now() }
     val startDate = remember { currentMonth.minusMonths(100).atStartOfMonth() } // Adjust as needed
