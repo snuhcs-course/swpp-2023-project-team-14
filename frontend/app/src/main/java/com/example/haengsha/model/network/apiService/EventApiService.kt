@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import com.example.haengsha.ui.screens.home.EventCardData
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import retrofit2.http.GET
 import retrofit2.http.Path
 import java.time.LocalDate
@@ -12,16 +13,22 @@ import java.time.format.DateTimeFormatter
 
 @Serializable
 data class EventResponse(
-    @SerialName("nickname") val organizer: String,
+    @SerialName("id") val id: Int,
     @SerialName("title") val title: String,
-    @SerialName("content") val content: String,
-    @SerialName("place") val place: String,
-    @SerialName("image") val image: String?,
     @SerialName("is_festival") val isFestival: Boolean,
+    @SerialName("author") val author: Author,
+    @SerialName("event_durations") val eventDurations: List<EventDurationResponse>,
+    @SerialName("place") val place: String,
+    @SerialName("time") val time: String?,
+    @SerialName("content") val content: String,
+    @SerialName("image") val image: String?,
     @SerialName("like_count") val likeCount: Int,
     @SerialName("favorite_count") val favoriteCount: Int,
-    @SerialName("time") val time: String,
-    @SerialName("event_durations") val eventDurations: List<EventDurationResponse>
+)
+
+@Serializable
+data class Author(
+    @SerialName("nickname") val nickname: String
 )
 
 @Serializable
@@ -33,16 +40,16 @@ data class EventDurationResponse(
 fun EventResponse.toEventCardData(): EventCardData {
     var startDate = stringToDate(eventDurations[0].eventDay)
     var endDate = startDate
-    if (eventDurations.size>1) {
-        endDate = stringToDate(eventDurations[eventDurations.size-1].eventDay)
+    if (eventDurations.size > 1) {
+        endDate = stringToDate(eventDurations[eventDurations.size - 1].eventDay)
     }
 
     var eventType = "Festival"
-    if (!isFestival){
+    if (!isFestival) {
         eventType = "Academic"
     }
     return EventCardData(
-        organizer = organizer,
+        organizer = author.nickname,
         eventTitle = title,
         startDate = startDate,
         endDate = endDate,
@@ -50,7 +57,7 @@ fun EventResponse.toEventCardData(): EventCardData {
         favorites = favoriteCount,
         eventType = eventType,
         place = place,
-        time = time
+        time = time ?: "wow"
     )
 }
 
@@ -59,7 +66,7 @@ interface EventApiService {
     suspend fun getEventByDate(
         @Path("eventType") eventType: Int,  // Replace with appropriate type
         @Path("date") date: String
-    ): List<EventResponse>  // Change the return type to a list of EventResponse
+    ): List<EventResponse>? // Change the return type to a list of EventResponse
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
