@@ -17,13 +17,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.haengsha.R
+import com.example.haengsha.ui.theme.ModalButtonBlue
+import com.example.haengsha.ui.theme.ModalButtonRed
 import com.example.haengsha.ui.theme.poppins
 
 @Composable
@@ -32,7 +32,7 @@ fun ModalConfirmButton(onClick: () -> Unit) {
         modifier = Modifier
             .size(width = 120.dp, height = 30.dp)
             .shadow(elevation = 5.dp, shape = RoundedCornerShape(15.dp))
-            .background(color = colorResource(R.color.ModalButtonBlue))
+            .background(color = ModalButtonBlue)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
@@ -54,7 +54,7 @@ fun ModalCancelButton(onClick: () -> Unit) {
         modifier = Modifier
             .size(width = 120.dp, height = 30.dp)
             .shadow(elevation = 5.dp, shape = RoundedCornerShape(15.dp))
-            .background(color = colorResource(R.color.ModalButtonRed))
+            .background(color = ModalButtonRed)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {

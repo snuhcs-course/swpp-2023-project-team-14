@@ -2,6 +2,7 @@
 .env
 .vscode/
 ec2-key.pem
+swpp-env/
 
 
 *.iml

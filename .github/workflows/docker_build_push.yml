@@ -1,0 +1,41 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+      - backend/server
+      - dev
+      
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Login to DockerHub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+    - name: Build and push Docker image
+      run: |
+        cd backend
+        docker build -t "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest" .
+        docker push "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+    
+    - name: Stop Docker Container, Clean Up, Pull & Run
+      run: | 
+        set +x
+        echo "${{ secrets.PEM }}" > key.pem 
+        set -x
+        chmod 600 key.pem
+        ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
+          echo "Stopping containers..."
+          docker stop $(docker ps -q)
+          sudo fuser -k 8080/tcp || true
+          echo "Pulling new image..."
+          docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+          docker run -d -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+        EOF
