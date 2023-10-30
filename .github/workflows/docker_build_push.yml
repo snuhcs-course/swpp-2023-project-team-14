@@ -6,6 +6,7 @@ on:
       - main
       - backend/server
       - dev
+      - backend/hotfix
       
 
 jobs:
