@@ -29,7 +29,7 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "ec2-43-201-28-141.ap-northeast-2.compute.amazonaws.com",
+    "ec2-52-79-228-36.ap-northeast-2.compute.amazonaws.com",
     "localhost",
     "127.0.0.1",
 ]
