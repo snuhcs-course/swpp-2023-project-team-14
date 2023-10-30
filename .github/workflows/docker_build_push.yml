@@ -46,8 +46,8 @@ jobs:
           fi
 
           # this removes all images
-          if [ "$(docker images -q)" ]; then
-            docker rmi -f $(docker images -q)
+          if [ "$(docker images -q -f dangling=true)" ]; then
+            docker rmi -f $(docker images -q -f dangling=true)
           else
               echo "No images to remove."
           fi
