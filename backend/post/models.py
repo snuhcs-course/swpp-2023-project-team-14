@@ -8,7 +8,7 @@ class Duration(models.Model):
 class Post(models.Model):
   title = models.CharField(max_length=30)
   author = models.ForeignKey(PersonalUser, on_delete=models.CASCADE,null=True)
-  content = models.CharField(null=True,max_length=100)
+  content = models.CharField(null=True,max_length=1000)
   place = models.CharField(null=True,max_length=30)
   image = models.ImageField(null=True,upload_to='images/')
   is_festival = models.BooleanField(null=True)
