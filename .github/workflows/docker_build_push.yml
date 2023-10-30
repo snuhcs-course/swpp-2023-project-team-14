@@ -33,32 +33,24 @@ jobs:
         set -x
         chmod 600 key.pem
         ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
-          # Diagnostic commands
-          echo "===== HOST INFO ====="
-          hostname
-          echo "===== NETWORK INFO ====="
-          ifconfig
-          echo "===== DOCKER INFO ====="
-          docker info
-
-          CONTAINER_LIST=$(docker ps -aq) 
-          echo "Containers: $CONTAINER_LIST"
-          echo "Stopping containers..."
-          # this stops and removes all containers, if they exist 
-          if [ "$(docker ps -aq)" ]; then
-            docker stop $(docker ps -aq)
-            docker rm $(docker ps -aq)
-          else
-              echo "No containers to stop."
-          fi
-
-          # this removes all images
-          if [ "$(docker images -q -f dangling=true)" ]; then
-            docker rmi -f $(docker images -q -f dangling=true)
-          else
-              echo "No images to remove."
-          fi
-
+          # CONTAINER_LIST=$(docker ps -aq) 
+          # echo "Containers: $CONTAINER_LIST"
+          # echo "Stopping containers..."
+          # # this stops and removes all containers, if they exist 
+          # if [ "$(docker ps -aq)" ]; then
+          #   docker stop $(docker ps -aq)
+          #   docker rm $(docker ps -aq)
+          # else
+          #     echo "No containers to stop."
+          # fi
+          # # this removes all images
+          # if [ "$(docker images -q -f dangling=true)" ]; then
+          #   docker rmi -f $(docker images -q -f dangling=true)
+          # else
+          #     echo "No images to remove."
+          # fi
+          docker stop haeng
+          docker rm haeng
           echo "Waiting for port to be released..."
           sleep 10
           if lsof -i:8080; then
@@ -68,5 +60,5 @@ jobs:
           sudo fuser -k 8080/tcp || true
           echo "Pulling new image..."
           docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-          docker run -d -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+          docker run -d --name -haeng -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
         EOF
