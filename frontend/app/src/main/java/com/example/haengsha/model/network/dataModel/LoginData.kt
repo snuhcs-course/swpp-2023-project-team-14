@@ -17,7 +17,7 @@ data class LoginRequest(
 )
 
 @Serializable
-data class LoginCodeVerificationResponse(
+data class LoginCodeVerifyResponse(
     val message: String
 )
 
@@ -28,7 +28,7 @@ data class LoginCodeVerifyRequest(
 )
 
 @Serializable
-data class SignupEmailVerificationResponse(
+data class SignupEmailVerifyResponse(
     val message: String
 )
 
@@ -64,7 +64,7 @@ data class CheckNicknameRequest(
 )
 
 @Serializable
-data class FindEmailVerificationResponse(
+data class FindEmailVerifyResponse(
     val message: String
 )
 

@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.uiState.login.LoginUiState
-import com.example.haengsha.model.uiState.login.SignupUiState
 import com.example.haengsha.model.viewModel.login.LoginViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
@@ -45,7 +44,6 @@ fun SignupEmailVerificationScreen(
     loginViewModel: LoginViewModel,
     loginUiState: LoginUiState,
     signupEmailUpdate: (String) -> Unit,
-    signupUiState: SignupUiState,
     loginNavController: NavController,
     loginNavBack: () -> Unit,
     loginContext: Context
