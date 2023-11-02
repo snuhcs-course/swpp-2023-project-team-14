@@ -202,11 +202,19 @@ def check_nickname(request):
 
 
 @api_view(["POST"])
-def signup(request):
+def signup(request):        # for users 
     email = request.data.get("email")
-    password = request.data.get("password")
-    role = request.data.get("role")
     nickname = request.data.get("nickname")
+    role = request.data.get("role")
+    major = request.data.get("major")
+    grade = request.data.get("grade")
+    password = request.data.get("password")
+    interest = request.data.get("interest")
+    if not email:
+        return Response(
+            {"message": "Need a nonempty email."}, status=status.HTTP_400_BAD_REQUEST
+        )
+    
     length = len(nickname)
     if length < 2 or length > 10:
         return Response(
@@ -215,22 +223,34 @@ def signup(request):
             },
             status=status.HTTP_400_BAD_REQUEST,
         )
+    
+    if not role:
+        return Response(
+            {"message": "Need a nonempty role."}, status=status.HTTP_400_BAD_REQUEST
+        )
 
-    major = request.data.get("major")
+    if not major:
+        return Response(
+            {"message": "Need a nonempty major."}, status=status.HTTP_400_BAD_REQUEST
+        )
+    
     valid_major_choices = [choice[0] for choice in PersonalUser.MAJOR_CHOICES]
     if not major in valid_major_choices:
         return Response(
             {"message": "Invalid major."}, status=status.HTTP_400_BAD_REQUEST
         )
-
-    grade = request.data.get("grade")
+    
     valid_grade_choices = [choice[0] for choice in PersonalUser.GRADE_CHOICES]
     if not grade in valid_grade_choices:
         return Response(
             {"message": "Invalid grade."}, status=status.HTTP_400_BAD_REQUEST
         )
 
-    interest = request.data.get("interest")
+    if not password:
+        return Response(
+            {"message": "Need a nonempty password."}, status=status.HTTP_400_BAD_REQUEST
+        )
+    
     valid_interest_choices = [choice[0] for choice in PersonalUser.INTEREST_CHOICES]
     if not interest in valid_interest_choices:
         return Response(

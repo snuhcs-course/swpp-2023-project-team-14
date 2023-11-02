@@ -20,10 +20,11 @@ class SignedInUserAPITest(TestCase):
             interest='music'
         )
         self.user.set_password('passwd')
+        self.user.save()
         self.code = '123456'
         self.cache = cache
         self.cache.set(self.user.email, self.code, timeout=3600)  # Store code for 60 minutes, just for the tests
-        self.client.force_authenticate(user=self.user)  # authenticates the request
+        self.client.login(username=self.user.email, password=self.user.password)  # authenticates the request
     
     @classmethod
     def tearDownClass(self):
@@ -159,5 +160,6 @@ class SignedInUserAPITest(TestCase):
             'password_confirm': 'diffpasswor2'
         }
         response = self.client.post(reverse('change_password'), request)
-        # print(response.content)
         self.assertContains(response, 'The password and the confirmation password do not match.', status_code=400)
+
+    
