@@ -26,7 +26,9 @@ fun HaengshaApp() {
 
     NavHost(
         navController = mainNavController,
-        startDestination = MainRoute.Login.route
+        // TODO 서버 없이 일단 board UI 확인
+        // startDestination = MainRoute.Login.route
+        startDestination = MainRoute.Dashboard.route
     ) {
         composable(MainRoute.Login.route) {
             Login(
