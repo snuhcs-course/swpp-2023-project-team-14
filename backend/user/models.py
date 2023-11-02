@@ -1,10 +1,26 @@
 import uuid
 
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin
 
 # Create your models here.
-class PersonalUser(AbstractUser):
+class PersonalUserManager(BaseUserManager):
+  def create_user(self, email, password=None, **extra_fields):
+      if not email:
+          raise ValueError('The email field must be set')
+      email = self.normalize_email(email)
+      user = self.model(email=email, username=email, **extra_fields)
+      user.set_password(password)
+      user.save(using=self._db)
+      return user
+
+  def create_superuser(self, email, password=None, **extra_fields):
+      # Assuming you want to use this method to create superusers
+      extra_fields.setdefault('is_staff', True)
+      extra_fields.setdefault('is_superuser', True)
+      return self.create_user(email, password, **extra_fields)
+
+class PersonalUser(AbstractUser, PermissionsMixin):
   USER = 'User'
   GROUP = 'Group'
   ROLE_CHOICES = (
@@ -20,6 +36,7 @@ class PersonalUser(AbstractUser):
     ('Music', '음악대학'),
     ('Humanities', '인문대학'),
     ('NaturalSciences', '자연과학대학'),
+    ('Undefined', 'Undefined')
   )
   GRADE_CHOICES = (
     ('17', '17학번 이상'),
@@ -29,6 +46,7 @@ class PersonalUser(AbstractUser):
     ('21', '21학번'),
     ('22', '22학번'),
     ('23', '23학번'),
+    ('Undefined', 'Undefined')
   )
   INTEREST_CHOICES = (
     ('dance', '댄스'),
@@ -38,19 +56,24 @@ class PersonalUser(AbstractUser):
     ('music', '음악'),
     ('sports', '운동'),
     ('art', '예술'),
-    ('religion', '종교')
+    ('religion', '종교'),
+    ('Undefined', 'Undefined')
   )
   nickname = models.CharField(max_length=10)
   email = models.EmailField(unique=True)
   password = models.CharField(max_length=500)
   role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='User')
-  major = models.CharField(max_length=20, choices=MAJOR_CHOICES, default='Business')
-  grade = models.CharField(max_length=10, choices=GRADE_CHOICES, default='23')
-  interest = models.CharField(max_length=10, choices=INTEREST_CHOICES, default='music')
+  major = models.CharField(max_length=20, choices=MAJOR_CHOICES, default='Undefined')
+  grade = models.CharField(max_length=10, choices=GRADE_CHOICES, default='Undefined')
+  interest = models.CharField(max_length=10, choices=INTEREST_CHOICES, default='Undefined')
 
-  def save(self, *args, **kwargs):
-    self.email = self.email.lower()
-    self.username = self.email 
-    super(PersonalUser, self).save(*args, **kwargs)
+  USERNAME_FIELD = 'email'
+  REQUIRED_FIELDS = ['nickname', 'role', 'major', 'grade', 'interest']
+
+  objects = PersonalUserManager()
+  # def save(self, *args, **kwargs):
+  #   self.email = self.email.lower()
+  #   self.username = self.email 
+  #   super(PersonalUser, self).save(*args, **kwargs)
 
   
