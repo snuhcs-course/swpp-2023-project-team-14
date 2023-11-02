@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -301,6 +304,44 @@ fun passwordCheckTextField(
             focusedBorderColor = FieldStrokeBlue,
             unfocusedBorderColor = HaengshaGrey,
             errorBorderColor = FieldStrokeRed
+        )
+    )
+    return input
+}
+
+@Composable
+fun searchBar(): String {
+    var input by rememberSaveable { mutableStateOf("") }
+
+    OutlinedTextField(
+        modifier = Modifier
+            .size(width = 340.dp, height = 60.dp),
+        value = input,
+        onValueChange = { input = it },
+        placeholder = {
+            Text(
+                text = "Search",
+                fontFamily = poppins,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium,
+                color = PlaceholderGrey,
+            )
+        },
+        leadingIcon = {
+            Icon(
+                Icons.Rounded.Search,
+                contentDescription = "search icon"
+            )
+        },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Done
+        ),
+        singleLine = true,
+        shape = RoundedCornerShape(30.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = FieldStrokeBlue,
+            unfocusedBorderColor = HaengshaGrey,
         )
     )
     return input
