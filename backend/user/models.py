@@ -1,5 +1,3 @@
-import uuid
-
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin
 
@@ -68,7 +66,7 @@ class PersonalUser(AbstractUser, PermissionsMixin):
   interest = models.CharField(max_length=10, choices=INTEREST_CHOICES, default='Undefined')
 
   USERNAME_FIELD = 'email'
-  REQUIRED_FIELDS = ['nickname', 'role', 'major', 'grade', 'interest']
+  REQUIRED_FIELDS = ['nickname', 'role']
 
   objects = PersonalUserManager()
   # def save(self, *args, **kwargs):

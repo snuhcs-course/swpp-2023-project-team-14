@@ -122,6 +122,12 @@ def verify_code(request):
     entered_code = str(request.data.get("code"))
     stored_code = str(cache.get(email))
 
+    if not email or not entered_code:
+        return Response(
+            {"message": "The email field and code field must be nonempty."},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+
     if entered_code == stored_code:
         cache.delete(email)
         return Response(
@@ -234,6 +240,16 @@ def signup(request):        # for users
             {"message": "Need a nonempty major."}, status=status.HTTP_400_BAD_REQUEST
         )
     
+    if not grade:
+        return Response(
+            {"message": "Need a nonempty grade."}, status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    if not interest:
+        return Response(
+            {"message": "Need a nonempty interest."}, status=status.HTTP_400_BAD_REQUEST
+        )
+
     valid_major_choices = [choice[0] for choice in PersonalUser.MAJOR_CHOICES]
     if not major in valid_major_choices:
         return Response(
@@ -257,16 +273,15 @@ def signup(request):        # for users
             {"message": "Invalid interest."}, status=status.HTTP_400_BAD_REQUEST
         )
 
-    personal_user = PersonalUser(
+    PersonalUser.objects.create_user(
         nickname=nickname,
         email=email,
+        password=password,
         role=role,
         major=major,
         grade=grade,
         interest=interest,
     )
-    personal_user.set_password(password)
-    personal_user.save()
     try:
         return Response({"message": "created user account"}, status=status.HTTP_200_OK)
     except Exception as e:
