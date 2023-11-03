@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - main
-      - backend/server
       - dev
-      - backend/hotfix
+      - feat/backend_unit_test
       
 
 jobs:
@@ -35,14 +34,8 @@ jobs:
         ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
           docker stop haeng
           docker rm haeng
-          docker system prune -a -f
-          echo "Waiting for port to be released..."
-          sleep 10
-          if lsof -i:8080; then
-            echo "Port 8080 is still occupied"
-            exit 1
-          fi 
-          sudo fuser -k 8080/tcp || true
+          echo "Removing unused Docker images..."
+          docker image prune -f
           echo "Pulling new image..."
           docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
           docker run -d --name haeng -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
