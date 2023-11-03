@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - main
-      - backend/server
       - dev
-      - backend/hotfix
+      - feat/backend_unit_test
       
 
 jobs:
