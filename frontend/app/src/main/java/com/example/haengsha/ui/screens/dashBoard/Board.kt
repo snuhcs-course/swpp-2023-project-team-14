@@ -10,8 +10,7 @@ import com.example.haengsha.ui.uiComponents.HaengshaTopAppBar
 @Composable
 fun Board(userUiState: UserUiState, mainNavController: NavController) {
     val currentScreen = "Board"
-    val canNavigateBack = false
-    val isSettingScreen = false
+    val canNavigateBack = true
 
     Scaffold(
         topBar = {
@@ -29,6 +28,7 @@ fun Board(userUiState: UserUiState, mainNavController: NavController) {
             )
         }
     ) { innerPadding ->
-        BoardScreen(innerPadding)
+        //BoardScreen(innerPadding)
+        BoardDetailScreen(innerPadding)
     }
 }

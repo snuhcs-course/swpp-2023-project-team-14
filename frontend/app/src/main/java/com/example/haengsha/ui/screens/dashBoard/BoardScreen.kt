@@ -25,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.haengsha.ui.theme.HaengshaBlue
-import com.example.haengsha.ui.theme.HaengshaGrey
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.BoardList
@@ -39,11 +38,6 @@ fun BoardScreen(innerPadding: PaddingValues) {
             .padding(innerPadding),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        HorizontalDivider(
-            modifier = Modifier.fillMaxWidth(),
-            thickness = 1.dp,
-            color = HaengshaGrey
-        )
         Spacer(modifier = Modifier.height(20.dp))
         searchBar()
         Spacer(modifier = Modifier.height(20.dp))

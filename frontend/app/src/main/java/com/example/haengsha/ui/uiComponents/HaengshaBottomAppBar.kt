@@ -23,7 +23,7 @@ fun HaengshaBottomAppBar(
     BottomAppBar(
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp),
+            .height(60.dp),
         actions = {
             Spacer(modifier = Modifier.width(20.dp))
             IconButton(onClick = { navigateFavorite() }) {

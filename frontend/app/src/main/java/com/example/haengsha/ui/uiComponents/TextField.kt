@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -342,6 +343,37 @@ fun searchBar(): String {
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = FieldStrokeBlue,
             unfocusedBorderColor = HaengshaGrey,
+        )
+    )
+    return input
+}
+
+@Composable
+fun commentTextField(): String {
+    var input by rememberSaveable { mutableStateOf("") }
+
+    OutlinedTextField(
+        modifier = Modifier.size(width = 280.dp, height = 60.dp),
+        value = input,
+        onValueChange = { input = it },
+        placeholder = {
+            Text(
+                text = "반응을 남겨보세요",
+                fontFamily = poppins,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal,
+                color = PlaceholderGrey,
+            )
+        },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Done
+        ),
+        singleLine = true,
+        shape = RoundedCornerShape(20.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color(0x00F8F8F8)
         )
     )
     return input

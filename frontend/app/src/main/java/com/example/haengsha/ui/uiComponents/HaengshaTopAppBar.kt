@@ -10,11 +10,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.haengsha.ui.theme.md_theme_light_primaryContainer
 import com.example.haengsha.ui.theme.poppins
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,6 +49,7 @@ fun HaengshaTopAppBar(
                 }
             }
         },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(md_theme_light_primaryContainer)
 //        TODO setting 화면 가능하면 추가
 //        actions = {
 //            if (!isSettingScreen) {

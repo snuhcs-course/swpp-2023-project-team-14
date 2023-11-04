@@ -2,6 +2,7 @@ package com.example.haengsha.ui.uiComponents
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.haengsha.R
+import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.HaengshaGrey
 import com.example.haengsha.ui.theme.HaengshaTheme
 import com.example.haengsha.ui.theme.LikePink
@@ -40,6 +43,7 @@ fun BoardList(isFavorite: Boolean) {
             .fillMaxWidth()
             .height(60.dp)
             .padding(horizontal = 15.dp, vertical = 10.dp)
+            .clickable { /*TODO 상세페이지 보여주기*/ }
     ) {
         Row(
             modifier = Modifier
@@ -134,6 +138,53 @@ fun BoardList(isFavorite: Boolean) {
     }
 }
 
+@Composable
+fun CommentList(
+    userNickName: String,
+    commentDate: String,
+    commentContent: String
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(70.dp)
+            .padding(vertical = 10.dp, horizontal = 15.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(25.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.user_comment_icon),
+                contentDescription = "user comment Icon",
+                tint = HaengshaBlue
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = userNickName,
+                fontFamily = poppins,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Normal
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = commentDate,
+                fontFamily = poppins,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Normal,
+                color = PlaceholderGrey
+            )
+        }
+        Text(
+            text = commentContent,
+            fontFamily = poppins,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Normal
+        )
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
