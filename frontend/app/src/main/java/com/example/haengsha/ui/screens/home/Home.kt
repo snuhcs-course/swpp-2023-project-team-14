@@ -15,9 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,18 +57,18 @@ class SharedViewModel() : ViewModel() {
 
     // Initialize _festivalItems and _academicItems with initial data
     @RequiresApi(Build.VERSION_CODES.O)
-    private val _festivalItems = MutableLiveData<List<EventCardData>>()
+    private val _festivalItems = MutableLiveData<List<EventCardData>?>()
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private val _academicItems = MutableLiveData<List<EventCardData>>()
-
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    val festivalItems: LiveData<List<EventCardData>> = _festivalItems
+    private val _academicItems = MutableLiveData<List<EventCardData>?>()
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    val academicItems: LiveData<List<EventCardData>> = _academicItems
+    val festivalItems: MutableLiveData<List<EventCardData>?> = _festivalItems
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val academicItems: MutableLiveData<List<EventCardData>?> = _academicItems
 
 
     // Update functions to set LiveData properties
@@ -80,12 +78,12 @@ class SharedViewModel() : ViewModel() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateFestivalItems(newItems: List<EventCardData>) {
+    fun updateFestivalItems(newItems: List<EventCardData>?) {
         _festivalItems.value = newItems
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateAcademicItems(newItems: List<EventCardData>) {
+    fun updateAcademicItems(newItems: List<EventCardData>?) {
         _academicItems.value = newItems
     }
 }
@@ -108,6 +106,8 @@ fun HomeScreen(
 ) {
     val eventViewModel: EventViewModel =
         viewModel(factory = EventViewModel.Factory(sharedViewModel))
+    eventViewModel.getEventByDate(eventType = "Academic", LocalDate.now())
+    eventViewModel.getEventByDate(eventType = "Festival", LocalDate.now())
     val currentDate = remember { LocalDate.now() }
     val currentMonth = remember { YearMonth.now() }
     val startDate = remember { currentMonth.minusMonths(100).atStartOfMonth() } // Adjust as needed
@@ -123,40 +123,31 @@ fun HomeScreen(
 
     var isDatePickerDialogVisible by remember { mutableStateOf(false) }
 
-    Scaffold(topBar = {
-        TopAppBar(
-            title = { Text(text = "Home") },
-        )
-    }) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            WeekCalendar(
-                state = state,
-                dayContent = { day ->
-                    Day(day.date, isSelected = selection == day.date) { clicked ->
-                        if (selection != clicked) {
-                            selection = clicked
-                            //pickDate = clicked
-                            eventViewModel.getEventByDate(eventType = "Academic", clicked)
-                            eventViewModel.getEventByDate(eventType = "Festival", clicked)
-                        }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        WeekCalendar(
+            state = state,
+            dayContent = { day ->
+                Day(day.date, isSelected = selection == day.date) { clicked ->
+                    if (selection != clicked) {
+                        selection = clicked
+                        //pickDate = clicked
+                        eventViewModel.getEventByDate(eventType = "Academic", clicked)
+                        eventViewModel.getEventByDate(eventType = "Festival", clicked)
                     }
-                },
-            )
-            TabView(sharedViewModel, selection, 0)
-            Button(
-                onClick = {
-                    isDatePickerDialogVisible = true
                 }
-            ) {
-                Text("Pick Date")
+            },
+        )
+        TabView(sharedViewModel, selection, 0)
+        Button(
+            onClick = {
+                isDatePickerDialogVisible = true
             }
+        ) {
+            Text("Pick Date")
         }
-
-
     }
 }
 

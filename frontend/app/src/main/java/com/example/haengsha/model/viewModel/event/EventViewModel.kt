@@ -48,11 +48,11 @@ open class EventViewModel(
             try {
                 var eventTypeConverted = if (eventType == "Festival") 1 else 0
 
-                val eventGetResponse: List<EventResponse> =
+                val eventGetResponse: List<EventResponse>? =
                     eventDataRepository.getEventByDate(eventTypeConverted, date.toString())
 
-                val eventCardDataList: List<EventCardData> =
-                    eventGetResponse.map { it.toEventCardData() }
+                val eventCardDataList: List<EventCardData>? =
+                    eventGetResponse?.map { it.toEventCardData() }
 
                 if (eventType == "Festival") {
                     sharedViewModel.updateFestivalItems(eventCardDataList)
@@ -64,6 +64,10 @@ open class EventViewModel(
 
             } catch (e: HttpException) {
                 val errorMessage = e.response()?.errorBody()?.string() ?: "이벤트를 불러오지 못했습니다."
+                sharedViewModel.updateAcademicItems(null)
+                sharedViewModel.updateFestivalItems(null)
+                sharedViewModel.updateSelectedDate(date)
+                e.printStackTrace()
             } catch (e: IOException) {
                 val errorMessage = "이벤트를 불러오지 못했습니다."
             } catch (e: Exception) {
