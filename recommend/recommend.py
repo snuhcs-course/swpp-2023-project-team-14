@@ -1,7 +1,9 @@
+import csv
+import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
-import numpy as np
+
 
 def min_max_scaling(embeddings, sigma_factor=0):
     min_val = np.min(embeddings)
@@ -93,4 +95,8 @@ if __name__ == '__main__':
 
     ## Get List of recommendations for All Users
     allRecommends = [get_recommend(userIdx, False) for userIdx in range(len(userkoBertEmbeddings))]
-    # allRecommends = np.asarray(allRecommends)
+    allRecommends_str = np.asarray([np.char.replace(elem.astype(str), ',', ' ') for elem in allRecommends])
+    index = np.arange(1, allRecommends_str.shape[0] + 1).reshape(-1, 1)
+    allRecommends_with_index = np.hstack((index, allRecommends_str))
+    header = "Index, Recommend1, Recommend2, Recommend3, Recommend4,Recommend5, Recommend6, Recommend7, Recommend8, Recommend9, Recommend10"
+    np.savetxt('all_recommends.csv', allRecommends_with_index, delimiter=",", header=header, comments='', fmt='%s')
