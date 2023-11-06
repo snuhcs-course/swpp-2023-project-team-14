@@ -3,7 +3,7 @@ from .models import Post, Duration, EventDuration
 from user.models import PersonalUser
 
 
-class UsernicknameSerializer(serializers.ModelSerializer):
+class UserNicknameSerializer(serializers.ModelSerializer):
     class Meta:
         model = PersonalUser
         fields = [
@@ -19,13 +19,13 @@ class EventDurationSerializer(serializers.ModelSerializer):
         fields = ["event_day"]
 
 
-class Postserializer(serializers.ModelSerializer):
+class PostSerializer(serializers.ModelSerializer):
     like_count = serializers.IntegerField()
     favorite_count = serializers.IntegerField()
     event_durations = EventDurationSerializer(
         many=True, read_only=True, source="eventduration_set"
     )
-    author = UsernicknameSerializer(read_only=True)
+    author = UserNicknameSerializer(read_only=True)
 
     class Meta:
         model = Post
@@ -43,3 +43,9 @@ class Postserializer(serializers.ModelSerializer):
             "favorite_count",
             
         )
+
+class UploadImageSerializer(serializers.Serializer):
+    image = serializers.ImageField()
+
+class ImageURLSerializer(serializers.Serializer):
+    image_url = serializers.URLField()
