@@ -82,10 +82,18 @@ class PostDetailView(APIView):
     def get(self, request, post_id):
         try:
             post = Post.objects.get(id=post_id)
-        except:
+        except Post.DoesNotExist:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        is_liked = post.like_users.filter(id=request.user.id).exists()
+        is_favorite = post.favorite_users.filter(id=request.user.id).exists()
+
         serializer = Postserializer(post)
-        return Response(serializer.data, status=200)
+        data = serializer.data
+        data['is_liked'] = is_liked
+        data['is_favorite'] = is_favorite
+
+        return Response(data, status=200)
 
     def delete(self, request, post_id):
         try:

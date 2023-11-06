@@ -29,6 +29,9 @@ class Favorite(models.Model):
   user = models.ForeignKey(PersonalUser, on_delete=models.CASCADE)
   post = models.ForeignKey(Post, on_delete=models.CASCADE)
   
+class Recommend(models.Model):
+  user = models.ForeignKey(PersonalUser, on_delete=models.CASCADE)
+  post = models.ForeignKey(Post, on_delete=models.CASCADE)
 
 class EventDuration(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
