@@ -234,6 +234,7 @@ fun BoardDetailScreen(innerPadding: PaddingValues) {
                                 color = LikePink
                             )
                         }
+                        /*
                         Spacer(modifier = Modifier.width(12.dp))
                         Row(
                             verticalAlignment = Alignment.CenterVertically
@@ -253,6 +254,7 @@ fun BoardDetailScreen(innerPadding: PaddingValues) {
                                 color = CommentBlue
                             )
                         }
+                        */
                         Spacer(modifier = Modifier.width(8.dp))
                         Row(
                             modifier = Modifier.clickable { /*TODO 즐겨찾기 누르고 별 바꾸기*/ },
@@ -297,6 +299,7 @@ fun BoardDetailScreen(innerPadding: PaddingValues) {
                     Spacer(modifier = Modifier.height(15.dp))
                 }
             }
+            /*
             items(1) {
                 HorizontalDivider(
                     modifier = Modifier.fillMaxWidth(),
@@ -330,7 +333,9 @@ fun BoardDetailScreen(innerPadding: PaddingValues) {
                     color = PlaceholderGrey
                 )
             }
+            */
         }
+        /*
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -352,5 +357,6 @@ fun BoardDetailScreen(innerPadding: PaddingValues) {
                 CommentButton(isCommented = true) { /*TODO onClick 넣기*/ }
             }
         }
+        */
     }
 }

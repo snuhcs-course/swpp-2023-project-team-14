@@ -42,8 +42,8 @@ fun BoardList(isFavorite: Boolean) {
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
-            .padding(horizontal = 15.dp, vertical = 10.dp)
             .clickable { /*TODO 상세페이지 보여주기*/ }
+            .padding(horizontal = 15.dp, vertical = 10.dp)
     ) {
         Row(
             modifier = Modifier

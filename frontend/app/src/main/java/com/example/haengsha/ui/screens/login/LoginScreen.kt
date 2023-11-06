@@ -146,7 +146,7 @@ fun LoginScreen(
 //                    } else {
                     loginTrigger++
                     // loginViewModel.login("$emailInput@snu.ac.kr", passwordInput)
-                    loginViewModel.login("s.lee.0713@snu.ac.kr", "test")
+                    loginViewModel.login("user1@snu.ac.kr", "user1")
                     //}
                 })
             if (isLoginFailedDialogVisible) {

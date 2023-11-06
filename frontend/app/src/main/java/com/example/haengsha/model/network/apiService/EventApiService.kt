@@ -5,7 +5,6 @@ import androidx.annotation.RequiresApi
 import com.example.haengsha.ui.screens.home.EventCardData
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import retrofit2.http.GET
 import retrofit2.http.Path
 import java.time.LocalDate
