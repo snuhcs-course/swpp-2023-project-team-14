@@ -18,6 +18,7 @@ class Post(models.Model):
   favorite_count = models.IntegerField(default=0)
   event_durations = models.ManyToManyField(Duration, blank=True, related_name='duration_events', through='EventDuration')
   time = models.CharField(max_length=100, null=True)
+  recommend_users = models.ManyToManyField(PersonalUser, blank=True, related_name='recommend_posts', through='Recommend')
 
   
 
@@ -29,10 +30,14 @@ class Favorite(models.Model):
   user = models.ForeignKey(PersonalUser, on_delete=models.CASCADE)
   post = models.ForeignKey(Post, on_delete=models.CASCADE)
   
-class Recommend(models.Model):
-  user = models.ForeignKey(PersonalUser, on_delete=models.CASCADE)
-  post = models.ForeignKey(Post, on_delete=models.CASCADE)
 
 class EventDuration(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     duration = models.ForeignKey(Duration, on_delete=models.CASCADE,to_field='event_day')
+
+class Recommend(models.Model):
+  user = models.ForeignKey(PersonalUser, on_delete=models.CASCADE)
+  post = models.ForeignKey('post.Post', on_delete=models.CASCADE)
+  score = models.IntegerField(default=0)
+  class Meta:
+    ordering = ['-score']

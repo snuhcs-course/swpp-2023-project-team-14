@@ -112,7 +112,6 @@ class PostFavoriteView(APIView):
     def get(self, request):
         posts = (
             Post.objects.filter(favorite_users=request.user)
-            .annotate(like_count=Count("like_users"))
             .order_by("-like_count")
         )
         if posts.count() == 0:
