@@ -91,15 +91,16 @@ class PostListView(APIView):
                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         is_festival = request.data.get("is_festival")
+        time = request.data.get("time")
         post = Post.objects.create(
             title=title,
             content=content,
+            time=time,
             place=place,
             image=url,
             is_festival=is_festival,
             author=author,
         )
-        time = request.data.get("time")
         durations = request.data.get("duration")    # assume that durations is a single duration. 
         print(f'durations:\n{durations}')
         # for duration_data in durations:
