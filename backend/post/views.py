@@ -52,10 +52,8 @@ class PostListView(APIView):
         title = request.data.get("title")
         content = request.data.get("content")
         author = request.user
-        # print(f'author: {author}')
         place = request.data.get("place")
         image = request.FILES.get("image")
-        # print(f'image:\n{image}')
         url = ""
         if image and image.size > 0:   # only do this if "image" is non-empty
             image_data = {'image': image}
@@ -67,11 +65,13 @@ class PostListView(APIView):
                 )
             image = image_serializer.validated_data['image']
             try: 
-                image_name = str(uuid.uuid4()) + str(image.name).split('.')[0]
-                print(f'image_name: {image_name}')
+                image_name = str(uuid.uuid4())
+                image_extension = '.' + str(image.name).split('.')[1]
+                full_image_name = image_name + image_extension
+                print(f'full_image_name: {full_image_name}')
                 # utils.upload_file_to_s3_from_mem(image, utils.s3_bucket, image_name)
                 presigned_url = utils.generate_presigned_url(utils.s3_bucket, image_name, expiration=3600)
-                
+
                 try:
                     file_content = image.read()
                     upload_response = utils.upload_file_to_s3_requests(file_content, presigned_url)
@@ -138,11 +138,16 @@ class PostDetailView(APIView):
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
         
         image_name = post.image.split('/')[-1]
-        presigned_url = utils.generate_presigned_url(utils.s3_bucket, image_name, expiration=3600)
+        image_first = image_name.split('.')[0]
+        image_extension = image_name.split('.')[1]
+        presigned_url = utils.generate_presigned_url(utils.s3_bucket, image_first, expiration=3600)
+        presigned_url += '.' + image_extension
         serializer = PostSerializer(post)
 
         post_response_data = serializer.data 
         post_response_data['image'] = presigned_url
+        elem = post_response_data['image']
+        print(f'get:\n{elem}')
 
         return Response(post_response_data, status=200)
         # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
