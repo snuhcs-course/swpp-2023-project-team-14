@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Duration, EventDuration
+from .models import Post, EventDuration
 from user.models import PersonalUser
 
 

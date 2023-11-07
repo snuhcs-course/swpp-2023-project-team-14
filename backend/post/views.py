@@ -143,10 +143,13 @@ class PostDetailView(APIView):
     def get(self, request, post_id):
         try:
             post = Post.objects.get(id=post_id)
-        except:
+        except Post.DoesNotExist:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
         
+        is_liked = post.like_users.filter(id=request.user.id).exists()
+        is_favorite = post.favorite_users.filter(id=request.user.id).exists()
         post_image = post.image
+
         if utils.s3_bucket in post_image:
             print(f'image is uploaded to s3. Image_name=\n{post_image}')
             image_name = post.image.split('/')[-1]
@@ -164,8 +167,11 @@ class PostDetailView(APIView):
             serializer = PostSerializer(post)
             post_response_data = serializer.data 
 
+        post_response_data = serializer.data
+        post_response_data['is_liked'] = is_liked
+        post_response_data['is_favorite'] = is_favorite
+
         return Response(post_response_data, status=200)
-        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, post_id):
         try:
@@ -184,7 +190,6 @@ class PostFavoriteView(APIView):
     def get(self, request):
         posts = (
             Post.objects.filter(favorite_users=request.user)
-            .annotate(like_count=Count("like_users"))
             .order_by("-like_count")
         )
         if posts.count() == 0:
