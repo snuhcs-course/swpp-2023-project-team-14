@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os, environ
 from decouple import config
+import pymysql
+pymysql.install_as_MySQLdb()
 
 env = environ.Env(DEBUG=(bool, True))
 
