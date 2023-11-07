@@ -102,20 +102,27 @@ class PostListView(APIView):
             author=author,
         )
         durations = request.data.get("duration")    # assume that durations is a single duration. 
-        print(f'durations:\n{durations}')
-        # for duration_data in durations:
-        try:    # need to load duration_data as a JSON object
+        try:
             duration_data_json = json.loads(durations)
-            print(f'duration_data_json:\n{duration_data_json}')
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON format'}, status=400)
-        
-        event_day = duration_data_json["event_day"]
-        try:
-            duration = Duration.objects.get(event_day=event_day)
-        except:
-            duration = Duration.objects.create(event_day=event_day)
-        post.event_durations.add(duration)
+    
+        for duration_data in duration_data_json:
+            # need to load duration_data as a JSON object
+            # duration_data_json = json.loads(duration_data)
+            # print(f'duration_data_json:\n{duration_data_json}')
+            print(f'duration_data:\n{duration_data}')
+            # try:
+            #     duration_data_json = json.loads(duration_data)
+            # except json.JSONDecodeError:
+            #     return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+
+            event_day = duration_data["event_day"]
+            try:
+                duration = Duration.objects.get(event_day=event_day)
+            except:
+                duration = Duration.objects.create(event_day=event_day)
+            post.event_durations.add(duration)
         post.save()
 
         if author.role != "Group":
