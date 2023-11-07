@@ -43,11 +43,15 @@ def upload_file_to_s3_from_mem(file_obj, bucket, object_name=None):
         return False 
     return True 
 
-def generate_presigned_url(bucket_name, object_key, expiration=3600):
+def generate_presigned_url_img(bucket_name, object_key, expiration=3600, put=True):
     try:
-        response = s3_client.generate_presigned_url('get_object',
+        command = 'put_object' if put else 'get_object'
+        key = 'ContentType' if put else 'ResponseContentType'
+        response = s3_client.generate_presigned_url(command,
             Params={'Bucket': bucket_name,
-                    'Key': object_key},
+                    'Key': object_key,
+                    key: 'image/jpeg'
+                    },
             ExpiresIn=expiration)
     except Exception as e:
         print(e)

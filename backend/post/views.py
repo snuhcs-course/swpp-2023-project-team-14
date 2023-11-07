@@ -70,22 +70,23 @@ class PostListView(APIView):
                 full_image_name = image_name + image_extension
                 print(f'full_image_name: {full_image_name}')
                 # utils.upload_file_to_s3_from_mem(image, utils.s3_bucket, image_name)
-                presigned_url = utils.generate_presigned_url(utils.s3_bucket, image_name, expiration=3600)
-
+                presigned_url = utils.generate_presigned_url_img(utils.s3_bucket, full_image_name, expiration=3600, put=True)
+                print(f'post: presigned_url\n{presigned_url}')
+                
                 try:
                     file_content = image.read()
                     upload_response = utils.upload_file_to_s3_requests(file_content, presigned_url)
                 except Exception as e:
                     return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-                s3_url = f"https://{utils.s3_bucket}.s3.{utils.region_name}.amazonaws.com/{image_name}"
+                s3_url = f"https://{utils.s3_bucket}.s3.{utils.region_name}.amazonaws.com/{full_image_name}"
                 image_url_serializer = ImageURLSerializer(
                     data={"image_url": s3_url}
                 )
                 if not image_url_serializer.is_valid():
                     return Response({"error": "issue with image_url_serializer"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 url = image_url_serializer.validated_data['image_url']
-                print(f'retrieved url:\n{url}')
+                print(f'post url:\n{url}')
             except Exception as e:
                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -137,17 +138,23 @@ class PostDetailView(APIView):
         except:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
         
-        image_name = post.image.split('/')[-1]
-        image_first = image_name.split('.')[0]
-        image_extension = image_name.split('.')[1]
-        presigned_url = utils.generate_presigned_url(utils.s3_bucket, image_first, expiration=3600)
-        presigned_url += '.' + image_extension
-        serializer = PostSerializer(post)
-
-        post_response_data = serializer.data 
-        post_response_data['image'] = presigned_url
-        elem = post_response_data['image']
-        print(f'get:\n{elem}')
+        post_image = post.image
+        if utils.s3_bucket in post_image:
+            print(f'image is uploaded to s3. Image_name=\n{post_image}')
+            image_name = post.image.split('/')[-1]
+            image_first = image_name.split('.')[0]
+            image_extension = image_name.split('.')[1]
+            presigned_url = utils.generate_presigned_url_img(utils.s3_bucket, image_name, expiration=3600, put=False)
+            # presigned_url += '.' + image_extension
+            serializer = PostSerializer(post)
+            post_response_data = serializer.data 
+            post_response_data['image'] = presigned_url
+            elem = post_response_data['image']
+            print(f'get presigned_url:\n{elem}')
+        else:
+            print(f'image is not in s3. Image_name=\n{post_image}')
+            serializer = PostSerializer(post)
+            post_response_data = serializer.data 
 
         return Response(post_response_data, status=200)
         # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

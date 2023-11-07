@@ -36,6 +36,4 @@ urlpatterns = [
     path('like/<int:post_id>/', LikeView.as_view()),
     path('favorite/', PostFavoriteView.as_view()),
 
-    # 새 행사 등록 URL
-    path('new_event/', PostListView.as_view(), name='create-new-event')
 ]
