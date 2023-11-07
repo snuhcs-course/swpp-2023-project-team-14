@@ -16,6 +16,7 @@ def get_recommend_items(userIdx, topN=5):
     userScores = similarityMatrix[userIdx]
     topItemIndices = userScores.argsort()[-topN:][::-1]
     recommendedItems = itemEmbeddingsDf.iloc[topItemIndices]
+    topItemIndices = topItemIndices + 1
     return recommendedItems, userScores, topItemIndices
 
 def get_least_recommend_items(userIdx, bottomN=5):
