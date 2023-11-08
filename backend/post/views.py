@@ -41,9 +41,9 @@ class PostListView(APIView):
             posts = posts.filter(event_durations__event_day__lte=end_date)
 
         posts = posts.order_by("-like_count")
-        if posts.count() == 0:
-            empty_data = []
-            return JsonResponse(empty_data, status=status.HTTP_200_OK, safe=False)
+        # if posts.count() == 0:
+        #     empty_data = []
+        #     return JsonResponse(empty_data, status=status.HTTP_200_OK, safe=False)
 
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=200)
