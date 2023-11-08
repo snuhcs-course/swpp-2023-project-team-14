@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - dev
+      - backend/null_post
       
 
 jobs:
