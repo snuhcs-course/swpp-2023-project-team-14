@@ -1,5 +1,6 @@
 package com.example.haengsha.model.dataSource
 
+import com.example.haengsha.model.network.apiService.BoardApiService
 import com.example.haengsha.model.network.apiService.EventApiService
 import com.example.haengsha.model.network.apiService.LoginApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -12,6 +13,7 @@ import java.util.concurrent.TimeUnit
 interface AppContainer {
     val loginDataRepository: LoginDataRepository
     val eventDataRepository: EventDataRepository
+    val boardDataRepository: BoardDataRepository
 }
 
 class HaengshaAppContainer : AppContainer {
@@ -26,6 +28,16 @@ class HaengshaAppContainer : AppContainer {
         .baseUrl(baseUrl)
         .client(okHttpClient)
         .build()
+
+    private val retrofitBoardService: BoardApiService by lazy {
+        retrofit.create(BoardApiService::class.java)
+    }
+
+    override val boardDataRepository: BoardDataRepository by lazy {
+        NetworkBoardDataRepository(
+            retrofitBoardService
+        )
+    }
 
     private val retrofitEventService: EventApiService by lazy {
         retrofit.create(EventApiService::class.java)

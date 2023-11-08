@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,7 +18,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,9 +35,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.haengsha.model.route.MainRoute
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.viewModel.event.EventViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
+import com.example.haengsha.ui.uiComponents.HaengshaBottomAppBar
+import com.example.haengsha.ui.uiComponents.HaengshaTopAppBar
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.atStartOfMonth
@@ -103,6 +106,7 @@ fun formatDateToYYYYMMDD(date: MutableLiveData<LocalDate>): String {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
+    innerPadding: PaddingValues,
     userUiState: UserUiState,
     sharedViewModel: SharedViewModel
 ) {
@@ -125,40 +129,32 @@ fun HomeScreen(
 
     var isDatePickerDialogVisible by remember { mutableStateOf(false) }
 
-    Scaffold(topBar = {
-        TopAppBar(
-            title = { Text(text = "Home") },
-        )
-    }) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            WeekCalendar(
-                state = state,
-                dayContent = { day ->
-                    Day(day.date, isSelected = selection == day.date) { clicked ->
-                        if (selection != clicked) {
-                            selection = clicked
-                            //pickDate = clicked
-                            eventViewModel.getEventByDate(eventType = "Academic", clicked)
-                            eventViewModel.getEventByDate(eventType = "Festival", clicked)
-                        }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+    ) {
+        WeekCalendar(
+            state = state,
+            dayContent = { day ->
+                Day(day.date, isSelected = selection == day.date) { clicked ->
+                    if (selection != clicked) {
+                        selection = clicked
+                        //pickDate = clicked
+                        eventViewModel.getEventByDate(eventType = "Academic", clicked)
+                        eventViewModel.getEventByDate(eventType = "Festival", clicked)
                     }
-                },
-            )
-            TabView(sharedViewModel, selection, 0)
-            Button(
-                onClick = {
-                    isDatePickerDialogVisible = true
                 }
-            ) {
-                Text("Pick Date")
+            },
+        )
+        TabView(sharedViewModel, selection, 0)
+        Button(
+            onClick = {
+                isDatePickerDialogVisible = true
             }
+        ) {
+            Text("Pick Date")
         }
-
-
     }
 }
 
@@ -217,8 +213,26 @@ fun Home(
     mainNavController: NavController
 ) {
     val sharedViewModel = viewModel<SharedViewModel>()
-    Column {
-        HomeScreen(userUiState, sharedViewModel)
+    val currentScreen = "Home"
+    val canNavigateBack = false
+
+    Scaffold(
+        topBar = {
+            HaengshaTopAppBar(
+                currentScreen = currentScreen,
+                canNavigateBack = canNavigateBack,
+                navigateBack = { /* No back button */ }
+            )
+        },
+        bottomBar = {
+            HaengshaBottomAppBar(
+                navigateFavorite = { mainNavController.navigate(MainRoute.Favorite.route) },
+                navigateHome = { mainNavController.navigate(MainRoute.Home.route) },
+                navigateBoard = { mainNavController.navigate(MainRoute.Dashboard.route) }
+            )
+        }
+    ) { innerPadding ->
+        HomeScreen(innerPadding, userUiState, sharedViewModel)
     }
 }
 
