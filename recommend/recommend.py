@@ -1,4 +1,3 @@
-import csv
 import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
@@ -17,17 +16,18 @@ def get_recommend_items(userIdx, topN=5):
     userScores = similarityMatrix[userIdx]
     topItemIndices = userScores.argsort()[-topN:][::-1]
     recommendedItems = itemEmbeddingsDf.iloc[topItemIndices]
-    return recommendedItems, userScores
+    topItemIndices = topItemIndices + 1
+    return recommendedItems, userScores, topItemIndices
 
 def get_least_recommend_items(userIdx, bottomN=5):
     userScores = similarityMatrix[userIdx]
     bottomItemIndices = userScores.argsort()[:bottomN] 
     leastRecommendedItems = itemEmbeddingsDf.iloc[bottomItemIndices]
-    return leastRecommendedItems, userScores
+    return leastRecommendedItems, userScores, bottomItemIndices
 
-def get_recommend(userIdx, printAll = False):
-    recommendedEvents, scores = get_recommend_items(userIdx,10)
-    leastRecommendEvents, scores = get_least_recommend_items(userIdx,5)
+def get_recommend(userIdx, printAll = False, index = False):
+    recommendedEvents, scores, top_item_indices = get_recommend_items(userIdx,10)
+    leastRecommendEvents, scores, bottom_item_indices = get_least_recommend_items(userIdx,5)
 
     if printAll:
         print(userEmbeddingsDf.iloc[userIdx])
@@ -43,7 +43,9 @@ def get_recommend(userIdx, printAll = False):
         print("비추천행사\n")
         print(leastRecommendEvents["행사명"])
         print("\n","="*100)
-
+    
+    if index:
+        return top_item_indices
     return recommendedEvents["행사명"].to_numpy()
 
 def recover_scale(df, randomness=0):
@@ -94,9 +96,16 @@ if __name__ == '__main__':
 
 
     ## Get List of recommendations for All Users
-    allRecommends = [get_recommend(userIdx, False) for userIdx in range(len(userkoBertEmbeddings))]
-    allRecommends_str = np.asarray([np.char.replace(elem.astype(str), ',', ' ') for elem in allRecommends])
-    index = np.arange(1, allRecommends_str.shape[0] + 1).reshape(-1, 1)
-    allRecommends_with_index = np.hstack((index, allRecommends_str))
+    allRecommends = np.asarray([get_recommend(userIdx, False, False) for userIdx in range(len(userkoBertEmbeddings))])
+    allRecommends = np.char.replace(np.char.replace(np.char.replace(np.char.replace(allRecommends.astype(str), ',', ''), '\'', ''), '\"', ''), "\n", '')
+    
+    index = np.arange(1, allRecommends.shape[0] + 1).reshape(-1, 1)
+    allRecommends_with_index = np.hstack((index, allRecommends))
     header = "Index, Recommend1, Recommend2, Recommend3, Recommend4,Recommend5, Recommend6, Recommend7, Recommend8, Recommend9, Recommend10"
     np.savetxt('all_recommends.csv', allRecommends_with_index, delimiter=",", header=header, comments='', fmt='%s')
+
+    allRecommendsIndices = np.asarray([get_recommend(userIdx, False, True) for userIdx in range(len(userkoBertEmbeddings))])
+    recommended_items_by_index = np.hstack((index, allRecommendsIndices))
+    # note: all_recommends_index = (index of event in eventData.csv) - 2
+    # reason: all_recommends_index gives zero-based indices to events in eventData.csv, but the events in eventData.csv have one-based indices that also takes the header into account.
+    np.savetxt('all_recommends_index.csv', recommended_items_by_index, delimiter=",", header=header, comments='', fmt='%s')
