@@ -42,26 +42,8 @@ class PostListView(APIView):
 
         posts = posts.order_by("-like_count")
         if posts.count() == 0:
-            empty_data = {
-                "id": 'null', 
-                "title": 'null',
-                "is_festival": 'null',
-                "author": 'null',
-                "event_durations": 'null',
-                "place": 'null',
-                "time": 'null',
-                "content": 'null',
-                "image": None,
-                "like_count": '0',
-                "favorite_count": '0'
-            }
-            serializer = PostSerializer(data=empty_data)
-            if serializer.is_valid():
-                ...
-            else:
-                return Response({'error': serializer.errors}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
-            return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+            empty_data = []
+            return JsonResponse(empty_data, status=status.HTTP_200_OK, safe=False)
 
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=200)
