@@ -1,6 +1,7 @@
 package com.example.haengsha.ui.screens.dashBoard
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,13 +26,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -41,9 +42,9 @@ import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
-import com.example.haengsha.ui.uiComponents.ConfirmOnlyDialog
 import com.example.haengsha.ui.uiComponents.boardList
 import com.example.haengsha.ui.uiComponents.searchBar
+import es.dmoral.toasty.Toasty
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -51,75 +52,74 @@ import java.time.LocalDate
 fun boardScreen(
     innerPadding: PaddingValues,
     boardViewModel: BoardViewModel,
-    boardNavController: NavController
+    boardNavController: NavController,
+    isFavorite: Boolean,
+    userToken: String
 ): Int {
+    val boardContext = LocalContext.current
     val boardListUiState = boardViewModel.boardListUiState
     val localDate = LocalDate.now().toString()
-    var isLoginFailedDialogVisible by remember { mutableStateOf(false) }
     var eventId by rememberSaveable { mutableIntStateOf(0) }
 
     LaunchedEffect(Unit) {
-        boardViewModel.getBoardList(localDate)
+        if (isFavorite) {
+            boardViewModel.getFavoriteBoardList(userToken)
+            Log.d("favor", "fetch")
+        } else boardViewModel.getBoardList(localDate)
     }
 
     when (boardListUiState) {
         is BoardListUiState.HttpError -> {
-            isLoginFailedDialogVisible = true
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
                 contentAlignment = Alignment.Center
             ) {
-                ConfirmOnlyDialog(
-                    onDismissRequest = { isLoginFailedDialogVisible = false },
-                    onClick = { isLoginFailedDialogVisible = false },
-                    text = "아무 행사도 등록되지 않았어요... :("
-                )
+                if (isFavorite) {
+                    Text(
+                        text = "즐겨찾기한 행사가 없어요 :(\n\n관심 있는 행사를\n즐겨찾기 해보세요!",
+                        fontFamily = poppins,
+                        fontSize = 25.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        lineHeight = 40.sp,
+                        textAlign = TextAlign.Center
+                    )
+                } else {
+                    Text(
+                        text = "등록된 행사가 없어요 :(",
+                        fontFamily = poppins,
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
 
         is BoardListUiState.NetworkError -> {
-            isLoginFailedDialogVisible = true
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding),
-                contentAlignment = Alignment.Center
+                    .padding(innerPadding)
             ) {
-                ConfirmOnlyDialog(
-                    onDismissRequest = { isLoginFailedDialogVisible = false },
-                    onClick = { isLoginFailedDialogVisible = false },
-                    text = "네트워크 연결을 확인해주세요."
-                )
+                Toasty.error(boardContext, "네트워크 연결을 확인해주세요", Toasty.LENGTH_SHORT).show()
             }
         }
 
         is BoardListUiState.Error -> {
-            isLoginFailedDialogVisible = true
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding),
-                contentAlignment = Alignment.Center
+                    .padding(innerPadding)
             ) {
-                ConfirmOnlyDialog(
-                    onDismissRequest = { isLoginFailedDialogVisible = false },
-                    onClick = { isLoginFailedDialogVisible = false },
-                    text = "Exception occurs"
-                )
+                Toasty.error(boardContext, "알 수 없는 에러가 발생했어요 :( 메일로 제보해주세요!", Toasty.LENGTH_SHORT)
+                    .show()
             }
         }
 
         is BoardListUiState.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                contentAlignment = Alignment.Center
-            ) {
-                //Toasty.info(boardContext, "로딩 중...", Toasty.LENGTH_SHORT, true).show()
-            }
+            // Do nothing
         }
 
         is BoardListUiState.BoardListResult -> {
@@ -171,7 +171,7 @@ fun boardScreen(
                             boardNavController.navigate(BoardRoute.BoardDetail.route)
                         }) {
                             boardList(
-                                isFavorite = false,
+                                isFavorite = isFavorite,
                                 event = event
                             )
                         }

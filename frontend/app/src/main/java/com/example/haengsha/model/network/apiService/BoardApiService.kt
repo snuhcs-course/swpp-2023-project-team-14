@@ -17,4 +17,9 @@ interface BoardApiService {
         @Header("Authorization") token: String,
         @Path("post_id") postId: Int,
     ): BoardDetailResponse
+
+    @GET("/api/favorite")
+    suspend fun getFavoriteList(
+        @Header("Authorization") token: String
+    ): List<BoardListResponse>
 }

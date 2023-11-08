@@ -8,10 +8,10 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.MainRoute
 import com.example.haengsha.model.viewModel.UserViewModel
+import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.screens.dashBoard.Board
 import com.example.haengsha.ui.screens.favorite.Favorite
 import com.example.haengsha.ui.screens.home.Home
@@ -22,6 +22,7 @@ import com.example.haengsha.ui.screens.login.Login
 fun HaengshaApp() {
     val userViewModel: UserViewModel = viewModel()
     val userUiState by userViewModel.uiState.collectAsState()
+    val boardViewModel: BoardViewModel = viewModel(factory = BoardViewModel.Factory)
     val mainNavController = rememberNavController()
 
     NavHost(
@@ -43,13 +44,15 @@ fun HaengshaApp() {
         composable(MainRoute.Dashboard.route) {
             Board(
                 userUiState = userUiState,
-                mainNavController = mainNavController
+                mainNavController = mainNavController,
+                boardViewModel = boardViewModel
             )
         }
         composable(MainRoute.Favorite.route) {
             Favorite(
                 userUiState = userUiState,
-                mainNavController = mainNavController
+                mainNavController = mainNavController,
+                boardViewModel = boardViewModel
             )
         }
 //        composable(MainRoute.Setting.route) {

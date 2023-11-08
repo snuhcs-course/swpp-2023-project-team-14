@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -25,13 +24,13 @@ import com.example.haengsha.ui.uiComponents.HaengshaTopAppBar
 @Composable
 fun Board(
     userUiState: UserUiState,
+    boardViewModel: BoardViewModel,
     mainNavController: NavController
 ) {
     val boardNavController = rememberNavController()
     val backStackEntry by boardNavController.currentBackStackEntryAsState()
     val currentScreen = backStackEntry?.destination?.route ?: BoardRoute.Dashboard.route
     val canNavigateBack = currentScreen == "Details"
-    val boardViewModel: BoardViewModel = viewModel(factory = BoardViewModel.Factory)
     var eventId by rememberSaveable { mutableIntStateOf(0) }
 
     Scaffold(
@@ -45,18 +44,8 @@ fun Board(
         bottomBar = {
             HaengshaBottomAppBar(
                 navigateFavorite = { mainNavController.navigate(MainRoute.Favorite.route) },
-                navigateHome = {
-                    mainNavController.navigate(MainRoute.Home.route)
-                    boardNavController.navigate(BoardRoute.Dashboard.route) {
-                        popUpTo(BoardRoute.Dashboard.route) { inclusive = false }
-                    }
-                },
-                navigateBoard = {
-                    mainNavController.navigate(MainRoute.Dashboard.route)
-                    boardNavController.navigate(BoardRoute.Dashboard.route) {
-                        popUpTo(BoardRoute.Dashboard.route) { inclusive = false }
-                    }
-                }
+                navigateHome = { mainNavController.navigate(MainRoute.Home.route) },
+                navigateBoard = { mainNavController.navigate(MainRoute.Dashboard.route) }
             )
         }
     ) { innerPadding ->
@@ -68,7 +57,9 @@ fun Board(
                 eventId = boardScreen(
                     innerPadding = innerPadding,
                     boardViewModel = boardViewModel,
-                    boardNavController = boardNavController
+                    boardNavController = boardNavController,
+                    isFavorite = false,
+                    userToken = userUiState.token
                 )
             }
             composable(BoardRoute.BoardDetail.route) {
