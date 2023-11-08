@@ -68,4 +68,22 @@ class BoardViewModel(private val boardDataRepository: BoardDataRepository) : Vie
             }
         }
     }
+
+    fun getFavoriteBoardList(token: String) {
+        viewModelScope.launch {
+            boardListUiState = BoardListUiState.Loading
+            boardListUiState = try {
+                val authToken = "Token: $token"
+                val boardListResult = boardDataRepository.getFavoriteList(authToken)
+                BoardListUiState.BoardListResult(boardListResult)
+            } catch (e: HttpException) {
+                BoardListUiState.HttpError
+            } catch (e: IOException) {
+                BoardListUiState.NetworkError
+            } catch (e: Exception) {
+                e.message?.let { Log.d("board", it) }
+                BoardListUiState.Error
+            }
+        }
+    }
 }

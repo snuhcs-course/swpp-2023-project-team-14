@@ -7,6 +7,7 @@ import com.example.haengsha.model.network.dataModel.BoardListResponse
 interface BoardDataRepository {
     suspend fun getBoardList(startDate: String): List<BoardListResponse>
     suspend fun getBoardDetail(token: String, postId: Int): BoardDetailResponse
+    suspend fun getFavoriteList(token: String): List<BoardListResponse>
 }
 
 class NetworkBoardDataRepository(
@@ -18,5 +19,9 @@ class NetworkBoardDataRepository(
 
     override suspend fun getBoardDetail(token: String, postId: Int): BoardDetailResponse {
         return boardApiService.getBoardDetail(token, postId)
+    }
+
+    override suspend fun getFavoriteList(token: String): List<BoardListResponse> {
+        return boardApiService.getFavoriteList(token)
     }
 }

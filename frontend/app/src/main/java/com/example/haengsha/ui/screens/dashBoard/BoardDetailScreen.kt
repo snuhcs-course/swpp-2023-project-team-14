@@ -20,10 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -41,7 +37,7 @@ import com.example.haengsha.ui.theme.FavoriteYellow
 import com.example.haengsha.ui.theme.LikePink
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
-import com.example.haengsha.ui.uiComponents.ConfirmOnlyDialog
+import es.dmoral.toasty.Toasty
 
 @Composable
 fun BoardDetailScreen(
@@ -52,7 +48,6 @@ fun BoardDetailScreen(
 ) {
     val boardContext = LocalContext.current
     val boardDetailUiState = boardViewModel.boardDetailUiState
-    var isLoginFailedDialogVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         boardViewModel.getBoardDetail(userToken, eventId)
@@ -60,63 +55,38 @@ fun BoardDetailScreen(
 
     when (boardDetailUiState) {
         is BoardDetailUiState.HttpError -> {
-            isLoginFailedDialogVisible = true
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding),
-                contentAlignment = Alignment.Center
+                    .padding(innerPadding)
             ) {
-                ConfirmOnlyDialog(
-                    onDismissRequest = { isLoginFailedDialogVisible = false },
-                    onClick = { isLoginFailedDialogVisible = false },
-                    text = "HTTP ERROR"
-                )
+                Toasty.warning(boardContext, "행사 정보에 문제가 있어요", Toasty.LENGTH_SHORT).show()
             }
         }
 
         is BoardDetailUiState.NetworkError -> {
-            isLoginFailedDialogVisible = true
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding),
-                contentAlignment = Alignment.Center
+                    .padding(innerPadding)
             ) {
-                ConfirmOnlyDialog(
-                    onDismissRequest = { isLoginFailedDialogVisible = false },
-                    onClick = { isLoginFailedDialogVisible = false },
-                    text = "네트워크 연결을 확인해주세요."
-                )
+                Toasty.error(boardContext, "네트워크 연결을 확인해주세요.", Toasty.LENGTH_SHORT).show()
             }
         }
 
         is BoardDetailUiState.Error -> {
-            isLoginFailedDialogVisible = true
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding),
-                contentAlignment = Alignment.Center
+                    .padding(innerPadding)
             ) {
-                ConfirmOnlyDialog(
-                    onDismissRequest = { isLoginFailedDialogVisible = false },
-                    onClick = { isLoginFailedDialogVisible = false },
-                    text = "Exception occurs"
-                )
+                Toasty.error(boardContext, "알 수 없는 에러가 발생했어요 :( 메일로 제보해주세요!", Toasty.LENGTH_SHORT)
+                    .show()
             }
         }
 
         is BoardDetailUiState.Loading -> {
             // Do nothing
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .padding(innerPadding),
-//                contentAlignment = Alignment.Center
-//            ) {
-//                Toasty.info(boardContext, "로딩 중...", Toasty.LENGTH_SHORT, true).show()
-//            }
         }
 
         is BoardDetailUiState.BoardDetailResult -> {
