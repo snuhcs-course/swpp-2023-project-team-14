@@ -146,7 +146,7 @@ fun LoginScreen(
 //                    } else {
                     loginTrigger++
                     // loginViewModel.login("$emailInput@snu.ac.kr", passwordInput)
-                    loginViewModel.login("user1@snu.ac.kr", "user1")
+                    loginViewModel.login("user2@snu.ac.kr", "user2")
                     //}
                 })
             if (isLoginFailedDialogVisible) {
@@ -191,12 +191,7 @@ fun LoginScreen(
                 is LoginUiState.LoginSuccess -> {
                     userViewModel.updateToken(loginUiState.token)
                     userViewModel.updateRole(loginUiState.role)
-                    // TODO board 화면 테스트용
-//                    mainNavController.navigate(MainRoute.Home.route) {
-//                        popUpTo(LoginRoute.Login.route) { inclusive = true }
-//                        popUpTo(MainRoute.Login.route) { inclusive = true }
-//                    }
-                    mainNavController.navigate(MainRoute.Dashboard.route) {
+                    mainNavController.navigate(MainRoute.Home.route) {
                         popUpTo(LoginRoute.Login.route) { inclusive = true }
                         popUpTo(MainRoute.Login.route) { inclusive = true }
                     }

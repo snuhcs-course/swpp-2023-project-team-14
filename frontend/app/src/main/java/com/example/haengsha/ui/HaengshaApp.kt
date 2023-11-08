@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.MainRoute
 import com.example.haengsha.model.viewModel.UserViewModel
@@ -15,7 +16,6 @@ import com.example.haengsha.ui.screens.dashBoard.Board
 import com.example.haengsha.ui.screens.favorite.Favorite
 import com.example.haengsha.ui.screens.home.Home
 import com.example.haengsha.ui.screens.login.Login
-import com.example.haengsha.ui.screens.setting.Setting
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -26,7 +26,6 @@ fun HaengshaApp() {
 
     NavHost(
         navController = mainNavController,
-        // TODO 서버 없이 일단 board UI 확인
         startDestination = MainRoute.Login.route
     ) {
         composable(MainRoute.Login.route) {
@@ -53,13 +52,13 @@ fun HaengshaApp() {
                 mainNavController = mainNavController
             )
         }
-        composable(MainRoute.Setting.route) {
-            Setting(
-                userViewModel = userViewModel,
-                userUiState = userUiState,
-                mainNavController = mainNavController
-            )
-        }
+//        composable(MainRoute.Setting.route) {
+//            Setting(
+//                userViewModel = userViewModel,
+//                userUiState = userUiState,
+//                mainNavController = mainNavController
+//            )
+//        }
     }
 }
 

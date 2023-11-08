@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,9 +35,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.haengsha.model.route.MainRoute
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.viewModel.event.EventViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
+import com.example.haengsha.ui.uiComponents.HaengshaBottomAppBar
+import com.example.haengsha.ui.uiComponents.HaengshaTopAppBar
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.atStartOfMonth
@@ -101,6 +106,7 @@ fun formatDateToYYYYMMDD(date: MutableLiveData<LocalDate>): String {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
+    innerPadding: PaddingValues,
     userUiState: UserUiState,
     sharedViewModel: SharedViewModel
 ) {
@@ -126,6 +132,7 @@ fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(innerPadding)
     ) {
         WeekCalendar(
             state = state,
@@ -206,8 +213,26 @@ fun Home(
     mainNavController: NavController
 ) {
     val sharedViewModel = viewModel<SharedViewModel>()
-    Column {
-        HomeScreen(userUiState, sharedViewModel)
+    val currentScreen = "Home"
+    val canNavigateBack = false
+
+    Scaffold(
+        topBar = {
+            HaengshaTopAppBar(
+                currentScreen = currentScreen,
+                canNavigateBack = canNavigateBack,
+                navigateBack = { /* No back button */ }
+            )
+        },
+        bottomBar = {
+            HaengshaBottomAppBar(
+                navigateFavorite = { mainNavController.navigate(MainRoute.Favorite.route) },
+                navigateHome = { mainNavController.navigate(MainRoute.Home.route) },
+                navigateBoard = { mainNavController.navigate(MainRoute.Dashboard.route) }
+            )
+        }
+    ) { innerPadding ->
+        HomeScreen(innerPadding, userUiState, sharedViewModel)
     }
 }
 

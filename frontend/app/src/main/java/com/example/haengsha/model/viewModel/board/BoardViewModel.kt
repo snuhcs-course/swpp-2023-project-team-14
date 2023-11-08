@@ -1,5 +1,6 @@
 package com.example.haengsha.model.viewModel.board
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,13 +12,17 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.haengsha.HaengshaApplication
 import com.example.haengsha.model.dataSource.BoardDataRepository
-import com.example.haengsha.model.uiState.board.BoardUiState
+import com.example.haengsha.model.uiState.board.BoardDetailUiState
+import com.example.haengsha.model.uiState.board.BoardListUiState
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
 class BoardViewModel(private val boardDataRepository: BoardDataRepository) : ViewModel() {
-    var boardUiState: BoardUiState by mutableStateOf(BoardUiState.Loading)
+    var boardListUiState: BoardListUiState by mutableStateOf(BoardListUiState.Loading)
+        private set
+
+    var boardDetailUiState: BoardDetailUiState by mutableStateOf(BoardDetailUiState.Loading)
         private set
 
     companion object {
@@ -30,53 +35,36 @@ class BoardViewModel(private val boardDataRepository: BoardDataRepository) : Vie
         }
     }
 
-    fun getBoardList(token: String, startDate: String) {
+    fun getBoardList(startDate: String) {
         viewModelScope.launch {
-            boardUiState = BoardUiState.Loading
-            boardUiState = try {
-                val boardResult = boardDataRepository.getBoardList(token, startDate)
-                BoardUiState.BoardResult(
-                    boardResult.id,
-                    boardResult.title,
-                    boardResult.isFestival,
-                    boardResult.author,
-                    boardResult.eventDurations,
-                    boardResult.place,
-                    boardResult.time,
-                    boardResult.content,
-                    boardResult.image,
-                    boardResult.likeCount,
-                    boardResult.favoriteCount
-                )
+            boardListUiState = BoardListUiState.Loading
+            boardListUiState = try {
+                val boardListResult = boardDataRepository.getBoardList(startDate)
+                BoardListUiState.BoardListResult(boardListResult)
             } catch (e: HttpException) {
-                BoardUiState.HttpError(e.message())
+                BoardListUiState.HttpError
             } catch (e: IOException) {
-                BoardUiState.NetworkError
+                BoardListUiState.NetworkError
+            } catch (e: Exception) {
+                e.message?.let { Log.d("board", it) }
+                BoardListUiState.Error
             }
         }
     }
 
-    fun getBoardDetail(postId: Int) {
+    fun getBoardDetail(token: String, postId: Int) {
         viewModelScope.launch {
-            boardUiState = try {
-                val boardResult = boardDataRepository.getBoardDetail(postId)
-                BoardUiState.BoardResult(
-                    boardResult.id,
-                    boardResult.title,
-                    boardResult.isFestival,
-                    boardResult.author,
-                    boardResult.eventDurations,
-                    boardResult.place,
-                    boardResult.time,
-                    boardResult.content,
-                    boardResult.image,
-                    boardResult.likeCount,
-                    boardResult.favoriteCount
-                )
+            boardDetailUiState = try {
+                val authToken = "Token: $token"
+                val boardDetailResult = boardDataRepository.getBoardDetail(authToken, postId)
+                BoardDetailUiState.BoardDetailResult(boardDetailResult)
             } catch (e: HttpException) {
-                BoardUiState.HttpError(e.message())
+                BoardDetailUiState.HttpError
             } catch (e: IOException) {
-                BoardUiState.NetworkError
+                BoardDetailUiState.NetworkError
+            } catch (e: Exception) {
+                e.message?.let { Log.d("detail", it) }
+                BoardDetailUiState.Error
             }
         }
     }
