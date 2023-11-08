@@ -15,13 +15,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,12 +39,14 @@ import com.example.haengsha.model.route.MainRoute
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.viewModel.event.EventViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
+import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.HaengshaBottomAppBar
 import com.example.haengsha.ui.uiComponents.HaengshaTopAppBar
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.atStartOfMonth
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
+import com.kizitonwose.calendar.core.yearMonth
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -93,15 +95,7 @@ class SharedViewModel() : ViewModel() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-fun formatDateToYYYYMMDD(date: MutableLiveData<LocalDate>): String {
-    val localDate = date.value ?: LocalDate.now()
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    return localDate.format(formatter)
-}
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -112,20 +106,21 @@ fun HomeScreen(
 ) {
     val eventViewModel: EventViewModel =
         viewModel(factory = EventViewModel.Factory(sharedViewModel))
-    eventViewModel.getEventByDate(eventType = "Academic", LocalDate.now())
-    eventViewModel.getEventByDate(eventType = "Festival", LocalDate.now())
-    val currentDate = remember { LocalDate.now() }
-    val currentMonth = remember { YearMonth.now() }
+    var selection by remember { mutableStateOf(LocalDate.now()) }
+    val currentMonth = selection.yearMonth
     val startDate = remember { currentMonth.minusMonths(100).atStartOfMonth() } // Adjust as needed
     val endDate = remember { currentMonth.plusMonths(100).atEndOfMonth() } // Adjust as needed
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
-    var selection by remember { mutableStateOf(currentDate) }
+
+    eventViewModel.getEventByDate(eventType = "Academic", selection)
+    eventViewModel.getEventByDate(eventType = "Festival", selection)
     val state = rememberWeekCalendarState(
         startDate = startDate,
         endDate = endDate,
-        firstVisibleWeekDate = currentDate,
+        firstVisibleWeekDate = selection,
         firstDayOfWeek = firstDayOfWeek
     )
+
 
     var isDatePickerDialogVisible by remember { mutableStateOf(false) }
 
@@ -134,13 +129,31 @@ fun HomeScreen(
             .fillMaxSize()
             .padding(innerPadding)
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+        )
+        {
+
+            Text(
+                modifier = Modifier.padding(top = 10.dp),
+                text = monthFormatter.format(selection.month),
+                fontFamily = poppins,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+
         WeekCalendar(
             state = state,
+            userScrollEnabled = true,
+            calendarScrollPaged = true,
             dayContent = { day ->
                 Day(day.date, isSelected = selection == day.date) { clicked ->
+
                     if (selection != clicked) {
                         selection = clicked
-                        //pickDate = clicked
                         eventViewModel.getEventByDate(eventType = "Academic", clicked)
                         eventViewModel.getEventByDate(eventType = "Festival", clicked)
                     }
@@ -158,8 +171,12 @@ fun HomeScreen(
     }
 }
 
+
 @RequiresApi(Build.VERSION_CODES.O)
 private val dateFormatter = DateTimeFormatter.ofPattern("dd")
+
+@RequiresApi(Build.VERSION_CODES.O)
+private val monthFormatter = DateTimeFormatter.ofPattern("MMMM")
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun DayOfWeek.displayText(uppercase: Boolean = false): String {
