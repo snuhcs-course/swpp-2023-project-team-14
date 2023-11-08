@@ -43,8 +43,6 @@ fun EventCard(
     startDate: LocalDate,
     endDate: LocalDate,
     likes: Int,
-    favorites: Int = 0,
-    image: String = "",
 ) {
     val formattedStartDate = formatDateToMMDD(startDate)
     val formattedEndDate = formatDateToMMDD(endDate)

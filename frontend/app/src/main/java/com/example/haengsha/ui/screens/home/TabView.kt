@@ -41,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -73,8 +72,8 @@ data class EventCardData(
     val favorites: Int,
     val eventType: String,
     val place: String = "",
-    val time: String = "",
-    val image: String = "" // Image URL 변경 필요 (임시로 nudge_image 사용함)
+    val time: String = ""
+    // val Image:  // Image URL 변경 필요 (임시로 nudge_image 사용함)
 )
 
 
@@ -97,7 +96,6 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate, selectedT
             title = "Festival", eventCards = it
         )
     })
-    val imageContext = LocalContext.current
 
     // Remember the selected tab
     var selectedTabIndex by remember { mutableIntStateOf(0) }
@@ -197,8 +195,6 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate, selectedT
                             startDate = eventCardData.startDate,
                             endDate = eventCardData.endDate,
                             likes = eventCardData.likes,
-                            image = eventCardData.image,
-                            favorites = eventCardData.favorites,
                         )
                     }
                 }
@@ -387,7 +383,6 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate, selectedT
                         contentAlignment = Alignment.Center
 
                     ) {
-
                         Image(
                             painter = painterResource(id = R.drawable.nudge_image),
                             contentDescription = "image description",

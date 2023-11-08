@@ -82,9 +82,9 @@ dependencies {
 
     implementation("com.github.GrenderG:Toasty:1.5.2")
     // The view calendar library
-    implementation("com.kizitonwose.calendar:view:2.5.0-alpha01")
+    implementation("com.kizitonwose.calendar:view:2.4.0")
     // The compose calendar library
-    implementation("com.kizitonwose.calendar:compose:2.5.0-alpha01")
+    implementation("com.kizitonwose.calendar:compose:2.4.0")
     implementation("com.google.accompanist:accompanist-pager:0.12.0")
     implementation("androidx.tv:tv-material:1.0.0-alpha10")
     implementation("androidx.compose.runtime:runtime-livedata:1.6.0-alpha08")
