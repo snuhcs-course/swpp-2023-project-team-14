@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Duration, EventDuration
+from .models import Post, Duration, EventDuration, Recommend
 from user.models import PersonalUser
 
 
@@ -8,6 +8,13 @@ class UsernicknameSerializer(serializers.ModelSerializer):
         model = PersonalUser
         fields = [
             "nickname",
+        ]
+
+class RecommendSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recommend
+        fields = [
+            "score",
         ]
 
 
@@ -20,8 +27,6 @@ class EventDurationSerializer(serializers.ModelSerializer):
 
 
 class Postserializer(serializers.ModelSerializer):
-    like_count = serializers.IntegerField()
-    favorite_count = serializers.IntegerField()
     event_durations = EventDurationSerializer(
         many=True, read_only=True, source="eventduration_set"
     )
@@ -42,4 +47,36 @@ class Postserializer(serializers.ModelSerializer):
             "like_count",
             "favorite_count",
             
+        )
+
+class PostRecommendserializer(serializers.ModelSerializer):
+    event_durations = EventDurationSerializer(
+        many=True, read_only=True, source="eventduration_set"
+    )
+    author = UsernicknameSerializer(read_only=True)
+    score = serializers.SerializerMethodField()
+    def get_score(self, obj):
+        user = self.context['request'].user
+        recommend = Recommend.objects.filter(user=user, post=obj).first()
+        if recommend:
+            return recommend.score
+        else:
+            return 0
+
+
+    class Meta:
+        model = Post
+        fields = (
+            "id",
+            "title",
+            "is_festival",
+            "author",
+            "event_durations",
+            "place",
+            "time",
+            "content",
+            "image",
+            "like_count",
+            "favorite_count",
+            "score",
         )

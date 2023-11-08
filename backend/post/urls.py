@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import PostListView, PostDetailView, FavoriteView, LikeView, PostFavoriteView
+from .views import PostListView, PostDetailView, FavoriteView, LikeView, PostFavoriteView, PostRecommendView
 
 app_name = 'post'
 urlpatterns = [
@@ -34,5 +34,6 @@ urlpatterns = [
     path('<int:post_id>/', PostDetailView.as_view()),
     path('favorite/<int:post_id>/', FavoriteView.as_view()),
     path('like/<int:post_id>/', LikeView.as_view()),
-    path('favorite/', PostFavoriteView.as_view())
+    path('favorite/', PostFavoriteView.as_view()),
+    path('recommend/', PostRecommendView.as_view())
 ]
