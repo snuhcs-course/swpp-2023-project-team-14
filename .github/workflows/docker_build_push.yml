@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - dev
-      - feat/backend_unit_test
+      - backend/null_post
       
 
 jobs:
