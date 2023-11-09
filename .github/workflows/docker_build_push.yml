@@ -35,7 +35,6 @@ jobs:
           docker stop haeng
           docker rm haeng
           echo "Removing unused Docker images..."
-          docker image prune -f
           docker rmi "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
           echo "Pulling new image..."
           docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
