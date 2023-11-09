@@ -12,7 +12,7 @@ from user.models import PersonalUser
 from post.models import Post, Like, Favorite
 from datetime import date
 
-def save_userdata(save_dir, filename='userData.csv'):
+def save_user_data(save_dir, filename='userData.csv'):
     users = PersonalUser.objects.all()
     user_data = []
 
@@ -50,6 +50,30 @@ def save_userdata(save_dir, filename='userData.csv'):
     user_df.to_csv(save_dir+filename, index=False)
     return filename
 
+def save_event_data(save_dir, filename='eventData.csv'):
+    posts = Post.objects.all()
+    event_data = []
+
+    for post in posts:
+        category = "학술" if not post.is_festival else "공연"
+        event_duration = post.event_durations.first()         # Retrieve the starting date only from event_duration
+
+        post_info = {
+            '구분': category,
+            '행사명': post.title,
+            '날짜': event_duration.event_day if event_duration else "",
+            '장소': post.place,
+            '주최자': post.author.nickname if post.author else "",
+            '내용': post.content,
+        }
+
+        event_data.append(post_info)
+
+    event_df = pd.DataFrame(event_data)
+    event_df.to_csv(save_dir+filename, index=False)
+    return filename
+
+
 def put_data():
     file_name = '../recommend/all_recommends.csv'
     df = pd.read_csv(file_name)
@@ -61,4 +85,5 @@ if __name__ == "__main__":
     save_dir = "./data/"
     ##read_dir = "./machine_output_data/"
     
-    save_userdata(save_dir)
+    #save_user_data(save_dir)
+    save_event_data(save_dir)
