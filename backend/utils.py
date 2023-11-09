@@ -36,7 +36,7 @@ def upload_file_to_s3_from_mem(file_obj, bucket, object_name=None):
         object_name = file_obj
     
     try:
-        response = s3_client.upload_fileobj(file_obj, bucket, object_name)
+        response = s3_client.upload_fileobj(Fileobj=file_obj, Bucket=bucket, Key=object_name)
         print(f'Response:\n{response}')
     except NoCredentialsError:
         print('Credentials not available')
@@ -58,11 +58,14 @@ def generate_presigned_url_img(bucket_name, object_key, expiration=3600, put=Tru
         return None
     return response
 
-def upload_file_to_s3_requests(file_obj, presigned_url):
+def upload_file_to_s3_requests(file_obj, s3_url):
     files = {
         'file': file_obj
     }
-    response = requests.put(presigned_url, files=files)
+    headers = {
+        'Content-Type': 'image/jpeg'
+    }
+    response = requests.put(s3_url, data=file_obj, headers=headers)
     return response 
     
 

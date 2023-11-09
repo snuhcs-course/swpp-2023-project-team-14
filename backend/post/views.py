@@ -1,6 +1,8 @@
 import json 
 import sys
 import uuid
+import io
+
 from django.http import JsonResponse 
 from pathlib import Path
 from rest_framework.views import APIView
@@ -55,6 +57,7 @@ class PostListView(APIView):
         author = request.user
         place = request.data.get("place")
         image = request.FILES.get("image")
+        old_image = image
         url = ""
         if image and image.size > 0:   # only do this if "image" is non-empty
             image_data = {'image': image}
@@ -67,19 +70,16 @@ class PostListView(APIView):
             image = image_serializer.validated_data['image']
             try: 
                 image_name = str(uuid.uuid4())
+                # image_name = str(image.name).split('.')[0]
                 image_extension = '.' + str(image.name).split('.')[1]
                 full_image_name = image_name + image_extension
                 print(f'full_image_name: {full_image_name}')
                 # utils.upload_file_to_s3_from_mem(image, utils.s3_bucket, image_name)
+                # presigned_url = utils.generate_presigned_url_img(utils.s3_bucket, full_image_name, expiration=3600, put=True)
                 presigned_url = utils.generate_presigned_url_img(utils.s3_bucket, full_image_name, expiration=3600, put=True)
                 print(f'post: presigned_url\n{presigned_url}')
                 
-                try:
-                    file_content = image.read()
-                    upload_response = utils.upload_file_to_s3_requests(file_content, presigned_url)
-                except Exception as e:
-                    return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+                # s3_url = f"https://{utils.s3_bucket}.s3.{utils.region_name}.amazonaws.com/{full_image_name}"
                 s3_url = f"https://{utils.s3_bucket}.s3.{utils.region_name}.amazonaws.com/{full_image_name}"
                 image_url_serializer = ImageURLSerializer(
                     data={"image_url": s3_url}
@@ -88,6 +88,22 @@ class PostListView(APIView):
                     return Response({"error": "issue with image_url_serializer"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 url = image_url_serializer.validated_data['image_url']
                 print(f'post url:\n{url}')
+
+                try:
+                    file_content = old_image.read()
+                    upload_response = utils.upload_file_to_s3_requests(file_content, presigned_url)
+                    if upload_response.status_code != 200:
+                        print("Failed to upload image")
+                        return Response({"error": upload_response.text}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    else:
+                        print("Successfully uploaded image")
+                    # old_image.seek(0)
+                    # upload_response = utils.upload_file_to_s3_from_mem(old_image, utils.s3_bucket, s3_url)
+
+                except Exception as e:
+                    print(f"Exception during upload: {str(e)}")
+                    return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
             except Exception as e:
                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -124,6 +140,7 @@ class PostListView(APIView):
             except:
                 duration = Duration.objects.create(event_day=event_day)
             post.event_durations.add(duration)
+            
         post.save()
 
         if author.role != "Group":
