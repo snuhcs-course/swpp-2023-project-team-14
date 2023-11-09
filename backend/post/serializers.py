@@ -26,7 +26,7 @@ class EventDurationSerializer(serializers.ModelSerializer):
         fields = ["event_day"]
 
 
-class Postserializer(serializers.ModelSerializer):
+class PostSerializer(serializers.ModelSerializer):
     event_durations = EventDurationSerializer(
         many=True, read_only=True, source="eventduration_set"
     )
@@ -49,11 +49,11 @@ class Postserializer(serializers.ModelSerializer):
             
         )
 
-class PostRecommendserializer(serializers.ModelSerializer):
+class PostRecommendSerializer(serializers.ModelSerializer):
     event_durations = EventDurationSerializer(
         many=True, read_only=True, source="eventduration_set"
     )
-    author = UsernicknameSerializer(read_only=True)
+    author = UserNicknameSerializer(read_only=True)
     score = serializers.SerializerMethodField()
     def get_score(self, obj):
         user = self.context['request'].user

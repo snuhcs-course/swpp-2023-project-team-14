@@ -6,7 +6,7 @@ from pathlib import Path
 from rest_framework.views import APIView
 from .models import Post, Like, Favorite, Duration, EventDuration, Recommend   
 from rest_framework.response import Response
-from .serializers import Postserializer, PostRecommendserializer, UploadImageSerializer, ImageURLSerializer
+from .serializers import PostSerializer, PostRecommendSerializer, UploadImageSerializer, ImageURLSerializer
 from django.db.models import Count, Q
 from datetime import date
 from rest_framework import status
@@ -203,7 +203,7 @@ class PostRecommendView(APIView):
         user = request.user
         posts = Post.objects.filter(recommend_users=user).order_by("-recommend__score")
         # scores = Recommend.objects.filter(user=request.user).values('score')
-        serializer = PostRecommendserializer(posts, many=True, context={'request': request})
+        serializer = PostRecommendSerializer(posts, many=True, context={'request': request})
         return Response(serializer.data, status=200)
 
 
