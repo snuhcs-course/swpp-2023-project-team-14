@@ -17,6 +17,7 @@ swpp-env/
 /.idea/gradle.xml
 /.idea/misc.xml
 /.idea/compiler.xml
+.idea/*
 
 .DS_Store
 /build
