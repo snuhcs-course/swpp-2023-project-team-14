@@ -29,6 +29,7 @@ def signin(request):
             return Response(
                 {
                     "token": token.key,
+                    "nickname": user.nickname,
                     "role": user.role,
                     "message": "The user has successfully logged in.",
                 },
