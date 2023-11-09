@@ -3,7 +3,7 @@
 .vscode/
 swpp-env/
 .ssh
-
+.idea
 
 *.iml
 .gradle
