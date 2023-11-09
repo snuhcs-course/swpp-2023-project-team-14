@@ -162,15 +162,15 @@ class PostDetailView(APIView):
             post_response_data = serializer.data 
             post_response_data['image'] = presigned_url
             elem = post_response_data['image']
-            print(f'get presigned_url:\n{elem}')
+            post_response_data['is_liked'] = is_liked
+            post_response_data['is_favorite'] = is_favorite
+            # print(f'get presigned_url:\n{elem}')
         else:
             print(f'image is not in s3. Image_name=\n{post_image}')
             serializer = PostSerializer(post)
             post_response_data = serializer.data 
-
-        post_response_data = serializer.data
-        post_response_data['is_liked'] = is_liked
-        post_response_data['is_favorite'] = is_favorite
+            post_response_data['is_liked'] = is_liked
+            post_response_data['is_favorite'] = is_favorite
 
         return Response(post_response_data, status=200)
 
