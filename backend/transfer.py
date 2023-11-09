@@ -85,5 +85,5 @@ if __name__ == "__main__":
     save_dir = "./data/"
     ##read_dir = "./machine_output_data/"
     
-    #save_user_data(save_dir)
+    save_user_data(save_dir)
     save_event_data(save_dir)
