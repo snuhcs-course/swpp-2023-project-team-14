@@ -127,7 +127,7 @@ class PostListView(APIView):
             content=content,
             time=time,
             place=place,
-            image=url,
+            image=s3_url,
             is_festival=is_festival,
             author=author,
         )
