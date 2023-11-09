@@ -9,7 +9,7 @@ django.setup()
 
 
 from user.models import PersonalUser
-from post.models import Post, Like, Favorite
+from post.models import Post, Like, Favorite, Recommend
 from datetime import date
 
 def save_user_data(save_dir, filename='userData.csv'):
@@ -74,16 +74,46 @@ def save_event_data(save_dir, filename='eventData.csv'):
     return filename
 
 
-def put_data():
-    file_name = '../recommend/all_recommends.csv'
-    df = pd.read_csv(file_name)
-    
-    posts = Post.objects.all()
-    
+def put_recommends(save_dir, filename='all_recommends_index.csv', save_filename='transformed_recommends.csv'):
+    df = pd.read_csv(save_dir+filename)
+    transformed_data = []
+
+    for _, row in df.iterrows():
+        userIdx = row['userIdx']
+        user = PersonalUser.objects.get(pk=userIdx)
+
+        for col in df.columns[2:]:
+            score = int(col.replace('Recommend', ''))
+            postIdx = row[col]
+
+            try:
+                existing_recommend = Recommend.objects.get(user=user, post=postIdx, score=score)
+
+            except Recommend.DoesNotExist:
+                post = Post.objects.get(pk=postIdx)
+                recommend_instance = Recommend(user=user, post=post, score=score)
+                recommend_instance.save()
+
+            transformed_data.append([score, postIdx, userIdx])
+
+    transformed_df = pd.DataFrame(transformed_data, columns=['score', 'postIdx', 'userIdx'])
+    transformed_df.to_csv(save_dir+filename, index=True)
+    return transformed_df
+
+# Util Function to check whether recommendation exists
+def recommendation_exists(score, postId, userIdx):
+    try:
+        user = PersonalUser.objects.get(pk=userIdx)
+        post = Post.objects.get(pk=postId)
+        existing_recommend = Recommend.objects.get(user=user, post=post, score=score)
+        return True
+    except (PersonalUser.DoesNotExist, Post.DoesNotExist, Recommend.DoesNotExist):
+        return False
 
 if __name__ == "__main__":
     save_dir = "./data/"
     ##read_dir = "./machine_output_data/"
-    
-    save_user_data(save_dir)
-    save_event_data(save_dir)
+    #save_user_data(save_dir) #save userData.csv
+    #save_event_data(save_dir) #save eventData.csv
+    df = put_recommends(save_dir)
+    print(df)
