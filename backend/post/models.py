@@ -40,5 +40,3 @@ class Recommend(models.Model):
   user = models.ForeignKey(PersonalUser, on_delete=models.CASCADE)
   post = models.ForeignKey('post.Post', on_delete=models.CASCADE)
   score = models.IntegerField(default=0)
-  class Meta:
-    ordering = ['-score']
