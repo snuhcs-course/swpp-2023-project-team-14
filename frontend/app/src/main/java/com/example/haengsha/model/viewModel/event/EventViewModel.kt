@@ -2,6 +2,7 @@ package com.example.haengsha.model.viewModel.event
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -64,8 +65,8 @@ open class EventViewModel(
 
             } catch (e: HttpException) {
                 val errorMessage = e.response()?.errorBody()?.string() ?: "이벤트를 불러오지 못했습니다."
-                sharedViewModel.updateAcademicItems(null)
-                sharedViewModel.updateFestivalItems(null)
+                sharedViewModel.updateAcademicItems(listOf<EventCardData>())
+                sharedViewModel.updateFestivalItems(listOf<EventCardData>())
                 sharedViewModel.updateSelectedDate(date)
                 e.printStackTrace()
             } catch (e: IOException) {
