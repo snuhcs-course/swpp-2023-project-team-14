@@ -4,6 +4,7 @@ from decouple import config
 from django.contrib.auth import authenticate
 from django.core.cache import cache
 from django.core.mail import send_mail
+from django.shortcuts import redirect 
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -29,6 +30,7 @@ def signin(request):
             return Response(
                 {
                     "token": token.key,
+                    "nickname": user.nickname,
                     "role": user.role,
                     "message": "The user has successfully logged in.",
                 },
@@ -290,3 +292,12 @@ def signup(request):        # for users
             {"error": "An error occurred while creating the user"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
+@api_view(['POST'])
+def logout(request):
+    try:
+        request.user.auth_token.delete()
+    except Exception as e:
+        print(e)
+        return Response({"error": "couldn't log out the user"}, status=400)
+    return Response({"message": "successfully logged out the user"}, status=200)
