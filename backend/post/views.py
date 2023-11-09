@@ -43,9 +43,6 @@ class PostListView(APIView):
             posts = posts.filter(event_durations__event_day__lte=end_date)
 
         posts = posts.order_by("-like_count")
-        # if posts.count() == 0:
-        #     empty_data = []
-        #     return JsonResponse(empty_data, status=status.HTTP_200_OK, safe=False)
 
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=200)
@@ -59,6 +56,21 @@ class PostListView(APIView):
         image = request.FILES.get("image")
         old_image = image
         url = ""
+        is_festival = request.data.get("is_festival")
+        time = request.data.get("time")
+        durations = request.data.get("duration")
+
+        if author.role != "Group":
+            return Response(
+                {"detail": "Authentication credentials not provided"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        if not title or not durations or not place or not time:
+            return Response(
+                {"detail": "Please fill in all the blanks"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+            
         if image and image.size > 0:   # only do this if "image" is non-empty
             image_data = {'image': image}
             image_serializer = UploadImageSerializer(data=image_data)
@@ -97,8 +109,6 @@ class PostListView(APIView):
                         return Response({"error": upload_response.text}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                     else:
                         print("Successfully uploaded image")
-                    # old_image.seek(0)
-                    # upload_response = utils.upload_file_to_s3_from_mem(old_image, utils.s3_bucket, s3_url)
 
                 except Exception as e:
                     print(f"Exception during upload: {str(e)}")
@@ -106,9 +116,12 @@ class PostListView(APIView):
 
             except Exception as e:
                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        is_festival = request.data.get("is_festival")
-        time = request.data.get("time")
+        
+        try:
+            duration_data_json = json.loads(durations)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+    
         post = Post.objects.create(
             title=title,
             content=content,
@@ -118,21 +131,9 @@ class PostListView(APIView):
             is_festival=is_festival,
             author=author,
         )
-        durations = request.data.get("duration")    # assume that durations is a single duration. 
-        try:
-            duration_data_json = json.loads(durations)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
-    
+
         for duration_data in duration_data_json:
-            # need to load duration_data as a JSON object
-            # duration_data_json = json.loads(duration_data)
-            # print(f'duration_data_json:\n{duration_data_json}')
             print(f'duration_data:\n{duration_data}')
-            # try:
-            #     duration_data_json = json.loads(duration_data)
-            # except json.JSONDecodeError:
-            #     return JsonResponse({'error': 'Invalid JSON format'}, status=400)
 
             event_day = duration_data["event_day"]
             try:
@@ -140,19 +141,9 @@ class PostListView(APIView):
             except:
                 duration = Duration.objects.create(event_day=event_day)
             post.event_durations.add(duration)
-            
+        
         post.save()
-
-        if author.role != "Group":
-            return Response(
-                {"detail": "Authentication credentials not provided"},
-                status=status.HTTP_401_UNAUTHORIZED,
-            )
-        if not title or not duration or not place or not time:
-            return Response(
-                {"detail": "Please fill in all the blanks"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        
         serializer = PostSerializer(post)
         return Response(serializer.data, status=201)
 

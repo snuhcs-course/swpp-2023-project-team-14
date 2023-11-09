@@ -5,8 +5,6 @@ on:
     branches:
       - main
       - dev
-      - backend/null_post
-      - backend/he_fix
       
 
 jobs:
