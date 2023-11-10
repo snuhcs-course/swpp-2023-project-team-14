@@ -2,6 +2,8 @@ import django
 import os, environ 
 import pymysql
 import pandas as pd
+import argparse
+
 pymysql.install_as_MySQLdb()
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'haengsha.settings')
@@ -13,7 +15,7 @@ from post.models import Post, Like, Favorite, Recommend
 from datetime import date
 
 def save_user_data(save_dir, filename='userData.csv'):
-    users = PersonalUser.objects.all()
+    users = PersonalUser.objects.filter(role='User')
     user_data = []
 
     for user in users:
@@ -88,6 +90,7 @@ def put_recommends(save_dir, filename='all_recommends_index.csv', save_filename=
 
             try:
                 existing_recommend = Recommend.objects.get(user=user, post=postIdx, score=score)
+                #print("existing", postIdx, user, score)
 
             except Recommend.DoesNotExist:
                 post = Post.objects.get(pk=postIdx)
@@ -97,7 +100,7 @@ def put_recommends(save_dir, filename='all_recommends_index.csv', save_filename=
             transformed_data.append([score, postIdx, userIdx])
 
     transformed_df = pd.DataFrame(transformed_data, columns=['score', 'postIdx', 'userIdx'])
-    transformed_df.to_csv(save_dir+filename, index=True)
+    transformed_df.to_csv(save_dir+save_filename, index=True)
     return transformed_df
 
 # Util Function to check whether recommendation exists
@@ -110,10 +113,21 @@ def recommendation_exists(score, postId, userIdx):
     except (PersonalUser.DoesNotExist, Post.DoesNotExist, Recommend.DoesNotExist):
         return False
 
-if __name__ == "__main__":
+
+def main():
+    parser = argparse.ArgumentParser(description='Process recommendations.')
+    parser.add_argument('-c', '--collect', action='store_true', help='collect input data for machine input')
+    parser.add_argument('-l', '--load', action='store_true', help='Load output from machine to DB')
+    args = parser.parse_args()
+
     save_dir = "./data/"
-    ##read_dir = "./machine_output_data/"
-    #save_user_data(save_dir) #save userData.csv
-    #save_event_data(save_dir) #save eventData.csv
-    df = put_recommends(save_dir)
-    print(df)
+
+    if args.collect:
+        save_user_data(save_dir) #save userData.csv
+        save_event_data(save_dir) #save eventData.csv
+
+    if args.load:
+        df = put_recommends(save_dir)
+
+if __name__ == '__main__':
+    main()
