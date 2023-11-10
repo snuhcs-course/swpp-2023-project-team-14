@@ -84,8 +84,7 @@ data class EventCardData(
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate, selectedTabIndex: Int) {
-    var itemsToDisplay: List<EventCardData>?
+fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate) {
     val academicItems by sharedViewModel.academicItems.observeAsState()
     val festivalItems by sharedViewModel.festivalItems.observeAsState()
     var showDialog by remember { mutableStateOf(false) }
@@ -105,9 +104,7 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate, selectedT
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     // Pager state
-    var pagerState = rememberPagerState {
-        tabItems.size
-    }
+    val pagerState = rememberPagerState(pageCount = { tabItems.size })
 
     // Coroutine scope
     val coroutineScope = rememberCoroutineScope()
@@ -133,7 +130,7 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate, selectedT
                         selectedTabIndex = index
                         // Change the page when the tab is changed
                         coroutineScope.launch {
-                            pagerState.animateScrollToPage(selectedTabIndex)
+                            pagerState.animateScrollToPage(index)
                         }
                     },
                     text = {
@@ -143,7 +140,37 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate, selectedT
                 )
             }
         }
+// Button at the top of the HorizontalPager
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(0.dp)
+        ) {
+            Button(
+                onClick = {
+                    showDialog = true
+                },
+                colors = androidx.compose.material3.ButtonDefaults.buttonColors(HaengshaBlue),
+                modifier = Modifier
+                    .padding(16.dp)
+                    .shadow(
+                        elevation = 10.dp,
+                        spotColor = Color(0x1A18274B),
+                        ambientColor = Color(0x1A18274B)
+                    )
+                    .shadow(
+                        elevation = 10.dp,
+                        spotColor = Color(0x26000000),
+                        ambientColor = Color(0x26000000)
+                    )
+                    .width(200.dp)
+                    .height(50.dp)
 
+            ) {
+                Text(text = "맞춤 추천 받기")
+            }
+        }
         // Pager
         HorizontalPager(
             state = pagerState,
@@ -156,40 +183,13 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate, selectedT
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                item {
-                    // Button at the top of the HorizontalPager
-                    Button(
-                        onClick = {
-                            showDialog = true
-                        },
-                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(HaengshaBlue),
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .shadow(
-                                elevation = 10.dp,
-                                spotColor = Color(0x1A18274B),
-                                ambientColor = Color(0x1A18274B)
-                            )
-                            .shadow(
-                                elevation = 10.dp,
-                                spotColor = Color(0x26000000),
-                                ambientColor = Color(0x26000000)
-                            )
-                            .width(200.dp)
-                            .height(50.dp)
 
-                    ) {
-                        Text(text = "맞춤 추천 받기")
-                    }
-                }
                 if (index == 1) {
-                    itemsToDisplay = festivalItems
                     selectedTabIndex = 1
                 } else {
-                    itemsToDisplay = academicItems
                     selectedTabIndex = 0
                 }
-                //val itemsToDisplay = if (index == 1) festivalItems else academicItems
+                val itemsToDisplay = if (index == 1) festivalItems else academicItems
                 items(itemsToDisplay.orEmpty()) { eventCardData ->
                     Box(modifier = Modifier.clickable {
                         showEventCardPopup = true
@@ -392,7 +392,7 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate, selectedT
                             contentScale = ContentScale.Crop, // Maintain aspect ratio
                             modifier = Modifier.fillMaxWidth()
                         )*/
-                        if(selectedEvent?.image?.isNotEmpty() == true) {
+                        if (selectedEvent?.image?.isNotEmpty() == true) {
                             AsyncImage(
                                 model = ImageRequest.Builder(context = eventContext)
                                     .data(selectedEvent?.image)
