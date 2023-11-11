@@ -3,11 +3,18 @@ package com.example.haengsha.model.dataSource
 import com.example.haengsha.model.network.apiService.BoardApiService
 import com.example.haengsha.model.network.dataModel.BoardDetailResponse
 import com.example.haengsha.model.network.dataModel.BoardListResponse
+import com.example.haengsha.model.network.dataModel.BoardPostRequest
+import com.example.haengsha.model.network.dataModel.BoardPostResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.http.Header
+import retrofit2.http.Part
 
 interface BoardDataRepository {
     suspend fun getBoardList(startDate: String): List<BoardListResponse>
     suspend fun getBoardDetail(token: String, postId: Int): BoardDetailResponse
     suspend fun getFavoriteList(token: String): List<BoardListResponse>
+    suspend fun postEvent(boardPostRequest: BoardPostRequest): BoardPostResponse
 }
 
 class NetworkBoardDataRepository(
@@ -23,5 +30,18 @@ class NetworkBoardDataRepository(
 
     override suspend fun getFavoriteList(token: String): List<BoardListResponse> {
         return boardApiService.getFavoriteList(token)
+    }
+
+    override suspend fun postEvent(boardPostRequest: BoardPostRequest): BoardPostResponse {
+        return boardApiService.postEvent(
+            boardPostRequest.token,
+            boardPostRequest.image,
+            boardPostRequest.title,
+            boardPostRequest.isFestival,
+            boardPostRequest.eventDurations,
+            boardPostRequest.place,
+            boardPostRequest.time,
+            boardPostRequest.content
+        )
     }
 }

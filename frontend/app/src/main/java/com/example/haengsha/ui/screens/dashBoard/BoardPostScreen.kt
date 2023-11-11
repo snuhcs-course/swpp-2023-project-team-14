@@ -1,7 +1,6 @@
 package com.example.haengsha.ui.screens.dashBoard
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,10 +42,10 @@ import com.example.haengsha.R
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
-import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CheckBox
+import com.example.haengsha.ui.uiComponents.ConfirmDialog
 import com.example.haengsha.ui.uiComponents.customTextField
 
 @Composable
@@ -61,6 +60,7 @@ fun BoardPostScreen(
     var eventTime by remember { mutableStateOf("") }
     var eventContent by remember { mutableStateOf("") }
     var eventCategory by remember { mutableStateOf(true) } // 행사면 true
+    var postConfirmDialog by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -316,7 +316,7 @@ fun BoardPostScreen(
                 modifier = Modifier
                     .size(60.dp)
                     .background(ButtonBlue, RoundedCornerShape(30.dp))
-                    .clickable(onClick = {/*TODO 이벤트 등록 확인 모달*/ }),
+                    .clickable(onClick = { postConfirmDialog = true }),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -326,6 +326,13 @@ fun BoardPostScreen(
                     tint = Color.White
                 )
             }
+        }
+        if (postConfirmDialog) {
+            ConfirmDialog(
+                onDismissRequest = { postConfirmDialog = false },
+                onClick = { /* TODO 이벤트 등록 */ },
+                text = "글을 업로드 하시겠어요?"
+            )
         }
     }
 }
