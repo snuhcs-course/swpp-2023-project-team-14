@@ -74,6 +74,7 @@ fun Board(
                 BoardPostScreen(
                     innerPadding = innerPadding,
                     boardViewModel = boardViewModel,
+                    boardNavController = boardNavController,
                     userUiState = userUiState
                 )
             }

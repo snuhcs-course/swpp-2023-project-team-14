@@ -60,7 +60,7 @@ class BoardViewModel(private val boardDataRepository: BoardDataRepository) : Vie
         viewModelScope.launch {
             boardDetailUiState = try {
                 val authToken = "Token: $token"
-                val boardDetailResult = boardDataRepository.getBoardDetail(authToken, 142)
+                val boardDetailResult = boardDataRepository.getBoardDetail(authToken, postId)
                 BoardDetailUiState.BoardDetailResult(boardDetailResult)
             } catch (e: HttpException) {
                 BoardDetailUiState.HttpError

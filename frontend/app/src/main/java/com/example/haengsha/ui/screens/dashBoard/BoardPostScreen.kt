@@ -1,5 +1,9 @@
 package com.example.haengsha.ui.screens.dashBoard
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,10 +15,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.HorizontalDivider
@@ -32,12 +38,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.haengsha.R
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.viewModel.board.BoardViewModel
@@ -52,6 +62,7 @@ import com.example.haengsha.ui.uiComponents.customTextField
 fun BoardPostScreen(
     innerPadding: PaddingValues,
     boardViewModel: BoardViewModel,
+    boardNavController: NavController,
     userUiState: UserUiState
 ) {
     var eventTitle by remember { mutableStateOf("") }
@@ -61,6 +72,12 @@ fun BoardPostScreen(
     var eventContent by remember { mutableStateOf("") }
     var eventCategory by remember { mutableStateOf(true) } // 행사면 true
     var postConfirmDialog by remember { mutableStateOf(false) }
+
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val getImage =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { result ->
+            result?.let { uri -> imageUri = uri }
+        }
 
     Box(
         modifier = Modifier
@@ -94,222 +111,247 @@ fun BoardPostScreen(
                     focusedContainerColor = Color(0x00F8F8F8)
                 )
             )
-            Spacer(modifier = Modifier.height(10.dp))
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 25.dp, vertical = 10.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "필수 정보를 입력해주세요",
-                        fontFamily = poppins,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 16.sp
-                    )
-                    Row(
-                        modifier = Modifier.clickable { /*TODO 사진 선택 모달*/ },
-                        verticalAlignment = Alignment.CenterVertically
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(1) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 25.dp, vertical = 10.dp)
                     ) {
-                        Text(
-                            text = "사진 첨부 (선택)",
-                            fontFamily = poppins,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 12.sp
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Icon(
-                            modifier = Modifier.size(14.dp),
-                            imageVector = ImageVector.vectorResource(id = R.drawable.attach_icon),
-                            contentDescription = "attach icon",
-                            tint = Color.Black
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(20.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "주최",
-                        fontFamily = poppins,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 16.sp
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    VerticalDivider(
-                        modifier = Modifier.height(16.dp),
-                        thickness = 1.dp
-                    )
-                    customTextField(
-                        placeholder = userUiState.nickname,
-                        enabled = false
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "일자",
-                        fontFamily = poppins,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 16.sp
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    VerticalDivider(
-                        modifier = Modifier.height(16.dp),
-                        thickness = 1.dp
-                    )
-                    eventDuration = customTextField(
-                        placeholder = "2023.11.11 ~ 2023.11.13",
-                        enabled = true
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "장소",
-                        fontFamily = poppins,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 16.sp
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    VerticalDivider(
-                        modifier = Modifier.height(16.dp),
-                        thickness = 1.dp
-                    )
-                    eventPlace = customTextField(
-                        placeholder = "자하연 앞",
-                        enabled = true
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "시간",
-                        fontFamily = poppins,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 16.sp
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    VerticalDivider(
-                        modifier = Modifier.height(16.dp),
-                        thickness = 1.dp
-                    )
-                    eventTime = customTextField(
-                        placeholder = "오후 1시 ~ 오후 6시",
-                        enabled = true
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "분류",
-                        fontFamily = poppins,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 16.sp
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    VerticalDivider(
-                        modifier = Modifier.height(16.dp),
-                        thickness = 1.dp
-                    )
-                    Spacer(modifier = Modifier.width(15.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier.clickable { eventCategory = true }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "필수 정보를 입력해주세요",
+                                fontFamily = poppins,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 16.sp
+                            )
+                            Row(
+                                modifier = Modifier.clickable { getImage.launch("image/*") },
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                CheckBox(
-                                    color = if (eventCategory) ButtonBlue else Color.Transparent,
-                                    size = 18
+                                Text(
+                                    text = "사진 첨부 (선택)",
+                                    fontFamily = poppins,
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 12.sp
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Icon(
+                                    modifier = Modifier.size(14.dp),
+                                    imageVector = ImageVector.vectorResource(id = R.drawable.attach_icon),
+                                    contentDescription = "attach icon",
+                                    tint = Color.Black
                                 )
                             }
-                            Spacer(modifier = Modifier.width(10.dp))
+                        }
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
                             Text(
-                                text = "공연",
+                                text = "주최",
                                 fontFamily = poppins,
-                                fontWeight = FontWeight.Normal,
+                                fontWeight = FontWeight.SemiBold,
                                 fontSize = 16.sp
                             )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            VerticalDivider(
+                                modifier = Modifier.height(16.dp),
+                                thickness = 1.dp
+                            )
+                            customTextField(
+                                placeholder = userUiState.nickname,
+                                enabled = false
+                            )
                         }
-                        Spacer(modifier = Modifier.weight(1f))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(modifier = Modifier.clickable { eventCategory = false }) {
-                                CheckBox(
-                                    color = if (eventCategory) Color.Transparent else ButtonBlue,
-                                    size = 18
-                                )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = "일자",
+                                fontFamily = poppins,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 16.sp
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            VerticalDivider(
+                                modifier = Modifier.height(16.dp),
+                                thickness = 1.dp
+                            )
+                            eventDuration = customTextField(
+                                placeholder = "2023.11.11 ~ 2023.11.13",
+                                enabled = true
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = "장소",
+                                fontFamily = poppins,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 16.sp
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            VerticalDivider(
+                                modifier = Modifier.height(16.dp),
+                                thickness = 1.dp
+                            )
+                            eventPlace = customTextField(
+                                placeholder = "자하연 앞",
+                                enabled = true
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = "시간",
+                                fontFamily = poppins,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 16.sp
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            VerticalDivider(
+                                modifier = Modifier.height(16.dp),
+                                thickness = 1.dp
+                            )
+                            eventTime = customTextField(
+                                placeholder = "오후 1시 ~ 오후 6시",
+                                enabled = true
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = "분류",
+                                fontFamily = poppins,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 16.sp
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            VerticalDivider(
+                                modifier = Modifier.height(16.dp),
+                                thickness = 1.dp
+                            )
+                            Spacer(modifier = Modifier.width(15.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Box(
+                                        modifier = Modifier.clickable { eventCategory = true }
+                                    ) {
+                                        CheckBox(
+                                            color = if (eventCategory) ButtonBlue else Color.Transparent,
+                                            size = 18
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Text(
+                                        text = "공연",
+                                        fontFamily = poppins,
+                                        fontWeight = FontWeight.Normal,
+                                        fontSize = 16.sp
+                                    )
+                                }
+                                Spacer(modifier = Modifier.weight(1f))
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Box(modifier = Modifier.clickable { eventCategory = false }) {
+                                        CheckBox(
+                                            color = if (eventCategory) Color.Transparent else ButtonBlue,
+                                            size = 18
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Text(
+                                        text = "학술",
+                                        fontFamily = poppins,
+                                        fontWeight = FontWeight.Normal,
+                                        fontSize = 16.sp
+                                    )
+                                }
+                                Spacer(modifier = Modifier.weight(1f))
                             }
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Text(
-                                text = "학술",
-                                fontFamily = poppins,
-                                fontWeight = FontWeight.Normal,
-                                fontSize = 16.sp
-                            )
                         }
-                        Spacer(modifier = Modifier.weight(1f))
                     }
-                    eventTime = customTextField(
-                        placeholder = "오후 1시 ~ 오후 6시",
-                        enabled = true
+                    Spacer(modifier = Modifier.height(10.dp))
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth(),
+                        thickness = 1.dp,
+                        color = PlaceholderGrey
+                    )
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        imageUri?.let { uri ->
+                            Spacer(modifier = Modifier.height(20.dp))
+                            Image(
+                                painter = rememberAsyncImagePainter(uri),
+                                contentDescription = "image",
+                                contentScale = ContentScale.FillBounds,
+                                modifier = Modifier.size(300.dp)
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Text(
+                                text = "사진이 정방형이 아니면 비율이 깨질 수 있으며 1장만 선택할 수 있습니다.",
+                                fontFamily = poppins,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 11.sp,
+                                fontStyle = FontStyle.Italic,
+                                color = PlaceholderGrey
+                            )
+                            Spacer(modifier = Modifier.height(20.dp))
+                        }
+                    }
+                    TextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 600.dp),
+                        value = eventContent,
+                        onValueChange = { eventContent = it },
+                        placeholder = {
+                            Text(
+                                text = "행사 정보를 입력해주세요",
+                                fontFamily = poppins,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = PlaceholderGrey
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Default
+                        ),
+                        colors = TextFieldDefaults.colors(
+                            unfocusedContainerColor = Color(0x00F8F8F8),
+                            focusedContainerColor = Color(0x00F8F8F8)
+                        )
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(10.dp))
-            HorizontalDivider(
-                modifier = Modifier.fillMaxWidth(),
-                thickness = 1.dp,
-                color = PlaceholderGrey
-            )
-            TextField(
-                modifier = Modifier
-                    .fillMaxSize(),
-                value = eventContent,
-                onValueChange = { eventContent = it },
-                placeholder = {
-                    Text(
-                        text = "행사 정보를 입력해주세요",
-                        fontFamily = poppins,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = PlaceholderGrey
-                    )
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done
-                ),
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = Color(0x00F8F8F8),
-                    focusedContainerColor = Color(0x00F8F8F8)
-                )
-            )
         }
         Box(modifier = Modifier.offset(330.dp, 600.dp)) {
             Box(
@@ -330,7 +372,9 @@ fun BoardPostScreen(
         if (postConfirmDialog) {
             ConfirmDialog(
                 onDismissRequest = { postConfirmDialog = false },
-                onClick = { /* TODO 이벤트 등록 */ },
+                onClick = { /* TODO 이벤트 등록 */
+                    boardNavController.popBackStack()
+                },
                 text = "글을 업로드 하시겠어요?"
             )
         }
