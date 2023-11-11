@@ -30,7 +30,7 @@ fun Board(
     val boardNavController = rememberNavController()
     val backStackEntry by boardNavController.currentBackStackEntryAsState()
     val currentScreen = backStackEntry?.destination?.route ?: BoardRoute.Dashboard.route
-    val canNavigateBack = currentScreen == "Details"
+    val canNavigateBack = currentScreen != "Board"
     var eventId by rememberSaveable { mutableIntStateOf(0) }
 
     Scaffold(
@@ -68,6 +68,13 @@ fun Board(
                     boardViewModel = boardViewModel,
                     userToken = userUiState.token,
                     eventId = eventId
+                )
+            }
+            composable(BoardRoute.BoardPost.route) {
+                BoardPostScreen(
+                    innerPadding = innerPadding,
+                    boardViewModel = boardViewModel,
+                    userToken = userUiState.token
                 )
             }
         }
