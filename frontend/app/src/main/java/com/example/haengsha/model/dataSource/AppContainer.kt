@@ -17,7 +17,7 @@ interface AppContainer {
 }
 
 class HaengshaAppContainer : AppContainer {
-    private val baseUrl = "http://ec2-52-79-228-36.ap-northeast-2.compute.amazonaws.com:8080/"
+    private val baseUrl = "http://ec2-52-79-228-92.ap-northeast-2.compute.amazonaws.com:8080/"
     private val okHttpClient = OkHttpClient.Builder()
         .readTimeout(30, TimeUnit.SECONDS)
         .connectTimeout(30, TimeUnit.SECONDS)
