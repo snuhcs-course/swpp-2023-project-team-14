@@ -1,6 +1,7 @@
 package com.example.haengsha.ui.screens.dashBoard
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,23 +40,27 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.haengsha.R
+import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
+import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.CheckBox
+import com.example.haengsha.ui.uiComponents.customTextField
 
 @Composable
 fun BoardPostScreen(
     innerPadding: PaddingValues,
     boardViewModel: BoardViewModel,
-    userToken: String
+    userUiState: UserUiState
 ) {
     var eventTitle by remember { mutableStateOf("") }
     var eventDuration by remember { mutableStateOf("") }
     var eventPlace by remember { mutableStateOf("") }
     var eventTime by remember { mutableStateOf("") }
     var eventContent by remember { mutableStateOf("") }
-    var eventCategory by remember { mutableStateOf(true) }
+    var eventCategory by remember { mutableStateOf(true) } // 행사면 true
 
     Box(
         modifier = Modifier
@@ -113,11 +118,11 @@ fun BoardPostScreen(
                             text = "사진 첨부 (선택)",
                             fontFamily = poppins,
                             fontWeight = FontWeight.Normal,
-                            fontSize = 14.sp
+                            fontSize = 12.sp
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Icon(
-                            modifier = Modifier.size(16.dp),
+                            modifier = Modifier.size(14.dp),
                             imageVector = ImageVector.vectorResource(id = R.drawable.attach_icon),
                             contentDescription = "attach icon",
                             tint = Color.Black
@@ -142,28 +147,9 @@ fun BoardPostScreen(
                         modifier = Modifier.height(16.dp),
                         thickness = 1.dp
                     )
-                    Spacer(modifier = Modifier.width(20.dp))
-                    TextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(40.dp)
-                            .background(color = Color(0x00F8F8F8)),
-                        readOnly = true,
-                        enabled = false,
-                        value = "서울대학교 마술 동아리 몽환", // readOnly 라서 아무 변수 할당
-                        onValueChange = {},
-                        placeholder = {
-                            Text(
-                                text = "서울대학교 마술 동아리 몽환", // readOnly 라서 아무 변수 할당
-                                fontFamily = poppins,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = Color.Black
-                            )
-                        },
-                        colors = TextFieldDefaults.colors(
-                            disabledContainerColor = Color(0x00F8F8F8)
-                        )
+                    customTextField(
+                        placeholder = userUiState.nickname,
+                        enabled = false
                     )
                 }
                 Row(
@@ -183,33 +169,9 @@ fun BoardPostScreen(
                         modifier = Modifier.height(16.dp),
                         thickness = 1.dp
                     )
-                    Spacer(modifier = Modifier.width(20.dp))
-                    TextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(40.dp)
-                            .background(color = Color(0x00F8F8F8)),
-                        value = eventDuration,
-                        onValueChange = { eventDuration = it },
-                        placeholder = {
-                            Text(
-                                // TODO : DatePicker로 바꾸기
-                                text = "2023년 11월 10일 ~ 2023년 11월 12일",
-                                fontFamily = poppins,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = PlaceholderGrey
-                            )
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Done
-                        ),
-                        singleLine = true,
-                        colors = TextFieldDefaults.colors(
-                            unfocusedContainerColor = Color(0x00F8F8F8),
-                            focusedContainerColor = Color(0x00F8F8F8)
-                        )
+                    eventDuration = customTextField(
+                        placeholder = "2023.11.11 ~ 2023.11.13",
+                        enabled = true
                     )
                 }
                 Row(
@@ -229,32 +191,9 @@ fun BoardPostScreen(
                         modifier = Modifier.height(16.dp),
                         thickness = 1.dp
                     )
-                    Spacer(modifier = Modifier.width(20.dp))
-                    TextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(40.dp)
-                            .background(color = Color(0x00F8F8F8)),
-                        value = eventPlace,
-                        onValueChange = { eventPlace = it },
-                        placeholder = {
-                            Text(
-                                text = "자하연 앞",
-                                fontFamily = poppins,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = PlaceholderGrey
-                            )
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Done
-                        ),
-                        singleLine = true,
-                        colors = TextFieldDefaults.colors(
-                            unfocusedContainerColor = Color(0x00F8F8F8),
-                            focusedContainerColor = Color(0x00F8F8F8)
-                        )
+                    eventPlace = customTextField(
+                        placeholder = "자하연 앞",
+                        enabled = true
                     )
                 }
                 Row(
@@ -274,32 +213,71 @@ fun BoardPostScreen(
                         modifier = Modifier.height(16.dp),
                         thickness = 1.dp
                     )
-                    Spacer(modifier = Modifier.width(20.dp))
-                    TextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(40.dp)
-                            .background(color = Color(0x00F8F8F8)),
-                        value = eventTime,
-                        onValueChange = { eventTime = it },
-                        placeholder = {
+                    eventTime = customTextField(
+                        placeholder = "오후 1시 ~ 오후 6시",
+                        enabled = true
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = "분류",
+                        fontFamily = poppins,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 16.sp
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    VerticalDivider(
+                        modifier = Modifier.height(16.dp),
+                        thickness = 1.dp
+                    )
+                    Spacer(modifier = Modifier.width(15.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier.clickable { eventCategory = true }
+                            ) {
+                                CheckBox(
+                                    color = if (eventCategory) ButtonBlue else Color.Transparent,
+                                    size = 18
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = "오후 1시 ~ 오후 3시",
+                                text = "공연",
                                 fontFamily = poppins,
-                                fontSize = 16.sp,
                                 fontWeight = FontWeight.Normal,
-                                color = PlaceholderGrey
+                                fontSize = 16.sp
                             )
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Done
-                        ),
-                        singleLine = true,
-                        colors = TextFieldDefaults.colors(
-                            unfocusedContainerColor = Color(0x00F8F8F8),
-                            focusedContainerColor = Color(0x00F8F8F8)
-                        )
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(modifier = Modifier.clickable { eventCategory = false }) {
+                                CheckBox(
+                                    color = if (eventCategory) Color.Transparent else ButtonBlue,
+                                    size = 18
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                text = "학술",
+                                fontFamily = poppins,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 16.sp
+                            )
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                    eventTime = customTextField(
+                        placeholder = "오후 1시 ~ 오후 6시",
+                        enabled = true
                     )
                 }
             }
@@ -318,7 +296,7 @@ fun BoardPostScreen(
                     Text(
                         text = "행사 정보를 입력해주세요",
                         fontFamily = poppins,
-                        fontSize = 16.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Normal,
                         color = PlaceholderGrey
                     )
@@ -350,9 +328,4 @@ fun BoardPostScreen(
             }
         }
     }
-}
-
-@Composable
-fun SmallTextField() {
-
 }

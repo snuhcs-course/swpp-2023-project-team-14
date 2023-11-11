@@ -191,6 +191,7 @@ fun LoginScreen(
                 is LoginUiState.LoginSuccess -> {
                     userViewModel.updateToken(loginUiState.token)
                     userViewModel.updateRole(loginUiState.role)
+                    userViewModel.updateRole(loginUiState.nickname)
                     mainNavController.navigate(MainRoute.Home.route) {
                         popUpTo(LoginRoute.Login.route) { inclusive = true }
                         popUpTo(MainRoute.Login.route) { inclusive = true }

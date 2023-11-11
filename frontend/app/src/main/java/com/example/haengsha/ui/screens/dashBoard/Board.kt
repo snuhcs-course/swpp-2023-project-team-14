@@ -74,7 +74,7 @@ fun Board(
                 BoardPostScreen(
                     innerPadding = innerPadding,
                     boardViewModel = boardViewModel,
-                    userToken = userUiState.token
+                    userUiState = userUiState
                 )
             }
         }

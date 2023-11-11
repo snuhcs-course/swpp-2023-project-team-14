@@ -2,19 +2,27 @@ package com.example.haengsha.ui.uiComponents
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TextFieldDefaults.indicatorLine
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,11 +34,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -379,14 +389,84 @@ fun commentTextField(): String {
     return input
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun customTextField(placeholder: String, enabled: Boolean): String {
+    var input by remember { mutableStateOf("") }
+    val interactionSource = remember { MutableInteractionSource() }
+
+    BasicTextField(
+        value = input,
+        onValueChange = { input = it },
+        modifier = Modifier
+            .indicatorLine(
+                enabled = false,
+                isError = false,
+                interactionSource = interactionSource,
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                )
+            )
+            .fillMaxWidth()
+            .height(40.dp)
+            .background(color = Color(0x00F8F8F8)),
+        enabled = enabled,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Done
+        ),
+        singleLine = true,
+        textStyle = TextStyle(
+            color = Color.Black,
+            fontSize = 16.sp,
+            fontFamily = poppins,
+            fontWeight = FontWeight.Normal,
+        ),
+        decorationBox = { innerTextField ->
+            TextFieldDefaults.DecorationBox(
+                value = input,
+                innerTextField = innerTextField,
+                enabled = enabled,
+                singleLine = true,
+                visualTransformation = VisualTransformation.None,
+                interactionSource = interactionSource,
+                contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(
+                    top = 0.dp,
+                    bottom = 0.dp
+                ),
+                placeholder = {
+                    Text(
+                        text = placeholder,
+                        color = if (enabled) HaengshaGrey else Color.Black,
+                        fontSize = 16.sp,
+                        fontFamily = poppins,
+                        fontWeight = FontWeight.Normal,
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    focusedContainerColor = Color(0x00F8F8F8),
+                    unfocusedContainerColor = Color(0x00F8F8F8),
+                    disabledContainerColor = Color(0x00F8F8F8)
+                )
+            )
+        }
+    )
+    return input
+}
+
 @Preview(showBackground = true)
 @Composable
-fun CommonTextFieldPreview() {
+fun TextFieldPreview() {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        commonTextField(false, "placeholder")
+        customTextField("자하연 앞", true)
     }
 }
