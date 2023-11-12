@@ -21,14 +21,13 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,11 +55,9 @@ import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.atStartOfMonth
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.core.yearMonth
-import kotlinx.coroutines.selects.select
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Date
@@ -97,13 +94,9 @@ class SharedViewModel() : ViewModel() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateFestivalItems(newItems: List<EventCardData>?) {
-        _festivalItems.value = newItems
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun updateAcademicItems(newItems: List<EventCardData>?) {
-        _academicItems.value = newItems
+    fun updateEventItems(festivalItems: List<EventCardData>?, academicItems: List<EventCardData>?) {
+        _festivalItems.value = festivalItems
+        _academicItems.value = academicItems
     }
 }
 
@@ -124,14 +117,14 @@ fun HomeScreen(
     val endDate = remember { currentMonth.plusMonths(100).atEndOfMonth() } // Adjust as needed
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
 
-    eventViewModel.getEventByDate(eventType = "Academic", selection)
-    eventViewModel.getEventByDate(eventType = "Festival", selection)
+    eventViewModel.getEventByDate(selection)
     val state = rememberWeekCalendarState(
         startDate = startDate,
         endDate = endDate,
         firstVisibleWeekDate = selection,
-        firstDayOfWeek = firstDayOfWeek
+        firstDayOfWeek = firstDayOfWeek,
     )
+
 
     var date by remember {
         mutableStateOf("Open date picker dialog")
@@ -194,6 +187,10 @@ fun HomeScreen(
             }
         }
 
+        LaunchedEffect(selection) {
+            state.animateScrollToWeek(selection)
+        }
+
         WeekCalendar(
             state = state,
             userScrollEnabled = true,
@@ -202,14 +199,13 @@ fun HomeScreen(
                 Day(day.date, isSelected = selection == day.date) { clicked ->
                     if (selection != clicked) {
                         selection = clicked
-                        eventViewModel.getEventByDate(eventType = "Academic", selection)
-                        eventViewModel.getEventByDate(eventType = "Festival", selection)
+                        eventViewModel.getEventByDate(selection)
                     }
                 }
             },
         )
 
-        TabView(sharedViewModel, selection, 0)
+        TabView(sharedViewModel, selection)
 
 
     }
@@ -293,7 +289,9 @@ fun MyDatePickerDialog(
         onDismissRequest = { onDismiss() },
         confirmButton = {
             Button(onClick = {
-                onDateSelected(selectedDate)
+                if(selectedDate!=null){
+                    onDateSelected(selectedDate)
+                }
                 onDismiss()
             }
 
@@ -319,6 +317,7 @@ private fun convertMillisToDate(millis: Long): String {
     val formatter = SimpleDateFormat("yyyy-MM-dd")
     return formatter.format(Date(millis))
 }
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Home(
