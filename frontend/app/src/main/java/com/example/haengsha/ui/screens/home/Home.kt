@@ -24,6 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -121,8 +122,9 @@ fun HomeScreen(
         startDate = startDate,
         endDate = endDate,
         firstVisibleWeekDate = selection,
-        firstDayOfWeek = firstDayOfWeek
+        firstDayOfWeek = firstDayOfWeek,
     )
+
 
     var date by remember {
         mutableStateOf("Open date picker dialog")
@@ -183,6 +185,10 @@ fun HomeScreen(
 
                 )
             }
+        }
+
+        LaunchedEffect(selection) {
+            state.animateScrollToWeek(selection)
         }
 
         WeekCalendar(
@@ -283,7 +289,9 @@ fun MyDatePickerDialog(
         onDismissRequest = { onDismiss() },
         confirmButton = {
             Button(onClick = {
-                onDateSelected(selectedDate)
+                if(selectedDate!=null){
+                    onDateSelected(selectedDate)
+                }
                 onDismiss()
             }
 

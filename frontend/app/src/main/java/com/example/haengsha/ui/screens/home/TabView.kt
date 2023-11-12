@@ -177,35 +177,53 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate) {
             modifier = Modifier.fillMaxWidth(),
 
             ) { index ->
-
+            selectedTabIndex = if (index == 1) {
+                1
+            } else {
+                0
+            }
+            val itemsToDisplay = if (index == 1) festivalItems else academicItems
             // App content
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
 
-                if (index == 1) {
-                    selectedTabIndex = 1
-                } else {
-                    selectedTabIndex = 0
-                }
-                val itemsToDisplay = if (index == 1) festivalItems else academicItems
-                items(itemsToDisplay.orEmpty()) { eventCardData ->
-                    Box(modifier = Modifier.clickable {
-                        showEventCardPopup = true
-                        selectedEvent = eventCardData
-                    }) {
-                        EventCard(
-                            organizer = eventCardData.organizer,
-                            eventTitle = eventCardData.eventTitle,
-                            startDate = eventCardData.startDate,
-                            endDate = eventCardData.endDate,
-                            likes = eventCardData.likes,
+            if (itemsToDisplay.isNullOrEmpty()){
+                Box(contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)){
+                    Text(
+                        text = "오늘은 예정된 이벤트가 없어요!",
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            fontFamily = poppins,
+                            fontWeight = FontWeight(500),
+                            color = Color(0xFF000000),
+                            textAlign = TextAlign.Center,
                         )
-                    }
+                    )
                 }
             }
 
+            else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    items(itemsToDisplay.orEmpty()) { eventCardData ->
+                        Box(modifier = Modifier.clickable {
+                            showEventCardPopup = true
+                            selectedEvent = eventCardData
+                        }) {
+                            EventCard(
+                                organizer = eventCardData.organizer,
+                                eventTitle = eventCardData.eventTitle,
+                                startDate = eventCardData.startDate,
+                                endDate = eventCardData.endDate,
+                                likes = eventCardData.likes,
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 
