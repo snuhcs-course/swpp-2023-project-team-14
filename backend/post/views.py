@@ -55,7 +55,7 @@ class PostListView(APIView):
         place = request.data.get("place")
         image = request.FILES.get("image")
         old_image = image
-        url = ""
+        s3_url = ""
         is_festival = request.data.get("is_festival")
         time = request.data.get("time")
         durations = request.data.get("duration")
@@ -135,12 +135,15 @@ class PostListView(APIView):
         for duration_data in duration_data_json:
             print(f'duration_data:\n{duration_data}')
 
-            event_day = duration_data["event_day"]
-            try:
-                duration = Duration.objects.get(event_day=event_day)
-            except:
-                duration = Duration.objects.create(event_day=event_day)
-            post.event_durations.add(duration)
+            for it in duration_data.values():
+                # event_day = duration_data["event_day"]
+                event_day = it
+                try:
+                    duration = Duration.objects.get(event_day=event_day)
+                except:
+                    duration = Duration.objects.create(event_day=event_day)
+                    
+                post.event_durations.add(duration)
         
         post.save()
         
