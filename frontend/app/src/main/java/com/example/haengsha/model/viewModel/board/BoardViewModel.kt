@@ -96,8 +96,10 @@ class BoardViewModel(private val boardDataRepository: BoardDataRepository) : Vie
                 boardDataRepository.postEvent(boardPostRequest)
                 BoardPostUiState.Success
             } catch (e: HttpException) {
+                e.message?.let { Log.d("post", it) }
                 BoardPostUiState.HttpError
             } catch (e: IOException) {
+                e.message?.let { Log.d("post", it) }
                 BoardPostUiState.NetworkError
             } catch (e: Exception) {
                 e.message?.let { Log.d("post", it) }

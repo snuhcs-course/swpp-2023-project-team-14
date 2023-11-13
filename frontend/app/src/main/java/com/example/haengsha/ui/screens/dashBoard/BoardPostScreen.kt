@@ -1,6 +1,9 @@
 package com.example.haengsha.ui.screens.dashBoard
 
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -30,7 +33,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -49,7 +55,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.haengsha.R
+import com.example.haengsha.model.network.dataModel.BoardPostRequest
 import com.example.haengsha.model.uiState.UserUiState
+import com.example.haengsha.model.uiState.board.BoardPostUiState
 import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
@@ -57,6 +65,12 @@ import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CheckBox
 import com.example.haengsha.ui.uiComponents.ConfirmDialog
 import com.example.haengsha.ui.uiComponents.customTextField
+import es.dmoral.toasty.Toasty
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.ByteArrayOutputStream
 
 @Composable
 fun BoardPostScreen(
@@ -65,19 +79,64 @@ fun BoardPostScreen(
     boardNavController: NavController,
     userUiState: UserUiState
 ) {
+    val postContext = LocalContext.current
+    val boardPostUiState = boardViewModel.boardPostUiState
+    var postTrigger by remember { mutableIntStateOf(0) }
+    val authToken = "Token ${userUiState.token}"
     var eventTitle by remember { mutableStateOf("") }
     var eventDuration by remember { mutableStateOf("") }
     var eventPlace by remember { mutableStateOf("") }
     var eventTime by remember { mutableStateOf("") }
     var eventContent by remember { mutableStateOf("") }
-    var eventCategory by remember { mutableStateOf(true) } // 행사면 true
+    var eventCategory by remember { mutableIntStateOf(1) } // 행사면 1
     var postConfirmDialog by remember { mutableStateOf(false) }
+    var durationStart by remember { mutableStateOf("") }
+    var durationEnd by remember { mutableStateOf("") }
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val getImage =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { result ->
             result?.let { uri -> imageUri = uri }
         }
+
+    val titleRequestBody = eventTitle.toRequestBody("application/json".toMediaTypeOrNull())
+    val categoryRequestBody =
+        eventCategory.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+    val durationStartRequestBody = durationStart.toRequestBody("text/plain".toMediaTypeOrNull())
+    val durationEndRequestBody = durationEnd.toRequestBody("text/plain".toMediaTypeOrNull())
+    val placeRequestBody = eventPlace.toRequestBody("text/plain".toMediaTypeOrNull())
+    val timeRequestBody = eventTime.toRequestBody("text/plain".toMediaTypeOrNull())
+    val contentRequestBody = eventContent.toRequestBody("text/plain".toMediaTypeOrNull())
+    val hashMap = HashMap<String, RequestBody>()
+
+    // TODO SDK 버전 28 이상만 가능
+    val bitmap = if (imageUri === null) null else {
+        ImageDecoder.decodeBitmap(
+            ImageDecoder.createSource(
+                postContext.contentResolver,
+                imageUri!!
+            )
+        )
+    }
+    val byteArrayOutputStream = ByteArrayOutputStream()
+    bitmap?.compress(Bitmap.CompressFormat.JPEG, 10, byteArrayOutputStream)
+    val imageRequestBody = if (bitmap === null) null else {
+        byteArrayOutputStream.toByteArray().toRequestBody("image/*".toMediaTypeOrNull())
+    }
+    val imageMultipartBody = if (imageRequestBody === null) null else {
+        MultipartBody.Part.createFormData("image", "image.jpeg", imageRequestBody)
+    }
+
+    val boardPostRequest = BoardPostRequest(
+        token = authToken,
+        image = imageMultipartBody,
+        title = titleRequestBody,
+        isFestival = categoryRequestBody,
+        eventDurations = hashMap,
+        place = placeRequestBody,
+        time = timeRequestBody,
+        content = contentRequestBody
+    )
 
     Box(
         modifier = Modifier
@@ -261,10 +320,10 @@ fun BoardPostScreen(
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Box(
-                                        modifier = Modifier.clickable { eventCategory = true }
+                                        modifier = Modifier.clickable { eventCategory = 1 }
                                     ) {
                                         CheckBox(
-                                            color = if (eventCategory) ButtonBlue else Color.Transparent,
+                                            color = if (eventCategory == 1) ButtonBlue else Color.Transparent,
                                             size = 18
                                         )
                                     }
@@ -278,9 +337,9 @@ fun BoardPostScreen(
                                 }
                                 Spacer(modifier = Modifier.weight(1f))
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Box(modifier = Modifier.clickable { eventCategory = false }) {
+                                    Box(modifier = Modifier.clickable { eventCategory = 0 }) {
                                         CheckBox(
-                                            color = if (eventCategory) Color.Transparent else ButtonBlue,
+                                            color = if (eventCategory == 1) Color.Transparent else ButtonBlue,
                                             size = 18
                                         )
                                     }
@@ -372,11 +431,68 @@ fun BoardPostScreen(
         if (postConfirmDialog) {
             ConfirmDialog(
                 onDismissRequest = { postConfirmDialog = false },
-                onClick = { /* TODO 이벤트 등록 */
-                    boardNavController.popBackStack()
+                onClick = {
+                    if (eventDuration.contains("~")) {
+                        val duration = eventDuration.split("~")
+                        if (duration.size > 1) {
+                            durationStart = duration[0].trim()
+                            durationEnd = duration[1].trim()
+                        }
+                    }
+                    hashMap["event_day_start"] = durationStartRequestBody
+                    hashMap["event_day_end"] = durationEndRequestBody
+                    postTrigger++
+                    Log.d(
+                        "post",
+                        userUiState.token + " & " + userUiState.role + " & " + userUiState.nickname
+                    )
+                    boardViewModel.postEvent(boardPostRequest = boardPostRequest)
                 },
                 text = "글을 업로드 하시겠어요?"
             )
         }
     }
+    if (postTrigger > 0) {
+        LaunchedEffect(key1 = boardPostUiState) {
+            when (boardPostUiState) {
+                is BoardPostUiState.Success -> {
+                    Toasty.success(
+                        postContext,
+                        "글이 업로드 되었습니다.",
+                        Toasty.LENGTH_SHORT
+                    ).show()
+                    boardNavController.popBackStack()
+                }
+
+                is BoardPostUiState.HttpError -> {
+                    Toasty.warning(
+                        postContext,
+                        "글 업로드에 실패했습니다. 다시 시도해주세요.",
+                        Toasty.LENGTH_SHORT
+                    ).show()
+                }
+
+                is BoardPostUiState.NetworkError -> {
+                    Toasty.error(
+                        postContext,
+                        "인터넷 연결을 확인해주세요",
+                        Toasty.LENGTH_SHORT,
+                        true
+                    ).show()
+                }
+
+                is BoardPostUiState.Loading -> {
+                    // 로딩중
+                }
+
+                else -> {
+                    // 앱 오류
+                }
+            }
+        }
+    }
+}
+
+fun buildRequestBody() {
+
 }

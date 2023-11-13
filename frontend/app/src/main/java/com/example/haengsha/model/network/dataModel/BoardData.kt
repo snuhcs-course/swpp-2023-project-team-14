@@ -56,7 +56,7 @@ data class BoardPostRequest(
     val image: MultipartBody.Part?,
     val title: RequestBody,
     val isFestival: RequestBody,
-    val eventDurations: List<RequestBody>,
+    val eventDurations: HashMap<String, RequestBody>,
     val place: RequestBody,
     val time: RequestBody,
     val content: RequestBody

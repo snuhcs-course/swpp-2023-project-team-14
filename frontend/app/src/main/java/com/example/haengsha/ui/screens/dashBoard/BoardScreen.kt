@@ -54,7 +54,6 @@ import com.example.haengsha.ui.uiComponents.searchBar
 import es.dmoral.toasty.Toasty
 import java.time.LocalDate
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun boardScreen(
     innerPadding: PaddingValues,
