@@ -12,8 +12,10 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.haengsha.HaengshaApplication
 import com.example.haengsha.model.dataSource.BoardDataRepository
+import com.example.haengsha.model.network.dataModel.BoardPostRequest
 import com.example.haengsha.model.uiState.board.BoardDetailUiState
 import com.example.haengsha.model.uiState.board.BoardListUiState
+import com.example.haengsha.model.uiState.board.BoardPostUiState
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -23,6 +25,9 @@ class BoardViewModel(private val boardDataRepository: BoardDataRepository) : Vie
         private set
 
     var boardDetailUiState: BoardDetailUiState by mutableStateOf(BoardDetailUiState.Loading)
+        private set
+
+    var boardPostUiState: BoardPostUiState by mutableStateOf(BoardPostUiState.Loading)
         private set
 
     companion object {
@@ -46,7 +51,6 @@ class BoardViewModel(private val boardDataRepository: BoardDataRepository) : Vie
             } catch (e: IOException) {
                 BoardListUiState.NetworkError
             } catch (e: Exception) {
-                e.message?.let { Log.d("board", it) }
                 BoardListUiState.Error
             }
         }
@@ -63,7 +67,6 @@ class BoardViewModel(private val boardDataRepository: BoardDataRepository) : Vie
             } catch (e: IOException) {
                 BoardDetailUiState.NetworkError
             } catch (e: Exception) {
-                e.message?.let { Log.d("detail", it) }
                 BoardDetailUiState.Error
             }
         }
@@ -81,8 +84,26 @@ class BoardViewModel(private val boardDataRepository: BoardDataRepository) : Vie
             } catch (e: IOException) {
                 BoardListUiState.NetworkError
             } catch (e: Exception) {
-                e.message?.let { Log.d("board", it) }
                 BoardListUiState.Error
+            }
+        }
+    }
+
+    fun postEvent(boardPostRequest: BoardPostRequest) {
+        viewModelScope.launch {
+            boardPostUiState = BoardPostUiState.Loading
+            boardPostUiState = try {
+                boardDataRepository.postEvent(boardPostRequest)
+                BoardPostUiState.Success
+            } catch (e: HttpException) {
+                e.message?.let { Log.d("post", it) }
+                BoardPostUiState.HttpError
+            } catch (e: IOException) {
+                e.message?.let { Log.d("post", it) }
+                BoardPostUiState.NetworkError
+            } catch (e: Exception) {
+                e.message?.let { Log.d("post", it) }
+                BoardPostUiState.Error
             }
         }
     }

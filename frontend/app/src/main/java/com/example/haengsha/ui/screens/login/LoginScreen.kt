@@ -146,7 +146,7 @@ fun LoginScreen(
 //                    } else {
                     loginTrigger++
                     // loginViewModel.login("$emailInput@snu.ac.kr", passwordInput)
-                    loginViewModel.login("user2@snu.ac.kr", "user2")
+                    loginViewModel.login("groupuser52@snu.ac.kr", "groupuser52")
                     //}
                 })
             if (isLoginFailedDialogVisible) {
@@ -191,6 +191,7 @@ fun LoginScreen(
                 is LoginUiState.LoginSuccess -> {
                     userViewModel.updateToken(loginUiState.token)
                     userViewModel.updateRole(loginUiState.role)
+                    userViewModel.updateNickname(loginUiState.nickname)
                     mainNavController.navigate(MainRoute.Home.route) {
                         popUpTo(LoginRoute.Login.route) { inclusive = true }
                         popUpTo(MainRoute.Login.route) { inclusive = true }

@@ -24,3 +24,11 @@ sealed interface BoardDetailUiState {
     object Error : BoardDetailUiState
     object Loading : BoardDetailUiState
 }
+
+sealed interface BoardPostUiState {
+    object Success : BoardPostUiState
+    object HttpError : BoardPostUiState
+    object NetworkError : BoardPostUiState
+    object Error : BoardPostUiState
+    object Loading : BoardPostUiState
+}

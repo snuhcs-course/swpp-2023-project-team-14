@@ -1,5 +1,6 @@
 package com.example.haengsha.model.viewModel.login
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -45,6 +46,7 @@ class LoginViewModel(private val loginDataRepository: LoginDataRepository) : Vie
                     loginDataRepository.login(LoginRequest(email, password))
                 LoginUiState.LoginSuccess(
                     loginSuccessResult.token,
+                    loginSuccessResult.nickname,
                     loginSuccessResult.role,
                     loginSuccessResult.message
                 )
@@ -52,11 +54,12 @@ class LoginViewModel(private val loginDataRepository: LoginDataRepository) : Vie
                 val errorMessage = e.response()?.errorBody()?.string() ?: "입력한 정보를 확인해주세요"
                 LoginUiState.HttpError(errorMessage)
             } catch (e: IOException) {
+                Log.d("login", e.message.toString())
                 LoginUiState.NetworkError
             }
         }
     }
-    
+
     fun loginCodeVerify(email: String, code: String) {
         viewModelScope.launch {
             loginUiState = LoginUiState.Loading
