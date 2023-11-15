@@ -1,6 +1,7 @@
 package com.example.haengsha.ui.screens.dashBoard
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -33,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -82,14 +84,22 @@ fun boardScreen(
                 contentAlignment = Alignment.Center
             ) {
                 if (isFavorite) {
-                    Text(
-                        text = "즐겨찾기한 행사가 없어요 :(\n\n관심 있는 행사를\n즐겨찾기 해보세요!",
-                        fontFamily = poppins,
-                        fontSize = 25.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        lineHeight = 40.sp,
-                        textAlign = TextAlign.Center
-                    )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Image(
+                            modifier = Modifier.size(300.dp),
+                            painter = painterResource(R.drawable.nudge_image),
+                            contentDescription = "nudge image"
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Text(
+                            text = "관심 있는 행사를 즐겨찾기 해보세요!",
+                            fontFamily = poppins,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            lineHeight = 35.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 } else {
                     Text(
                         text = "등록된 행사가 없어요 :(",
