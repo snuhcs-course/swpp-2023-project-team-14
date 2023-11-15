@@ -25,7 +25,7 @@ class PostListView(APIView):
         posts = Post.objects.all()
 
         if keyword:
-            posts = posts.filter(title__icontains=keyword)
+            posts = posts.filter(Q(title__icontains=keyword) | Q(content__icontains=keyword))
         if is_festival is not None:
             posts = posts.filter(is_festival=is_festival)
         if start_date and end_date:
@@ -36,11 +36,11 @@ class PostListView(APIView):
                 )
             posts = posts.filter(
                 ~Q(event_durations__event_day__lt=start_date)
-            ).filter(~Q(event_durations__event_day__gt=end_date)).distinct()
+            ).filter(~Q(event_durations__event_day__gt=end_date))
         elif start_date:
-            posts = posts.filter(~Q(event_durations__event_day__lt=start_date)).distinct()
+            posts = posts.filter(~Q(event_durations__event_day__lt=start_date))
         elif end_date:
-            posts = posts.filter(~Q(event_durations__event_day__gt=end_date)).distinct()
+            posts = posts.filter(~Q(event_durations__event_day__gt=end_date))
 
         posts = posts.order_by("-like_count")
 
