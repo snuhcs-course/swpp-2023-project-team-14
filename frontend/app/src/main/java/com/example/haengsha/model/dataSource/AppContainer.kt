@@ -7,6 +7,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
@@ -18,9 +19,12 @@ interface AppContainer {
 
 class HaengshaAppContainer : AppContainer {
     private val baseUrl = "http://ec2-52-79-228-92.ap-northeast-2.compute.amazonaws.com:8080/"
+    private val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
+
     private val okHttpClient = OkHttpClient.Builder()
-        .readTimeout(30, TimeUnit.SECONDS)
-        .connectTimeout(30, TimeUnit.SECONDS)
+        .addInterceptor(httpLoggingInterceptor)
         .build()
 
     private val retrofit = Retrofit.Builder()

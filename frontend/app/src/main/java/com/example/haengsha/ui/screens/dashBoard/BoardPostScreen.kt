@@ -1,9 +1,9 @@
 package com.example.haengsha.ui.screens.dashBoard
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -68,7 +68,6 @@ import com.example.haengsha.ui.uiComponents.customTextField
 import es.dmoral.toasty.Toasty
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
 
@@ -90,53 +89,17 @@ fun BoardPostScreen(
     var eventContent by remember { mutableStateOf("") }
     var eventCategory by remember { mutableIntStateOf(1) } // 행사면 1
     var postConfirmDialog by remember { mutableStateOf(false) }
-    var durationStart by remember { mutableStateOf("") }
-    var durationEnd by remember { mutableStateOf("") }
-
+    var durationStart = ""
+    var durationEnd = ""
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val getImage =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { result ->
             result?.let { uri -> imageUri = uri }
         }
 
-    val titleRequestBody = eventTitle.toRequestBody("application/json".toMediaTypeOrNull())
-    val categoryRequestBody =
-        eventCategory.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-    val durationStartRequestBody = durationStart.toRequestBody("text/plain".toMediaTypeOrNull())
-    val durationEndRequestBody = durationEnd.toRequestBody("text/plain".toMediaTypeOrNull())
-    val placeRequestBody = eventPlace.toRequestBody("text/plain".toMediaTypeOrNull())
-    val timeRequestBody = eventTime.toRequestBody("text/plain".toMediaTypeOrNull())
-    val contentRequestBody = eventContent.toRequestBody("text/plain".toMediaTypeOrNull())
-    val hashMap = HashMap<String, RequestBody>()
+    var boardPostRequest: BoardPostRequest
 
     // TODO SDK 버전 28 이상만 가능
-    val bitmap = if (imageUri === null) null else {
-        ImageDecoder.decodeBitmap(
-            ImageDecoder.createSource(
-                postContext.contentResolver,
-                imageUri!!
-            )
-        )
-    }
-    val byteArrayOutputStream = ByteArrayOutputStream()
-    bitmap?.compress(Bitmap.CompressFormat.JPEG, 10, byteArrayOutputStream)
-    val imageRequestBody = if (bitmap === null) null else {
-        byteArrayOutputStream.toByteArray().toRequestBody("image/*".toMediaTypeOrNull())
-    }
-    val imageMultipartBody = if (imageRequestBody === null) null else {
-        MultipartBody.Part.createFormData("image", "image.jpeg", imageRequestBody)
-    }
-
-    val boardPostRequest = BoardPostRequest(
-        token = authToken,
-        image = imageMultipartBody,
-        title = titleRequestBody,
-        isFestival = categoryRequestBody,
-        eventDurations = hashMap,
-        place = placeRequestBody,
-        time = timeRequestBody,
-        content = contentRequestBody
-    )
 
     Box(
         modifier = Modifier
@@ -248,7 +211,7 @@ fun BoardPostScreen(
                                 thickness = 1.dp
                             )
                             eventDuration = customTextField(
-                                placeholder = "2023.11.11 ~ 2023.11.13",
+                                placeholder = "2023-11-11 ~ 2023-11-13",
                                 enabled = true
                             )
                         }
@@ -439,13 +402,19 @@ fun BoardPostScreen(
                             durationEnd = duration[1].trim()
                         }
                     }
-                    hashMap["event_day_start"] = durationStartRequestBody
-                    hashMap["event_day_end"] = durationEndRequestBody
-                    postTrigger++
-                    Log.d(
-                        "post",
-                        userUiState.token + " & " + userUiState.role + " & " + userUiState.nickname
+                    boardPostRequest = buildRequestBody(
+                        token = authToken,
+                        image = imageUri,
+                        title = eventTitle,
+                        isFestival = eventCategory,
+                        durationStart = durationStart,
+                        durationEnd = durationEnd,
+                        place = eventPlace,
+                        time = eventTime,
+                        content = eventContent,
+                        postContext = postContext
                     )
+                    postTrigger++
                     boardViewModel.postEvent(boardPostRequest = boardPostRequest)
                 },
                 text = "글을 업로드 하시겠어요?"
@@ -456,6 +425,7 @@ fun BoardPostScreen(
         LaunchedEffect(key1 = boardPostUiState) {
             when (boardPostUiState) {
                 is BoardPostUiState.Success -> {
+                    postConfirmDialog = false
                     Toasty.success(
                         postContext,
                         "글이 업로드 되었습니다.",
@@ -467,7 +437,7 @@ fun BoardPostScreen(
                 is BoardPostUiState.HttpError -> {
                     Toasty.warning(
                         postContext,
-                        "글 업로드에 실패했습니다. 다시 시도해주세요.",
+                        "글 업로드에 실패했습니다.\n다시 시도해주세요.",
                         Toasty.LENGTH_SHORT
                     ).show()
                 }
@@ -493,6 +463,54 @@ fun BoardPostScreen(
     }
 }
 
-fun buildRequestBody() {
+fun buildRequestBody(
+    token: String,
+    image: Uri?,
+    title: String,
+    isFestival: Int,
+    durationStart: String,
+    durationEnd: String,
+    place: String,
+    time: String,
+    content: String,
+    postContext: Context
+): BoardPostRequest {
+    val titleRequestBody = title.toRequestBody("text/plain".toMediaTypeOrNull())
+    val isFestivalRequestBody =
+        isFestival.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+    val eventDurations =
+        "[{\"event_day_1\": \"$durationStart\"}, {\"event_day_2\": \"$durationEnd\"}]"
+    val durationRequestBody = eventDurations.toRequestBody("text/plain".toMediaTypeOrNull())
+    val placeRequestBody = place.toRequestBody("text/plain".toMediaTypeOrNull())
+    val timeRequestBody = time.toRequestBody("text/plain".toMediaTypeOrNull())
+    val contentRequestBody = content.toRequestBody("text/plain".toMediaTypeOrNull())
 
+
+    val bitmap = if (image === null) null else {
+        ImageDecoder.decodeBitmap(
+            ImageDecoder.createSource(
+                postContext.contentResolver,
+                image
+            )
+        )
+    }
+    val byteArrayOutputStream = ByteArrayOutputStream()
+    bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+    val imageRequestBody = if (bitmap === null) null else {
+        byteArrayOutputStream.toByteArray().toRequestBody("image/*".toMediaTypeOrNull())
+    }
+    val imageMultipartBody = if (imageRequestBody === null) null else {
+        MultipartBody.Part.createFormData("image", "image.jpeg", imageRequestBody)
+    }
+
+    return BoardPostRequest(
+        token = token,
+        image = imageMultipartBody,
+        title = titleRequestBody,
+        isFestival = isFestivalRequestBody,
+        eventDurations = durationRequestBody,
+        place = placeRequestBody,
+        time = timeRequestBody,
+        content = contentRequestBody
+    )
 }

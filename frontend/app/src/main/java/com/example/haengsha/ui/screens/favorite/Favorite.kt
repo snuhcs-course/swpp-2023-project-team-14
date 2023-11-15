@@ -1,7 +1,5 @@
 package com.example.haengsha.ui.screens.favorite
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,7 +20,6 @@ import com.example.haengsha.ui.screens.dashBoard.boardScreen
 import com.example.haengsha.ui.uiComponents.HaengshaBottomAppBar
 import com.example.haengsha.ui.uiComponents.HaengshaTopAppBar
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Favorite(
     userUiState: UserUiState,
@@ -61,7 +58,7 @@ fun Favorite(
                     boardViewModel = boardViewModel,
                     boardNavController = favoriteNavController,
                     isFavorite = true,
-                    userToken = userUiState.token
+                    userUiState = userUiState
                 )
             }
             composable(FavoriteRoute.FavoriteDetail.route) {

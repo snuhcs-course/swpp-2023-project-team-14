@@ -5,10 +5,6 @@ import com.example.haengsha.model.network.dataModel.BoardDetailResponse
 import com.example.haengsha.model.network.dataModel.BoardListResponse
 import com.example.haengsha.model.network.dataModel.BoardPostRequest
 import com.example.haengsha.model.network.dataModel.BoardPostResponse
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import retrofit2.http.Header
-import retrofit2.http.Part
 
 interface BoardDataRepository {
     suspend fun getBoardList(startDate: String): List<BoardListResponse>

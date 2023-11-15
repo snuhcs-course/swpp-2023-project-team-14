@@ -6,8 +6,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.http.Header
-import retrofit2.http.Part
 
 @Serializable
 data class BoardListResponse(
@@ -56,7 +54,7 @@ data class BoardPostRequest(
     val image: MultipartBody.Part?,
     val title: RequestBody,
     val isFestival: RequestBody,
-    val eventDurations: HashMap<String, RequestBody>,
+    val eventDurations: RequestBody,
     val place: RequestBody,
     val time: RequestBody,
     val content: RequestBody
@@ -64,7 +62,8 @@ data class BoardPostRequest(
 
 @Serializable
 data class BoardPostResponse(
-    val title: String,
+    val id: Int?,
+    val title: String?,
     @SerialName("is_festival")
     val isFestival: Boolean?,
     val author: Author?, // EventApiService.kt에 정의
@@ -72,6 +71,12 @@ data class BoardPostResponse(
     val time: String?,
     val content: String?,
     val image: String?,
+    @SerialName("event_durations")
+    val eventDurations: ArrayList<EventDurationResponse>,
+    @SerialName("like_count")
+    val likeCount: Int?,
+    @SerialName("favorite_count")
+    val favoriteCount: Int?,
 )
 
 /* TODO 필터 api 짜야함 */

@@ -1,6 +1,5 @@
 package com.example.haengsha.ui.screens.dashBoard
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -233,8 +232,6 @@ fun BoardDetailScreen(
                                         contentDescription = "festival poster",
                                         modifier = Modifier.size(360.dp)
                                     )
-                                    Text(text = boardDetail.image)
-                                    Log.d("img", boardDetail.image)
                                     Spacer(modifier = Modifier.height(20.dp))
                                 }
                             }

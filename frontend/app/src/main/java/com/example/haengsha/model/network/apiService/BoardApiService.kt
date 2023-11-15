@@ -10,22 +10,21 @@ import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
-import retrofit2.http.PartMap
 import retrofit2.http.Path
 
 interface BoardApiService {
-    @GET("/api/post/start_date/{start_date}/")
+    @GET("/api/post/start_date/{start_date}")
     suspend fun getBoardList(
         @Path("start_date") startDate: String
     ): List<BoardListResponse>
 
-    @GET("/api/post/{post_id}/")
+    @GET("/api/post/{post_id}")
     suspend fun getBoardDetail(
         @Header("Authorization") token: String,
         @Path("post_id") postId: Int,
     ): BoardDetailResponse
 
-    @GET("/api/favorite/")
+    @GET("/api/post/favorite")
     suspend fun getFavoriteList(
         @Header("Authorization") token: String
     ): List<BoardListResponse>
@@ -37,7 +36,7 @@ interface BoardApiService {
         @Part image: MultipartBody.Part?,
         @Part("title") title: RequestBody,
         @Part("is_festival") isFestival: RequestBody,
-        @PartMap eventDurations: HashMap<String, RequestBody>,
+        @Part("duration") duration: RequestBody,
         @Part("place") place: RequestBody,
         @Part("time") time: RequestBody,
         @Part("content") content: RequestBody

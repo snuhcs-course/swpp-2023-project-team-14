@@ -1,8 +1,7 @@
 package com.example.haengsha.ui.screens.dashBoard
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -35,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haengsha.R
 import com.example.haengsha.model.route.BoardRoute
+import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.board.BoardListUiState
 import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
@@ -60,7 +61,7 @@ fun boardScreen(
     boardViewModel: BoardViewModel,
     boardNavController: NavController,
     isFavorite: Boolean,
-    userToken: String
+    userUiState: UserUiState
 ): Int {
     val boardContext = LocalContext.current
     val boardListUiState = boardViewModel.boardListUiState
@@ -69,7 +70,7 @@ fun boardScreen(
 
     LaunchedEffect(Unit) {
         if (isFavorite) {
-            boardViewModel.getFavoriteBoardList(userToken)
+            boardViewModel.getFavoriteBoardList(userUiState.token)
             Log.d("favor", "fetch")
         } else boardViewModel.getBoardList(localDate)
     }
@@ -83,14 +84,22 @@ fun boardScreen(
                 contentAlignment = Alignment.Center
             ) {
                 if (isFavorite) {
-                    Text(
-                        text = "즐겨찾기한 행사가 없어요 :(\n\n관심 있는 행사를\n즐겨찾기 해보세요!",
-                        fontFamily = poppins,
-                        fontSize = 25.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        lineHeight = 40.sp,
-                        textAlign = TextAlign.Center
-                    )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Image(
+                            modifier = Modifier.size(300.dp),
+                            painter = painterResource(R.drawable.nudge_image),
+                            contentDescription = "nudge image"
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Text(
+                            text = "관심 있는 행사를 즐겨찾기 해보세요!",
+                            fontFamily = poppins,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            lineHeight = 35.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 } else {
                     Text(
                         text = "등록된 행사가 없어요 :(",
@@ -191,24 +200,25 @@ fun boardScreen(
                         }
                     }
                 }
-                Box(modifier = Modifier.offset(330.dp, 600.dp)) {
-                    Box(
-                        modifier = Modifier
-                            .size(60.dp)
-                            .background(ButtonBlue, RoundedCornerShape(30.dp))
-                            .clickable(onClick = { boardNavController.navigate(BoardRoute.BoardPost.route) }),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(25.dp),
-                            imageVector = ImageVector.vectorResource(id = R.drawable.write_festival_icon),
-                            contentDescription = "event post Button",
-                            tint = Color.White
-                        )
+                if (userUiState.role == "Group") {
+                    Box(modifier = Modifier.offset(330.dp, 600.dp)) {
+                        Box(
+                            modifier = Modifier
+                                .size(60.dp)
+                                .background(ButtonBlue, RoundedCornerShape(30.dp))
+                                .clickable(onClick = { boardNavController.navigate(BoardRoute.BoardPost.route) }),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(25.dp),
+                                imageVector = ImageVector.vectorResource(id = R.drawable.write_festival_icon),
+                                contentDescription = "event post Button",
+                                tint = Color.White
+                            )
+                        }
                     }
                 }
             }
-
         }
     }
     return if (eventId != 0) eventId
