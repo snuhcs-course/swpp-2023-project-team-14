@@ -12,8 +12,8 @@ urlpatterns = [
     path('festival/<int:is_festival>/', PostListView.as_view(), name='post-filter-by-festival'),
 
     # 날짜 범위 필터만 사용한 URL
-    # fixed date issue. 
-    path('date/<str:start_date>/<str:end_date>/', PostListView.as_view(), name='post-filter-by-date'),
+    # 홈화면을 위한 single-sided boundary query를 사용한 URL
+    path('date/<str:start_date>/<str:end_date>/', PostListView.as_view(), name='post-filter-by-single-sided-date'),
 
     # start_date만 사용한 URL
     # fixed duplicate date issue
@@ -29,14 +29,28 @@ urlpatterns = [
     path('keyword/<str:keyword>/festival/<int:is_festival>/', PostListView.as_view(), name='post-filter-keyword-and-festival'),
 
     # 키워드와 날짜 범위 필터를 사용한 URL
-    path('keyword/<str:keyword>/date/<str:start_date>/<str:end_date>/', PostListView.as_view(), name='post-filter-keyword-and-date'),
+    path('keyword/<str:keyword>/date/<str:start_date>/<str:end_date>/', PostListView.as_view(), name='post-filter-keyword-and-single-sided-date'),
 
     # 축제 여부와 날짜 범위 필터를 사용한 URL
     # fixed issue with duplicate items in the given date range.
-    path('festival/<int:is_festival>/date/<str:start_date>/<str:end_date>/', PostListView.as_view(), name='post-filter-festival-and-date'),
+    path('festival/<int:is_festival>/date/<str:start_date>/<str:end_date>/', PostListView.as_view(), name='post-filter-festival-and-single-sided-date'),
 
     # 모든 필터를 사용한 URL
-    path('keyword/<str:keyword>/festival/<int:is_festival>/date/<str:start_date>/<str:end_date>/', PostListView.as_view(), name='post-filter-all'),
+    path('keyword/<str:keyword>/festival/<int:is_festival>/date/<str:start_date>/<str:end_date>/', PostListView.as_view(), name='post-filter-all-single-sided-date'),
+    
+    # fixed date issue. 날짜 >= start_date AND 날짜 <= end_date
+    path('exact_date/<str:start_date>/<str:end_date>/', PostListView.as_view(), name='post-filter-single-date'),
+    
+    # 키워드와 날짜 범위 필터를 사용한 URL
+    path('keyword/<str:keyword>/exact_date/<str:start_date>/<str:end_date>/', PostListView.as_view(), name='post-filter-keyword-and-inclusive-range-date'),
+
+    # 축제 여부와 날짜 범위 필터를 사용한 URL
+    # fixed issue with duplicate items in the given date range.
+    path('festival/<int:is_festival>/exact_date/<str:start_date>/<str:end_date>/', PostListView.as_view(), name='post-filter-festival-and-inclusive-range-date'),
+
+    # 모든 필터를 사용한 URL
+    path('keyword/<str:keyword>/festival/<int:is_festival>/exact_date/<str:start_date>/<str:end_date>/', PostListView.as_view(), name='post-filter-all-inclusive-range-date'),
+    
     path('<int:post_id>/', PostDetailView.as_view()),
     path('favorite/<int:post_id>/', FavoriteView.as_view()),
     path('like/<int:post_id>/', LikeView.as_view()),

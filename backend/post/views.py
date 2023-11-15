@@ -34,9 +34,16 @@ class PostListView(APIView):
                     {"detail": "start_date must be earlier than end_date"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            posts = posts.filter(
-                ~Q(event_durations__event_day__lt=start_date)
-            ).filter(~Q(event_durations__event_day__gt=end_date))
+            if 'exact_date' in str(request):
+                posts = posts.filter(
+                    ~Q(event_durations__event_day__lt=start_date)
+                ).filter(~Q(event_durations__event_day__gt=end_date))
+                
+            else: # single-sided boundary check for date
+                posts = posts.filter(
+                    ~(Q(event_durations__event_day__gte=start_date) ^ Q(event_durations__event_day__lte=end_date))
+                )
+            
         elif start_date:
             posts = posts.filter(~Q(event_durations__event_day__lt=start_date))
         elif end_date:
@@ -44,6 +51,7 @@ class PostListView(APIView):
 
         posts = posts.order_by("-like_count")
 
+        print(f'# of posts: {len(posts)}')
         print(f'posts:\n{posts}')
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=200)
