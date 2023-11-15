@@ -338,7 +338,7 @@ fun BoardPostScreen(
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                             Text(
-                                text = "사진이 정방형이 아니면 비율이 깨질 수 있으며 1장만 선택할 수 있습니다.",
+                                text = "1:1 비율이 아니면 사진이 잘릴 수 있으며 1장만 첨부할 수 있습니다.",
                                 fontFamily = poppins,
                                 fontWeight = FontWeight.Normal,
                                 fontSize = 11.sp,

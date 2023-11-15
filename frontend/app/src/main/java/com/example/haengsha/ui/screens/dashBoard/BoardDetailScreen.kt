@@ -14,24 +14,36 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import coil.size.Size
 import com.example.haengsha.R
+import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.board.BoardDetailUiState
+import com.example.haengsha.model.uiState.board.PostLikeFavoriteUiState
 import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.FavoriteYellow
 import com.example.haengsha.ui.theme.LikePink
@@ -43,14 +55,13 @@ import es.dmoral.toasty.Toasty
 fun BoardDetailScreen(
     innerPadding: PaddingValues,
     boardViewModel: BoardViewModel,
-    userToken: String,
+    userUiState: UserUiState,
     eventId: Int
 ) {
     val boardContext = LocalContext.current
     val boardDetailUiState = boardViewModel.boardDetailUiState
-
     LaunchedEffect(Unit) {
-        boardViewModel.getBoardDetail(userToken, eventId)
+        boardViewModel.getBoardDetail(userUiState.token, eventId)
     }
 
     when (boardDetailUiState) {
@@ -86,11 +97,45 @@ fun BoardDetailScreen(
         }
 
         is BoardDetailUiState.Loading -> {
-            // Do nothing
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            )
         }
 
         is BoardDetailUiState.BoardDetailResult -> {
             val boardDetail = boardDetailUiState.boardDetail
+            var likeCount by remember { mutableIntStateOf(boardDetail.likeCount) }
+            var favoriteCount by remember { mutableIntStateOf(boardDetail.favoriteCount) }
+            var isLiked by remember { mutableStateOf(boardDetail.isLiked) }
+            var isFavorite by remember { mutableStateOf(boardDetail.isFavorite) }
+            when (val postLikeUiState = boardViewModel.postLikeUiState) {
+                is PostLikeFavoriteUiState.Success -> {
+                    likeCount = postLikeUiState.likeCount
+                    favoriteCount = postLikeUiState.favoriteCount
+                    isLiked = postLikeUiState.isLiked
+                    isFavorite = postLikeUiState.isFavorite
+                }
+
+                is PostLikeFavoriteUiState.Loading -> {
+                    // 로딩
+                }
+
+                is PostLikeFavoriteUiState.HttpError -> {
+                    Toasty.warning(boardContext, "오류가 발생했습니다.\n다시 시도해주세요.", Toasty.LENGTH_SHORT)
+                        .show()
+                }
+
+                is PostLikeFavoriteUiState.NetworkError -> {
+                    Toasty.error(boardContext, "네트워크 연결을 확인해주세요.", Toasty.LENGTH_SHORT).show()
+                }
+
+                is PostLikeFavoriteUiState.Error -> {
+                    // 앱 오류
+                }
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -219,21 +264,24 @@ fun BoardDetailScreen(
                                 color = PlaceholderGrey
                             )
                             Spacer(modifier = Modifier.height(20.dp))
-                            Box(
-                                modifier = Modifier.fillMaxWidth(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if ((boardDetail.image?.isNotEmpty() == true)) {
+                            if ((boardDetail.image?.isNotEmpty() == true)) {
+                                val imageModel = ImageRequest.Builder(context = boardContext)
+                                    .data(boardDetail.image)
+                                    .size(Size.ORIGINAL)
+                                    .build()
+                                val painter = rememberAsyncImagePainter(model = imageModel)
+                                Box(contentAlignment = Alignment.Center) {
                                     AsyncImage(
-                                        model = ImageRequest.Builder(context = boardContext)
-                                            .data(boardDetail.image)
-                                            .crossfade(true)
-                                            .build(),
+                                        model = imageModel,
                                         contentDescription = "festival poster",
-                                        modifier = Modifier.size(360.dp)
+                                        modifier = Modifier.size(360.dp),
+                                        contentScale = ContentScale.Crop
                                     )
-                                    Spacer(modifier = Modifier.height(20.dp))
+                                    if (painter.state is AsyncImagePainter.State.Loading) {
+                                        CircularProgressIndicator()
+                                    }
                                 }
+                                Spacer(modifier = Modifier.height(20.dp))
                             }
                             Text(
                                 text = boardDetail.content ?: "내용이 없어요",
@@ -248,12 +296,14 @@ fun BoardDetailScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Row(
-                                    modifier = Modifier.clickable { /*TODO 추천 누르고 하트도 바꾸기*/ },
+                                    modifier = Modifier.clickable(
+                                        // TODO enabled = userUiState.role == "User"
+                                    ) { boardViewModel.postLike(userUiState.token, eventId) },
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
                                         modifier = Modifier.size(20.dp),
-                                        imageVector = if (boardDetail.isLiked) {
+                                        imageVector = if (isLiked) {
                                             ImageVector.vectorResource(id = R.drawable.like_fill_icon)
                                         } else {
                                             ImageVector.vectorResource(id = R.drawable.like_empty_icon)
@@ -263,7 +313,7 @@ fun BoardDetailScreen(
                                     )
                                     Spacer(modifier = Modifier.width(3.dp))
                                     Text(
-                                        text = boardDetail.likeCount.toString(),
+                                        text = likeCount.toString(),
                                         fontFamily = poppins,
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Normal,
@@ -293,12 +343,14 @@ fun BoardDetailScreen(
                                 */
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Row(
-                                    modifier = Modifier.clickable { /*TODO 즐겨찾기 누르고 별 바꾸기*/ },
+                                    modifier = Modifier.clickable(
+                                        // TODO enabled = userUiState.role == "User"
+                                    ) { boardViewModel.postFavorite(userUiState.token, eventId) },
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
                                         modifier = Modifier.size(20.dp),
-                                        imageVector = if (boardDetail.isFavorite) {
+                                        imageVector = if (isFavorite) {
                                             ImageVector.vectorResource(id = R.drawable.favorite_fill_icon)
                                         } else {
                                             ImageVector.vectorResource(id = R.drawable.favorite_empty_icon)
@@ -308,7 +360,7 @@ fun BoardDetailScreen(
                                     )
                                     Spacer(modifier = Modifier.width(3.dp))
                                     Text(
-                                        text = boardDetail.favoriteCount.toString(),
+                                        text = favoriteCount.toString(),
                                         fontFamily = poppins,
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Normal,

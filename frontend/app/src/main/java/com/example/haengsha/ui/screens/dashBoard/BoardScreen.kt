@@ -1,6 +1,5 @@
 package com.example.haengsha.ui.screens.dashBoard
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -71,7 +70,6 @@ fun boardScreen(
     LaunchedEffect(Unit) {
         if (isFavorite) {
             boardViewModel.getFavoriteBoardList(userUiState.token)
-            Log.d("favor", "fetch")
         } else boardViewModel.getBoardList(localDate)
     }
 

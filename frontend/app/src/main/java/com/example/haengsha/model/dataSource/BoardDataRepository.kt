@@ -5,12 +5,15 @@ import com.example.haengsha.model.network.dataModel.BoardDetailResponse
 import com.example.haengsha.model.network.dataModel.BoardListResponse
 import com.example.haengsha.model.network.dataModel.BoardPostRequest
 import com.example.haengsha.model.network.dataModel.BoardPostResponse
+import com.example.haengsha.model.network.dataModel.PostLikeResponse
 
 interface BoardDataRepository {
     suspend fun getBoardList(startDate: String): List<BoardListResponse>
     suspend fun getBoardDetail(token: String, postId: Int): BoardDetailResponse
     suspend fun getFavoriteList(token: String): List<BoardListResponse>
     suspend fun postEvent(boardPostRequest: BoardPostRequest): BoardPostResponse
+    suspend fun postLike(token: String, postId: Int): PostLikeResponse
+    suspend fun postFavorite(token: String, postId: Int): PostLikeResponse
 }
 
 class NetworkBoardDataRepository(
@@ -39,5 +42,13 @@ class NetworkBoardDataRepository(
             boardPostRequest.time,
             boardPostRequest.content
         )
+    }
+
+    override suspend fun postLike(token: String, postId: Int): PostLikeResponse {
+        return boardApiService.postLike(token, postId)
+    }
+
+    override suspend fun postFavorite(token: String, postId: Int): PostLikeResponse {
+        return boardApiService.postFavorite(token, postId)
     }
 }

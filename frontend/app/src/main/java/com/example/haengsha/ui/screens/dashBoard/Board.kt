@@ -1,7 +1,5 @@
 package com.example.haengsha.ui.screens.dashBoard
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,7 +18,6 @@ import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.uiComponents.HaengshaBottomAppBar
 import com.example.haengsha.ui.uiComponents.HaengshaTopAppBar
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Board(
     userUiState: UserUiState,
@@ -66,7 +63,7 @@ fun Board(
                 BoardDetailScreen(
                     innerPadding = innerPadding,
                     boardViewModel = boardViewModel,
-                    userToken = userUiState.token,
+                    userUiState = userUiState,
                     eventId = eventId
                 )
             }
