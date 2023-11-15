@@ -3,7 +3,6 @@ package com.example.haengsha.model.network.apiService
 import com.example.haengsha.model.network.dataModel.BoardDetailResponse
 import com.example.haengsha.model.network.dataModel.BoardListResponse
 import com.example.haengsha.model.network.dataModel.BoardPostResponse
-import kotlinx.serialization.Serializable
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.GET
@@ -11,7 +10,6 @@ import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
-import retrofit2.http.PartMap
 import retrofit2.http.Path
 
 interface BoardApiService {
@@ -38,7 +36,7 @@ interface BoardApiService {
         @Part image: MultipartBody.Part?,
         @Part("title") title: RequestBody,
         @Part("is_festival") isFestival: RequestBody,
-        @Part duration: ArrayList<MultipartBody.Part>,
+        @Part("duration") duration: RequestBody,
         @Part("place") place: RequestBody,
         @Part("time") time: RequestBody,
         @Part("content") content: RequestBody

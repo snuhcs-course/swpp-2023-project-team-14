@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -476,20 +475,16 @@ fun buildRequestBody(
     content: String,
     postContext: Context
 ): BoardPostRequest {
-    val titleRequestBody = title.toRequestBody("application/json".toMediaTypeOrNull())
+    val titleRequestBody = title.toRequestBody("text/plain".toMediaTypeOrNull())
     val isFestivalRequestBody =
         isFestival.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-    val eventDurations: ArrayList<MultipartBody.Part> = ArrayList()
+    val eventDurations =
+        "[{\"event_day_1\": \"$durationStart\"}, {\"event_day_2\": \"$durationEnd\"}]"
+    val durationRequestBody = eventDurations.toRequestBody("text/plain".toMediaTypeOrNull())
     val placeRequestBody = place.toRequestBody("text/plain".toMediaTypeOrNull())
     val timeRequestBody = time.toRequestBody("text/plain".toMediaTypeOrNull())
     val contentRequestBody = content.toRequestBody("text/plain".toMediaTypeOrNull())
 
-    eventDurations.add(
-        MultipartBody.Part.createFormData(
-            "duration",
-            "[{\"event_day_1\": \"$durationStart\"}, {\"event_day_2\": \"$durationEnd\"}]"
-        )
-    )
 
     val bitmap = if (image === null) null else {
         ImageDecoder.decodeBitmap(
@@ -513,7 +508,7 @@ fun buildRequestBody(
         image = imageMultipartBody,
         title = titleRequestBody,
         isFestival = isFestivalRequestBody,
-        eventDurations = eventDurations,
+        eventDurations = durationRequestBody,
         place = placeRequestBody,
         time = timeRequestBody,
         content = contentRequestBody
