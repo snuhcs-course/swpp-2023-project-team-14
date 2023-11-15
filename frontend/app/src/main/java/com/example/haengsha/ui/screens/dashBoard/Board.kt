@@ -59,7 +59,7 @@ fun Board(
                     boardViewModel = boardViewModel,
                     boardNavController = boardNavController,
                     isFavorite = false,
-                    userToken = userUiState.token
+                    userUiState = userUiState
                 )
             }
             composable(BoardRoute.BoardDetail.route) {

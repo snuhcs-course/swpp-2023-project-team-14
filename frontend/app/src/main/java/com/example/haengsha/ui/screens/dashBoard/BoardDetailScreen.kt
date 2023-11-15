@@ -233,8 +233,6 @@ fun BoardDetailScreen(
                                         contentDescription = "festival poster",
                                         modifier = Modifier.size(360.dp)
                                     )
-                                    Text(text = boardDetail.image)
-                                    Log.d("img", boardDetail.image)
                                     Spacer(modifier = Modifier.height(20.dp))
                                 }
                             }

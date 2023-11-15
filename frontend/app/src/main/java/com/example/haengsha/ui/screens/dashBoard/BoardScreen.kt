@@ -1,8 +1,6 @@
 package com.example.haengsha.ui.screens.dashBoard
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -43,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haengsha.R
 import com.example.haengsha.model.route.BoardRoute
+import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.board.BoardListUiState
 import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
@@ -60,7 +59,7 @@ fun boardScreen(
     boardViewModel: BoardViewModel,
     boardNavController: NavController,
     isFavorite: Boolean,
-    userToken: String
+    userUiState: UserUiState
 ): Int {
     val boardContext = LocalContext.current
     val boardListUiState = boardViewModel.boardListUiState
@@ -69,7 +68,7 @@ fun boardScreen(
 
     LaunchedEffect(Unit) {
         if (isFavorite) {
-            boardViewModel.getFavoriteBoardList(userToken)
+            boardViewModel.getFavoriteBoardList(userUiState.token)
             Log.d("favor", "fetch")
         } else boardViewModel.getBoardList(localDate)
     }
@@ -191,24 +190,25 @@ fun boardScreen(
                         }
                     }
                 }
-                Box(modifier = Modifier.offset(330.dp, 600.dp)) {
-                    Box(
-                        modifier = Modifier
-                            .size(60.dp)
-                            .background(ButtonBlue, RoundedCornerShape(30.dp))
-                            .clickable(onClick = { boardNavController.navigate(BoardRoute.BoardPost.route) }),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(25.dp),
-                            imageVector = ImageVector.vectorResource(id = R.drawable.write_festival_icon),
-                            contentDescription = "event post Button",
-                            tint = Color.White
-                        )
+                if (userUiState.role == "Group") {
+                    Box(modifier = Modifier.offset(330.dp, 600.dp)) {
+                        Box(
+                            modifier = Modifier
+                                .size(60.dp)
+                                .background(ButtonBlue, RoundedCornerShape(30.dp))
+                                .clickable(onClick = { boardNavController.navigate(BoardRoute.BoardPost.route) }),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(25.dp),
+                                imageVector = ImageVector.vectorResource(id = R.drawable.write_festival_icon),
+                                contentDescription = "event post Button",
+                                tint = Color.White
+                            )
+                        }
                     }
                 }
             }
-
         }
     }
     return if (eventId != 0) eventId

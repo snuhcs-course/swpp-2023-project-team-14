@@ -65,35 +65,27 @@ import java.util.Locale
 
 
 class SharedViewModel() : ViewModel() {
-    @RequiresApi(Build.VERSION_CODES.O)
     private val _selectedDate = MutableLiveData(LocalDate.now())
 
-    @RequiresApi(Build.VERSION_CODES.O)
     val selectedDate: LiveData<LocalDate> = _selectedDate
 
     // Initialize _festivalItems and _academicItems with initial data
-    @RequiresApi(Build.VERSION_CODES.O)
     private val _festivalItems = MutableLiveData<List<EventCardData>?>()
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private val _academicItems = MutableLiveData<List<EventCardData>?>()
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     val festivalItems: MutableLiveData<List<EventCardData>?> = _festivalItems
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     val academicItems: MutableLiveData<List<EventCardData>?> = _academicItems
 
 
     // Update functions to set LiveData properties
-    @RequiresApi(Build.VERSION_CODES.O)
     fun updateSelectedDate(newDate: LocalDate) {
         _selectedDate.value = newDate
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun updateEventItems(festivalItems: List<EventCardData>?, academicItems: List<EventCardData>?) {
         _festivalItems.value = festivalItems
         _academicItems.value = academicItems
@@ -102,7 +94,6 @@ class SharedViewModel() : ViewModel() {
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
     innerPadding: PaddingValues,
@@ -212,13 +203,10 @@ fun HomeScreen(
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 private val dateFormatter = DateTimeFormatter.ofPattern("dd")
 
-@RequiresApi(Build.VERSION_CODES.O)
 private val monthFormatter = DateTimeFormatter.ofPattern("MMMM")
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun parseStringToDate(dateString: String): LocalDate? {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     return try {
@@ -228,14 +216,12 @@ fun parseStringToDate(dateString: String): LocalDate? {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun DayOfWeek.displayText(uppercase: Boolean = false): String {
     return getDisplayName(TextStyle.SHORT, Locale.ENGLISH).let { value ->
         if (uppercase) value.uppercase(Locale.ENGLISH) else value
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun Day(date: LocalDate, isSelected: Boolean, onClick: (LocalDate) -> Unit) {
     Box(
@@ -289,7 +275,7 @@ fun MyDatePickerDialog(
         onDismissRequest = { onDismiss() },
         confirmButton = {
             Button(onClick = {
-                if(selectedDate!=null){
+                if (selectedDate != null) {
                     onDateSelected(selectedDate)
                 }
                 onDismiss()
@@ -318,7 +304,6 @@ private fun convertMillisToDate(millis: Long): String {
     return formatter.format(Date(millis))
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Home(
     userUiState: UserUiState,
@@ -348,7 +333,6 @@ fun Home(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {

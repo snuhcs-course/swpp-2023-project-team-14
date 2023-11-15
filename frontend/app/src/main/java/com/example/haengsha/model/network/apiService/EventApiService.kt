@@ -1,11 +1,8 @@
 package com.example.haengsha.model.network.apiService
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.example.haengsha.ui.screens.home.EventCardData
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import retrofit2.http.GET
 import retrofit2.http.Path
 import java.time.LocalDate
@@ -36,7 +33,6 @@ data class EventDurationResponse(
     @SerialName("event_day") val eventDay: String
 )
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun EventResponse.toEventCardData(): EventCardData {
     var startDate = stringToDate(eventDurations[0].eventDay)
     var endDate = startDate
@@ -69,7 +65,6 @@ interface EventApiService {
     ): List<EventResponse>? // Change the return type to a list of EventResponse
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun stringToDate(dateString: String): LocalDate {
     var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     try {
