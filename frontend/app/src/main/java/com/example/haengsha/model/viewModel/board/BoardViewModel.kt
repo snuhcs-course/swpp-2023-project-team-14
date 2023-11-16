@@ -1,6 +1,5 @@
 package com.example.haengsha.model.viewModel.board
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,6 +15,7 @@ import com.example.haengsha.model.network.dataModel.BoardPostRequest
 import com.example.haengsha.model.uiState.board.BoardDetailUiState
 import com.example.haengsha.model.uiState.board.BoardListUiState
 import com.example.haengsha.model.uiState.board.BoardPostUiState
+import com.example.haengsha.model.uiState.board.PostLikeFavoriteUiState
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -28,6 +28,9 @@ class BoardViewModel(private val boardDataRepository: BoardDataRepository) : Vie
         private set
 
     var boardPostUiState: BoardPostUiState by mutableStateOf(BoardPostUiState.Loading)
+        private set
+
+    var postLikeUiState: PostLikeFavoriteUiState by mutableStateOf(PostLikeFavoriteUiState.Loading)
         private set
 
     companion object {
@@ -101,6 +104,50 @@ class BoardViewModel(private val boardDataRepository: BoardDataRepository) : Vie
                 BoardPostUiState.NetworkError
             } catch (e: Exception) {
                 BoardPostUiState.Error
+            }
+        }
+    }
+
+    fun postLike(token: String, postId: Int) {
+        viewModelScope.launch {
+            postLikeUiState = PostLikeFavoriteUiState.Loading
+            postLikeUiState = try {
+                val authToken = "Token $token"
+                val boardDetailResult = boardDataRepository.postLike(authToken, postId)
+                PostLikeFavoriteUiState.Success(
+                    boardDetailResult.likeCount,
+                    boardDetailResult.favoriteCount,
+                    isLiked = false, //boardDetailResult.isLiked
+                    isFavorite = false //boardDetailResult.isFavorite
+                )
+            } catch (e: HttpException) {
+                PostLikeFavoriteUiState.HttpError
+            } catch (e: IOException) {
+                PostLikeFavoriteUiState.NetworkError
+            } catch (e: Exception) {
+                PostLikeFavoriteUiState.Error
+            }
+        }
+    }
+
+    fun postFavorite(token: String, postId: Int) {
+        viewModelScope.launch {
+            postLikeUiState = PostLikeFavoriteUiState.Loading
+            postLikeUiState = try {
+                val authToken = "Token $token"
+                val boardDetailResult = boardDataRepository.postFavorite(authToken, postId)
+                PostLikeFavoriteUiState.Success(
+                    boardDetailResult.likeCount,
+                    boardDetailResult.favoriteCount,
+                    isLiked = false, //boardDetailResult.isLiked
+                    isFavorite = false //boardDetailResult.isFavorite
+                )
+            } catch (e: HttpException) {
+                PostLikeFavoriteUiState.HttpError
+            } catch (e: IOException) {
+                PostLikeFavoriteUiState.NetworkError
+            } catch (e: Exception) {
+                PostLikeFavoriteUiState.Error
             }
         }
     }

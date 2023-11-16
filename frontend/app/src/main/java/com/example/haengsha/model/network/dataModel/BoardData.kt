@@ -49,6 +49,30 @@ data class BoardDetailResponse(
     val isFavorite: Boolean
 )
 
+// TODO PostLike에서 isLiked를 보내주면 BoardDetailResponse로 통일해도 됨
+@Serializable
+data class PostLikeResponse(
+    val id: Int,
+    val title: String,
+    @SerialName("is_festival")
+    val isFestival: Boolean?,
+    val author: Author?, // EventApiService.kt에 정의
+    @SerialName("event_durations")
+    val eventDurations: List<EventDurationResponse>, // EventApiService.kt에 정의
+    val place: String?,
+    val time: String?,
+    val content: String?,
+    val image: String?,
+    @SerialName("like_count")
+    val likeCount: Int,
+    @SerialName("favorite_count")
+    val favoriteCount: Int,
+//    @SerialName("is_liked")
+//    val isLiked: Boolean,
+//    @SerialName("is_favorite")
+//    val isFavorite: Boolean
+)
+
 data class BoardPostRequest(
     val token: String,
     val image: MultipartBody.Part?,

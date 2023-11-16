@@ -65,7 +65,7 @@ fun Favorite(
                 BoardDetailScreen(
                     innerPadding = innerPadding,
                     boardViewModel = boardViewModel,
-                    userToken = userUiState.token,
+                    userUiState = userUiState,
                     eventId = eventId
                 )
             }

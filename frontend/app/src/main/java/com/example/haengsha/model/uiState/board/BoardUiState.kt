@@ -32,3 +32,17 @@ sealed interface BoardPostUiState {
     object Error : BoardPostUiState
     object Loading : BoardPostUiState
 }
+
+sealed interface PostLikeFavoriteUiState {
+    data class Success(
+        val likeCount: Int,
+        val favoriteCount: Int,
+        val isLiked: Boolean,
+        val isFavorite: Boolean
+    ) : PostLikeFavoriteUiState
+
+    object HttpError : PostLikeFavoriteUiState
+    object NetworkError : PostLikeFavoriteUiState
+    object Error : PostLikeFavoriteUiState
+    object Loading : PostLikeFavoriteUiState
+}
