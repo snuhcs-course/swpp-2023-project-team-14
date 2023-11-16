@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.uiState.login.LoginUiState
-import com.example.haengsha.model.viewModel.login.LoginViewModel
+import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
@@ -41,7 +41,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun FindPasswordScreen(
-    loginViewModel: LoginViewModel,
+    loginApiViewModel: LoginApiViewModel,
     loginUiState: LoginUiState,
     findPasswordEmailUpdate: (String) -> Unit,
     loginNavController: NavHostController,
@@ -110,7 +110,7 @@ fun FindPasswordScreen(
                         } else {
                             isEmailError = false
                             emailVerifyTrigger++
-                            loginViewModel.findEmailVerify(emailInput)
+                            loginApiViewModel.findEmailVerify(emailInput)
                         }
                     },
             ) {
@@ -184,7 +184,7 @@ fun FindPasswordScreen(
                         ).show()
                     } else {
                         codeVerifyTrigger++
-                        loginViewModel.loginCodeVerify(emailInput, codeInput)
+                        loginApiViewModel.loginCodeVerify(emailInput, codeInput)
                     }
                 })
             Spacer(modifier = Modifier.height(45.dp))

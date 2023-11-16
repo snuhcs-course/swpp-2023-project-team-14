@@ -31,7 +31,7 @@ import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.uiState.login.FindPasswordUiState
 import com.example.haengsha.model.uiState.login.LoginUiState
 import com.example.haengsha.model.viewModel.login.FindPasswordViewModel
-import com.example.haengsha.model.viewModel.login.LoginViewModel
+import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
 import com.example.haengsha.ui.uiComponents.passwordCheckTextField
@@ -40,7 +40,7 @@ import es.dmoral.toasty.Toasty
 
 @Composable
 fun PasswordResetScreen(
-    loginViewModel: LoginViewModel,
+    loginApiViewModel: LoginApiViewModel,
     loginUiState: LoginUiState,
     findPasswordViewModel: FindPasswordViewModel,
     findPasswordUiState: FindPasswordUiState,
@@ -121,7 +121,7 @@ fun PasswordResetScreen(
                             ).show()
                         } else {
                             resetPasswordTrigger++
-                            loginViewModel.findChangePassword(
+                            loginApiViewModel.findChangePassword(
                                 email = findPasswordUiState.email,
                                 passwordInput,
                                 passwordCheckInput

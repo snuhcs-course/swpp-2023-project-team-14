@@ -58,7 +58,7 @@ import com.example.haengsha.R
 import com.example.haengsha.model.network.dataModel.BoardPostRequest
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.board.BoardPostUiState
-import com.example.haengsha.model.viewModel.board.BoardViewModel
+import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
@@ -74,12 +74,12 @@ import java.io.ByteArrayOutputStream
 @Composable
 fun BoardPostScreen(
     innerPadding: PaddingValues,
-    boardViewModel: BoardViewModel,
+    boardApiViewModel: BoardApiViewModel,
     boardNavController: NavController,
     userUiState: UserUiState
 ) {
     val postContext = LocalContext.current
-    val boardPostUiState = boardViewModel.boardPostUiState
+    val boardPostUiState = boardApiViewModel.boardPostUiState
     var postTrigger by remember { mutableIntStateOf(0) }
     val authToken = "Token ${userUiState.token}"
     var eventTitle by remember { mutableStateOf("") }
@@ -415,7 +415,7 @@ fun BoardPostScreen(
                         postContext = postContext
                     )
                     postTrigger++
-                    boardViewModel.postEvent(boardPostRequest = boardPostRequest)
+                    boardApiViewModel.postEvent(boardPostRequest = boardPostRequest)
                 },
                 text = "글을 업로드 하시겠어요?"
             )

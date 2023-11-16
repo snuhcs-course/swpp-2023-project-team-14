@@ -44,7 +44,7 @@ import com.example.haengsha.R
 import com.example.haengsha.model.route.BoardRoute
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.board.BoardListUiState
-import com.example.haengsha.model.viewModel.board.BoardViewModel
+import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
@@ -57,20 +57,20 @@ import java.time.LocalDate
 @Composable
 fun boardScreen(
     innerPadding: PaddingValues,
-    boardViewModel: BoardViewModel,
+    boardApiViewModel: BoardApiViewModel,
     boardNavController: NavController,
     isFavorite: Boolean,
     userUiState: UserUiState
 ): Int {
     val boardContext = LocalContext.current
-    val boardListUiState = boardViewModel.boardListUiState
+    val boardListUiState = boardApiViewModel.boardListUiState
     val localDate = LocalDate.now().toString()
     var eventId by rememberSaveable { mutableIntStateOf(0) }
 
     LaunchedEffect(Unit) {
         if (isFavorite) {
-            boardViewModel.getFavoriteBoardList(userUiState.token)
-        } else boardViewModel.getBoardList(localDate)
+            boardApiViewModel.getFavoriteBoardList(userUiState.token)
+        } else boardApiViewModel.getBoardList(localDate)
     }
 
     when (boardListUiState) {

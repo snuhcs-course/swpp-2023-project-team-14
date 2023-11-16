@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.MainRoute
 import com.example.haengsha.model.viewModel.UserViewModel
-import com.example.haengsha.model.viewModel.board.BoardViewModel
+import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.ui.screens.dashBoard.Board
 import com.example.haengsha.ui.screens.favorite.Favorite
 import com.example.haengsha.ui.screens.home.Home
@@ -19,7 +19,7 @@ import com.example.haengsha.ui.screens.login.Login
 fun HaengshaApp() {
     val userViewModel: UserViewModel = viewModel()
     val userUiState by userViewModel.uiState.collectAsState()
-    val boardViewModel: BoardViewModel = viewModel(factory = BoardViewModel.Factory)
+    val boardApiViewModel: BoardApiViewModel = viewModel(factory = BoardApiViewModel.Factory)
     val mainNavController = rememberNavController()
 
     NavHost(
@@ -42,14 +42,14 @@ fun HaengshaApp() {
             Board(
                 userUiState = userUiState,
                 mainNavController = mainNavController,
-                boardViewModel = boardViewModel
+                boardApiViewModel = boardApiViewModel
             )
         }
         composable(MainRoute.Favorite.route) {
             Favorite(
                 userUiState = userUiState,
                 mainNavController = mainNavController,
-                boardViewModel = boardViewModel
+                boardApiViewModel = boardApiViewModel
             )
         }
 //        composable(MainRoute.Setting.route) {

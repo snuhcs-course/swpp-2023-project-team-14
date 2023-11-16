@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-class LoginViewModel(private val loginDataRepository: LoginDataRepository) : ViewModel() {
+class LoginApiViewModel(private val loginDataRepository: LoginDataRepository) : ViewModel() {
     var loginUiState: LoginUiState by mutableStateOf(LoginUiState.Loading)
         private set
 
@@ -32,7 +32,7 @@ class LoginViewModel(private val loginDataRepository: LoginDataRepository) : Vie
             initializer {
                 val application = this[APPLICATION_KEY] as HaengshaApplication
                 val loginDataRepository = application.container.loginDataRepository
-                LoginViewModel(loginDataRepository)
+                LoginApiViewModel(loginDataRepository)
             }
         }
     }
