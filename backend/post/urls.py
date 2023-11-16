@@ -35,10 +35,9 @@ urlpatterns = [
 
     # 모든 필터를 사용한 URL
     path('keyword/<str:keyword>/festival/<int:is_festival>/date/<str:start_date>/<str:end_date>/', PostListView.as_view(), name='post-filter-all'),
-    
-    path('<int:post_id>/', PostDetailView.as_view()),
-    path('favorite/<int:post_id>/', FavoriteView.as_view()),
-    path('like/<int:post_id>/', LikeView.as_view()),
-    path('favorite/', PostFavoriteView.as_view()),
-    path('recommend/', PostRecommendView.as_view())
+    path('<int:post_id>/', PostDetailView.as_view(), name='post-detail'),
+    path('favorite/<int:post_id>/', FavoriteView.as_view(), name='post-favorite'),
+    path('like/<int:post_id>/', LikeView.as_view(), name='post-like'),
+    path('favorite/', PostFavoriteView.as_view(), name='post-favorite-list'),
+    path('recommend/', PostRecommendView.as_view(), name='post-recommend-list')
 ]
