@@ -154,7 +154,7 @@ class PostDetailView(APIView):
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
         
         is_liked = post.like_users.filter(id=request.user.id).exists()
-        is_favorite = post.favorite_users.filter(id=request.user.id).exists()
+        is_favorited = post.favorite_users.filter(id=request.user.id).exists()
         post_image = post.image
 
         if utils.s3_bucket in post_image:
@@ -168,13 +168,13 @@ class PostDetailView(APIView):
             post_response_data['image'] = presigned_url
             elem = post_response_data['image']
             post_response_data['is_liked'] = is_liked
-            post_response_data['is_favorite'] = is_favorite
+            post_response_data['is_favorited'] = is_favorited
         else:
             print(f'image is not in s3. Image_name=\n{post_image}')
             serializer = PostSerializer(post)
             post_response_data = serializer.data 
             post_response_data['is_liked'] = is_liked
-            post_response_data['is_favorite'] = is_favorite
+            post_response_data['is_favorited'] = is_favorited
 
         return Response(post_response_data, status=200)
 
@@ -229,9 +229,13 @@ class FavoriteView(APIView):
             post.favorite_count += 1
 
         post.save()
-
         serializer = PostSerializer(post)
-        return Response(serializer.data, status=200)
+        post_response_data = serializer.data
+        is_liked = post.like_users.filter(id=request.user.id).exists()
+        is_favorited = post.favorite_users.filter(id=request.user.id).exists()
+        post_response_data['is_liked'] = is_liked
+        post_response_data['is_favorited'] = is_favorited
+        return Response(post_response_data, status=200)
 
 
 class LikeView(APIView):
@@ -251,8 +255,12 @@ class LikeView(APIView):
             post.like_count += 1
 
         post.save()
-
         serializer = PostSerializer(post)
-        return Response(serializer.data, status=200)
+        post_response_data = serializer.data
+        is_liked = post.like_users.filter(id=request.user.id).exists()
+        is_favorited = post.favorite_users.filter(id=request.user.id).exists()
+        post_response_data['is_liked'] = is_liked
+        post_response_data['is_favorited'] = is_favorited
+        return Response(post_response_data, status=200)
     
 
