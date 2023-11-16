@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.uiState.login.LoginUiState
-import com.example.haengsha.model.viewModel.login.LoginViewModel
+import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
@@ -41,7 +41,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun SignupEmailVerificationScreen(
-    loginViewModel: LoginViewModel,
+    loginApiViewModel: LoginApiViewModel,
     loginUiState: LoginUiState,
     signupEmailUpdate: (String) -> Unit,
     loginNavController: NavController,
@@ -102,7 +102,7 @@ fun SignupEmailVerificationScreen(
                         } else {
                             isEmailError = false
                             emailVerifyTrigger++
-                            loginViewModel.signupEmailVerify(emailInput)
+                            loginApiViewModel.signupEmailVerify(emailInput)
                         }
                     },
             ) {
@@ -176,7 +176,7 @@ fun SignupEmailVerificationScreen(
                         ).show()
                     } else {
                         codeVerifyTrigger++
-                        loginViewModel.loginCodeVerify(emailInput, codeInput)
+                        loginApiViewModel.loginCodeVerify(emailInput, codeInput)
                     }
                 })
             Spacer(modifier = Modifier.height(45.dp))

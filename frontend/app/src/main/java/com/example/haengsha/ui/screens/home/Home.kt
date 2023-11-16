@@ -1,8 +1,6 @@
 package com.example.haengsha.ui.screens.home
 
 import android.annotation.SuppressLint
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,7 +43,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.R
 import com.example.haengsha.model.route.MainRoute
 import com.example.haengsha.model.uiState.UserUiState
-import com.example.haengsha.model.viewModel.event.EventViewModel
+import com.example.haengsha.model.viewModel.event.EventApiViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.HaengshaBottomAppBar
@@ -100,15 +98,15 @@ fun HomeScreen(
     userUiState: UserUiState,
     sharedViewModel: SharedViewModel
 ) {
-    val eventViewModel: EventViewModel =
-        viewModel(factory = EventViewModel.Factory(sharedViewModel))
+    val eventApiViewModel: EventApiViewModel =
+        viewModel(factory = EventApiViewModel.Factory(sharedViewModel))
     var selection by remember { mutableStateOf(LocalDate.now()) }
     val currentMonth = selection.yearMonth
     val startDate = remember { currentMonth.minusMonths(100).atStartOfMonth() } // Adjust as needed
     val endDate = remember { currentMonth.plusMonths(100).atEndOfMonth() } // Adjust as needed
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
 
-    eventViewModel.getEventByDate(selection)
+    eventApiViewModel.getEventByDate(selection)
     val state = rememberWeekCalendarState(
         startDate = startDate,
         endDate = endDate,
@@ -190,7 +188,7 @@ fun HomeScreen(
                 Day(day.date, isSelected = selection == day.date) { clicked ->
                     if (selection != clicked) {
                         selection = clicked
-                        eventViewModel.getEventByDate(selection)
+                        eventApiViewModel.getEventByDate(selection)
                     }
                 }
             },

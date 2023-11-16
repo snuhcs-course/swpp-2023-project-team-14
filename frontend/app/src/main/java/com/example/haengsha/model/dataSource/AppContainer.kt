@@ -23,6 +23,8 @@ class HaengshaAppContainer : AppContainer {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
+//    private val baseUrl = "http://ec2-52-79-228-92.ap-northeast-2.compute.amazonaws.com:8080/"
+//     private val baseUrl = "http://192.168.0.4:8000/"
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(httpLoggingInterceptor)
         .build()

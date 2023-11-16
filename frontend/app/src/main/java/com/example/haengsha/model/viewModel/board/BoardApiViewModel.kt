@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-class BoardViewModel(private val boardDataRepository: BoardDataRepository) : ViewModel() {
+class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : ViewModel() {
     var boardListUiState: BoardListUiState by mutableStateOf(BoardListUiState.Loading)
         private set
 
@@ -30,7 +30,7 @@ class BoardViewModel(private val boardDataRepository: BoardDataRepository) : Vie
     var boardPostUiState: BoardPostUiState by mutableStateOf(BoardPostUiState.Loading)
         private set
 
-    var postLikeUiState: PostLikeFavoriteUiState by mutableStateOf(PostLikeFavoriteUiState.Loading)
+    var postLikeFavoriteUiState: PostLikeFavoriteUiState by mutableStateOf(PostLikeFavoriteUiState.Loading)
         private set
 
     companion object {
@@ -38,7 +38,7 @@ class BoardViewModel(private val boardDataRepository: BoardDataRepository) : Vie
             initializer {
                 val application = this[APPLICATION_KEY] as HaengshaApplication
                 val boardDataRepository = application.container.boardDataRepository
-                BoardViewModel(boardDataRepository)
+                BoardApiViewModel(boardDataRepository)
             }
         }
     }
@@ -110,8 +110,8 @@ class BoardViewModel(private val boardDataRepository: BoardDataRepository) : Vie
 
     fun postLike(token: String, postId: Int) {
         viewModelScope.launch {
-            postLikeUiState = PostLikeFavoriteUiState.Loading
-            postLikeUiState = try {
+            postLikeFavoriteUiState = PostLikeFavoriteUiState.Loading
+            postLikeFavoriteUiState = try {
                 val authToken = "Token $token"
                 val boardDetailResult = boardDataRepository.postLike(authToken, postId)
                 PostLikeFavoriteUiState.Success(
@@ -132,8 +132,8 @@ class BoardViewModel(private val boardDataRepository: BoardDataRepository) : Vie
 
     fun postFavorite(token: String, postId: Int) {
         viewModelScope.launch {
-            postLikeUiState = PostLikeFavoriteUiState.Loading
-            postLikeUiState = try {
+            postLikeFavoriteUiState = PostLikeFavoriteUiState.Loading
+            postLikeFavoriteUiState = try {
                 val authToken = "Token $token"
                 val boardDetailResult = boardDataRepository.postFavorite(authToken, postId)
                 PostLikeFavoriteUiState.Success(

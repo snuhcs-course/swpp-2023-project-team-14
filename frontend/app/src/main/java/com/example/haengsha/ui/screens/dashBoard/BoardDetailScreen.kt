@@ -44,7 +44,7 @@ import com.example.haengsha.R
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.board.BoardDetailUiState
 import com.example.haengsha.model.uiState.board.PostLikeFavoriteUiState
-import com.example.haengsha.model.viewModel.board.BoardViewModel
+import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.ui.theme.FavoriteYellow
 import com.example.haengsha.ui.theme.LikePink
 import com.example.haengsha.ui.theme.PlaceholderGrey
@@ -54,14 +54,14 @@ import es.dmoral.toasty.Toasty
 @Composable
 fun BoardDetailScreen(
     innerPadding: PaddingValues,
-    boardViewModel: BoardViewModel,
+    boardApiViewModel: BoardApiViewModel,
     userUiState: UserUiState,
     eventId: Int
 ) {
     val boardContext = LocalContext.current
-    val boardDetailUiState = boardViewModel.boardDetailUiState
+    val boardDetailUiState = boardApiViewModel.boardDetailUiState
     LaunchedEffect(Unit) {
-        boardViewModel.getBoardDetail(userUiState.token, eventId)
+        boardApiViewModel.getBoardDetail(userUiState.token, eventId)
     }
 
     when (boardDetailUiState) {
@@ -110,12 +110,12 @@ fun BoardDetailScreen(
             var favoriteCount by remember { mutableIntStateOf(boardDetail.favoriteCount) }
             var isLiked by remember { mutableStateOf(boardDetail.isLiked) }
             var isFavorite by remember { mutableStateOf(boardDetail.isFavorite) }
-            when (val postLikeUiState = boardViewModel.postLikeUiState) {
+            when (val postLikeFavoriteUiState = boardApiViewModel.postLikeFavoriteUiState) {
                 is PostLikeFavoriteUiState.Success -> {
-                    likeCount = postLikeUiState.likeCount
-                    favoriteCount = postLikeUiState.favoriteCount
-                    isLiked = postLikeUiState.isLiked
-                    isFavorite = postLikeUiState.isFavorite
+                    likeCount = postLikeFavoriteUiState.likeCount
+                    favoriteCount = postLikeFavoriteUiState.favoriteCount
+                    isLiked = postLikeFavoriteUiState.isLiked
+                    isFavorite = postLikeFavoriteUiState.isFavorite
                 }
 
                 is PostLikeFavoriteUiState.Loading -> {
@@ -298,7 +298,7 @@ fun BoardDetailScreen(
                                 Row(
                                     modifier = Modifier.clickable(
                                         // TODO enabled = userUiState.role == "User"
-                                    ) { boardViewModel.postLike(userUiState.token, eventId) },
+                                    ) { boardApiViewModel.postLike(userUiState.token, eventId) },
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
@@ -345,7 +345,12 @@ fun BoardDetailScreen(
                                 Row(
                                     modifier = Modifier.clickable(
                                         // TODO enabled = userUiState.role == "User"
-                                    ) { boardViewModel.postFavorite(userUiState.token, eventId) },
+                                    ) {
+                                        boardApiViewModel.postFavorite(
+                                            userUiState.token,
+                                            eventId
+                                        )
+                                    },
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(

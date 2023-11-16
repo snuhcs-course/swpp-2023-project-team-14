@@ -3,7 +3,7 @@ package com.example.haengsha.model.network.apiService
 import com.example.haengsha.model.network.dataModel.BoardDetailResponse
 import com.example.haengsha.model.network.dataModel.BoardListResponse
 import com.example.haengsha.model.network.dataModel.BoardPostResponse
-import com.example.haengsha.model.network.dataModel.PostLikeResponse
+import com.example.haengsha.model.network.dataModel.PostLikeFavoriteResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.GET
@@ -49,11 +49,11 @@ interface BoardApiService {
     suspend fun postLike(
         @Header("Authorization") token: String,
         @Path("post_id") postId: Int,
-    ): PostLikeResponse
+    ): PostLikeFavoriteResponse
 
     @PATCH("/api/post/favorite/{post_id}/")
     suspend fun postFavorite(
         @Header("Authorization") token: String,
         @Path("post_id") postId: Int,
-    ): PostLikeResponse
+    ): PostLikeFavoriteResponse
 }

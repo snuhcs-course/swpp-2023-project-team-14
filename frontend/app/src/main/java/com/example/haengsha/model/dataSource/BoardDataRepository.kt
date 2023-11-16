@@ -5,15 +5,15 @@ import com.example.haengsha.model.network.dataModel.BoardDetailResponse
 import com.example.haengsha.model.network.dataModel.BoardListResponse
 import com.example.haengsha.model.network.dataModel.BoardPostRequest
 import com.example.haengsha.model.network.dataModel.BoardPostResponse
-import com.example.haengsha.model.network.dataModel.PostLikeResponse
+import com.example.haengsha.model.network.dataModel.PostLikeFavoriteResponse
 
 interface BoardDataRepository {
     suspend fun getBoardList(startDate: String): List<BoardListResponse>
     suspend fun getBoardDetail(token: String, postId: Int): BoardDetailResponse
     suspend fun getFavoriteList(token: String): List<BoardListResponse>
     suspend fun postEvent(boardPostRequest: BoardPostRequest): BoardPostResponse
-    suspend fun postLike(token: String, postId: Int): PostLikeResponse
-    suspend fun postFavorite(token: String, postId: Int): PostLikeResponse
+    suspend fun postLike(token: String, postId: Int): PostLikeFavoriteResponse
+    suspend fun postFavorite(token: String, postId: Int): PostLikeFavoriteResponse
 }
 
 class NetworkBoardDataRepository(
@@ -44,11 +44,11 @@ class NetworkBoardDataRepository(
         )
     }
 
-    override suspend fun postLike(token: String, postId: Int): PostLikeResponse {
+    override suspend fun postLike(token: String, postId: Int): PostLikeFavoriteResponse {
         return boardApiService.postLike(token, postId)
     }
 
-    override suspend fun postFavorite(token: String, postId: Int): PostLikeResponse {
+    override suspend fun postFavorite(token: String, postId: Int): PostLikeFavoriteResponse {
         return boardApiService.postFavorite(token, postId)
     }
 }

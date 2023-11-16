@@ -25,7 +25,7 @@ class PostListView(APIView):
         posts = Post.objects.all()
 
         if keyword:
-            posts = posts.filter(title__icontains=keyword)
+            posts = posts.filter(Q(title__icontains=keyword) | Q(content__icontains=keyword))
         if is_festival is not None:
             posts = posts.filter(is_festival=is_festival)
         if start_date and end_date:
@@ -35,12 +35,12 @@ class PostListView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             posts = posts.filter(
-                Q(event_durations__event_day__range=[start_date, end_date])
+                ~(Q(event_durations__event_day__gte=start_date) ^ Q(event_durations__event_day__lte=end_date))
             )
         elif start_date:
-            posts = posts.filter(event_durations__event_day__gte=start_date)
+            posts = posts.filter(Q(event_durations__event_day__gte=start_date)).distinct()
         elif end_date:
-            posts = posts.filter(event_durations__event_day__lte=end_date)
+            posts = posts.filter(Q(event_durations__event_day__lte=end_date)).distinct()
 
         posts = posts.order_by("-like_count")
 
@@ -82,16 +82,12 @@ class PostListView(APIView):
             image = image_serializer.validated_data['image']
             try: 
                 image_name = str(uuid.uuid4())
-                # image_name = str(image.name).split('.')[0]
                 image_extension = '.' + str(image.name).split('.')[1]
                 full_image_name = image_name + image_extension
                 print(f'full_image_name: {full_image_name}')
-                # utils.upload_file_to_s3_from_mem(image, utils.s3_bucket, image_name)
-                # presigned_url = utils.generate_presigned_url_img(utils.s3_bucket, full_image_name, expiration=3600, put=True)
                 presigned_url = utils.generate_presigned_url_img(utils.s3_bucket, full_image_name, expiration=3600, put=True)
                 print(f'post: presigned_url\n{presigned_url}')
                 
-                # s3_url = f"https://{utils.s3_bucket}.s3.{utils.region_name}.amazonaws.com/{full_image_name}"
                 s3_url = f"https://{utils.s3_bucket}.s3.{utils.region_name}.amazonaws.com/{full_image_name}"
                 image_url_serializer = ImageURLSerializer(
                     data={"image_url": s3_url}
@@ -136,7 +132,6 @@ class PostListView(APIView):
             print(f'duration_data:\n{duration_data}')
 
             for it in duration_data.values():
-                # event_day = duration_data["event_day"]
                 event_day = it
                 try:
                     duration = Duration.objects.get(event_day=event_day)
@@ -168,14 +163,12 @@ class PostDetailView(APIView):
             image_first = image_name.split('.')[0]
             image_extension = image_name.split('.')[1]
             presigned_url = utils.generate_presigned_url_img(utils.s3_bucket, image_name, expiration=3600, put=False)
-            # presigned_url += '.' + image_extension
             serializer = PostSerializer(post)
             post_response_data = serializer.data 
             post_response_data['image'] = presigned_url
             elem = post_response_data['image']
             post_response_data['is_liked'] = is_liked
             post_response_data['is_favorite'] = is_favorite
-            # print(f'get presigned_url:\n{elem}')
         else:
             print(f'image is not in s3. Image_name=\n{post_image}')
             serializer = PostSerializer(post)

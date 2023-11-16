@@ -33,7 +33,7 @@ import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.route.MainRoute
 import com.example.haengsha.model.uiState.login.LoginUiState
 import com.example.haengsha.model.viewModel.UserViewModel
-import com.example.haengsha.model.viewModel.login.LoginViewModel
+import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.md_theme_light_outline
@@ -49,7 +49,7 @@ fun LoginScreen(
     userViewModel: UserViewModel,
     mainNavController: NavHostController,
     loginNavController: NavHostController,
-    loginViewModel: LoginViewModel,
+    loginApiViewModel: LoginApiViewModel,
     loginUiState: LoginUiState,
     loginContext: Context
 ) {
@@ -146,7 +146,7 @@ fun LoginScreen(
 //                    } else {
                     loginTrigger++
                     // loginViewModel.login("$emailInput@snu.ac.kr", passwordInput)
-                    loginViewModel.login("groupuser52@snu.ac.kr", "groupuser52")
+                    loginApiViewModel.login("groupuser52@snu.ac.kr", "groupuser52")
                     //}
                 })
             if (isLoginFailedDialogVisible) {

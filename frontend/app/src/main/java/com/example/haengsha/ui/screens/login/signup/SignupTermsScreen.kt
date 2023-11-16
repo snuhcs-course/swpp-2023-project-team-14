@@ -42,7 +42,7 @@ import androidx.navigation.NavController
 import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.uiState.login.LoginUiState
 import com.example.haengsha.model.uiState.login.SignupUiState
-import com.example.haengsha.model.viewModel.login.LoginViewModel
+import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.ButtonGrey
 import com.example.haengsha.ui.theme.HaengshaGrey
@@ -56,7 +56,7 @@ import es.dmoral.toasty.Toasty
 
 @Composable
 fun SignupTermsScreen(
-    loginViewModel: LoginViewModel,
+    loginApiViewModel: LoginApiViewModel,
     loginUiState: LoginUiState,
     signupStateReset: () -> Unit,
     signupUiState: SignupUiState,
@@ -217,7 +217,7 @@ fun SignupTermsScreen(
                     CommonBlueButton(
                         text = "동의 후 회원가입",
                         onClick = {
-                            loginViewModel.signupRegister(
+                            loginApiViewModel.signupRegister(
                                 email = signupUiState.email,
                                 password = signupUiState.password,
                                 nickname = signupUiState.nickname,
