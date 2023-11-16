@@ -55,7 +55,6 @@ fun Board(
                     innerPadding = innerPadding,
                     boardApiViewModel = boardApiViewModel,
                     boardNavController = boardNavController,
-                    isFavorite = false,
                     userUiState = userUiState
                 )
             }
