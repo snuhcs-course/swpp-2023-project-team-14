@@ -1,3 +1,4 @@
+import random 
 import uuid
 
 from decouple import config
@@ -49,8 +50,12 @@ def signin(request):
 
 
 def generate_unique_code():
-    auth_code = uuid.uuid4()
-    return auth_code
+    res = random.sample(range(0, 10), 6)
+    output = ""
+    for elem in res:
+        output += str(elem)
+
+    return output
 
 
 def send_code_to_email(email, code):

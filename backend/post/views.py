@@ -35,7 +35,7 @@ class PostListView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             posts = posts.filter(
-                ~(Q(event_durations__event_day__gte=start_date) ^ Q(event_durations__event_day__lte=end_date))
+                Q(event_durations__event_day__range=[start_date, end_date])
             )
         elif start_date:
             posts = posts.filter(Q(event_durations__event_day__gte=start_date)).distinct()
@@ -44,6 +44,7 @@ class PostListView(APIView):
 
         posts = posts.order_by("-like_count")
 
+        print(f'posts:\n{posts}')
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=200)
 
