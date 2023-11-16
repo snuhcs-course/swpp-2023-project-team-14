@@ -113,7 +113,6 @@ def recommendation_exists(score, postId, userIdx):
     except (PersonalUser.DoesNotExist, Post.DoesNotExist, Recommend.DoesNotExist):
         return False
 
-
 def main():
     parser = argparse.ArgumentParser(description='Process recommendations.')
     parser.add_argument('-c', '--collect', action='store_true', help='collect input data for machine input')
@@ -121,13 +120,13 @@ def main():
     args = parser.parse_args()
 
     save_dir = "./data/"
-
     if args.collect:
         save_user_data(save_dir) #save userData.csv
         save_event_data(save_dir) #save eventData.csv
 
     if args.load:
         df = put_recommends(save_dir)
+    util_erase_posts_with_no_durations()
 
 if __name__ == '__main__':
     main()
