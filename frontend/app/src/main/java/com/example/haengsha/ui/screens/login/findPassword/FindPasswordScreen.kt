@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.haengsha.model.route.LoginRoute
-import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.uiState.login.LoginApiUiState
 import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
@@ -42,7 +42,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun FindPasswordScreen(
     loginApiViewModel: LoginApiViewModel,
-    loginUiState: LoginUiState,
+    loginUiState: LoginApiUiState,
     findPasswordEmailUpdate: (String) -> Unit,
     loginNavController: NavHostController,
     loginNavBack: () -> Unit,
@@ -227,7 +227,7 @@ fun FindPasswordScreen(
     if (emailVerifyTrigger > 0) {
         LaunchedEffect(key1 = loginUiState) {
             when (loginUiState) {
-                is LoginUiState.Success -> {
+                is LoginApiUiState.Success -> {
                     Toasty
                         .success(
                             loginContext,
@@ -240,7 +240,7 @@ fun FindPasswordScreen(
                     emailVerifyTrigger = 0
                 }
 
-                is LoginUiState.HttpError -> {
+                is LoginApiUiState.HttpError -> {
                     if (loginUiState.message.contains("exist")) {
                         isEmailNotFoundDialogVisible = true
                     } else {
@@ -257,7 +257,7 @@ fun FindPasswordScreen(
                     emailVerifyTrigger = 0
                 }
 
-                is LoginUiState.NetworkError -> {
+                is LoginApiUiState.NetworkError -> {
                     Toasty
                         .error(
                             loginContext,
@@ -269,7 +269,7 @@ fun FindPasswordScreen(
                     emailVerifyTrigger = 0
                 }
 
-                is LoginUiState.Loading -> {
+                is LoginApiUiState.Loading -> {
                     /* Loading State, may add some loading UI or throw error after long time */
                 }
 
@@ -283,13 +283,13 @@ fun FindPasswordScreen(
     if (codeVerifyTrigger > 0) {
         LaunchedEffect(key1 = loginUiState) {
             when (loginUiState) {
-                is LoginUiState.Success -> {
+                is LoginApiUiState.Success -> {
                     findPasswordEmailUpdate(emailInput)
                     loginNavController.navigate(LoginRoute.FindPasswordReset.route)
                     codeVerifyTrigger = 0
                 }
 
-                is LoginUiState.HttpError -> {
+                is LoginApiUiState.HttpError -> {
                     Toasty
                         .error(
                             loginContext,
@@ -302,7 +302,7 @@ fun FindPasswordScreen(
                     codeVerifyTrigger = 0
                 }
 
-                is LoginUiState.NetworkError -> {
+                is LoginApiUiState.NetworkError -> {
                     Toasty
                         .error(
                             loginContext,
@@ -314,7 +314,7 @@ fun FindPasswordScreen(
                     codeVerifyTrigger = 0
                 }
 
-                is LoginUiState.Loading -> {
+                is LoginApiUiState.Loading -> {
                     /* Loading State, may add some loading UI or throw error after long time */
                 }
 

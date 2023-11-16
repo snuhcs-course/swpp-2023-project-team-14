@@ -3,11 +3,12 @@ package com.example.haengsha.model.viewModel
 import androidx.lifecycle.ViewModel
 import com.example.haengsha.model.uiState.UserUiState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class UserViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(UserUiState())
-    val uiState = _uiState
+    val uiState = _uiState.asStateFlow()
 
     fun updateToken(token: String) {
         updateUserData(token, "token")

@@ -2,7 +2,7 @@ package com.example.haengsha.unitTest.login
 
 import com.example.haengsha.fakeData.login.FakeLoginDataSource
 import com.example.haengsha.fakeData.login.FakeNetworkLoginDataRepository
-import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.uiState.login.LoginApiUiState
 import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.testRules.TestDispatcherRule
 import kotlinx.coroutines.test.runTest
@@ -22,7 +22,7 @@ class LoginApiViewModelTest {
         )
         loginApiViewModel.login(FakeLoginDataSource.email, FakeLoginDataSource.password)
         assertEquals(
-            LoginUiState.LoginSuccess(
+            LoginApiUiState.LoginSuccess(
                 FakeLoginDataSource.loginResponse.token,
                 FakeLoginDataSource.loginResponse.nickname,
                 FakeLoginDataSource.loginResponse.role,
@@ -38,7 +38,7 @@ class LoginApiViewModelTest {
         )
         loginApiViewModel.loginCodeVerify(FakeLoginDataSource.email, FakeLoginDataSource.code)
         assertEquals(
-            LoginUiState.Success(FakeLoginDataSource.message), loginApiViewModel.loginUiState
+            LoginApiUiState.Success(FakeLoginDataSource.message), loginApiViewModel.loginUiState
         )
     }
 
@@ -49,7 +49,7 @@ class LoginApiViewModelTest {
         )
         loginApiViewModel.signupEmailVerify(FakeLoginDataSource.email)
         assertEquals(
-            LoginUiState.Success(FakeLoginDataSource.message), loginApiViewModel.loginUiState
+            LoginApiUiState.Success(FakeLoginDataSource.message), loginApiViewModel.loginUiState
         )
     }
 
@@ -68,7 +68,7 @@ class LoginApiViewModelTest {
             FakeLoginDataSource.interest
         )
         assertEquals(
-            LoginUiState.Success(FakeLoginDataSource.message), loginApiViewModel.loginUiState
+            LoginApiUiState.Success(FakeLoginDataSource.message), loginApiViewModel.loginUiState
         )
     }
 
@@ -79,7 +79,7 @@ class LoginApiViewModelTest {
         )
         loginApiViewModel.checkNickname(FakeLoginDataSource.nickname)
         assertEquals(
-            LoginUiState.Success(FakeLoginDataSource.message), loginApiViewModel.loginUiState
+            LoginApiUiState.Success(FakeLoginDataSource.message), loginApiViewModel.loginUiState
         )
     }
 
@@ -90,7 +90,7 @@ class LoginApiViewModelTest {
         )
         loginApiViewModel.findEmailVerify(FakeLoginDataSource.email)
         assertEquals(
-            LoginUiState.Success(FakeLoginDataSource.message), loginApiViewModel.loginUiState
+            LoginApiUiState.Success(FakeLoginDataSource.message), loginApiViewModel.loginUiState
         )
     }
 
@@ -105,7 +105,7 @@ class LoginApiViewModelTest {
             FakeLoginDataSource.newPasswordAgain
         )
         assertEquals(
-            LoginUiState.Success(FakeLoginDataSource.message), loginApiViewModel.loginUiState
+            LoginApiUiState.Success(FakeLoginDataSource.message), loginApiViewModel.loginUiState
         )
     }
 }

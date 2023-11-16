@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.route.MainRoute
-import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.uiState.login.LoginApiUiState
 import com.example.haengsha.model.viewModel.UserViewModel
 import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
@@ -50,7 +50,7 @@ fun LoginScreen(
     mainNavController: NavHostController,
     loginNavController: NavHostController,
     loginApiViewModel: LoginApiViewModel,
-    loginUiState: LoginUiState,
+    loginUiState: LoginApiUiState,
     loginContext: Context
 ) {
     var loginTrigger by remember { mutableIntStateOf(0) }
@@ -186,7 +186,7 @@ fun LoginScreen(
     if (loginTrigger > 0) {
         LaunchedEffect(key1 = loginUiState) {
             when (loginUiState) {
-                is LoginUiState.LoginSuccess -> {
+                is LoginApiUiState.LoginSuccess -> {
                     userViewModel.updateToken(loginUiState.token)
                     userViewModel.updateRole(loginUiState.role)
                     userViewModel.updateNickname(loginUiState.nickname)
@@ -196,11 +196,11 @@ fun LoginScreen(
                     }
                 }
 
-                is LoginUiState.HttpError -> {
+                is LoginApiUiState.HttpError -> {
                     isLoginFailedDialogVisible = true
                 }
 
-                is LoginUiState.NetworkError -> {
+                is LoginApiUiState.NetworkError -> {
                     Toasty
                         .error(
                             loginContext,
@@ -211,7 +211,7 @@ fun LoginScreen(
                         .show()
                 }
 
-                is LoginUiState.Loading -> {
+                is LoginApiUiState.Loading -> {
                     /* Loading State, may add some loading UI or throw error after long time */
                 }
 

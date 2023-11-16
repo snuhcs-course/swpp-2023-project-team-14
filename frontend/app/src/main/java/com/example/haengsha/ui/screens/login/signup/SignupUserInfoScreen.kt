@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haengsha.model.route.LoginRoute
-import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.uiState.login.LoginApiUiState
 import com.example.haengsha.model.viewModel.login.SignupViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
@@ -47,7 +47,7 @@ import es.dmoral.toasty.Toasty
 @Composable
 fun SignupUserInfoScreen(
     checkNickname: (String) -> Unit,
-    loginUiState: LoginUiState,
+    loginUiState: LoginApiUiState,
     signupViewModel: SignupViewModel,
     signupNickname: String,
     loginNavController: NavController,
@@ -237,7 +237,7 @@ fun SignupUserInfoScreen(
     if (checkNicknameTrigger > 0) {
         LaunchedEffect(key1 = loginUiState) {
             when (loginUiState) {
-                is LoginUiState.Success -> {
+                is LoginApiUiState.Success -> {
                     isNicknameError = false
                     signupViewModel.updateNickname(nickname)
                     Toasty
@@ -245,14 +245,14 @@ fun SignupUserInfoScreen(
                         .show()
                 }
 
-                is LoginUiState.HttpError -> {
+                is LoginApiUiState.HttpError -> {
                     isNicknameError = true
                     Toasty
                         .warning(loginContext, "이미 존재하는 닉네임입니다", Toast.LENGTH_SHORT, true)
                         .show()
                 }
 
-                is LoginUiState.NetworkError -> {
+                is LoginApiUiState.NetworkError -> {
                     Toasty
                         .error(
                             loginContext,
@@ -263,7 +263,7 @@ fun SignupUserInfoScreen(
                         .show()
                 }
 
-                is LoginUiState.Loading -> {
+                is LoginApiUiState.Loading -> {
                     /* Loading State, may add some loading UI or throw error after long time */
                 }
 

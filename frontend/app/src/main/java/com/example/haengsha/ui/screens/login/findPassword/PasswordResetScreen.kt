@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.uiState.login.FindPasswordUiState
-import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.uiState.login.LoginApiUiState
 import com.example.haengsha.model.viewModel.login.FindPasswordViewModel
 import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.theme.poppins
@@ -41,7 +41,7 @@ import es.dmoral.toasty.Toasty
 @Composable
 fun PasswordResetScreen(
     loginApiViewModel: LoginApiViewModel,
-    loginUiState: LoginUiState,
+    loginUiState: LoginApiUiState,
     findPasswordViewModel: FindPasswordViewModel,
     findPasswordUiState: FindPasswordUiState,
     loginNavController: NavController,
@@ -152,14 +152,14 @@ fun PasswordResetScreen(
     if (resetPasswordTrigger > 0) {
         LaunchedEffect(key1 = loginUiState) {
             when (loginUiState) {
-                is LoginUiState.Success -> {
+                is LoginApiUiState.Success -> {
                     findPasswordViewModel.resetFindPasswordData()
                     loginNavController.navigate(LoginRoute.FindPasswordComplete.route) {
                         popUpTo(LoginRoute.Login.route) { inclusive = false }
                     }
                 }
 
-                is LoginUiState.HttpError -> {
+                is LoginApiUiState.HttpError -> {
                     Toasty
                         .error(
                             loginContext,
@@ -170,7 +170,7 @@ fun PasswordResetScreen(
                         .show()
                 }
 
-                is LoginUiState.NetworkError -> {
+                is LoginApiUiState.NetworkError -> {
                     Toasty
                         .error(
                             loginContext,
@@ -181,7 +181,7 @@ fun PasswordResetScreen(
                         .show()
                 }
 
-                is LoginUiState.Loading -> {
+                is LoginApiUiState.Loading -> {
                     /* Loading State, may add some loading UI or throw error after long time */
                 }
 

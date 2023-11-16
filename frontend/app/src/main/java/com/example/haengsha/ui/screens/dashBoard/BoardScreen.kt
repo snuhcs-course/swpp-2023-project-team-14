@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -38,12 +39,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.haengsha.R
 import com.example.haengsha.model.route.BoardRoute
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.board.BoardListUiState
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
+import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
@@ -59,12 +62,14 @@ fun boardScreen(
     boardNavController: NavController,
     userUiState: UserUiState
 ): Int {
+    val boardViewModel: BoardViewModel = viewModel()
+    val boardUiState = boardViewModel.uiState.collectAsState()
     val boardContext = LocalContext.current
     val boardListUiState = boardApiViewModel.boardListUiState
     var eventId by remember { mutableIntStateOf(0) }
     var isFestival by remember { mutableIntStateOf(1) }
-    var startDate by remember { mutableStateOf("2023-11-09") }
-    var endDate by remember { mutableStateOf("2023-11-30") }
+    var startDate by remember { mutableStateOf("") }
+    var endDate by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
@@ -76,6 +81,7 @@ fun boardScreen(
         ) {
             Spacer(modifier = Modifier.height(20.dp))
             SearchBar(
+                boardViewModel,
                 { boardApiViewModel.searchEvent(it) },
                 userUiState.token, isFestival, startDate, endDate
             )
@@ -169,7 +175,8 @@ fun boardScreen(
                     }
 
                     is BoardListUiState.BoardListResult -> {
-                        items(boardListUiState.boardList) { event ->
+                        boardViewModel.updateBoardList(boardListUiState.boardList)
+                        items(boardUiState.value.boardList) { event ->
                             Box(modifier = Modifier.clickable {
                                 eventId = event.id
                                 boardNavController.navigate(BoardRoute.BoardDetail.route)

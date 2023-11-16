@@ -1,7 +1,6 @@
 package com.example.haengsha.ui.screens.login.signup
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -29,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haengsha.model.route.LoginRoute
-import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.uiState.login.LoginApiUiState
 import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
@@ -43,7 +42,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SignupEmailVerificationScreen(
     loginApiViewModel: LoginApiViewModel,
-    loginUiState: LoginUiState,
+    loginUiState: LoginApiUiState,
     signupEmailUpdate: (String) -> Unit,
     loginNavController: NavController,
     loginNavBack: () -> Unit,
@@ -211,7 +210,7 @@ fun SignupEmailVerificationScreen(
     if (emailVerifyTrigger > 0) {
         LaunchedEffect(key1 = loginUiState) {
             when (loginUiState) {
-                is LoginUiState.Success -> {
+                is LoginApiUiState.Success -> {
                     Toasty
                         .success(
                             loginContext,
@@ -224,7 +223,7 @@ fun SignupEmailVerificationScreen(
                     emailVerifyTrigger = 0
                 }
 
-                is LoginUiState.HttpError -> {
+                is LoginApiUiState.HttpError -> {
                     if (loginUiState.message.contains("exist")) {
                         isEmailAlreadyExistDialogVisible = true
                     } else {
@@ -241,7 +240,7 @@ fun SignupEmailVerificationScreen(
                     emailVerifyTrigger = 0
                 }
 
-                is LoginUiState.NetworkError -> {
+                is LoginApiUiState.NetworkError -> {
                     Toasty
                         .error(
                             loginContext,
@@ -253,7 +252,7 @@ fun SignupEmailVerificationScreen(
                     emailVerifyTrigger = 0
                 }
 
-                is LoginUiState.Loading -> {
+                is LoginApiUiState.Loading -> {
                     /* Loading State, may add some loading UI or throw error after long time */
                 }
 
@@ -267,12 +266,12 @@ fun SignupEmailVerificationScreen(
     if (codeVerifyTrigger > 0) {
         LaunchedEffect(key1 = loginUiState) {
             when (loginUiState) {
-                is LoginUiState.Success -> {
+                is LoginApiUiState.Success -> {
                     signupEmailUpdate(emailInput)
                     loginNavController.navigate(LoginRoute.SignupPassword.route)
                 }
 
-                is LoginUiState.HttpError -> {
+                is LoginApiUiState.HttpError -> {
                     Toasty
                         .error(
                             loginContext,
@@ -285,7 +284,7 @@ fun SignupEmailVerificationScreen(
                     codeVerifyTrigger = 0
                 }
 
-                is LoginUiState.NetworkError -> {
+                is LoginApiUiState.NetworkError -> {
                     Toasty
                         .error(
                             loginContext,
@@ -297,7 +296,7 @@ fun SignupEmailVerificationScreen(
                     codeVerifyTrigger = 0
                 }
 
-                is LoginUiState.Loading -> {
+                is LoginApiUiState.Loading -> {
                     /* Loading State, may add some loading UI or throw error after long time */
                 }
 

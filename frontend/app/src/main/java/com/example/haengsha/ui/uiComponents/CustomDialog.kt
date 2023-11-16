@@ -22,6 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.haengsha.model.network.dataModel.SearchRequest
+import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.BackgroundGrey
 import com.example.haengsha.ui.theme.md_theme_light_onPrimary
 import com.example.haengsha.ui.theme.md_theme_light_tertiary
@@ -124,6 +126,15 @@ fun ConfirmDialog(
             }
         }
     }
+}
+
+@Composable
+fun FilterDialog(
+    onSubmit: (SearchRequest) -> Unit,
+    onDismissRequest: () -> Unit,
+    boardViewModel: BoardViewModel
+) {
+
 }
 
 @Preview(showBackground = true)

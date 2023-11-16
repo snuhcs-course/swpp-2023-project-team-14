@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.example.haengsha.model.route.LoginRoute
-import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.uiState.login.LoginApiUiState
 import com.example.haengsha.model.uiState.login.SignupUiState
 import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
@@ -57,7 +57,7 @@ import es.dmoral.toasty.Toasty
 @Composable
 fun SignupTermsScreen(
     loginApiViewModel: LoginApiViewModel,
-    loginUiState: LoginUiState,
+    loginUiState: LoginApiUiState,
     signupStateReset: () -> Unit,
     signupUiState: SignupUiState,
     loginNavController: NavController,
@@ -292,14 +292,14 @@ fun SignupTermsScreen(
     if (signupRegisterTrigger > 0) {
         LaunchedEffect(key1 = loginUiState) {
             when (loginUiState) {
-                is LoginUiState.Success -> {
+                is LoginApiUiState.Success -> {
                     signupStateReset()
                     loginNavController.navigate(LoginRoute.SignupComplete.route) {
                         popUpTo(LoginRoute.Login.route) { inclusive = false }
                     }
                 }
 
-                is LoginUiState.HttpError -> {
+                is LoginApiUiState.HttpError -> {
                     Toasty
                         .error(
                             loginContext,
@@ -310,7 +310,7 @@ fun SignupTermsScreen(
                         .show()
                 }
 
-                is LoginUiState.NetworkError -> {
+                is LoginApiUiState.NetworkError -> {
                     Toasty
                         .error(
                             loginContext,
@@ -321,7 +321,7 @@ fun SignupTermsScreen(
                         .show()
                 }
 
-                is LoginUiState.Loading -> {
+                is LoginApiUiState.Loading -> {
                     /* Loading State, may add some loading UI or throw error after long time */
                 }
 

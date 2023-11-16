@@ -46,6 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.haengsha.model.network.dataModel.SearchRequest
+import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.FieldStrokeRed
 import com.example.haengsha.ui.theme.HaengshaGrey
@@ -324,6 +325,7 @@ fun passwordCheckTextField(
 
 @Composable
 fun SearchBar(
+    boardViewModel: BoardViewModel,
     onSubmit: (SearchRequest) -> Unit,
     userToken: String,
     isFestival: Int,
