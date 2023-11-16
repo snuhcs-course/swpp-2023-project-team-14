@@ -296,9 +296,17 @@ fun BoardDetailScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Row(
-                                    modifier = Modifier.clickable(
-                                        // TODO enabled = userUiState.role == "User"
-                                    ) { boardApiViewModel.postLike(userUiState.token, eventId) },
+                                    modifier = Modifier.clickable {
+                                        if (userUiState.role == "User") {
+                                            boardApiViewModel.postLike(userUiState.token, eventId)
+                                        } else {
+                                            Toasty.warning(
+                                                boardContext,
+                                                "단체 계정은 좋아요를 할 수 없어요",
+                                                Toasty.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    },
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
@@ -320,7 +328,7 @@ fun BoardDetailScreen(
                                         color = LikePink
                                     )
                                 }
-                                /*
+                                /* TODO 댓글 UI
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically
@@ -343,13 +351,19 @@ fun BoardDetailScreen(
                                 */
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Row(
-                                    modifier = Modifier.clickable(
-                                        // TODO enabled = userUiState.role == "User"
-                                    ) {
-                                        boardApiViewModel.postFavorite(
-                                            userUiState.token,
-                                            eventId
-                                        )
+                                    modifier = Modifier.clickable {
+                                        if (userUiState.role == "User") {
+                                            boardApiViewModel.postFavorite(
+                                                userUiState.token,
+                                                eventId
+                                            )
+                                        } else {
+                                            Toasty.warning(
+                                                boardContext,
+                                                "단체 계정은 즐겨찾기를 할 수 없어요",
+                                                Toasty.LENGTH_SHORT
+                                            ).show()
+                                        }
                                     },
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {

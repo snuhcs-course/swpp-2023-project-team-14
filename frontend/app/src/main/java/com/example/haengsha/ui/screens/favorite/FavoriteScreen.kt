@@ -1,6 +1,5 @@
 package com.example.haengsha.ui.screens.favorite
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -53,62 +52,35 @@ fun favoriteScreen(
     val boardListUiState = boardApiViewModel.boardListUiState
     var eventId by rememberSaveable { mutableIntStateOf(0) }
 
-    LaunchedEffect(Unit) {
-        if (userUiState.role == "User") {
-            boardApiViewModel.getFavoriteBoardList(userUiState.token)
-        }
-    }
-
-    when (boardListUiState) {
-        is BoardListUiState.HttpError -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(
-                        modifier = Modifier.size(300.dp),
-                        painter = painterResource(R.drawable.nudge_image),
-                        contentDescription = "nudge image"
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Text(
-                        text = "관심 있는 행사를 즐겨찾기 해보세요!",
-                        fontFamily = poppins,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        lineHeight = 35.sp,
-                        textAlign = TextAlign.Center
-                    )
-                }
+    if (userUiState.role == "Group") {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(
+                    modifier = Modifier.size(300.dp),
+                    painter = painterResource(R.drawable.nudge_image),
+                    contentDescription = "nudge image"
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "단체 계정은 즐겨찾기를 할 수 없어요",
+                    fontFamily = poppins,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    lineHeight = 35.sp,
+                    textAlign = TextAlign.Center
+                )
             }
         }
+    } else {
+        LaunchedEffect(Unit) { boardApiViewModel.getFavoriteBoardList(userUiState.token) }
 
-        is BoardListUiState.NetworkError -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            ) {
-                Toasty.error(boardContext, "네트워크 연결을 확인해주세요", Toasty.LENGTH_SHORT).show()
-            }
-        }
-
-        is BoardListUiState.Error -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            ) {
-                Toasty.error(boardContext, "알 수 없는 에러가 발생했어요 :( 메일로 제보해주세요!", Toasty.LENGTH_SHORT)
-                    .show()
-            }
-        }
-
-        is BoardListUiState.Loading -> {
-            if (userUiState.role == "Group") {
+        when (boardListUiState) {
+            is BoardListUiState.HttpError -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -123,7 +95,7 @@ fun favoriteScreen(
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                         Text(
-                            text = "단체 계정은 즐겨찾기를 할 수 없어요",
+                            text = "관심 있는 행사를 즐겨찾기 해보세요!",
                             fontFamily = poppins,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -133,41 +105,70 @@ fun favoriteScreen(
                     }
                 }
             }
-        }
 
-        is BoardListUiState.BoardListResult -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+            is BoardListUiState.NetworkError -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(2.dp)
-                            .background(PlaceholderGrey)
+                    Toasty.error(boardContext, "네트워크 연결을 확인해주세요", Toasty.LENGTH_SHORT).show()
+                }
+            }
+
+            is BoardListUiState.Error -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                ) {
+                    Toasty.error(
+                        boardContext,
+                        "알 수 없는 에러가 발생했어요 :( 메일로 제보해주세요!",
+                        Toasty.LENGTH_SHORT
                     )
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize()
+                        .show()
+                }
+            }
+
+            is BoardListUiState.Loading -> {
+                // Do Nothing
+            }
+
+            is BoardListUiState.BoardListResult -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        items(boardListUiState.boardList) { event ->
-                            Box(modifier = Modifier.clickable {
-                                eventId = event.id
-                                favoriteNavController.navigate(FavoriteRoute.FavoriteDetail.route)
-                            }) {
-                                boardList(
-                                    isFavorite = true,
-                                    event = event
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(2.dp)
+                                .background(PlaceholderGrey)
+                        )
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(boardListUiState.boardList) { event ->
+                                Box(modifier = Modifier.clickable {
+                                    eventId = event.id
+                                    favoriteNavController.navigate(FavoriteRoute.FavoriteDetail.route)
+                                }) {
+                                    boardList(
+                                        isFavorite = true,
+                                        event = event
+                                    )
+                                }
+                                HorizontalDivider(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    thickness = 1.dp,
+                                    color = PlaceholderGrey
                                 )
                             }
-                            HorizontalDivider(
-                                modifier = Modifier.fillMaxWidth(),
-                                thickness = 1.dp,
-                                color = PlaceholderGrey
-                            )
                         }
                     }
                 }
