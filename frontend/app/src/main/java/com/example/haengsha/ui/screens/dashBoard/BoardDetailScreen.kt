@@ -374,7 +374,7 @@ fun BoardDetailScreen(
                                 }
                             }
                             Spacer(modifier = Modifier.height(20.dp))
-                            /*
+                            /* TODO 댓글 UI
                             Spacer(modifier = Modifier.height(15.dp))
                             HorizontalDivider(
                                 modifier = Modifier.fillMaxWidth(),
