@@ -31,6 +31,18 @@ class BoardViewModel : ViewModel() {
         updateSearchParameter(newEndDate, listOf(), "endDate")
     }
 
+    fun resetUiState() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                boardList = listOf(),
+                keyword = "",
+                isFestival = 0,
+                startDate = "",
+                endDate = ""
+            )
+        }
+    }
+
     private fun updateSearchParameter(
         newParameter: String,
         newBoardList: List<BoardListResponse>,

@@ -130,22 +130,7 @@ fun boardScreen(
             ) {
                 when (boardListUiState) {
                     is BoardListUiState.HttpError -> {
-                        items(1) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(innerPadding),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "등록된 행사가 없어요 :(",
-                                    fontFamily = poppins,
-                                    fontSize = 30.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-                        }
+                        boardViewModel.resetUiState()
                     }
 
                     is BoardListUiState.NetworkError -> {
@@ -183,22 +168,41 @@ fun boardScreen(
 
                     is BoardListUiState.BoardListResult -> {
                         boardViewModel.updateBoardList(boardListUiState.boardList)
-                        items(boardUiState.value.boardList) { event ->
-                            Box(modifier = Modifier.clickable {
-                                eventId = event.id
-                                boardNavController.navigate(BoardRoute.BoardDetail.route)
-                            }) {
-                                boardList(
-                                    isFavorite = false,
-                                    event = event
-                                )
-                            }
-                            HorizontalDivider(
-                                modifier = Modifier.fillMaxWidth(),
-                                thickness = 1.dp,
-                                color = PlaceholderGrey
+                    }
+                }
+                if (boardUiState.value.boardList.isEmpty()) {
+                    items(1) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "등록된 행사가 없어요 :(",
+                                fontFamily = poppins,
+                                fontSize = 30.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                textAlign = TextAlign.Center
                             )
                         }
+                    }
+                } else {
+                    items(boardUiState.value.boardList) { event ->
+                        Box(modifier = Modifier.clickable {
+                            eventId = event.id
+                            boardNavController.navigate(BoardRoute.BoardDetail.route)
+                        }) {
+                            boardList(
+                                isFavorite = false,
+                                event = event
+                            )
+                        }
+                        HorizontalDivider(
+                            modifier = Modifier.fillMaxWidth(),
+                            thickness = 1.dp,
+                            color = PlaceholderGrey
+                        )
                     }
                 }
             }

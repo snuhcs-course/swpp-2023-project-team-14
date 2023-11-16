@@ -130,9 +130,11 @@ fun ConfirmDialog(
 
 @Composable
 fun FilterDialog(
+    boardViewModel: BoardViewModel,
     onSubmit: (SearchRequest) -> Unit,
     onDismissRequest: () -> Unit,
-    boardViewModel: BoardViewModel
+    userToken: String,
+    keyword: String
 ) {
 
 }
