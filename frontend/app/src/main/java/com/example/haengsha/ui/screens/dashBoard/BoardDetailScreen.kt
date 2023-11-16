@@ -264,7 +264,7 @@ fun BoardDetailScreen(
                                 color = PlaceholderGrey
                             )
                             Spacer(modifier = Modifier.height(20.dp))
-                            if ((boardDetail.image?.isNotEmpty() == true)) {
+                            if ((boardDetail.image?.isNotEmpty() == true && boardDetail.image != "image.jpg")) {
                                 val imageModel = ImageRequest.Builder(context = boardContext)
                                     .data(boardDetail.image)
                                     .size(Size.ORIGINAL)

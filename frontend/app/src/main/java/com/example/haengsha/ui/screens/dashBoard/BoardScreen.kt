@@ -25,7 +25,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,8 +48,8 @@ import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.SearchBar
 import com.example.haengsha.ui.uiComponents.boardList
-import com.example.haengsha.ui.uiComponents.searchBar
 import es.dmoral.toasty.Toasty
 
 @Composable
@@ -60,7 +61,10 @@ fun boardScreen(
 ): Int {
     val boardContext = LocalContext.current
     val boardListUiState = boardApiViewModel.boardListUiState
-    var eventId by rememberSaveable { mutableIntStateOf(0) }
+    var eventId by remember { mutableIntStateOf(0) }
+    var isFestival by remember { mutableIntStateOf(1) }
+    var startDate by remember { mutableStateOf("2023-11-09") }
+    var endDate by remember { mutableStateOf("2023-11-30") }
 
     Box(
         modifier = Modifier
@@ -71,7 +75,10 @@ fun boardScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(20.dp))
-            searchBar()
+            SearchBar(
+                { boardApiViewModel.searchEvent(it) },
+                userUiState.token, isFestival, startDate, endDate
+            )
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier = Modifier.fillMaxWidth()) {
                 Spacer(modifier = Modifier.weight(1f))
@@ -83,7 +90,9 @@ fun boardScreen(
                             color = HaengshaBlue,
                             shape = RoundedCornerShape(10.dp)
                         )
-                        .clickable { /*TODO 필터 모달*/ },
+                        .clickable {
+                            // TODO 필터 모달
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(

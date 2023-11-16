@@ -44,7 +44,6 @@ interface BoardApiService {
         @Part("content") content: RequestBody
     ): BoardPostResponse
 
-    // TODO Response 통일되면 그걸로 수정
     @PATCH("/api/post/like/{post_id}/")
     suspend fun postLike(
         @Header("Authorization") token: String,
@@ -56,4 +55,13 @@ interface BoardApiService {
         @Header("Authorization") token: String,
         @Path("post_id") postId: Int,
     ): PostLikeFavoriteResponse
+
+    @GET("/api/post/keyword/{keyword}/festival/{is_festival}/date/{start_date}/{end_date}/")
+    suspend fun searchEvent(
+        @Header("Authorization") token: String,
+        @Path("keyword") keyword: String,
+        @Path("is_festival") isFestival: Int,
+        @Path("start_date") startDate: String,
+        @Path("end_date") endDate: String
+    ): List<BoardListResponse>
 }

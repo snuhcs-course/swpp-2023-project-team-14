@@ -41,7 +41,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -185,11 +184,13 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate) {
             val itemsToDisplay = if (index == 1) festivalItems else academicItems
             // App content
 
-            if (itemsToDisplay.isNullOrEmpty()){
-                Box(contentAlignment = Alignment.Center,
+            if (itemsToDisplay.isNullOrEmpty()) {
+                Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)){
+                        .padding(16.dp)
+                ) {
                     Text(
                         text = "오늘은 예정된 이벤트가 없어요!",
                         style = TextStyle(
@@ -201,9 +202,7 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate) {
                         )
                     )
                 }
-            }
-
-            else {
+            } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
