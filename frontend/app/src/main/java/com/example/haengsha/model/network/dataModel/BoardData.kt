@@ -51,7 +51,7 @@ data class BoardDetailResponse(
 
 // TODO PostLike에서 isLiked를 보내주면 BoardDetailResponse로 통일해도 됨
 @Serializable
-data class PostLikeResponse(
+data class PostLikeFavoriteResponse(
     val id: Int,
     val title: String,
     @SerialName("is_festival")

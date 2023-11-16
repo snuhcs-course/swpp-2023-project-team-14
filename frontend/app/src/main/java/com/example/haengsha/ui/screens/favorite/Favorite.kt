@@ -14,7 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.FavoriteRoute
 import com.example.haengsha.model.route.MainRoute
 import com.example.haengsha.model.uiState.UserUiState
-import com.example.haengsha.model.viewModel.board.BoardViewModel
+import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.ui.screens.dashBoard.BoardDetailScreen
 import com.example.haengsha.ui.screens.dashBoard.boardScreen
 import com.example.haengsha.ui.uiComponents.HaengshaBottomAppBar
@@ -23,7 +23,7 @@ import com.example.haengsha.ui.uiComponents.HaengshaTopAppBar
 @Composable
 fun Favorite(
     userUiState: UserUiState,
-    boardViewModel: BoardViewModel,
+    boardApiViewModel: BoardApiViewModel,
     mainNavController: NavController
 ) {
     val favoriteNavController = rememberNavController()
@@ -55,7 +55,7 @@ fun Favorite(
             composable(FavoriteRoute.FavoriteBoard.route) {
                 eventId = boardScreen(
                     innerPadding = innerPadding,
-                    boardViewModel = boardViewModel,
+                    boardApiViewModel = boardApiViewModel,
                     boardNavController = favoriteNavController,
                     isFavorite = true,
                     userUiState = userUiState
@@ -64,7 +64,7 @@ fun Favorite(
             composable(FavoriteRoute.FavoriteDetail.route) {
                 BoardDetailScreen(
                     innerPadding = innerPadding,
-                    boardViewModel = boardViewModel,
+                    boardApiViewModel = boardApiViewModel,
                     userUiState = userUiState,
                     eventId = eventId
                 )

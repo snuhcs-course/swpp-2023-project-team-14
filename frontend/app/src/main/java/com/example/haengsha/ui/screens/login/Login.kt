@@ -12,7 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.viewModel.UserViewModel
 import com.example.haengsha.model.viewModel.login.FindPasswordViewModel
-import com.example.haengsha.model.viewModel.login.LoginViewModel
+import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.model.viewModel.login.SignupViewModel
 import com.example.haengsha.ui.screens.login.findPassword.FindPasswordCompleteScreen
 import com.example.haengsha.ui.screens.login.findPassword.FindPasswordOrganizerScreen
@@ -31,8 +31,8 @@ fun Login(
     userViewModel: UserViewModel,
     mainNavController: NavHostController
 ) {
-    val loginViewModel: LoginViewModel = viewModel(factory = LoginViewModel.Factory)
-    val loginUiState = loginViewModel.loginUiState
+    val loginApiViewModel: LoginApiViewModel = viewModel(factory = LoginApiViewModel.Factory)
+    val loginUiState = loginApiViewModel.loginUiState
     val signupViewModel: SignupViewModel = viewModel()
     val signupUiState by signupViewModel.uiState.collectAsState()
     val findPasswordViewModel: FindPasswordViewModel = viewModel()
@@ -49,7 +49,7 @@ fun Login(
                 userViewModel = userViewModel,
                 mainNavController = mainNavController,
                 loginNavController = loginNavController,
-                loginViewModel = loginViewModel,
+                loginApiViewModel = loginApiViewModel,
                 loginUiState = loginUiState,
                 loginContext = loginContext
             )
@@ -57,7 +57,7 @@ fun Login(
 
         composable(LoginRoute.FindPassword.route) {
             FindPasswordScreen(
-                loginViewModel = loginViewModel,
+                loginApiViewModel = loginApiViewModel,
                 loginUiState = loginUiState,
                 findPasswordEmailUpdate = { findPasswordViewModel.updateEmail(it) },
                 loginNavController = loginNavController,
@@ -72,7 +72,7 @@ fun Login(
         }
         composable(LoginRoute.FindPasswordReset.route) {
             PasswordResetScreen(
-                loginViewModel = loginViewModel,
+                loginApiViewModel = loginApiViewModel,
                 loginUiState = loginUiState,
                 findPasswordViewModel = findPasswordViewModel,
                 findPasswordUiState = findPasswordUiState,
@@ -100,7 +100,7 @@ fun Login(
         }
         composable(LoginRoute.SignupEmail.route) {
             SignupEmailVerificationScreen(
-                loginViewModel = loginViewModel,
+                loginApiViewModel = loginApiViewModel,
                 loginUiState = loginUiState,
                 signupEmailUpdate = { signupViewModel.updateEmail(it) },
                 loginNavController = loginNavController,
@@ -118,7 +118,7 @@ fun Login(
         }
         composable(LoginRoute.SignupUserInfo.route) {
             SignupUserInfoScreen(
-                checkNickname = { loginViewModel.checkNickname(it) },
+                checkNickname = { loginApiViewModel.checkNickname(it) },
                 loginUiState = loginUiState,
                 signupViewModel = signupViewModel,
                 signupNickname = signupUiState.nickname,
@@ -129,7 +129,7 @@ fun Login(
         }
         composable(LoginRoute.SignupTerms.route) {
             SignupTermsScreen(
-                loginViewModel = loginViewModel,
+                loginApiViewModel = loginApiViewModel,
                 loginUiState = loginUiState,
                 signupStateReset = { signupViewModel.resetSignupData() },
                 signupUiState = signupUiState,

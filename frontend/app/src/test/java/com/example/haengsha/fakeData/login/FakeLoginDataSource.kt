@@ -29,7 +29,7 @@ object FakeLoginDataSource {
     const val newPassword = "fakeNewPassword"
     const val newPasswordAgain = "fakeNewPasswordAgain"
 
-    val loginResponse = LoginResponse(token, role, message)
+    val loginResponse = LoginResponse(token, role, nickname, message)
 
     val loginRequest = LoginRequest(email, password)
 
