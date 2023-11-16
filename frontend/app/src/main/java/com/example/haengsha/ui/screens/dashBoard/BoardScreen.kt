@@ -67,9 +67,13 @@ fun boardScreen(
     val boardContext = LocalContext.current
     val boardListUiState = boardApiViewModel.boardListUiState
     var eventId by remember { mutableIntStateOf(0) }
-    var isFestival by remember { mutableIntStateOf(1) }
-    var startDate by remember { mutableStateOf("") }
-    var endDate by remember { mutableStateOf("") }
+    var isFestival by remember { mutableIntStateOf(boardUiState.value.isFestival) }
+    var startDate by remember { mutableStateOf(boardUiState.value.startDate) }
+    var endDate by remember { mutableStateOf(boardUiState.value.endDate) }
+
+    LaunchedEffect(Unit) {
+        boardApiViewModel.resetUiState()
+    }
 
     Box(
         modifier = Modifier
@@ -83,7 +87,10 @@ fun boardScreen(
             SearchBar(
                 boardViewModel,
                 { boardApiViewModel.searchEvent(it) },
-                userUiState.token, isFestival, startDate, endDate
+                userUiState.token,
+                boardUiState.value.isFestival,
+                boardUiState.value.startDate,
+                boardUiState.value.endDate
             )
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier = Modifier.fillMaxWidth()) {

@@ -45,6 +45,10 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
         }
     }
 
+    fun resetUiState() {
+        boardListUiState = BoardListUiState.Loading
+    }
+
     fun getBoardList(startDate: String) {
         viewModelScope.launch {
             boardListUiState = BoardListUiState.Loading

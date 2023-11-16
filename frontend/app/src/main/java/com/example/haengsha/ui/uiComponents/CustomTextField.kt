@@ -332,11 +332,8 @@ fun SearchBar(
     startDate: String,
     endDate: String
 ) {
-    var input by rememberSaveable { mutableStateOf("") }
+    var input by rememberSaveable { mutableStateOf(boardViewModel.uiState.value.keyword) }
     val keyboardController = LocalSoftwareKeyboardController.current
-
-    val searchRequest =
-        SearchRequest("Token $userToken", input, isFestival, startDate, endDate)
 
     OutlinedTextField(
         modifier = Modifier
@@ -364,7 +361,8 @@ fun SearchBar(
         ),
         keyboardActions = KeyboardActions(
             onSearch = {
-                onSubmit(searchRequest)
+                boardViewModel.updateKeyword(input)
+                onSubmit(SearchRequest("Token $userToken", input, isFestival, startDate, endDate))
                 keyboardController?.hide()
             }
         ),
