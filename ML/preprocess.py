@@ -31,7 +31,7 @@ if __name__ == '__main__':
     
     ## DataType: User(1), Event(0)
     if dataType == 1:
-        beforePreprocessFileName = "data_haengsha.csv"
+        beforePreprocessFileName = "userData.csv"
         afterPreprocessFileName = "userEmbedding.csv"
     elif dataType == 0:
         beforePreprocessFileName = "eventData.csv"

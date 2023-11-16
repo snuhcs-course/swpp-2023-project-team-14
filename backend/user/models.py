@@ -37,7 +37,8 @@ class PersonalUser(AbstractUser, PermissionsMixin):
     ('Undefined', 'Undefined')
   )
   GRADE_CHOICES = (
-    ('17', '17학번 이상'),
+     ('16', '16학번 이상'),
+    ('17', '17학번'),
     ('18', '18학번'),
     ('19', '19학번'),
     ('20', '20학번'),

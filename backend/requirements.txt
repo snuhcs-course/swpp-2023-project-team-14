@@ -10,6 +10,7 @@ async-timeout==4.0.3
 attrs==23.1.0
 awscli
 backcall==0.2.0
+boto3
 # backports==1.0
 # backports-functools-lru-cache==1.6.5
 # backports.functools_lru_cache==1.6.5
@@ -74,6 +75,7 @@ psutil==5.9.5
 ptyprocess==0.7.0
 pure-eval==0.2.2
 pygments==2.16.1
+pymysql
 pynacl
 pyparsing==3.1.1
 # python==3.11.5

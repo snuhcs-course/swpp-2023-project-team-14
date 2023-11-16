@@ -17,6 +17,10 @@ class UserViewModel : ViewModel() {
         updateUserData(role, "role")
     }
 
+    fun updateNickname(nickname: String) {
+        updateUserData(nickname, "nickname")
+    }
+
     fun resetUserData() {
         _uiState.value = UserUiState()
     }
@@ -25,7 +29,8 @@ class UserViewModel : ViewModel() {
         _uiState.update { currentState ->
             currentState.copy(
                 token = if (type == "token") newUserData else currentState.token,
-                role = if (type == "role") newUserData else currentState.role
+                role = if (type == "role") newUserData else currentState.role,
+                nickname = if (type == "nickname") newUserData else currentState.nickname
             )
         }
     }

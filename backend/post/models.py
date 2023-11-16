@@ -10,7 +10,7 @@ class Post(models.Model):
   author = models.ForeignKey(PersonalUser, on_delete=models.CASCADE,null=True)
   content = models.CharField(null=True,max_length=1000)
   place = models.CharField(null=True,max_length=30)
-  image = models.ImageField(null=True,upload_to='images/')
+  image = models.URLField(null=True)
   is_festival = models.BooleanField(null=True)
   like_users = models.ManyToManyField(PersonalUser, blank=True, related_name='like_posts', through='Like')
   like_count = models.IntegerField(default=0)

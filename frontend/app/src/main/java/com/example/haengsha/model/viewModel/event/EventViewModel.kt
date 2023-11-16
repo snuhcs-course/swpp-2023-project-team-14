@@ -15,7 +15,6 @@ import com.example.haengsha.ui.screens.home.EventCardData
 import com.example.haengsha.ui.screens.home.SharedViewModel
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import java.io.Closeable
 import java.io.IOException
 import java.time.LocalDate
 
@@ -43,29 +42,28 @@ open class EventViewModel(
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getEventByDate(eventType: String, date: LocalDate) {
+    fun getEventByDate(date: LocalDate) {
         viewModelScope.launch {
             try {
-                var eventTypeConverted = if (eventType == "Festival") 1 else 0
+                val festivalResponse: List<EventResponse>? =
+                    eventDataRepository.getEventByDate(1, date.toString())
 
-                val eventGetResponse: List<EventResponse>? =
-                    eventDataRepository.getEventByDate(eventTypeConverted, date.toString())
+                val academicResponse: List<EventResponse>? =
+                    eventDataRepository.getEventByDate(0, date.toString())
 
-                val eventCardDataList: List<EventCardData>? =
-                    eventGetResponse?.map { it.toEventCardData() }
+                val academicCardDataList: List<EventCardData>? =
+                    academicResponse?.map { it.toEventCardData() }
 
-                if (eventType == "Festival") {
-                    sharedViewModel.updateFestivalItems(eventCardDataList)
-                } else {
-                    sharedViewModel.updateAcademicItems(eventCardDataList)
-                }
+                val festivalCardDataList: List<EventCardData>? =
+                    festivalResponse?.map { it.toEventCardData() }
+
+                sharedViewModel.updateEventItems(festivalCardDataList,academicCardDataList)
 
                 sharedViewModel.updateSelectedDate(date)
 
             } catch (e: HttpException) {
                 val errorMessage = e.response()?.errorBody()?.string() ?: "이벤트를 불러오지 못했습니다."
-                sharedViewModel.updateAcademicItems(null)
-                sharedViewModel.updateFestivalItems(null)
+                sharedViewModel.updateEventItems(listOf(),listOf())
                 sharedViewModel.updateSelectedDate(date)
                 e.printStackTrace()
             } catch (e: IOException) {
