@@ -11,6 +11,15 @@ class BoardViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(BoardUiState())
     val uiState = _uiState.asStateFlow()
 
+    fun saveToken(token: String) {
+        val authToken = "Token $token"
+        _uiState.update { currentState ->
+            currentState.copy(
+                token = authToken
+            )
+        }
+    }
+
     fun updateBoardList(newBoardList: List<BoardListResponse>) {
         updateSearchParameter("", newBoardList, "boardList")
     }
@@ -31,6 +40,15 @@ class BoardViewModel : ViewModel() {
         updateSearchParameter(newEndDate, listOf(), "endDate")
     }
 
+    fun setInitial() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                initialState = true
+            )
+        }
+    }
+
+
     fun resetUiState() {
         _uiState.update { currentState ->
             currentState.copy(
@@ -38,7 +56,8 @@ class BoardViewModel : ViewModel() {
                 keyword = "",
                 isFestival = 0,
                 startDate = "",
-                endDate = ""
+                endDate = "",
+                initialState = false
             )
         }
     }
@@ -54,7 +73,8 @@ class BoardViewModel : ViewModel() {
                 keyword = if (type == "keyword") newParameter else currentState.keyword,
                 isFestival = if (type == "isFestival") newParameter.toInt() else currentState.isFestival,
                 startDate = if (type == "startDate") newParameter else currentState.startDate,
-                endDate = if (type == "endDate") newParameter else currentState.endDate
+                endDate = if (type == "endDate") newParameter else currentState.endDate,
+                initialState = false
             )
         }
     }

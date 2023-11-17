@@ -46,6 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.haengsha.model.network.dataModel.SearchRequest
+import com.example.haengsha.model.uiState.board.BoardUiState
 import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.FieldStrokeRed
@@ -326,11 +327,7 @@ fun passwordCheckTextField(
 @Composable
 fun SearchBar(
     boardViewModel: BoardViewModel,
-    onSubmit: (SearchRequest) -> Unit,
-    userToken: String,
-    isFestival: Int,
-    startDate: String,
-    endDate: String
+    onSubmit: (SearchRequest) -> Unit
 ) {
     var input by rememberSaveable { mutableStateOf(boardViewModel.uiState.value.keyword) }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -362,7 +359,15 @@ fun SearchBar(
         keyboardActions = KeyboardActions(
             onSearch = {
                 boardViewModel.updateKeyword(input)
-                onSubmit(SearchRequest("Token $userToken", input, isFestival, startDate, endDate))
+                onSubmit(
+                    SearchRequest(
+                        boardViewModel.uiState.value.token,
+                        input,
+                        boardViewModel.uiState.value.isFestival,
+                        boardViewModel.uiState.value.startDate,
+                        boardViewModel.uiState.value.endDate
+                    )
+                )
                 keyboardController?.hide()
             }
         ),

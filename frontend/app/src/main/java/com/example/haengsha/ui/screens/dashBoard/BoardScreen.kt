@@ -15,9 +15,11 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -51,6 +53,7 @@ import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.FilterDialog
 import com.example.haengsha.ui.uiComponents.SearchBar
 import com.example.haengsha.ui.uiComponents.boardList
 import es.dmoral.toasty.Toasty
@@ -70,9 +73,13 @@ fun boardScreen(
     var isFestival by remember { mutableIntStateOf(boardUiState.value.isFestival) }
     var startDate by remember { mutableStateOf(boardUiState.value.startDate) }
     var endDate by remember { mutableStateOf(boardUiState.value.endDate) }
+    var filterModal by remember { mutableStateOf(false) }
+
+    boardViewModel.saveToken(userUiState.token)
 
     LaunchedEffect(Unit) {
-        boardApiViewModel.resetUiState()
+        boardApiViewModel.resetApiUiState()
+        boardViewModel.setInitial()
     }
 
     Box(
@@ -85,30 +92,28 @@ fun boardScreen(
         ) {
             Spacer(modifier = Modifier.height(20.dp))
             SearchBar(
-                boardViewModel,
-                { boardApiViewModel.searchEvent(it) },
-                userUiState.token,
-                boardUiState.value.isFestival,
-                boardUiState.value.startDate,
-                boardUiState.value.endDate
-            )
+                boardViewModel
+            ) { boardApiViewModel.searchEvent(it) }
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier = Modifier.fillMaxWidth()) {
                 Spacer(modifier = Modifier.weight(1f))
                 Box(
                     modifier = Modifier
-                        .size(width = 110.dp, height = 25.dp)
+                        .wrapContentWidth()
+                        .height(25.dp)
                         .border(
                             width = 1.dp,
                             color = HaengshaBlue,
                             shape = RoundedCornerShape(10.dp)
                         )
                         .clickable {
-                            // TODO 필터 모달
-                        },
+                            filterModal = true
+                        }
+                        .padding(horizontal = 8.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
+                        // TODO 필터 텍스트
                         text = "필터 : 선택 안 함",
                         fontFamily = poppins,
                         fontSize = 12.sp,
@@ -163,31 +168,14 @@ fun boardScreen(
                     }
 
                     is BoardListUiState.Loading -> {
-                        // Do nothing
+                        // handled in when branch
                     }
 
                     is BoardListUiState.BoardListResult -> {
                         boardViewModel.updateBoardList(boardListUiState.boardList)
                     }
                 }
-                if (boardUiState.value.boardList.isEmpty()) {
-                    items(1) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "등록된 행사가 없어요 :(",
-                                fontFamily = poppins,
-                                fontSize = 30.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
-                } else {
+                if (boardUiState.value.boardList.isNotEmpty()) {
                     items(boardUiState.value.boardList) { event ->
                         Box(modifier = Modifier.clickable {
                             eventId = event.id
@@ -204,9 +192,67 @@ fun boardScreen(
                             color = PlaceholderGrey
                         )
                     }
+                } else {
+                    if (boardListUiState is BoardListUiState.Loading) {
+                        if (boardUiState.value.initialState) {
+                            items(1) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(innerPadding),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "찾고 싶은 행사를 검색해보세요!",
+                                        fontFamily = poppins,
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        textAlign = TextAlign.Center
+                                    )
+                                    Spacer(modifier = Modifier.height(20.dp))
+                                    Text(
+                                        text = "(단체 계정은 행사를 등록할 수도 있습니다)",
+                                        fontFamily = poppins,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
+                        } else {
+                            items(1) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(innerPadding),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            }
+                        }
+                    } else {
+                        items(1) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(innerPadding),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "찾는 행사가 없어요 :(",
+                                    fontFamily = poppins,
+                                    fontSize = 30.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
+
         if (userUiState.role == "Group") {
             Box(modifier = Modifier.offset(330.dp, 600.dp)) {
                 Box(
@@ -225,10 +271,14 @@ fun boardScreen(
                 }
             }
         }
-    }
 
-    LaunchedEffect(Unit /* TODO key 변경 */) {
-        // TODO 검색 함수 호출
+        if (filterModal) {
+            FilterDialog(
+                boardViewModel = boardViewModel,
+                onSubmit = { boardApiViewModel.searchEvent(it) },
+                onDismissRequest = { filterModal = false }
+            )
+        }
     }
 
     return if (eventId != 0) eventId

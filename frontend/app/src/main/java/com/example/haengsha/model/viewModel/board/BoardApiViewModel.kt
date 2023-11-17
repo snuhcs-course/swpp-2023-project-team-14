@@ -1,6 +1,5 @@
 package com.example.haengsha.model.viewModel.board
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -45,7 +44,7 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
         }
     }
 
-    fun resetUiState() {
+    fun resetApiUiState() {
         boardListUiState = BoardListUiState.Loading
     }
 
