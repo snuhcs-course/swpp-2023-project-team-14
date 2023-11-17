@@ -1,5 +1,6 @@
 package com.example.haengsha.model.viewModel.board
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,6 +13,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.haengsha.HaengshaApplication
 import com.example.haengsha.model.dataSource.BoardDataRepository
 import com.example.haengsha.model.network.dataModel.BoardPostRequest
+import com.example.haengsha.model.network.dataModel.SearchRequest
 import com.example.haengsha.model.uiState.board.BoardDetailUiState
 import com.example.haengsha.model.uiState.board.BoardListUiState
 import com.example.haengsha.model.uiState.board.BoardPostUiState
@@ -117,8 +119,8 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
                 PostLikeFavoriteUiState.Success(
                     boardDetailResult.likeCount,
                     boardDetailResult.favoriteCount,
-                    isLiked = false, //boardDetailResult.isLiked
-                    isFavorite = false //boardDetailResult.isFavorite
+                    boardDetailResult.isLiked,
+                    boardDetailResult.isFavorite
                 )
             } catch (e: HttpException) {
                 PostLikeFavoriteUiState.HttpError
@@ -139,8 +141,8 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
                 PostLikeFavoriteUiState.Success(
                     boardDetailResult.likeCount,
                     boardDetailResult.favoriteCount,
-                    isLiked = false, //boardDetailResult.isLiked
-                    isFavorite = false //boardDetailResult.isFavorite
+                    boardDetailResult.isLiked,
+                    boardDetailResult.isFavorite
                 )
             } catch (e: HttpException) {
                 PostLikeFavoriteUiState.HttpError
@@ -148,6 +150,22 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
                 PostLikeFavoriteUiState.NetworkError
             } catch (e: Exception) {
                 PostLikeFavoriteUiState.Error
+            }
+        }
+    }
+
+    fun searchEvent(searchRequest: SearchRequest) {
+        viewModelScope.launch {
+            boardListUiState = BoardListUiState.Loading
+            boardListUiState = try {
+                val boardSearchResult = boardDataRepository.searchEvent(searchRequest)
+                BoardListUiState.BoardListResult(boardSearchResult)
+            } catch (e: HttpException) {
+                BoardListUiState.HttpError
+            } catch (e: IOException) {
+                BoardListUiState.NetworkError
+            } catch (e: Exception) {
+                BoardListUiState.Error
             }
         }
     }

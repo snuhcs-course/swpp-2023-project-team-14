@@ -126,28 +126,26 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(50.dp))
             CommonBlueButton(text = "로그인하기",
                 onClick = {
-                    // TODO 로그인 과정 임시 간편화
-//                    if (emailInput.trimStart() == "") {
-//                        isEmailError = true
-//                        Toasty.error(
-//                            loginContext,
-//                            "이메일을 입력해주세요",
-//                            Toast.LENGTH_SHORT,
-//                            true
-//                        ).show()
-//                    } else if (passwordInput.trimStart() == "") {
-//                        isPasswordError = true
-//                        Toasty.error(
-//                            loginContext,
-//                            "비밀번호를 입력해주세요",
-//                            Toast.LENGTH_SHORT,
-//                            true
-//                        ).show()
-//                    } else {
-                    loginTrigger++
-                    // loginViewModel.login("$emailInput@snu.ac.kr", passwordInput)
-                    loginApiViewModel.login("groupuser52@snu.ac.kr", "groupuser52")
-                    //}
+                    if (emailInput.trimStart() == "") {
+                        isEmailError = true
+                        Toasty.error(
+                            loginContext,
+                            "이메일을 입력해주세요",
+                            Toast.LENGTH_SHORT,
+                            true
+                        ).show()
+                    } else if (passwordInput.trimStart() == "") {
+                        isPasswordError = true
+                        Toasty.error(
+                            loginContext,
+                            "비밀번호를 입력해주세요",
+                            Toast.LENGTH_SHORT,
+                            true
+                        ).show()
+                    } else {
+                        loginTrigger++
+                        loginApiViewModel.login("$emailInput@snu.ac.kr", passwordInput)
+                    }
                 })
             if (isLoginFailedDialogVisible) {
                 ConfirmOnlyDialog(

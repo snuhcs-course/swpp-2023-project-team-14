@@ -1,6 +1,7 @@
 package com.example.haengsha.ui.screens.login.signup
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -102,7 +103,7 @@ fun SignupEmailVerificationScreen(
                         } else {
                             isEmailError = false
                             emailVerifyTrigger++
-                            loginApiViewModel.signupEmailVerify(emailInput)
+                            loginApiViewModel.signupEmailVerify("$emailInput@snu.ac.kr")
                         }
                     },
             ) {

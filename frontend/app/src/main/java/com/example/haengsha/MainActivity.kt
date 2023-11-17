@@ -13,7 +13,6 @@ import com.example.haengsha.ui.HaengshaApp
 import com.example.haengsha.ui.theme.HaengshaTheme
 
 class MainActivity : ComponentActivity() {
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

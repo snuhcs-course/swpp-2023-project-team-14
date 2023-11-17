@@ -23,7 +23,7 @@ data class BoardListResponse(
     @SerialName("like_count")
     val likeCount: Int,
     @SerialName("favorite_count")
-    val favoriteCount: Int,
+    val favoriteCount: Int
 )
 
 @Serializable
@@ -45,11 +45,10 @@ data class BoardDetailResponse(
     val favoriteCount: Int,
     @SerialName("is_liked")
     val isLiked: Boolean,
-    @SerialName("is_favorite")
+    @SerialName("is_favorited")
     val isFavorite: Boolean
 )
 
-// TODO PostLike에서 isLiked를 보내주면 BoardDetailResponse로 통일해도 됨
 @Serializable
 data class PostLikeFavoriteResponse(
     val id: Int,
@@ -67,10 +66,10 @@ data class PostLikeFavoriteResponse(
     val likeCount: Int,
     @SerialName("favorite_count")
     val favoriteCount: Int,
-//    @SerialName("is_liked")
-//    val isLiked: Boolean,
-//    @SerialName("is_favorite")
-//    val isFavorite: Boolean
+    @SerialName("is_liked")
+    val isLiked: Boolean,
+    @SerialName("is_favorited")
+    val isFavorite: Boolean
 )
 
 data class BoardPostRequest(
@@ -103,4 +102,10 @@ data class BoardPostResponse(
     val favoriteCount: Int?,
 )
 
-/* TODO 필터 api 짜야함 */
+data class SearchRequest(
+    val token: String,
+    val keyword: String,
+    val isFestival: Int,
+    val startDate: String,
+    val endDate: String
+)

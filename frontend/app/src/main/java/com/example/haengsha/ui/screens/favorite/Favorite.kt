@@ -16,7 +16,6 @@ import com.example.haengsha.model.route.MainRoute
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.ui.screens.dashBoard.BoardDetailScreen
-import com.example.haengsha.ui.screens.dashBoard.boardScreen
 import com.example.haengsha.ui.uiComponents.HaengshaBottomAppBar
 import com.example.haengsha.ui.uiComponents.HaengshaTopAppBar
 
@@ -53,11 +52,10 @@ fun Favorite(
             startDestination = FavoriteRoute.FavoriteBoard.route
         ) {
             composable(FavoriteRoute.FavoriteBoard.route) {
-                eventId = boardScreen(
+                eventId = favoriteScreen(
                     innerPadding = innerPadding,
                     boardApiViewModel = boardApiViewModel,
-                    boardNavController = favoriteNavController,
-                    isFavorite = true,
+                    favoriteNavController = favoriteNavController,
                     userUiState = userUiState
                 )
             }

@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.haengsha.model.network.dataModel.SearchRequest
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.FieldStrokeRed
 import com.example.haengsha.ui.theme.HaengshaGrey
@@ -321,8 +323,18 @@ fun passwordCheckTextField(
 }
 
 @Composable
-fun searchBar(): String {
+fun SearchBar(
+    onSubmit: (SearchRequest) -> Unit,
+    userToken: String,
+    isFestival: Int,
+    startDate: String,
+    endDate: String
+) {
     var input by rememberSaveable { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val searchRequest =
+        SearchRequest("Token $userToken", input, isFestival, startDate, endDate)
 
     OutlinedTextField(
         modifier = Modifier
@@ -346,7 +358,13 @@ fun searchBar(): String {
         },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Done
+            imeAction = ImeAction.Search
+        ),
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                onSubmit(searchRequest)
+                keyboardController?.hide()
+            }
         ),
         singleLine = true,
         shape = RoundedCornerShape(30.dp),
@@ -355,7 +373,6 @@ fun searchBar(): String {
             unfocusedBorderColor = HaengshaGrey,
         )
     )
-    return input
 }
 
 @Composable
