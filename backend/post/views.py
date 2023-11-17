@@ -20,27 +20,26 @@ import utils
 
 class PostListView(APIView):
     def get(
-        self, request, keyword,is_festival, start_date, end_date
+        self, request, keyword=None, is_festival=None, start_date=None, end_date=None
     ):
         posts = Post.objects.all()
 
-        if keyword != "":
+        if keyword:
             posts = posts.filter(Q(title__icontains=keyword) | Q(content__icontains=keyword))
-        if int(is_festival) != 2:
-            is_festival = bool(int(is_festival))
+        if is_festival is not None:
             posts = posts.filter(is_festival=is_festival)
-        if start_date!="" and end_date!="":
+        if start_date and end_date:
             if start_date > end_date:
                 return Response(
                     {"detail": "start_date must be earlier than end_date"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             posts = posts.filter(
-                ~(Q(event_durations__event_day__gte=start_date) ^ Q(event_durations__event_day__lte=end_date))
-            )
-        elif start_date!="":
+                Q(event_durations__event_day__range=[start_date, end_date])
+            ).distinct()
+        elif start_date:
             posts = posts.filter(Q(event_durations__event_day__gte=start_date)).distinct()
-        elif end_date!="":
+        elif end_date:
             posts = posts.filter(Q(event_durations__event_day__lte=end_date)).distinct()
 
         posts = posts.order_by("-like_count")
