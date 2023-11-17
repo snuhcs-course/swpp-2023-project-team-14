@@ -14,11 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -54,7 +51,6 @@ fun SignupUserInfoScreen(
     loginNavBack: () -> Unit,
     loginContext: Context
 ) {
-    var checkNicknameTrigger by remember { mutableIntStateOf(0) }
     var nickname by rememberSaveable { mutableStateOf("") }
     var college by rememberSaveable { mutableStateOf("") }
     var studentId by rememberSaveable { mutableStateOf("") }
@@ -123,7 +119,6 @@ fun SignupUserInfoScreen(
                                     .error(loginContext, "길이 제한을 초과했습니다", Toast.LENGTH_SHORT, true)
                                     .show()
                             } else {
-                                checkNicknameTrigger++
                                 checkNickname(nickname)
                             }
                         },
@@ -234,8 +229,6 @@ fun SignupUserInfoScreen(
         }
     }
 
-    if (checkNicknameTrigger > 0) {
-        LaunchedEffect(key1 = loginUiState) {
             when (loginUiState) {
                 is LoginApiUiState.Success -> {
                     isNicknameError = false
@@ -264,15 +257,13 @@ fun SignupUserInfoScreen(
                 }
 
                 is LoginApiUiState.Loading -> {
-                    /* Loading State, may add some loading UI or throw error after long time */
+                    /* Loading State, may add some loading UI */
                 }
 
                 else -> {
                     /* Other Success State, do nothing */
                 }
             }
-        }
-    }
 }
 
 //@Preview(showBackground = true)

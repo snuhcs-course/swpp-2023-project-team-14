@@ -17,9 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -64,7 +62,6 @@ fun SignupTermsScreen(
     loginNavBack: () -> Unit,
     loginContext: Context
 ) {
-    var signupRegisterTrigger by remember { mutableIntStateOf(0) }
     var isAllChecked by rememberSaveable { mutableStateOf(false) }
     var isTermsChecked by rememberSaveable { mutableStateOf(false) }
     var isPolicyChecked by rememberSaveable { mutableStateOf(false) }
@@ -226,7 +223,6 @@ fun SignupTermsScreen(
                                 grade = signupUiState.grade,
                                 interest = signupUiState.interest
                             )
-                            signupRegisterTrigger++
                         }
                     )
                 } else CommonGreyButton(text = "동의 후 회원가입")
@@ -289,50 +285,47 @@ fun SignupTermsScreen(
         }
     }
 
-    if (signupRegisterTrigger > 0) {
-        LaunchedEffect(key1 = loginUiState) {
-            when (loginUiState) {
-                is LoginApiUiState.Success -> {
-                    signupStateReset()
-                    loginNavController.navigate(LoginRoute.SignupComplete.route) {
-                        popUpTo(LoginRoute.Login.route) { inclusive = false }
-                    }
-                }
-
-                is LoginApiUiState.HttpError -> {
-                    Toasty
-                        .error(
-                            loginContext,
-                            loginUiState.message,
-                            Toast.LENGTH_SHORT,
-                            true
-                        )
-                        .show()
-                }
-
-                is LoginApiUiState.NetworkError -> {
-                    Toasty
-                        .error(
-                            loginContext,
-                            "인터넷 연결을 확인해주세요",
-                            Toast.LENGTH_SHORT,
-                            true
-                        )
-                        .show()
-                }
-
-                is LoginApiUiState.Loading -> {
-                    /* Loading State, may add some loading UI or throw error after long time */
-                }
-
-                else -> {
-                    /* Other Success State, do nothing */
-                }
+    when (loginUiState) {
+        is LoginApiUiState.Success -> {
+            signupStateReset()
+            loginNavController.navigate(LoginRoute.SignupComplete.route) {
+                popUpTo(LoginRoute.Login.route) { inclusive = false }
             }
+        }
+
+        is LoginApiUiState.HttpError -> {
+            Toasty
+                .error(
+                    loginContext,
+                    loginUiState.message,
+                    Toast.LENGTH_SHORT,
+                    true
+                )
+                .show()
+        }
+
+        is LoginApiUiState.NetworkError -> {
+            Toasty
+                .error(
+                    loginContext,
+                    "인터넷 연결을 확인해주세요",
+                    Toast.LENGTH_SHORT,
+                    true
+                )
+                .show()
+        }
+
+        is LoginApiUiState.Loading -> {
+            /* Loading State, may add some loading UI */
+        }
+
+        else -> {
+            /* Other Success State, do nothing */
         }
     }
 }
 
+// TODO Dialog로 바꿔서 UiComponent.kt로 옮기기
 @Composable
 fun AgreementModal(text: String) {
     LazyColumn(

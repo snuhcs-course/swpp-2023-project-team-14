@@ -48,16 +48,10 @@ class BoardViewModel : ViewModel() {
         }
     }
 
-
-    fun resetUiState() {
+    fun resetList() {
         _uiState.update { currentState ->
             currentState.copy(
-                boardList = listOf(),
-                keyword = "",
-                isFestival = 0,
-                startDate = "",
-                endDate = "",
-                initialState = false
+                boardList = listOf()
             )
         }
     }

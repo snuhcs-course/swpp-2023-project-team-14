@@ -219,8 +219,7 @@ fun FilterDialog(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            // TODO 필터 텍스트
-                            text = "시작일을 선택해주세요",
+                            text = startDate.ifEmpty { "시작일을 선택해주세요" },
                             fontFamily = poppins,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
@@ -266,8 +265,7 @@ fun FilterDialog(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            // TODO 필터 텍스트
-                            text = "종료일을 선택해주세요",
+                            text = endDate.ifEmpty { "종료일을 선택해주세요" },
                             fontFamily = poppins,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,

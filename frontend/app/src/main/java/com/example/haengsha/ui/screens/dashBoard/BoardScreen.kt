@@ -135,7 +135,7 @@ fun boardScreen(
             ) {
                 when (boardListUiState) {
                     is BoardListUiState.HttpError -> {
-                        boardViewModel.resetUiState()
+                        boardViewModel.resetList()
                     }
 
                     is BoardListUiState.NetworkError -> {

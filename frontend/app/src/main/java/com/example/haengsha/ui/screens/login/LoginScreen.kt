@@ -12,9 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -53,7 +51,6 @@ fun LoginScreen(
     loginUiState: LoginApiUiState,
     loginContext: Context
 ) {
-    var loginTrigger by remember { mutableIntStateOf(0) }
     var emailInput: String by rememberSaveable { mutableStateOf("") }
     var passwordInput: String by remember { mutableStateOf("") }
     var isEmailError by remember { mutableStateOf(false) }
@@ -147,7 +144,6 @@ fun LoginScreen(
                             true
                         ).show()
                     } else {
-                        loginTrigger++
                         loginApiViewModel.login("$emailInput@snu.ac.kr", passwordInput)
                     }
                 })
@@ -187,42 +183,38 @@ fun LoginScreen(
         }
     }
 
-    if (loginTrigger > 0) {
-        LaunchedEffect(key1 = loginUiState) {
-            when (loginUiState) {
-                is LoginApiUiState.LoginSuccess -> {
-                    userViewModel.updateToken(loginUiState.token)
-                    userViewModel.updateRole(loginUiState.role)
-                    userViewModel.updateNickname(loginUiState.nickname)
-                    mainNavController.navigate(MainRoute.Home.route) {
-                        popUpTo(LoginRoute.Login.route) { inclusive = true }
-                        popUpTo(MainRoute.Login.route) { inclusive = true }
-                    }
-                }
-
-                is LoginApiUiState.HttpError -> {
-                    isLoginFailedDialogVisible = true
-                }
-
-                is LoginApiUiState.NetworkError -> {
-                    Toasty
-                        .error(
-                            loginContext,
-                            "인터넷 연결을 확인해주세요",
-                            Toast.LENGTH_SHORT,
-                            true
-                        )
-                        .show()
-                }
-
-                is LoginApiUiState.Loading -> {
-                    /* Loading State, may add some loading UI or throw error after long time */
-                }
-
-                else -> {
-                    /* Other Success State, do nothing */
-                }
+    when (loginUiState) {
+        is LoginApiUiState.LoginSuccess -> {
+            userViewModel.updateToken(loginUiState.token)
+            userViewModel.updateRole(loginUiState.role)
+            userViewModel.updateNickname(loginUiState.nickname)
+            mainNavController.navigate(MainRoute.Home.route) {
+                popUpTo(LoginRoute.Login.route) { inclusive = true }
+                popUpTo(MainRoute.Login.route) { inclusive = true }
             }
+        }
+
+        is LoginApiUiState.HttpError -> {
+            isLoginFailedDialogVisible = true
+        }
+
+        is LoginApiUiState.NetworkError -> {
+            Toasty
+                .error(
+                    loginContext,
+                    "인터넷 연결을 확인해주세요",
+                    Toast.LENGTH_SHORT,
+                    true
+                )
+                .show()
+        }
+
+        is LoginApiUiState.Loading -> {
+            /* Loading State, may add some loading UI */
+        }
+
+        else -> {
+            /* Other Success State, do nothing */
         }
     }
 }

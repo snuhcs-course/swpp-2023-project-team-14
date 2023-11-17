@@ -48,9 +48,9 @@ fun FindPasswordScreen(
     loginNavBack: () -> Unit,
     loginContext: Context
 ) {
-    var emailVerifyTrigger by remember { mutableIntStateOf(0) }
-    var codeVerifyTrigger by remember { mutableIntStateOf(0) }
-    var isCodeSent by remember { mutableIntStateOf(0) }
+    var emailVerifyTrigger by remember { mutableStateOf(false) }
+    var codeVerifyTrigger by remember { mutableStateOf(false) }
+    var codeSent by remember { mutableIntStateOf(0) }
     var codeExpireTime by remember { mutableIntStateOf(180) }
     val codeExpireMinute = String.format("%02d", codeExpireTime / 60)
     val codeExpireSecond = String.format("%02d", codeExpireTime % 60)
@@ -59,14 +59,6 @@ fun FindPasswordScreen(
     var isEmailError by remember { mutableStateOf(false) }
     var isCodeError by remember { mutableStateOf(false) }
     var isEmailNotFoundDialogVisible by remember { mutableStateOf(false) }
-
-    LaunchedEffect(key1 = isCodeSent) {
-        codeExpireTime = 180
-        while (codeExpireTime > 0) {
-            delay(1000L)
-            codeExpireTime--
-        }
-    }
 
     LazyColumn(
         modifier = Modifier
@@ -109,14 +101,14 @@ fun FindPasswordScreen(
                                 .show()
                         } else {
                             isEmailError = false
-                            emailVerifyTrigger++
+                            emailVerifyTrigger = true
                             loginApiViewModel.findEmailVerify(emailInput)
                         }
                     },
             ) {
                 Text(
                     modifier = Modifier.fillMaxSize(),
-                    text = "인증번호 " + if (isCodeSent == 0) "" else {
+                    text = "인증번호 " + if (codeSent == 0) "" else {
                         "재"
                     } + "발송",
                     fontFamily = poppins,
@@ -154,7 +146,7 @@ fun FindPasswordScreen(
             ) {
                 Text(
                     modifier = Modifier.fillMaxSize(),
-                    text = if (isCodeSent == 0) "" else "남은 시간 $codeExpireMinute:$codeExpireSecond",
+                    text = if (codeSent == 0) "" else "남은 시간 $codeExpireMinute:$codeExpireSecond",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Normal,
                     fontSize = 11.sp,
@@ -173,7 +165,7 @@ fun FindPasswordScreen(
                             Toast.LENGTH_SHORT,
                             true
                         ).show()
-                    } else if (isCodeSent == 0) {
+                    } else if (codeSent == 0) {
                         isEmailError = false
                         isCodeError = true
                         Toasty.error(
@@ -183,7 +175,7 @@ fun FindPasswordScreen(
                             true
                         ).show()
                     } else {
-                        codeVerifyTrigger++
+                        codeVerifyTrigger = true
                         loginApiViewModel.loginCodeVerify(emailInput, codeInput)
                     }
                 })
@@ -224,72 +216,33 @@ fun FindPasswordScreen(
         }
     }
 
-    if (emailVerifyTrigger > 0) {
-        LaunchedEffect(key1 = loginUiState) {
-            when (loginUiState) {
-                is LoginApiUiState.Success -> {
-                    Toasty
-                        .success(
-                            loginContext,
-                            "인증코드가 발송되었습니다",
-                            Toast.LENGTH_SHORT,
-                            true
-                        )
-                        .show()
-                    isCodeSent++
-                    emailVerifyTrigger = 0
-                }
-
-                is LoginApiUiState.HttpError -> {
-                    if (loginUiState.message.contains("exist")) {
-                        isEmailNotFoundDialogVisible = true
-                    } else {
-                        Toasty
-                            .error(
-                                loginContext,
-                                loginUiState.message,
-                                Toast.LENGTH_SHORT,
-                                true
-                            )
-                            .show()
-                    }
-                    isEmailError = true
-                    emailVerifyTrigger = 0
-                }
-
-                is LoginApiUiState.NetworkError -> {
-                    Toasty
-                        .error(
-                            loginContext,
-                            "인터넷 연결을 확인해주세요",
-                            Toast.LENGTH_SHORT,
-                            true
-                        )
-                        .show()
-                    emailVerifyTrigger = 0
-                }
-
-                is LoginApiUiState.Loading -> {
-                    /* Loading State, may add some loading UI or throw error after long time */
-                }
-
-                else -> {
-                    /* Other Success State, do nothing */
-                }
-            }
+    LaunchedEffect(key1 = codeSent) {
+        codeExpireTime = 180
+        while (codeExpireTime > 0) {
+            delay(1000L)
+            codeExpireTime--
         }
     }
 
-    if (codeVerifyTrigger > 0) {
-        LaunchedEffect(key1 = loginUiState) {
-            when (loginUiState) {
-                is LoginApiUiState.Success -> {
-                    findPasswordEmailUpdate(emailInput)
-                    loginNavController.navigate(LoginRoute.FindPasswordReset.route)
-                    codeVerifyTrigger = 0
-                }
+    if (emailVerifyTrigger) {
+        when (loginUiState) {
+            is LoginApiUiState.Success -> {
+                Toasty
+                    .success(
+                        loginContext,
+                        "인증코드가 발송되었습니다",
+                        Toast.LENGTH_SHORT,
+                        true
+                    )
+                    .show()
+                codeSent++
+                emailVerifyTrigger = false
+            }
 
-                is LoginApiUiState.HttpError -> {
+            is LoginApiUiState.HttpError -> {
+                if (loginUiState.message.contains("exist")) {
+                    isEmailNotFoundDialogVisible = true
+                } else {
                     Toasty
                         .error(
                             loginContext,
@@ -298,29 +251,72 @@ fun FindPasswordScreen(
                             true
                         )
                         .show()
-                    isCodeError = true
-                    codeVerifyTrigger = 0
                 }
+                isEmailError = true
+                emailVerifyTrigger = false
+            }
 
-                is LoginApiUiState.NetworkError -> {
-                    Toasty
-                        .error(
-                            loginContext,
-                            "인터넷 연결을 확인해주세요",
-                            Toast.LENGTH_SHORT,
-                            true
-                        )
-                        .show()
-                    codeVerifyTrigger = 0
-                }
+            is LoginApiUiState.NetworkError -> {
+                Toasty
+                    .error(
+                        loginContext,
+                        "인터넷 연결을 확인해주세요",
+                        Toast.LENGTH_SHORT,
+                        true
+                    )
+                    .show()
+                emailVerifyTrigger = false
+            }
 
-                is LoginApiUiState.Loading -> {
-                    /* Loading State, may add some loading UI or throw error after long time */
-                }
+            is LoginApiUiState.Loading -> {
+                /* Loading State, may add some loading UI or throw error after long time */
+            }
 
-                else -> {
-                    /* Other Success State, do nothing */
-                }
+            else -> {
+                /* Other Success State, do nothing */
+            }
+        }
+    }
+
+    if (codeVerifyTrigger) {
+        when (loginUiState) {
+            is LoginApiUiState.Success -> {
+                findPasswordEmailUpdate(emailInput)
+                loginNavController.navigate(LoginRoute.FindPasswordReset.route)
+                codeVerifyTrigger = false
+            }
+
+            is LoginApiUiState.HttpError -> {
+                Toasty
+                    .error(
+                        loginContext,
+                        loginUiState.message,
+                        Toast.LENGTH_SHORT,
+                        true
+                    )
+                    .show()
+                isCodeError = true
+                codeVerifyTrigger = false
+            }
+
+            is LoginApiUiState.NetworkError -> {
+                Toasty
+                    .error(
+                        loginContext,
+                        "인터넷 연결을 확인해주세요",
+                        Toast.LENGTH_SHORT,
+                        true
+                    )
+                    .show()
+                codeVerifyTrigger = false
+            }
+
+            is LoginApiUiState.Loading -> {
+                /* Loading State, may add some loading UI or throw error after long time */
+            }
+
+            else -> {
+                /* Other Success State, do nothing */
             }
         }
     }
