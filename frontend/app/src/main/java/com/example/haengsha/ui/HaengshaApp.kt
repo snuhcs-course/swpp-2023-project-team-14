@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.MainRoute
 import com.example.haengsha.model.viewModel.UserViewModel
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
+import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.screens.dashBoard.Board
 import com.example.haengsha.ui.screens.favorite.Favorite
 import com.example.haengsha.ui.screens.home.Home
@@ -18,6 +19,8 @@ import com.example.haengsha.ui.screens.login.Login
 @Composable
 fun HaengshaApp() {
     val userViewModel: UserViewModel = viewModel()
+    // TODO sharedPreference 없이 boardViewModel 드릴링한 거 수정
+    val boardViewModel: BoardViewModel = viewModel()
     val userUiState by userViewModel.uiState.collectAsState()
     val boardApiViewModel: BoardApiViewModel = viewModel(factory = BoardApiViewModel.Factory)
     val mainNavController = rememberNavController()
@@ -42,6 +45,7 @@ fun HaengshaApp() {
             Board(
                 userUiState = userUiState,
                 mainNavController = mainNavController,
+                boardViewModel = boardViewModel,
                 boardApiViewModel = boardApiViewModel
             )
         }

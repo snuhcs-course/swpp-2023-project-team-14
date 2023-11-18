@@ -62,11 +62,11 @@ import es.dmoral.toasty.Toasty
 @Composable
 fun boardScreen(
     innerPadding: PaddingValues,
+    boardViewModel: BoardViewModel,
     boardApiViewModel: BoardApiViewModel,
     boardNavController: NavController,
     userUiState: UserUiState
 ): Int {
-    val boardViewModel: BoardViewModel = viewModel()
     val boardUiState = boardViewModel.uiState.collectAsState()
     val boardListUiState = boardApiViewModel.boardListUiState
     val boardContext = LocalContext.current
