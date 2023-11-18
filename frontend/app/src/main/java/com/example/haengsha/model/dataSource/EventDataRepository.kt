@@ -12,6 +12,6 @@ class NetworkEventDataRepository(
     private val eventApiService: EventApiService
 ) : EventDataRepository {
     override suspend fun getEventByDate(eventType: Int, date: String): List<EventResponse>? {
-        return eventApiService.getEventByDate(eventType, date)
+        return eventApiService.getEventByDate("", eventType, date)
     }
 }

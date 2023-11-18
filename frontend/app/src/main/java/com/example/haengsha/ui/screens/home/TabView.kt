@@ -1,7 +1,5 @@
 package com.example.haengsha.ui.screens.home
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,10 +16,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.PrimaryTabRow
@@ -80,7 +78,6 @@ data class EventCardData(
 )
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate) {
@@ -203,11 +200,16 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate) {
                     )
                 }
             } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
+                val listScrollState = rememberScrollState()
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(listScrollState),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    items(itemsToDisplay.orEmpty()) { eventCardData ->
+                    for (i in itemsToDisplay.indices) {
+                        val eventCardData = itemsToDisplay[i]
                         Box(modifier = Modifier.clickable {
                             showEventCardPopup = true
                             selectedEvent = eventCardData
@@ -227,6 +229,8 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate) {
     }
 
     if (showDialog) {
+        val recommendScrollState = rememberScrollState()
+
         // Display the AlertDialog with "Here is popup"
         AlertDialog(
             onDismissRequest = {
@@ -245,47 +249,48 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate) {
                     )
                 )
             }, text = {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(recommendScrollState),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    items(1) {
-                        EventCard( // Demo 용으로 필요하면 추가
-                            organizer = "수리과학부",
-                            eventTitle = "수리과학부 강연",
-                            startDate = LocalDate.now().plusDays(5),
-                            endDate = LocalDate.now().plusDays(5),
-                            likes = 28
-                        )
-                        EventCard(
-                            organizer = "데이터사이언스 대학원",
-                            eventTitle = "인공지능의 투명성: 소셜 봇 대응의 최선의 방법",
-                            startDate = LocalDate.now().plusDays(1),
-                            endDate = LocalDate.now().plusDays(1),
-                            likes = 52
-                        )
-                        EventCard(
-                            organizer = "대학생문화원",
-                            eventTitle = "대학생문화원 자살예방교육",
-                            startDate = LocalDate.now().plusDays(3),
-                            endDate = LocalDate.now().plusDays(15),
-                            likes = 11
-                        )
-                        EventCard(
-                            organizer = "통일평화연구원",
-                            eventTitle = "통일평화연구원 통일학포럼",
-                            startDate = LocalDate.now(),
-                            endDate = LocalDate.now().plusDays(1),
-                            likes = 173
-                        )
-                        EventCard(
-                            organizer = "경영학과",
-                            eventTitle = "삼성 파운드리의 현재와 미래",
-                            startDate = LocalDate.now().plusDays(2),
-                            endDate = LocalDate.now().plusDays(2),
-                            likes = 81
-                        )
-                    }
+                    EventCard( // Demo 용으로 필요하면 추가
+                        organizer = "수리과학부",
+                        eventTitle = "수리과학부 강연",
+                        startDate = LocalDate.now().plusDays(5),
+                        endDate = LocalDate.now().plusDays(5),
+                        likes = 28
+                    )
+                    EventCard(
+                        organizer = "데이터사이언스 대학원",
+                        eventTitle = "인공지능의 투명성: 소셜 봇 대응의 최선의 방법",
+                        startDate = LocalDate.now().plusDays(1),
+                        endDate = LocalDate.now().plusDays(1),
+                        likes = 52
+                    )
+                    EventCard(
+                        organizer = "대학생문화원",
+                        eventTitle = "대학생문화원 자살예방교육",
+                        startDate = LocalDate.now().plusDays(3),
+                        endDate = LocalDate.now().plusDays(15),
+                        likes = 11
+                    )
+                    EventCard(
+                        organizer = "통일평화연구원",
+                        eventTitle = "통일평화연구원 통일학포럼",
+                        startDate = LocalDate.now(),
+                        endDate = LocalDate.now().plusDays(1),
+                        likes = 173
+                    )
+                    EventCard(
+                        organizer = "경영학과",
+                        eventTitle = "삼성 파운드리의 현재와 미래",
+                        startDate = LocalDate.now().plusDays(2),
+                        endDate = LocalDate.now().plusDays(2),
+                        likes = 81
+                    )
+
                 }
 
             },

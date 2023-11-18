@@ -225,7 +225,7 @@ fun boardScreen(
                     }
 
                     is BoardListUiState.BoardListResult -> {
-                        for (i in 0 until boardListUiState.boardList.size) {
+                        for (i in boardListUiState.boardList.indices) {
                             Column(modifier = Modifier.clickable {
                                 eventId = boardListUiState.boardList[i].id
                                 boardNavController.navigate(BoardRoute.BoardDetail.route)

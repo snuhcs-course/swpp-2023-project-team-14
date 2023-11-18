@@ -34,7 +34,7 @@ data class EventDurationResponse(
 )
 
 fun EventResponse.toEventCardData(): EventCardData {
-    var startDate = stringToDate(eventDurations[0].eventDay)
+    val startDate = stringToDate(eventDurations[0].eventDay)
     var endDate = startDate
     if (eventDurations.size > 1) {
         endDate = stringToDate(eventDurations[eventDurations.size - 1].eventDay)
@@ -58,15 +58,16 @@ fun EventResponse.toEventCardData(): EventCardData {
 }
 
 interface EventApiService {
-    @GET("/api/post/festival/{eventType}/date/{date}/{date}")
+    @GET("/api/post/keyword/{keyword}/festival/{is_festival}/date/{date}/{date}")
     suspend fun getEventByDate(
-        @Path("eventType") eventType: Int,  // Replace with appropriate type
+        @Path("keyword") keyword: String = "",
+        @Path("is_festival") isFestival: Int,  // Replace with appropriate type
         @Path("date") date: String
     ): List<EventResponse>? // Change the return type to a list of EventResponse
 }
 
 fun stringToDate(dateString: String): LocalDate {
-    var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     try {
         return LocalDate.parse(dateString, formatter)
         //val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
