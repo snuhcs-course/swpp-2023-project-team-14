@@ -69,6 +69,7 @@ dependencies {
     implementation("androidx.navigation:navigation-runtime-ktx:2.7.5")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.5")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.33.2-alpha")
 
     implementation("androidx.room:room-ktx:2.6.0")
     implementation("androidx.work:work-runtime-ktx:2.8.1")

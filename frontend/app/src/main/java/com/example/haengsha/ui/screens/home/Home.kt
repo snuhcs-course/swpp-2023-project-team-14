@@ -18,7 +18,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -38,16 +37,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.R
-import com.example.haengsha.model.route.MainRoute
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.viewModel.event.EventApiViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.poppins
-import com.example.haengsha.ui.uiComponents.HaengshaBottomAppBar
-import com.example.haengsha.ui.uiComponents.HaengshaTopAppBar
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.atStartOfMonth
@@ -62,7 +56,7 @@ import java.util.Date
 import java.util.Locale
 
 
-class SharedViewModel() : ViewModel() {
+class SharedViewModel : ViewModel() {
     private val _selectedDate = MutableLiveData(LocalDate.now())
 
     val selectedDate: LiveData<LocalDate> = _selectedDate
@@ -304,35 +298,19 @@ private fun convertMillisToDate(millis: Long): String {
 
 @Composable
 fun Home(
-    userUiState: UserUiState,
-    mainNavController: NavController
+    innerPadding: PaddingValues,
+    userUiState: UserUiState
 ) {
     val sharedViewModel = viewModel<SharedViewModel>()
-    val currentScreen = "Home"
-    val canNavigateBack = false
 
-    Scaffold(
-        topBar = {
-            HaengshaTopAppBar(
-                currentScreen = currentScreen,
-                canNavigateBack = canNavigateBack,
-                navigateBack = { /* No back button */ }
-            )
-        },
-        bottomBar = {
-            HaengshaBottomAppBar(
-                navigateFavorite = { mainNavController.navigate(MainRoute.Favorite.route) },
-                navigateHome = { mainNavController.navigate(MainRoute.Home.route) },
-                navigateBoard = { mainNavController.navigate(MainRoute.Dashboard.route) }
-            )
-        }
-    ) { innerPadding ->
-        HomeScreen(innerPadding, userUiState, sharedViewModel)
-    }
+    HomeScreen(innerPadding, userUiState, sharedViewModel)
 }
 
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    Home(userUiState = UserUiState("foo", "bar"), rememberNavController())
+    Home(
+        innerPadding = PaddingValues(0.dp),
+        userUiState = UserUiState("foo", "bar")
+    )
 }
