@@ -15,7 +15,13 @@ class BoardViewModel : ViewModel() {
         val authToken = "Token $token"
         _uiState.update { currentState ->
             currentState.copy(
-                token = authToken
+                token = authToken,
+                boardList = currentState.boardList,
+                keyword = currentState.keyword,
+                isFestival = currentState.isFestival,
+                startDate = currentState.startDate,
+                endDate = currentState.endDate,
+                initialState = currentState.initialState
             )
         }
     }
@@ -43,6 +49,12 @@ class BoardViewModel : ViewModel() {
     fun setInitial() {
         _uiState.update { currentState ->
             currentState.copy(
+                token = currentState.token,
+                boardList = currentState.boardList,
+                keyword = currentState.keyword,
+                isFestival = currentState.isFestival,
+                startDate = currentState.startDate,
+                endDate = currentState.endDate,
                 initialState = true
             )
         }
@@ -51,7 +63,13 @@ class BoardViewModel : ViewModel() {
     fun resetList() {
         _uiState.update { currentState ->
             currentState.copy(
-                boardList = listOf()
+                token = currentState.token,
+                boardList = listOf(),
+                keyword = currentState.keyword,
+                isFestival = currentState.isFestival,
+                startDate = currentState.startDate,
+                endDate = currentState.endDate,
+                initialState = false
             )
         }
     }

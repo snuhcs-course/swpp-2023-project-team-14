@@ -24,12 +24,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +53,7 @@ import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.CustomDatePickerDialog
 import com.example.haengsha.ui.uiComponents.FilterDialog
 import com.example.haengsha.ui.uiComponents.SearchBar
 import com.example.haengsha.ui.uiComponents.boardList
@@ -67,20 +68,21 @@ fun boardScreen(
 ): Int {
     val boardViewModel: BoardViewModel = viewModel()
     val boardUiState = boardViewModel.uiState.collectAsState()
-    val boardContext = LocalContext.current
     val boardListUiState = boardApiViewModel.boardListUiState
+    val boardContext = LocalContext.current
+
     var eventId by remember { mutableIntStateOf(0) }
-    var isFestival by remember { mutableIntStateOf(boardUiState.value.isFestival) }
-    var startDate by remember { mutableStateOf(boardUiState.value.startDate) }
-    var endDate by remember { mutableStateOf(boardUiState.value.endDate) }
+    val isFestival = boardUiState.value.isFestival
+    val startDate = boardUiState.value.startDate
+    val endDate = boardUiState.value.endDate
+
     var filterModal by remember { mutableStateOf(false) }
+    var startDatePick by rememberSaveable { mutableStateOf(false) }
+    var endDatePick by remember { mutableStateOf(false) }
 
+    boardApiViewModel.resetApiUiState()
     boardViewModel.saveToken(userUiState.token)
-
-    LaunchedEffect(Unit) {
-        boardApiViewModel.resetApiUiState()
-        boardViewModel.setInitial()
-    }
+    boardViewModel.setInitial()
 
     Box(
         modifier = Modifier
@@ -112,9 +114,18 @@ fun boardScreen(
                         .padding(horizontal = 8.dp),
                     contentAlignment = Alignment.Center
                 ) {
+                    val filterDateText = if (startDate.isEmpty() && endDate.isEmpty()) {
+                        ""
+                    } else "$startDate ~ $endDate"
+                    val filterCategoryText = when (isFestival) {
+                        0 -> "학술"
+                        1 -> "공연"
+                        else -> "공연, 학술"
+                    }
+                    val filterText =
+                        if (filterDateText.isEmpty()) filterCategoryText else "$filterDateText, $filterCategoryText"
                     Text(
-                        // TODO 필터 텍스트
-                        text = "필터 : 선택 안 함",
+                        text = "필터 : $filterText",
                         fontFamily = poppins,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
@@ -177,7 +188,7 @@ fun boardScreen(
                 }
                 if (boardUiState.value.boardList.isNotEmpty()) {
                     items(boardUiState.value.boardList) { event ->
-                        Box(modifier = Modifier.clickable {
+                        Column(modifier = Modifier.clickable {
                             eventId = event.id
                             boardNavController.navigate(BoardRoute.BoardDetail.route)
                         }) {
@@ -232,20 +243,22 @@ fun boardScreen(
                             }
                         }
                     } else {
-                        items(1) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(innerPadding),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "찾는 행사가 없어요 :(",
-                                    fontFamily = poppins,
-                                    fontSize = 30.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    textAlign = TextAlign.Center
-                                )
+                        if (boardListUiState is BoardListUiState.HttpError) {
+                            items(1) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(innerPadding),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "찾는 행사가 없어요 :(",
+                                        fontFamily = poppins,
+                                        fontSize = 30.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
                             }
                         }
                     }
@@ -275,8 +288,28 @@ fun boardScreen(
         if (filterModal) {
             FilterDialog(
                 boardViewModel = boardViewModel,
+                boardUiState = boardUiState.value,
+                context = boardContext,
                 onSubmit = { boardApiViewModel.searchEvent(it) },
-                onDismissRequest = { filterModal = false }
+                onDismissRequest = { filterModal = false },
+                onStartDatePick = { startDatePick = true },
+                onEndDatePick = { endDatePick = true }
+            )
+        }
+
+        if (startDatePick) {
+            CustomDatePickerDialog(
+                onDismissRequest = { startDatePick = false },
+                boardViewModel = boardViewModel,
+                type = "startDate"
+            )
+        }
+
+        if (endDatePick) {
+            CustomDatePickerDialog(
+                onDismissRequest = { endDatePick = false },
+                boardViewModel = boardViewModel,
+                type = "endDate"
             )
         }
     }

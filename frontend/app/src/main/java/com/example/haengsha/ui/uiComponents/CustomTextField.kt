@@ -339,7 +339,7 @@ fun SearchBar(
         onValueChange = { input = it },
         placeholder = {
             Text(
-                text = "Search",
+                text = input.ifEmpty { "Search" },
                 fontFamily = poppins,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,

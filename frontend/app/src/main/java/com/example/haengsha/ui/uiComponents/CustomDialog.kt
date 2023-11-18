@@ -1,5 +1,6 @@
 package com.example.haengsha.ui.uiComponents
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,13 +17,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -33,13 +38,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.haengsha.R
 import com.example.haengsha.model.network.dataModel.SearchRequest
+import com.example.haengsha.model.uiState.board.BoardUiState
 import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.BackgroundGrey
 import com.example.haengsha.ui.theme.ButtonBlue
@@ -48,6 +52,12 @@ import com.example.haengsha.ui.theme.HaengshaGrey
 import com.example.haengsha.ui.theme.md_theme_light_onPrimary
 import com.example.haengsha.ui.theme.md_theme_light_tertiary
 import com.example.haengsha.ui.theme.poppins
+import es.dmoral.toasty.Toasty
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun ConfirmOnlyDialog(
@@ -151,16 +161,14 @@ fun ConfirmDialog(
 @Composable
 fun FilterDialog(
     boardViewModel: BoardViewModel,
+    boardUiState: BoardUiState,
+    context: Context,
     onSubmit: (SearchRequest) -> Unit,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    onStartDatePick: () -> Unit,
+    onEndDatePick: () -> Unit
 ) {
-    var isFestival by remember { mutableIntStateOf(boardViewModel.uiState.value.isFestival) } // 0이면 학술, 1이면 축제, 2면 둘 다
-    var startDatePick by remember { mutableStateOf(false) }
-    var endDatePick by remember { mutableStateOf(false) }
-    var startDate by remember { mutableStateOf(boardViewModel.uiState.value.startDate) }
-    var endDate by remember { mutableStateOf(boardViewModel.uiState.value.endDate) }
-
-    // TODO 필터링 성공하면 onDismissRequest 호출
+    val isFestival = boardUiState.isFestival
 
     Dialog(onDismissRequest = onDismissRequest) {
         Box(
@@ -213,13 +221,13 @@ fun FilterDialog(
                                 shape = RoundedCornerShape(6.dp)
                             )
                             .clickable {
-                                // TODO 데이트 피커
+                                onStartDatePick()
                             }
                             .padding(horizontal = 10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = startDate.ifEmpty { "시작일을 선택해주세요" },
+                            text = boardUiState.startDate.ifEmpty { "시작일을 선택해주세요" },
                             fontFamily = poppins,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
@@ -259,13 +267,13 @@ fun FilterDialog(
                                 shape = RoundedCornerShape(6.dp)
                             )
                             .clickable {
-                                // TODO 데이트 피커
+                                onEndDatePick()
                             }
                             .padding(horizontal = 10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = endDate.ifEmpty { "종료일을 선택해주세요" },
+                            text = boardUiState.endDate.ifEmpty { "종료일을 선택해주세요" },
                             fontFamily = poppins,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
@@ -298,9 +306,20 @@ fun FilterDialog(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Box(modifier = Modifier.clickable {
-                            // TODO 행사 종류 선택, 박스 색깔 변경
+                            if (isFestival == 0) {
+                                boardViewModel.updateIsFestival(2)
+                            } else {
+                                if (isFestival == 1) {
+                                    Toasty.info(context, "최소 하나는 선택해주세요", Toasty.LENGTH_SHORT, true)
+                                        .show()
+                                }
+                                boardViewModel.updateIsFestival(0)
+                            }
                         }) {
-                            CheckBox(color = ButtonBlue, size = 22)
+                            CheckBox(
+                                color = if (boardUiState.isFestival == 0) Color.Transparent else ButtonBlue,
+                                size = 22
+                            )
                         }
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
@@ -315,9 +334,20 @@ fun FilterDialog(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Box(modifier = Modifier.clickable {
-                            // TODO 행사 종류 선택, 박스 색깔 변경
+                            if (isFestival == 1) {
+                                boardViewModel.updateIsFestival(2)
+                            } else {
+                                if (isFestival == 0) {
+                                    Toasty.info(context, "최소 하나는 선택해주세요", Toasty.LENGTH_SHORT, true)
+                                        .show()
+                                }
+                                boardViewModel.updateIsFestival(1)
+                            }
                         }) {
-                            CheckBox(color = Color.Transparent, size = 22)
+                            CheckBox(
+                                color = if (boardUiState.isFestival == 1) Color.Transparent else ButtonBlue,
+                                size = 22
+                            )
                         }
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
@@ -348,19 +378,16 @@ fun FilterDialog(
                     Spacer(modifier = Modifier.weight(1f))
                     ModalConfirmButton(
                         onClick = {
-                            boardViewModel.updateIsFestival(isFestival)
-                            boardViewModel.updateStartDate(startDate)
-                            boardViewModel.updateEndDate(endDate)
-
                             onSubmit(
                                 SearchRequest(
-                                    boardViewModel.uiState.value.token,
-                                    boardViewModel.uiState.value.keyword,
-                                    isFestival,
-                                    startDate,
-                                    endDate
+                                    boardUiState.token,
+                                    boardUiState.keyword,
+                                    boardUiState.isFestival,
+                                    boardUiState.startDate,
+                                    boardUiState.endDate
                                 )
                             )
+                            onDismissRequest()
                         }
                     )
                 }
@@ -370,12 +397,51 @@ fun FilterDialog(
     }
 }
 
-@Preview(showBackground = true)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MessageDialogPreview() {
-    FilterDialog(
-        boardViewModel = viewModel(),
-        onSubmit = { (_) -> },
-        onDismissRequest = { },
+fun CustomDatePickerDialog(
+    onDismissRequest: () -> Unit,
+    boardViewModel: BoardViewModel,
+    type: String
+) {
+    val currentDate = LocalDate.now()
+    val initialDate = Calendar.getInstance()
+    initialDate.set(currentDate.year, currentDate.monthValue - 1, currentDate.dayOfMonth)
+    var selectedDate by remember { mutableLongStateOf(initialDate.timeInMillis) }
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = initialDate.timeInMillis,
+        yearRange = currentDate.year - 1..currentDate.year + 1
     )
+    val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT)
+
+    DatePickerDialog(
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            Button(onClick = {
+                selectedDate = datePickerState.selectedDateMillis ?: initialDate.timeInMillis
+                if (type == "startDate") {
+                    boardViewModel.updateStartDate(dateFormatter.format(Date(selectedDate)))
+                } else {
+                    boardViewModel.updateEndDate(dateFormatter.format(Date(selectedDate)))
+                }
+                onDismissRequest()
+            }) {
+                Text(text = "확인")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismissRequest) {
+                Text(text = "취소")
+            }
+        },
+    ) {
+        DatePicker(
+            state = datePickerState,
+            showModeToggle = false
+        )
+    }
 }
+
+//@Preview(showBackground = true)
+//@Composable
+//fun MessageDialogPreview() {}

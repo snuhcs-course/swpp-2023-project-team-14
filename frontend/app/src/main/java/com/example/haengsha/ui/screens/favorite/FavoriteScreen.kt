@@ -77,7 +77,7 @@ fun favoriteScreen(
             }
         }
     } else {
-        LaunchedEffect(Unit) { boardApiViewModel.getFavoriteBoardList(userUiState.token) }
+        boardApiViewModel.getFavoriteBoardList(userUiState.token)
 
         when (boardListUiState) {
             is BoardListUiState.HttpError -> {
