@@ -42,7 +42,7 @@ fun HaengshaBottomAppBar(
             Spacer(modifier = Modifier.weight(1f))
             IconButton(onClick = { navigateBoard() }) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.board_page_icon),
+                    imageVector = ImageVector.vectorResource(R.drawable.search_icon),
                     contentDescription = "board screen icon"
                 )
             }
