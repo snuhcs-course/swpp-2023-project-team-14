@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -34,7 +33,7 @@ import androidx.navigation.NavController
 import com.example.haengsha.R
 import com.example.haengsha.model.route.FavoriteRoute
 import com.example.haengsha.model.uiState.UserUiState
-import com.example.haengsha.model.uiState.board.BoardListUiState
+import com.example.haengsha.model.uiState.board.BoardFavoriteUiState
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
@@ -49,7 +48,7 @@ fun favoriteScreen(
     userUiState: UserUiState
 ): Int {
     val boardContext = LocalContext.current
-    val boardListUiState = boardApiViewModel.boardListUiState
+    val boardFavoriteUiState = boardApiViewModel.boardFavoriteUiState
     var eventId by rememberSaveable { mutableIntStateOf(0) }
 
     if (userUiState.role == "Group") {
@@ -79,8 +78,8 @@ fun favoriteScreen(
     } else {
         boardApiViewModel.getFavoriteBoardList(userUiState.token)
 
-        when (boardListUiState) {
-            is BoardListUiState.HttpError -> {
+        when (boardFavoriteUiState) {
+            is BoardFavoriteUiState.HttpError -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -106,7 +105,7 @@ fun favoriteScreen(
                 }
             }
 
-            is BoardListUiState.NetworkError -> {
+            is BoardFavoriteUiState.NetworkError -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -116,7 +115,7 @@ fun favoriteScreen(
                 }
             }
 
-            is BoardListUiState.Error -> {
+            is BoardFavoriteUiState.Error -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -131,11 +130,11 @@ fun favoriteScreen(
                 }
             }
 
-            is BoardListUiState.Loading -> {
+            is BoardFavoriteUiState.Loading -> {
                 // Do Nothing
             }
 
-            is BoardListUiState.BoardListResult -> {
+            is BoardFavoriteUiState.BoardListResult -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -153,7 +152,7 @@ fun favoriteScreen(
                         LazyColumn(
                             modifier = Modifier.fillMaxSize()
                         ) {
-                            items(boardListUiState.boardList) { event ->
+                            items(boardFavoriteUiState.boardList) { event ->
                                 Box(modifier = Modifier.clickable {
                                     eventId = event.id
                                     favoriteNavController.navigate(FavoriteRoute.FavoriteDetail.route)

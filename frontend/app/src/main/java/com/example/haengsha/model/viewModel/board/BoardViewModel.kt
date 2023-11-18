@@ -1,7 +1,6 @@
 package com.example.haengsha.model.viewModel.board
 
 import androidx.lifecycle.ViewModel
-import com.example.haengsha.model.network.dataModel.BoardListResponse
 import com.example.haengsha.model.uiState.board.BoardUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +15,6 @@ class BoardViewModel : ViewModel() {
         _uiState.update { currentState ->
             currentState.copy(
                 token = authToken,
-                boardList = currentState.boardList,
                 keyword = currentState.keyword,
                 isFestival = currentState.isFestival,
                 startDate = currentState.startDate,
@@ -26,62 +24,25 @@ class BoardViewModel : ViewModel() {
         }
     }
 
-    fun updateBoardList(newBoardList: List<BoardListResponse>) {
-        updateSearchParameter("", newBoardList, "boardList")
-    }
-
     fun updateKeyword(newKeyword: String) {
-        updateSearchParameter(newKeyword, listOf(), "keyword")
+        updateSearchParameter(newKeyword, "keyword")
     }
 
     fun updateIsFestival(newIsFestival: Int) {
-        updateSearchParameter(newIsFestival.toString(), listOf(), "isFestival")
+        updateSearchParameter(newIsFestival.toString(), "isFestival")
     }
 
     fun updateStartDate(newStartDate: String) {
-        updateSearchParameter(newStartDate, listOf(), "startDate")
+        updateSearchParameter(newStartDate, "startDate")
     }
 
     fun updateEndDate(newEndDate: String) {
-        updateSearchParameter(newEndDate, listOf(), "endDate")
+        updateSearchParameter(newEndDate, "endDate")
     }
 
-    fun setInitial() {
+    private fun updateSearchParameter(newParameter: String, type: String) {
         _uiState.update { currentState ->
             currentState.copy(
-                token = currentState.token,
-                boardList = currentState.boardList,
-                keyword = currentState.keyword,
-                isFestival = currentState.isFestival,
-                startDate = currentState.startDate,
-                endDate = currentState.endDate,
-                initialState = true
-            )
-        }
-    }
-
-    fun resetList() {
-        _uiState.update { currentState ->
-            currentState.copy(
-                token = currentState.token,
-                boardList = listOf(),
-                keyword = currentState.keyword,
-                isFestival = currentState.isFestival,
-                startDate = currentState.startDate,
-                endDate = currentState.endDate,
-                initialState = false
-            )
-        }
-    }
-
-    private fun updateSearchParameter(
-        newParameter: String,
-        newBoardList: List<BoardListResponse>,
-        type: String
-    ) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                boardList = if (type == "boardList") newBoardList else currentState.boardList,
                 keyword = if (type == "keyword") newParameter else currentState.keyword,
                 isFestival = if (type == "isFestival") newParameter.toInt() else currentState.isFestival,
                 startDate = if (type == "startDate") newParameter else currentState.startDate,

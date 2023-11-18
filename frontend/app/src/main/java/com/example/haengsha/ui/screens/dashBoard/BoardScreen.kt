@@ -80,10 +80,6 @@ fun boardScreen(
     var startDatePick by rememberSaveable { mutableStateOf(false) }
     var endDatePick by remember { mutableStateOf(false) }
 
-    boardApiViewModel.resetApiUiState()
-    boardViewModel.saveToken(userUiState.token)
-    boardViewModel.setInitial()
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -94,7 +90,8 @@ fun boardScreen(
         ) {
             Spacer(modifier = Modifier.height(20.dp))
             SearchBar(
-                boardViewModel
+                boardViewModel = boardViewModel,
+                keyword = boardUiState.value.keyword,
             ) { boardApiViewModel.searchEvent(it) }
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier = Modifier.fillMaxWidth()) {
@@ -141,6 +138,7 @@ fun boardScreen(
                     .height(2.dp)
                     .background(PlaceholderGrey)
             )
+            // TODO material3 1.2.0-alpha08 부터 lazycolumn에 IndexOutOfBoundsException 발생 -> downgrade하려면 TapView.kt 수정해야 함
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -148,7 +146,20 @@ fun boardScreen(
             ) {
                 when (boardListUiState) {
                     is BoardListUiState.HttpError -> {
-                        boardViewModel.resetList()
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "찾는 행사가 없어요 :(",
+                                fontFamily = poppins,
+                                fontSize = 30.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
 
                     is BoardListUiState.NetworkError -> {
@@ -178,32 +189,6 @@ fun boardScreen(
                     }
 
                     is BoardListUiState.Loading -> {
-                        // handled in when branch
-                    }
-
-                    is BoardListUiState.BoardListResult -> {
-                        boardViewModel.updateBoardList(boardListUiState.boardList)
-                    }
-                }
-                if (boardUiState.value.boardList.isNotEmpty()) {
-                    for (i in 0 until boardUiState.value.boardList.size) {
-                        Column(modifier = Modifier.clickable {
-                            eventId = boardUiState.value.boardList[i].id
-                            boardNavController.navigate(BoardRoute.BoardDetail.route)
-                        }) {
-                            boardList(
-                                isFavorite = false,
-                                event = boardUiState.value.boardList[i]
-                            )
-                        }
-                        HorizontalDivider(
-                            modifier = Modifier.fillMaxWidth(),
-                            thickness = 1.dp,
-                            color = PlaceholderGrey
-                        )
-                    }
-                } else {
-                    if (boardListUiState is BoardListUiState.Loading) {
                         if (boardUiState.value.initialState) {
                             Column(
                                 modifier = Modifier
@@ -237,22 +222,24 @@ fun boardScreen(
                                 CircularProgressIndicator()
                             }
                         }
-                    } else {
-                        if (boardListUiState is BoardListUiState.HttpError) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(innerPadding),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "찾는 행사가 없어요 :(",
-                                    fontFamily = poppins,
-                                    fontSize = 30.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    textAlign = TextAlign.Center
+                    }
+
+                    is BoardListUiState.BoardListResult -> {
+                        for (i in 0 until boardListUiState.boardList.size) {
+                            Column(modifier = Modifier.clickable {
+                                eventId = boardListUiState.boardList[i].id
+                                boardNavController.navigate(BoardRoute.BoardDetail.route)
+                            }) {
+                                boardList(
+                                    isFavorite = false,
+                                    event = boardListUiState.boardList[i]
                                 )
                             }
+                            HorizontalDivider(
+                                modifier = Modifier.fillMaxWidth(),
+                                thickness = 1.dp,
+                                color = PlaceholderGrey
+                            )
                         }
                     }
                 }

@@ -14,6 +14,7 @@ import com.example.haengsha.model.dataSource.BoardDataRepository
 import com.example.haengsha.model.network.dataModel.BoardPostRequest
 import com.example.haengsha.model.network.dataModel.SearchRequest
 import com.example.haengsha.model.uiState.board.BoardDetailUiState
+import com.example.haengsha.model.uiState.board.BoardFavoriteUiState
 import com.example.haengsha.model.uiState.board.BoardListUiState
 import com.example.haengsha.model.uiState.board.BoardPostUiState
 import com.example.haengsha.model.uiState.board.PostLikeFavoriteUiState
@@ -23,6 +24,9 @@ import java.io.IOException
 
 class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : ViewModel() {
     var boardListUiState: BoardListUiState by mutableStateOf(BoardListUiState.Loading)
+        private set
+
+    var boardFavoriteUiState: BoardFavoriteUiState by mutableStateOf(BoardFavoriteUiState.Loading)
         private set
 
     var boardDetailUiState: BoardDetailUiState by mutableStateOf(BoardDetailUiState.Loading)
@@ -42,10 +46,6 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
                 BoardApiViewModel(boardDataRepository)
             }
         }
-    }
-
-    fun resetApiUiState() {
-        boardListUiState = BoardListUiState.Loading
     }
 
     fun getBoardList(startDate: String) {
@@ -82,17 +82,17 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
 
     fun getFavoriteBoardList(token: String) {
         viewModelScope.launch {
-            boardListUiState = BoardListUiState.Loading
-            boardListUiState = try {
+            boardFavoriteUiState = BoardFavoriteUiState.Loading
+            boardFavoriteUiState = try {
                 val authToken = "Token: $token"
-                val boardListResult = boardDataRepository.getFavoriteList(authToken)
-                BoardListUiState.BoardListResult(boardListResult)
+                val boardFavoriteResult = boardDataRepository.getFavoriteList(authToken)
+                BoardFavoriteUiState.BoardListResult(boardFavoriteResult)
             } catch (e: HttpException) {
-                BoardListUiState.HttpError
+                BoardFavoriteUiState.HttpError
             } catch (e: IOException) {
-                BoardListUiState.NetworkError
+                BoardFavoriteUiState.NetworkError
             } catch (e: Exception) {
-                BoardListUiState.Error
+                BoardFavoriteUiState.Error
             }
         }
     }

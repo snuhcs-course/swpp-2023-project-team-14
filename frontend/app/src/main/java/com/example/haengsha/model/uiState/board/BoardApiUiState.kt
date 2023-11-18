@@ -14,6 +14,17 @@ sealed interface BoardListUiState {
     object Loading : BoardListUiState
 }
 
+sealed interface BoardFavoriteUiState {
+    data class BoardListResult(
+        val boardList: List<BoardListResponse>
+    ) : BoardFavoriteUiState
+
+    object HttpError : BoardFavoriteUiState
+    object NetworkError : BoardFavoriteUiState
+    object Error : BoardFavoriteUiState
+    object Loading : BoardFavoriteUiState
+}
+
 sealed interface BoardDetailUiState {
     data class BoardDetailResult(
         val boardDetail: BoardDetailResponse

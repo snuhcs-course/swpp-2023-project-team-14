@@ -31,6 +31,7 @@ import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.route.MainRoute
 import com.example.haengsha.model.uiState.login.LoginApiUiState
 import com.example.haengsha.model.viewModel.UserViewModel
+import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.FieldStrokeBlue
@@ -45,6 +46,7 @@ import es.dmoral.toasty.Toasty
 @Composable
 fun LoginScreen(
     userViewModel: UserViewModel,
+    boardViewModel: BoardViewModel,
     mainNavController: NavHostController,
     loginNavController: NavHostController,
     loginApiViewModel: LoginApiViewModel,
@@ -188,6 +190,7 @@ fun LoginScreen(
             userViewModel.updateToken(loginUiState.token)
             userViewModel.updateRole(loginUiState.role)
             userViewModel.updateNickname(loginUiState.nickname)
+            boardViewModel.saveToken(loginUiState.token)
             mainNavController.navigate(MainRoute.Home.route) {
                 popUpTo(LoginRoute.Login.route) { inclusive = true }
                 popUpTo(MainRoute.Login.route) { inclusive = true }

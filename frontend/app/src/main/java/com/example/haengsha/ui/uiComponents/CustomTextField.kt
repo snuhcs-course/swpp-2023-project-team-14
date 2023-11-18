@@ -46,7 +46,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.haengsha.model.network.dataModel.SearchRequest
-import com.example.haengsha.model.uiState.board.BoardUiState
 import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.FieldStrokeRed
@@ -327,9 +326,10 @@ fun passwordCheckTextField(
 @Composable
 fun SearchBar(
     boardViewModel: BoardViewModel,
+    keyword: String,
     onSubmit: (SearchRequest) -> Unit
 ) {
-    var input by rememberSaveable { mutableStateOf(boardViewModel.uiState.value.keyword) }
+    var input by remember { mutableStateOf(keyword) }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     OutlinedTextField(
@@ -339,7 +339,7 @@ fun SearchBar(
         onValueChange = { input = it },
         placeholder = {
             Text(
-                text = input.ifEmpty { "Search" },
+                text = "Search",
                 fontFamily = poppins,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,

@@ -32,6 +32,7 @@ fun HaengshaApp() {
         composable(MainRoute.Login.route) {
             Login(
                 userViewModel = userViewModel,
+                boardViewModel = boardViewModel,
                 mainNavController = mainNavController
             )
         }
