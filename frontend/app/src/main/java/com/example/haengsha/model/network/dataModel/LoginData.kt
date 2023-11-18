@@ -17,6 +17,7 @@ data class LoginRequest(
     val password: String
 )
 
+// TODO 쓸모없는 response 받지 말기
 @Serializable
 data class LoginCodeVerifyResponse(
     val message: String

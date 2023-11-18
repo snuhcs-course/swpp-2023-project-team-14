@@ -167,4 +167,19 @@ class LoginApiViewModel(private val loginDataRepository: LoginDataRepository) : 
         }
     }
 
+    fun logout(token: String) {
+        viewModelScope.launch {
+            loginUiState = LoginApiUiState.Loading
+            loginUiState = try {
+                val authToken = "Token: $token"
+                loginDataRepository.logout(authToken)
+                LoginApiUiState.Success("로그아웃 성공")
+            } catch (e: HttpException) {
+                LoginApiUiState.HttpError("로그아웃에 실패하였습니다. 다시 시도해주세요")
+            } catch (e: IOException) {
+                LoginApiUiState.NetworkError
+            }
+        }
+    }
+
 }

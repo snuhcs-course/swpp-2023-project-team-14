@@ -1,20 +1,21 @@
 package com.example.haengsha.model.network.apiService
 
 import com.example.haengsha.model.network.dataModel.CheckNicknameRequest
-import com.example.haengsha.model.network.dataModel.FindChangePasswordResponse
 import com.example.haengsha.model.network.dataModel.CheckNicknameResponse
 import com.example.haengsha.model.network.dataModel.FindChangePasswordRequest
-import com.example.haengsha.model.network.dataModel.FindEmailVerifyResponse
+import com.example.haengsha.model.network.dataModel.FindChangePasswordResponse
 import com.example.haengsha.model.network.dataModel.FindEmailVerifyRequest
-import com.example.haengsha.model.network.dataModel.LoginCodeVerifyResponse
+import com.example.haengsha.model.network.dataModel.FindEmailVerifyResponse
 import com.example.haengsha.model.network.dataModel.LoginCodeVerifyRequest
+import com.example.haengsha.model.network.dataModel.LoginCodeVerifyResponse
 import com.example.haengsha.model.network.dataModel.LoginRequest
 import com.example.haengsha.model.network.dataModel.LoginResponse
-import com.example.haengsha.model.network.dataModel.SignupEmailVerifyResponse
 import com.example.haengsha.model.network.dataModel.SignupEmailVerifyRequest
+import com.example.haengsha.model.network.dataModel.SignupEmailVerifyResponse
 import com.example.haengsha.model.network.dataModel.SignupRegisterRequest
 import com.example.haengsha.model.network.dataModel.SignupRegisterResponse
 import retrofit2.http.Body
+import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface LoginApiService {
@@ -38,4 +39,7 @@ interface LoginApiService {
 
     @POST("/api/find/change_password")
     suspend fun findChangePassword(@Body findChangePasswordRequest: FindChangePasswordRequest): FindChangePasswordResponse
+
+    @POST("/api/logout")
+    suspend fun logout(@Header("Authorization") token: String)
 }

@@ -1,29 +1,37 @@
 package com.example.haengsha.ui
 
+import android.content.Context
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.MainRoute
+import com.example.haengsha.model.uiState.login.LoginApiUiState
 import com.example.haengsha.model.viewModel.NavigationViewModel
 import com.example.haengsha.model.viewModel.UserViewModel
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.model.viewModel.board.BoardViewModel
+import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.screens.dashBoard.Board
 import com.example.haengsha.ui.screens.favorite.Favorite
 import com.example.haengsha.ui.screens.home.Home
 import com.example.haengsha.ui.screens.login.Login
 import com.example.haengsha.ui.uiComponents.HaengshaBottomAppBar
 import com.example.haengsha.ui.uiComponents.HaengshaTopAppBar
+import es.dmoral.toasty.Toasty
 
 @Composable
 fun HaengshaApp() {
     val userViewModel: UserViewModel = viewModel()
     val userUiState by userViewModel.uiState.collectAsState()
+    val loginApiViewModel: LoginApiViewModel = viewModel(factory = LoginApiViewModel.Factory)
+    val loginApiUiState = loginApiViewModel.loginUiState
     val boardViewModel: BoardViewModel = viewModel()
     val boardApiViewModel: BoardApiViewModel = viewModel(factory = BoardApiViewModel.Factory)
     val navigationViewModel: NavigationViewModel = viewModel()
@@ -34,6 +42,8 @@ fun HaengshaApp() {
     val currentScreenType = navigationUiState.type
     val canNavigateBack = currentScreenName == "Details" || currentScreenName == "Write"
 
+    val context = LocalContext.current
+
     Scaffold(
         topBar = {
             if (currentScreenName != "Login") {
@@ -43,6 +53,16 @@ fun HaengshaApp() {
                     navigateBack = {
                         if (currentScreenType == "Board") mainNavController.navigate(MainRoute.Dashboard.route)
                         else mainNavController.navigate(MainRoute.Favorite.route)
+                    },
+                    logout = {
+                        logout(
+                            token = userUiState.token,
+                            context = context,
+                            loginApiViewModel = loginApiViewModel,
+                            loginApiUiState = loginApiUiState,
+                            userViewModel = userViewModel,
+                            mainNavController = mainNavController
+                        )
                     }
                 )
             }
@@ -65,6 +85,8 @@ fun HaengshaApp() {
                 navigationViewModel.updateRouteUiState("Main", MainRoute.Login.route)
                 Login(
                     userViewModel = userViewModel,
+                    loginApiViewModel = loginApiViewModel,
+                    loginApiUiState = loginApiUiState,
                     boardViewModel = boardViewModel,
                     mainNavController = mainNavController
                 )
@@ -102,6 +124,36 @@ fun HaengshaApp() {
 //                mainNavController = mainNavController
 //            )
 //        }
+        }
+    }
+}
+
+fun logout(
+    token: String,
+    context: Context,
+    loginApiViewModel: LoginApiViewModel,
+    loginApiUiState: LoginApiUiState,
+    userViewModel: UserViewModel,
+    mainNavController: NavController
+) {
+    loginApiViewModel.logout(token)
+    when (loginApiUiState) {
+        is LoginApiUiState.Success -> {
+            userViewModel.resetUserData()
+            mainNavController.navigate(MainRoute.Login.route) {
+                popUpTo(mainNavController.graph.id) { inclusive = true }
+            }
+        }
+
+        is LoginApiUiState.HttpError -> {
+            Toasty.warning(context, loginApiUiState.message, Toasty.LENGTH_SHORT).show()
+        }
+
+        is LoginApiUiState.NetworkError -> {
+            Toasty.error(context, "인터넷 연결을 확인해주세요.", Toasty.LENGTH_SHORT).show()
+        }
+
+        else -> { /*do nothing*/
         }
     }
 }

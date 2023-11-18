@@ -27,7 +27,8 @@ import com.example.haengsha.ui.theme.poppins
 fun HaengshaTopAppBar(
     currentScreen: String,
     canNavigateBack: Boolean,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    logout: () -> Unit
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -55,7 +56,7 @@ fun HaengshaTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(md_theme_light_primaryContainer),
         actions = {
             IconButton(
-                onClick = {/* TODO 로그아웃 */ }
+                onClick = logout
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.logout_icon),
