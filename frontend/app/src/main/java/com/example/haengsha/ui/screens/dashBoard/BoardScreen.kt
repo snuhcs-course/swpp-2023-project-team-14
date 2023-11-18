@@ -16,9 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -41,7 +41,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.haengsha.R
 import com.example.haengsha.model.route.BoardRoute
@@ -70,6 +69,7 @@ fun boardScreen(
     val boardUiState = boardViewModel.uiState.collectAsState()
     val boardListUiState = boardApiViewModel.boardListUiState
     val boardContext = LocalContext.current
+    val scrollState = rememberScrollState()
 
     var eventId by remember { mutableIntStateOf(0) }
     val isFestival = boardUiState.value.isFestival
@@ -141,8 +141,10 @@ fun boardScreen(
                     .height(2.dp)
                     .background(PlaceholderGrey)
             )
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
             ) {
                 when (boardListUiState) {
                     is BoardListUiState.HttpError -> {
@@ -150,32 +152,29 @@ fun boardScreen(
                     }
 
                     is BoardListUiState.NetworkError -> {
-                        items(1) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(innerPadding)
-                            ) {
-                                Toasty.error(boardContext, "네트워크 연결을 확인해주세요", Toasty.LENGTH_SHORT)
-                                    .show()
-                            }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding)
+                        ) {
+                            Toasty.error(boardContext, "네트워크 연결을 확인해주세요", Toasty.LENGTH_SHORT)
+                                .show()
                         }
                     }
 
                     is BoardListUiState.Error -> {
-                        items(1) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(innerPadding)
-                            ) {
-                                Toasty.error(
-                                    boardContext,
-                                    "알 수 없는 에러가 발생했어요 :( 메일로 제보해주세요!",
-                                    Toasty.LENGTH_SHORT
-                                ).show()
-                            }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding)
+                        ) {
+                            Toasty.error(
+                                boardContext,
+                                "알 수 없는 에러가 발생했어요 :( 메일로 제보해주세요!",
+                                Toasty.LENGTH_SHORT
+                            ).show()
                         }
+
                     }
 
                     is BoardListUiState.Loading -> {
@@ -187,14 +186,14 @@ fun boardScreen(
                     }
                 }
                 if (boardUiState.value.boardList.isNotEmpty()) {
-                    items(boardUiState.value.boardList) { event ->
+                    for (i in 0 until boardUiState.value.boardList.size) {
                         Column(modifier = Modifier.clickable {
-                            eventId = event.id
+                            eventId = boardUiState.value.boardList[i].id
                             boardNavController.navigate(BoardRoute.BoardDetail.route)
                         }) {
                             boardList(
                                 isFavorite = false,
-                                event = event
+                                event = boardUiState.value.boardList[i]
                             )
                         }
                         HorizontalDivider(
@@ -206,59 +205,53 @@ fun boardScreen(
                 } else {
                     if (boardListUiState is BoardListUiState.Loading) {
                         if (boardUiState.value.initialState) {
-                            items(1) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(innerPadding),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text(
-                                        text = "찾고 싶은 행사를 검색해보세요!",
-                                        fontFamily = poppins,
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        textAlign = TextAlign.Center
-                                    )
-                                    Spacer(modifier = Modifier.height(20.dp))
-                                    Text(
-                                        text = "(단체 계정은 행사를 등록할 수도 있습니다)",
-                                        fontFamily = poppins,
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(innerPadding),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "찾고 싶은 행사를 검색해보세요!",
+                                    fontFamily = poppins,
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(modifier = Modifier.height(20.dp))
+                                Text(
+                                    text = "(단체 계정은 행사를 등록할 수도 있습니다)",
+                                    fontFamily = poppins,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    textAlign = TextAlign.Center
+                                )
                             }
                         } else {
-                            items(1) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(innerPadding),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator()
-                                }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(innerPadding),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
                             }
                         }
                     } else {
                         if (boardListUiState is BoardListUiState.HttpError) {
-                            items(1) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(innerPadding),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "찾는 행사가 없어요 :(",
-                                        fontFamily = poppins,
-                                        fontSize = 30.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(innerPadding),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "찾는 행사가 없어요 :(",
+                                    fontFamily = poppins,
+                                    fontSize = 30.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    textAlign = TextAlign.Center
+                                )
                             }
                         }
                     }
