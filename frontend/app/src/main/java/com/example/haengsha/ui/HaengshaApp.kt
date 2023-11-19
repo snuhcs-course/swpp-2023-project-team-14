@@ -1,5 +1,7 @@
 package com.example.haengsha.ui
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -88,14 +90,94 @@ fun HaengshaApp() {
                     mainNavController = mainNavController
                 )
             }
-            composable(MainRoute.Home.route) {
+            composable(
+                MainRoute.Home.route,
+                enterTransition = {
+                    when (initialState.destination.route) {
+                        "Board" -> {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Right,
+                                animationSpec = tween(700)
+                            )
+                        }
+
+                        "Favorite" -> {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Left,
+                                animationSpec = tween(700)
+                            )
+                        }
+
+                        else -> null
+                    }
+                },
+                exitTransition = {
+                    when (targetState.destination.route) {
+                        "Board" -> {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Left,
+                                animationSpec = tween(700)
+                            )
+                        }
+
+                        "Favorite" -> {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Right,
+                                animationSpec = tween(700)
+                            )
+                        }
+
+                        else -> null
+                    }
+                }
+            ) {
                 navigationViewModel.updateRouteUiState("Main", MainRoute.Home.route)
                 Home(
                     innerPadding = innerPadding,
                     userUiState = userUiState,
                 )
             }
-            composable(MainRoute.Dashboard.route) {
+            composable(
+                MainRoute.Dashboard.route,
+                enterTransition = {
+                    when (initialState.destination.route) {
+                        "Home" -> {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Left,
+                                animationSpec = tween(700)
+                            )
+                        }
+
+                        "Favorite" -> {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Left,
+                                animationSpec = tween(700)
+                            )
+                        }
+
+                        else -> null
+                    }
+                },
+                exitTransition = {
+                    when (targetState.destination.route) {
+                        "Home" -> {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Right,
+                                animationSpec = tween(700)
+                            )
+                        }
+
+                        "Favorite" -> {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Right,
+                                animationSpec = tween(700)
+                            )
+                        }
+
+                        else -> null
+                    }
+                }
+            ) {
                 navigationViewModel.updateRouteUiState("Main", MainRoute.Dashboard.route)
                 Board(
                     innerPadding = innerPadding,
@@ -105,7 +187,47 @@ fun HaengshaApp() {
                     navigationViewModel = navigationViewModel
                 )
             }
-            composable(MainRoute.Favorite.route) {
+            composable(
+                MainRoute.Favorite.route,
+                enterTransition = {
+                    when (initialState.destination.route) {
+                        "Home" -> {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Right,
+                                animationSpec = tween(700)
+                            )
+                        }
+
+                        "Board" -> {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Right,
+                                animationSpec = tween(700)
+                            )
+                        }
+
+                        else -> null
+                    }
+                },
+                exitTransition = {
+                    when (targetState.destination.route) {
+                        "Home" -> {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Left,
+                                animationSpec = tween(700)
+                            )
+                        }
+
+                        "Board" -> {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Left,
+                                animationSpec = tween(700)
+                            )
+                        }
+
+                        else -> null
+                    }
+                }
+            ) {
                 navigationViewModel.updateRouteUiState("Main", MainRoute.Favorite.route)
                 Favorite(
                     innerPadding = innerPadding,
