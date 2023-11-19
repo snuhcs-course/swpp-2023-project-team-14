@@ -18,6 +18,7 @@ import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.HaengshaGrey
 
+// TODO 코드 개선 (회원가입 약관 동의할 때 ui가 조금 다른데, 그거 핸들링하는 코드를 이상하게 짬 ; color 기준으로 테두리 정하고, size 기본값을 정하고, onClick을 받지 않는 등)
 @Composable
 fun CheckBox(color: Color, size: Int = 25) {
     Box(

@@ -18,13 +18,13 @@ import com.example.haengsha.model.network.dataModel.LoginCodeVerifyRequest
 import com.example.haengsha.model.network.dataModel.LoginRequest
 import com.example.haengsha.model.network.dataModel.SignupEmailVerifyRequest
 import com.example.haengsha.model.network.dataModel.SignupRegisterRequest
-import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.uiState.login.LoginApiUiState
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
 class LoginApiViewModel(private val loginDataRepository: LoginDataRepository) : ViewModel() {
-    var loginUiState: LoginUiState by mutableStateOf(LoginUiState.Loading)
+    var loginUiState: LoginApiUiState by mutableStateOf(LoginApiUiState.Loading)
         private set
 
     companion object {
@@ -39,50 +39,50 @@ class LoginApiViewModel(private val loginDataRepository: LoginDataRepository) : 
 
     fun login(email: String, password: String) {
         viewModelScope.launch {
-            loginUiState = LoginUiState.Loading
+            loginUiState = LoginApiUiState.Loading
             loginUiState = try {
                 val loginSuccessResult = loginDataRepository.login(LoginRequest(email, password))
-                LoginUiState.LoginSuccess(
+                LoginApiUiState.LoginSuccess(
                     loginSuccessResult.token,
                     loginSuccessResult.nickname,
                     loginSuccessResult.role,
                     loginSuccessResult.message
                 )
             } catch (e: HttpException) {
-                LoginUiState.HttpError("입력한 정보를 확인해주세요")
+                LoginApiUiState.HttpError("입력한 정보를 확인해주세요")
             } catch (e: IOException) {
-                LoginUiState.NetworkError
+                LoginApiUiState.NetworkError
             }
         }
     }
 
     fun loginCodeVerify(email: String, code: String) {
         viewModelScope.launch {
-            loginUiState = LoginUiState.Loading
+            loginUiState = LoginApiUiState.Loading
             loginUiState = try {
                 val loginCodeVerificationResult =
                     loginDataRepository.loginCodeVerify(LoginCodeVerifyRequest(email, code))
-                LoginUiState.Success(loginCodeVerificationResult.message)
+                LoginApiUiState.Success(loginCodeVerificationResult.message)
             } catch (e: HttpException) {
-                LoginUiState.HttpError("입력한 정보를 확인해주세요")
+                LoginApiUiState.HttpError("입력한 정보를 확인해주세요")
             } catch (e: IOException) {
-                LoginUiState.NetworkError
+                LoginApiUiState.NetworkError
             }
         }
     }
 
     fun signupEmailVerify(email: String) {
         viewModelScope.launch {
-            loginUiState = LoginUiState.Loading
+            loginUiState = LoginApiUiState.Loading
             loginUiState = try {
                 val signupEmailVerifyResult = loginDataRepository.signupEmailVerify(
                     SignupEmailVerifyRequest(email)
                 )
-                LoginUiState.Success(signupEmailVerifyResult.message)
+                LoginApiUiState.Success(signupEmailVerifyResult.message)
             } catch (e: HttpException) {
-                LoginUiState.HttpError("입력한 정보를 확인해주세요")
+                LoginApiUiState.HttpError("입력한 정보를 확인해주세요")
             } catch (e: IOException) {
-                LoginUiState.NetworkError
+                LoginApiUiState.NetworkError
             }
         }
     }
@@ -97,7 +97,7 @@ class LoginApiViewModel(private val loginDataRepository: LoginDataRepository) : 
         interest: String
     ) {
         viewModelScope.launch {
-            loginUiState = LoginUiState.Loading
+            loginUiState = LoginApiUiState.Loading
             loginUiState = try {
                 val signupRegisterResult = loginDataRepository.signupRegister(
                     SignupRegisterRequest(
@@ -110,59 +110,59 @@ class LoginApiViewModel(private val loginDataRepository: LoginDataRepository) : 
                         interest
                     )
                 )
-                LoginUiState.Success(signupRegisterResult.message)
+                LoginApiUiState.Success(signupRegisterResult.message)
             } catch (e: HttpException) {
-                LoginUiState.HttpError("입력한 정보를 확인해주세요")
+                LoginApiUiState.HttpError("입력한 정보를 확인해주세요")
             } catch (e: IOException) {
-                LoginUiState.NetworkError
+                LoginApiUiState.NetworkError
             }
         }
     }
 
     fun checkNickname(nickname: String) {
         viewModelScope.launch {
-            loginUiState = LoginUiState.Loading
+            loginUiState = LoginApiUiState.Loading
             loginUiState = try {
                 val checkNicknameResult = loginDataRepository.checkNickname(
                     CheckNicknameRequest(nickname)
                 )
-                LoginUiState.Success(checkNicknameResult.message)
+                LoginApiUiState.Success(checkNicknameResult.message)
             } catch (e: HttpException) {
-                LoginUiState.HttpError("입력한 정보를 확인해주세요")
+                LoginApiUiState.HttpError("입력한 정보를 확인해주세요")
             } catch (e: IOException) {
-                LoginUiState.NetworkError
+                LoginApiUiState.NetworkError
             }
         }
     }
 
     fun findEmailVerify(email: String) {
         viewModelScope.launch {
-            loginUiState = LoginUiState.Loading
+            loginUiState = LoginApiUiState.Loading
             loginUiState = try {
                 val findEmailVerifyResult = loginDataRepository.findEmailVerify(
                     FindEmailVerifyRequest(email)
                 )
-                LoginUiState.Success(findEmailVerifyResult.message)
+                LoginApiUiState.Success(findEmailVerifyResult.message)
             } catch (e: HttpException) {
-                LoginUiState.HttpError("입력한 정보를 확인해주세요")
+                LoginApiUiState.HttpError("입력한 정보를 확인해주세요")
             } catch (e: IOException) {
-                LoginUiState.NetworkError
+                LoginApiUiState.NetworkError
             }
         }
     }
 
     fun findChangePassword(email: String, newPassword: String, newPasswordAgain: String) {
         viewModelScope.launch {
-            loginUiState = LoginUiState.Loading
+            loginUiState = LoginApiUiState.Loading
             loginUiState = try {
                 val findChangePasswordResult = loginDataRepository.findChangePassword(
                     FindChangePasswordRequest(email, newPassword, newPasswordAgain)
                 )
-                LoginUiState.Success(findChangePasswordResult.message)
+                LoginApiUiState.Success(findChangePasswordResult.message)
             } catch (e: HttpException) {
-                LoginUiState.HttpError("입력한 정보를 확인해주세요")
+                LoginApiUiState.HttpError("입력한 정보를 확인해주세요")
             } catch (e: IOException) {
-                LoginUiState.NetworkError
+                LoginApiUiState.NetworkError
             }
         }
     }

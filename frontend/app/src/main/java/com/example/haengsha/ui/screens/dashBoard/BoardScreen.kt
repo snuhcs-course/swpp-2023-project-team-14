@@ -15,18 +15,21 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,10 +47,13 @@ import com.example.haengsha.model.route.BoardRoute
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.board.BoardListUiState
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
+import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.CustomDatePickerDialog
+import com.example.haengsha.ui.uiComponents.FilterDialog
 import com.example.haengsha.ui.uiComponents.SearchBar
 import com.example.haengsha.ui.uiComponents.boardList
 import es.dmoral.toasty.Toasty
@@ -55,16 +61,24 @@ import es.dmoral.toasty.Toasty
 @Composable
 fun boardScreen(
     innerPadding: PaddingValues,
+    boardViewModel: BoardViewModel,
     boardApiViewModel: BoardApiViewModel,
     boardNavController: NavController,
     userUiState: UserUiState
 ): Int {
-    val boardContext = LocalContext.current
+    val boardUiState = boardViewModel.uiState.collectAsState()
     val boardListUiState = boardApiViewModel.boardListUiState
+    val boardContext = LocalContext.current
+    val scrollState = rememberScrollState()
+
     var eventId by remember { mutableIntStateOf(0) }
-    var isFestival by remember { mutableIntStateOf(1) }
-    var startDate by remember { mutableStateOf("2023-11-09") }
-    var endDate by remember { mutableStateOf("2023-11-30") }
+    val isFestival = boardUiState.value.isFestival
+    val startDate = boardUiState.value.startDate
+    val endDate = boardUiState.value.endDate
+
+    var filterModal by remember { mutableStateOf(false) }
+    var startDatePick by rememberSaveable { mutableStateOf(false) }
+    var endDatePick by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -76,27 +90,39 @@ fun boardScreen(
         ) {
             Spacer(modifier = Modifier.height(20.dp))
             SearchBar(
-                { boardApiViewModel.searchEvent(it) },
-                userUiState.token, isFestival, startDate, endDate
-            )
+                boardViewModel = boardViewModel,
+                keyword = boardUiState.value.keyword,
+            ) { boardApiViewModel.searchEvent(it) }
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier = Modifier.fillMaxWidth()) {
                 Spacer(modifier = Modifier.weight(1f))
                 Box(
                     modifier = Modifier
-                        .size(width = 110.dp, height = 25.dp)
+                        .wrapContentWidth()
+                        .height(25.dp)
                         .border(
                             width = 1.dp,
                             color = HaengshaBlue,
                             shape = RoundedCornerShape(10.dp)
                         )
                         .clickable {
-                            // TODO 필터 모달
-                        },
+                            filterModal = true
+                        }
+                        .padding(horizontal = 8.dp),
                     contentAlignment = Alignment.Center
                 ) {
+                    val filterDateText = if (startDate.isEmpty() && endDate.isEmpty()) {
+                        ""
+                    } else "$startDate ~ $endDate"
+                    val filterCategoryText = when (isFestival) {
+                        0 -> "학술"
+                        1 -> "공연"
+                        else -> "공연, 학술"
+                    }
+                    val filterText =
+                        if (filterDateText.isEmpty()) filterCategoryText else "$filterDateText, $filterCategoryText"
                     Text(
-                        text = "필터 : 선택 안 함",
+                        text = "필터 : $filterText",
                         fontFamily = poppins,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
@@ -112,71 +138,101 @@ fun boardScreen(
                     .height(2.dp)
                     .background(PlaceholderGrey)
             )
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
+            // TODO material3 1.2.0-alpha08 부터 lazycolumn에 IndexOutOfBoundsException 발생 -> downgrade하려면 TapView.kt 수정해야 함
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
             ) {
                 when (boardListUiState) {
                     is BoardListUiState.HttpError -> {
-                        items(1) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "찾는 행사가 없어요 :(",
+                                fontFamily = poppins,
+                                fontSize = 30.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+
+                    is BoardListUiState.NetworkError -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding)
+                        ) {
+                            Toasty.error(boardContext, "네트워크 연결을 확인해주세요", Toasty.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+
+                    is BoardListUiState.Error -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding)
+                        ) {
+                            Toasty.error(
+                                boardContext,
+                                "알 수 없는 에러가 발생했어요 :( 메일로 제보해주세요!",
+                                Toasty.LENGTH_SHORT
+                            ).show()
+                        }
+
+                    }
+
+                    is BoardListUiState.Loading -> {
+                        if (boardUiState.value.initialState) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(innerPadding),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "찾고 싶은 행사를 검색해보세요!",
+                                    fontFamily = poppins,
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(modifier = Modifier.height(20.dp))
+                                Text(
+                                    text = "(단체 계정은 행사를 등록할 수도 있습니다)",
+                                    fontFamily = poppins,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        } else {
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(innerPadding),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(
-                                    text = "등록된 행사가 없어요 :(",
-                                    fontFamily = poppins,
-                                    fontSize = 30.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    textAlign = TextAlign.Center
-                                )
+                                CircularProgressIndicator()
                             }
                         }
-                    }
-
-                    is BoardListUiState.NetworkError -> {
-                        items(1) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(innerPadding)
-                            ) {
-                                Toasty.error(boardContext, "네트워크 연결을 확인해주세요", Toasty.LENGTH_SHORT)
-                                    .show()
-                            }
-                        }
-                    }
-
-                    is BoardListUiState.Error -> {
-                        items(1) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(innerPadding)
-                            ) {
-                                Toasty.error(
-                                    boardContext,
-                                    "알 수 없는 에러가 발생했어요 :( 메일로 제보해주세요!",
-                                    Toasty.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
-                    }
-
-                    is BoardListUiState.Loading -> {
-                        // Do nothing
                     }
 
                     is BoardListUiState.BoardListResult -> {
-                        items(boardListUiState.boardList) { event ->
-                            Box(modifier = Modifier.clickable {
-                                eventId = event.id
+                        for (i in 0 until boardListUiState.boardList.size) {
+                            Column(modifier = Modifier.clickable {
+                                eventId = boardListUiState.boardList[i].id
                                 boardNavController.navigate(BoardRoute.BoardDetail.route)
                             }) {
                                 boardList(
                                     isFavorite = false,
-                                    event = event
+                                    event = boardListUiState.boardList[i]
                                 )
                             }
                             HorizontalDivider(
@@ -189,6 +245,7 @@ fun boardScreen(
                 }
             }
         }
+
         if (userUiState.role == "Group") {
             Box(modifier = Modifier.offset(330.dp, 600.dp)) {
                 Box(
@@ -207,10 +264,34 @@ fun boardScreen(
                 }
             }
         }
-    }
 
-    LaunchedEffect(Unit /* TODO key 변경 */) {
-        // TODO 검색 함수 호출
+        if (filterModal) {
+            FilterDialog(
+                boardViewModel = boardViewModel,
+                boardUiState = boardUiState.value,
+                context = boardContext,
+                onSubmit = { boardApiViewModel.searchEvent(it) },
+                onDismissRequest = { filterModal = false },
+                onStartDatePick = { startDatePick = true },
+                onEndDatePick = { endDatePick = true }
+            )
+        }
+
+        if (startDatePick) {
+            CustomDatePickerDialog(
+                onDismissRequest = { startDatePick = false },
+                boardViewModel = boardViewModel,
+                type = "startDate"
+            )
+        }
+
+        if (endDatePick) {
+            CustomDatePickerDialog(
+                onDismissRequest = { endDatePick = false },
+                boardViewModel = boardViewModel,
+                type = "endDate"
+            )
+        }
     }
 
     return if (eventId != 0) eventId

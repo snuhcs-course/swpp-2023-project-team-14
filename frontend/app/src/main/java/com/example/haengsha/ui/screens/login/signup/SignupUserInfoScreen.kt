@@ -14,11 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haengsha.model.route.LoginRoute
-import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.uiState.login.LoginApiUiState
 import com.example.haengsha.model.viewModel.login.SignupViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
@@ -47,14 +44,13 @@ import es.dmoral.toasty.Toasty
 @Composable
 fun SignupUserInfoScreen(
     checkNickname: (String) -> Unit,
-    loginUiState: LoginUiState,
+    loginUiState: LoginApiUiState,
     signupViewModel: SignupViewModel,
     signupNickname: String,
     loginNavController: NavController,
     loginNavBack: () -> Unit,
     loginContext: Context
 ) {
-    var checkNicknameTrigger by remember { mutableIntStateOf(0) }
     var nickname by rememberSaveable { mutableStateOf("") }
     var college by rememberSaveable { mutableStateOf("") }
     var studentId by rememberSaveable { mutableStateOf("") }
@@ -123,7 +119,6 @@ fun SignupUserInfoScreen(
                                     .error(loginContext, "길이 제한을 초과했습니다", Toast.LENGTH_SHORT, true)
                                     .show()
                             } else {
-                                checkNicknameTrigger++
                                 checkNickname(nickname)
                             }
                         },
@@ -234,10 +229,8 @@ fun SignupUserInfoScreen(
         }
     }
 
-    if (checkNicknameTrigger > 0) {
-        LaunchedEffect(key1 = loginUiState) {
             when (loginUiState) {
-                is LoginUiState.Success -> {
+                is LoginApiUiState.Success -> {
                     isNicknameError = false
                     signupViewModel.updateNickname(nickname)
                     Toasty
@@ -245,14 +238,14 @@ fun SignupUserInfoScreen(
                         .show()
                 }
 
-                is LoginUiState.HttpError -> {
+                is LoginApiUiState.HttpError -> {
                     isNicknameError = true
                     Toasty
                         .warning(loginContext, "이미 존재하는 닉네임입니다", Toast.LENGTH_SHORT, true)
                         .show()
                 }
 
-                is LoginUiState.NetworkError -> {
+                is LoginApiUiState.NetworkError -> {
                     Toasty
                         .error(
                             loginContext,
@@ -263,16 +256,14 @@ fun SignupUserInfoScreen(
                         .show()
                 }
 
-                is LoginUiState.Loading -> {
-                    /* Loading State, may add some loading UI or throw error after long time */
+                is LoginApiUiState.Loading -> {
+                    /* Loading State, may add some loading UI */
                 }
 
                 else -> {
                     /* Other Success State, do nothing */
                 }
             }
-        }
-    }
 }
 
 //@Preview(showBackground = true)

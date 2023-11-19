@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.viewModel.UserViewModel
+import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.model.viewModel.login.FindPasswordViewModel
 import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.model.viewModel.login.SignupViewModel
@@ -29,6 +30,7 @@ import com.example.haengsha.ui.screens.login.signup.SignupUserInfoScreen
 @Composable
 fun Login(
     userViewModel: UserViewModel,
+    boardViewModel: BoardViewModel,
     mainNavController: NavHostController
 ) {
     val loginApiViewModel: LoginApiViewModel = viewModel(factory = LoginApiViewModel.Factory)
@@ -47,6 +49,7 @@ fun Login(
         composable(LoginRoute.Login.route) {
             LoginScreen(
                 userViewModel = userViewModel,
+                boardViewModel = boardViewModel,
                 mainNavController = mainNavController,
                 loginNavController = loginNavController,
                 loginApiViewModel = loginApiViewModel,

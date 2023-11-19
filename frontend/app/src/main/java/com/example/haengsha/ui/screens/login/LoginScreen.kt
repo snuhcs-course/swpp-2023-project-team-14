@@ -12,9 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -31,8 +29,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.route.MainRoute
-import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.uiState.login.LoginApiUiState
 import com.example.haengsha.model.viewModel.UserViewModel
+import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.FieldStrokeBlue
@@ -47,13 +46,13 @@ import es.dmoral.toasty.Toasty
 @Composable
 fun LoginScreen(
     userViewModel: UserViewModel,
+    boardViewModel: BoardViewModel,
     mainNavController: NavHostController,
     loginNavController: NavHostController,
     loginApiViewModel: LoginApiViewModel,
-    loginUiState: LoginUiState,
+    loginUiState: LoginApiUiState,
     loginContext: Context
 ) {
-    var loginTrigger by remember { mutableIntStateOf(0) }
     var emailInput: String by rememberSaveable { mutableStateOf("") }
     var passwordInput: String by remember { mutableStateOf("") }
     var isEmailError by remember { mutableStateOf(false) }
@@ -126,6 +125,10 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(50.dp))
             CommonBlueButton(text = "로그인하기",
                 onClick = {
+                    // TODO 자동 로그인
+                    emailInput = "groupuser52"
+                    passwordInput = "groupuser52"
+
                     if (emailInput.trimStart() == "") {
                         isEmailError = true
                         Toasty.error(
@@ -143,7 +146,6 @@ fun LoginScreen(
                             true
                         ).show()
                     } else {
-                        loginTrigger++
                         loginApiViewModel.login("$emailInput@snu.ac.kr", passwordInput)
                     }
                 })
@@ -183,42 +185,39 @@ fun LoginScreen(
         }
     }
 
-    if (loginTrigger > 0) {
-        LaunchedEffect(key1 = loginUiState) {
-            when (loginUiState) {
-                is LoginUiState.LoginSuccess -> {
-                    userViewModel.updateToken(loginUiState.token)
-                    userViewModel.updateRole(loginUiState.role)
-                    userViewModel.updateNickname(loginUiState.nickname)
-                    mainNavController.navigate(MainRoute.Home.route) {
-                        popUpTo(LoginRoute.Login.route) { inclusive = true }
-                        popUpTo(MainRoute.Login.route) { inclusive = true }
-                    }
-                }
-
-                is LoginUiState.HttpError -> {
-                    isLoginFailedDialogVisible = true
-                }
-
-                is LoginUiState.NetworkError -> {
-                    Toasty
-                        .error(
-                            loginContext,
-                            "인터넷 연결을 확인해주세요",
-                            Toast.LENGTH_SHORT,
-                            true
-                        )
-                        .show()
-                }
-
-                is LoginUiState.Loading -> {
-                    /* Loading State, may add some loading UI or throw error after long time */
-                }
-
-                else -> {
-                    /* Other Success State, do nothing */
-                }
+    when (loginUiState) {
+        is LoginApiUiState.LoginSuccess -> {
+            userViewModel.updateToken(loginUiState.token)
+            userViewModel.updateRole(loginUiState.role)
+            userViewModel.updateNickname(loginUiState.nickname)
+            boardViewModel.saveToken(loginUiState.token)
+            mainNavController.navigate(MainRoute.Home.route) {
+                popUpTo(LoginRoute.Login.route) { inclusive = true }
+                popUpTo(MainRoute.Login.route) { inclusive = true }
             }
+        }
+
+        is LoginApiUiState.HttpError -> {
+            isLoginFailedDialogVisible = true
+        }
+
+        is LoginApiUiState.NetworkError -> {
+            Toasty
+                .error(
+                    loginContext,
+                    "인터넷 연결을 확인해주세요",
+                    Toast.LENGTH_SHORT,
+                    true
+                )
+                .show()
+        }
+
+        is LoginApiUiState.Loading -> {
+            /* Loading State, may add some loading UI */
+        }
+
+        else -> {
+            /* Other Success State, do nothing */
         }
     }
 }

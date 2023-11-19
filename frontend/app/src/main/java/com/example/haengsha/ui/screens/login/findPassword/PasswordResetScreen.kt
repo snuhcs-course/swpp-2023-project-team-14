@@ -13,9 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,7 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.uiState.login.FindPasswordUiState
-import com.example.haengsha.model.uiState.login.LoginUiState
+import com.example.haengsha.model.uiState.login.LoginApiUiState
 import com.example.haengsha.model.viewModel.login.FindPasswordViewModel
 import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.theme.poppins
@@ -41,14 +39,13 @@ import es.dmoral.toasty.Toasty
 @Composable
 fun PasswordResetScreen(
     loginApiViewModel: LoginApiViewModel,
-    loginUiState: LoginUiState,
+    loginUiState: LoginApiUiState,
     findPasswordViewModel: FindPasswordViewModel,
     findPasswordUiState: FindPasswordUiState,
     loginNavController: NavController,
     loginNavBack: () -> Unit,
     loginContext: Context
 ) {
-    var resetPasswordTrigger by remember { mutableIntStateOf(0) }
     var passwordInput: String by remember { mutableStateOf("") }
     var passwordCheckInput: String by remember { mutableStateOf("") }
     var isPasswordError by remember { mutableStateOf(false) }
@@ -120,7 +117,6 @@ fun PasswordResetScreen(
                                 true
                             ).show()
                         } else {
-                            resetPasswordTrigger++
                             loginApiViewModel.findChangePassword(
                                 email = findPasswordUiState.email,
                                 passwordInput,
@@ -149,48 +145,45 @@ fun PasswordResetScreen(
         }
     }
 
-    if (resetPasswordTrigger > 0) {
-        LaunchedEffect(key1 = loginUiState) {
-            when (loginUiState) {
-                is LoginUiState.Success -> {
-                    findPasswordViewModel.resetFindPasswordData()
-                    loginNavController.navigate(LoginRoute.FindPasswordComplete.route) {
-                        popUpTo(LoginRoute.Login.route) { inclusive = false }
-                    }
-                }
-
-                is LoginUiState.HttpError -> {
-                    Toasty
-                        .error(
-                            loginContext,
-                            loginUiState.message,
-                            Toast.LENGTH_SHORT,
-                            true
-                        )
-                        .show()
-                }
-
-                is LoginUiState.NetworkError -> {
-                    Toasty
-                        .error(
-                            loginContext,
-                            "인터넷 연결을 확인해주세요",
-                            Toast.LENGTH_SHORT,
-                            true
-                        )
-                        .show()
-                }
-
-                is LoginUiState.Loading -> {
-                    /* Loading State, may add some loading UI or throw error after long time */
-                }
-
-                else -> {
-                    /* Other Success State, do nothing */
-                }
+    when (loginUiState) {
+        is LoginApiUiState.Success -> {
+            findPasswordViewModel.resetFindPasswordData()
+            loginNavController.navigate(LoginRoute.FindPasswordComplete.route) {
+                popUpTo(LoginRoute.Login.route) { inclusive = false }
             }
         }
+
+        is LoginApiUiState.HttpError -> {
+            Toasty
+                .error(
+                    loginContext,
+                    loginUiState.message,
+                    Toast.LENGTH_SHORT,
+                    true
+                )
+                .show()
+        }
+
+        is LoginApiUiState.NetworkError -> {
+            Toasty
+                .error(
+                    loginContext,
+                    "인터넷 연결을 확인해주세요",
+                    Toast.LENGTH_SHORT,
+                    true
+                )
+                .show()
+        }
+
+        is LoginApiUiState.Loading -> {
+            /* Loading State, may add some loading UI */
+        }
+
+        else -> {
+            /* Other Success State, do nothing */
+        }
     }
+
 }
 
 //@Preview(showBackground = true)
