@@ -3,6 +3,7 @@ package com.example.haengsha.ui.screens.login
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +20,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -58,11 +61,15 @@ fun LoginScreen(
     var isEmailError by remember { mutableStateOf(false) }
     var isPasswordError by remember { mutableStateOf(false) }
     var isLoginFailedDialogVisible by remember { mutableStateOf(false) }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 90.dp),
+            .padding(top = 90.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = { keyboardController?.hide() })
+            },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(1) {
@@ -126,8 +133,8 @@ fun LoginScreen(
             CommonBlueButton(text = "로그인하기",
                 onClick = {
                     //TODO 자동 로그인
-//                    emailInput = "user2"
-//                    passwordInput = "user2"
+                    emailInput = "user2"
+                    passwordInput = "user2"
 
                     if (emailInput.trimStart() == "") {
                         isEmailError = true

@@ -2,6 +2,7 @@ package com.example.haengsha.ui
 
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -137,7 +138,9 @@ fun HaengshaApp() {
                 mainNavController.navigate(MainRoute.Login.route) {
                     popUpTo(mainNavController.graph.id) { inclusive = true }
                 }
-                Toasty.success(context, "로그아웃 되었습니다.", Toasty.LENGTH_SHORT).show()
+                LaunchedEffect(Unit) {
+                    Toasty.success(context, "로그아웃 되었습니다.", Toasty.LENGTH_SHORT).show()
+                }
             }
 
             is LoginApiUiState.HttpError -> {
