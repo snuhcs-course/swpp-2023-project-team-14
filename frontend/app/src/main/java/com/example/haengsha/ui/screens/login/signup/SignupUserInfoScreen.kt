@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -61,34 +62,34 @@ fun SignupUserInfoScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 90.dp),
+            .padding(vertical = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(1) {
             Text(
-                modifier = Modifier.width(270.dp),
+                modifier = Modifier.width(305.dp),
                 text = "나의 정보와 관심사는?",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Medium,
-                fontSize = 24.sp
+                fontSize = 30.sp
             )
-            Spacer(modifier = Modifier.height(45.dp))
+            Spacer(modifier = Modifier.height(60.dp))
             Text(
                 modifier = Modifier.width(270.dp),
                 text = buildAnnotatedString {
-                    append("닉네임을 입력하세요. (2 ~ 10자) ")
+                    append("닉네임을 입력하세요. (2~10자) ")
                     withStyle(SpanStyle(color = Color.Red)) { append("*") }
                 },
                 fontFamily = poppins,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp
+                fontSize = 18.sp
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             nickname = commonTextField(
                 isError = isNicknameError,
                 placeholder = "닉네임",
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             Row(
                 modifier = Modifier
                     .width(270.dp)
@@ -125,12 +126,12 @@ fun SignupUserInfoScreen(
                     text = "중복 확인",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 11.sp,
+                    fontSize = 14.sp,
                     textAlign = TextAlign.End,
                     color = FieldStrokeBlue
                 )
             }
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(40.dp))
             Text(
                 modifier = Modifier.width(270.dp),
                 text = buildAnnotatedString {
@@ -139,11 +140,11 @@ fun SignupUserInfoScreen(
                 },
                 fontFamily = poppins,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp
+                fontSize = 18.sp
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             college = dropDown("학과")
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(60.dp))
             Text(
                 modifier = Modifier.width(270.dp),
                 text = buildAnnotatedString {
@@ -152,24 +153,25 @@ fun SignupUserInfoScreen(
                 },
                 fontFamily = poppins,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp
+                fontSize = 18.sp
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             studentId = dropDown("학번")
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(60.dp))
             Text(
                 modifier = Modifier.width(270.dp),
                 text = buildAnnotatedString {
-                    append("관심사를 선택하세요. (중복 선택 가능) ")
+                    append("관심사를 선택하세요. ")
                     withStyle(SpanStyle(color = Color.Red)) { append("*") }
+                    append("\n(중복 선택 가능)")
                 },
                 fontFamily = poppins,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp
+                fontSize = 18.sp
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             interest = multiSelectDropDown("나의 관심 분야")
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(80.dp))
             CommonBlueButton(
                 text = "다음",
                 onClick = {
@@ -209,19 +211,14 @@ fun SignupUserInfoScreen(
                         }
                     }
                 })
-            Spacer(modifier = Modifier.height(45.dp))
-            Box(
-                modifier = Modifier
-                    .width(270.dp)
-                    .height(20.dp)
-                    .clickable { loginNavBack() }
-            ) {
+            Spacer(modifier = Modifier.height(60.dp))
+            Box(modifier = Modifier.wrapContentSize()) {
                 Text(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.clickable { loginNavBack() },
                     text = "이전 화면으로 돌아가기",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 15.sp,
+                    fontSize = 18.sp,
                     textAlign = TextAlign.Center,
                     textDecoration = TextDecoration.Underline
                 )
@@ -229,41 +226,41 @@ fun SignupUserInfoScreen(
         }
     }
 
-            when (loginUiState) {
-                is LoginApiUiState.Success -> {
-                    isNicknameError = false
-                    signupViewModel.updateNickname(nickname)
-                    Toasty
-                        .success(loginContext, "사용 가능한 닉네임입니다", Toast.LENGTH_SHORT, true)
-                        .show()
-                }
+    when (loginUiState) {
+        is LoginApiUiState.Success -> {
+            isNicknameError = false
+            signupViewModel.updateNickname(nickname)
+            Toasty
+                .success(loginContext, "사용 가능한 닉네임입니다", Toast.LENGTH_SHORT, true)
+                .show()
+        }
 
-                is LoginApiUiState.HttpError -> {
-                    isNicknameError = true
-                    Toasty
-                        .warning(loginContext, "이미 존재하는 닉네임입니다", Toast.LENGTH_SHORT, true)
-                        .show()
-                }
+        is LoginApiUiState.HttpError -> {
+            isNicknameError = true
+            Toasty
+                .warning(loginContext, "이미 존재하는 닉네임입니다", Toast.LENGTH_SHORT, true)
+                .show()
+        }
 
-                is LoginApiUiState.NetworkError -> {
-                    Toasty
-                        .error(
-                            loginContext,
-                            "인터넷 연결을 확인해주세요",
-                            Toast.LENGTH_SHORT,
-                            true
-                        )
-                        .show()
-                }
+        is LoginApiUiState.NetworkError -> {
+            Toasty
+                .error(
+                    loginContext,
+                    "인터넷 연결을 확인해주세요",
+                    Toast.LENGTH_SHORT,
+                    true
+                )
+                .show()
+        }
 
-                is LoginApiUiState.Loading -> {
-                    /* Loading State, may add some loading UI */
-                }
+        is LoginApiUiState.Loading -> {
+            /* Loading State, may add some loading UI */
+        }
 
-                else -> {
-                    /* Other Success State, do nothing */
-                }
-            }
+        else -> {
+            /* Other Success State, do nothing */
+        }
+    }
 }
 
 //@Preview(showBackground = true)

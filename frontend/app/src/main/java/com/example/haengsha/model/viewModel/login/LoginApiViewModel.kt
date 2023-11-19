@@ -182,4 +182,7 @@ class LoginApiViewModel(private val loginDataRepository: LoginDataRepository) : 
         }
     }
 
+    fun resetLoginApiUiState() {
+        loginApiUiState = LoginApiUiState.Loading
+    }
 }

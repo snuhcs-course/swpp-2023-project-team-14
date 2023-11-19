@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,18 +43,18 @@ fun SignupTypeScreen(
                 modifier = Modifier.width(320.dp),
                 text = "개인 유저 가입하기",
                 fontFamily = poppins,
-                fontSize = 18.sp,
+                fontSize = 30.sp,
                 fontWeight = FontWeight.SemiBold
             )
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(30.dp))
             Text(
                 modifier = Modifier.width(320.dp),
                 text = stringResource(id = R.string.personal_signup_guide),
                 fontFamily = poppins,
-                fontSize = 15.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Normal
             )
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(60.dp))
             CommonBlueButton(text = "개인 유저 가입하기") {
                 loginNavController.navigate(LoginRoute.SignupEmail.route)
             }
@@ -62,34 +63,29 @@ fun SignupTypeScreen(
                 modifier = Modifier.width(320.dp),
                 text = "단체 유저 가입하기",
                 fontFamily = poppins,
-                fontSize = 18.sp,
+                fontSize = 30.sp,
                 fontWeight = FontWeight.SemiBold
             )
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(30.dp))
             Text(
                 modifier = Modifier.width(320.dp),
                 text = stringResource(id = R.string.organizer_signup_guide),
                 fontFamily = poppins,
-                fontSize = 15.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Normal
             )
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(60.dp))
             CommonBlueButton(text = "단체 유저 가입하기") {
                 loginNavController.navigate(LoginRoute.SignupOrganizer.route)
             }
-            Spacer(modifier = Modifier.height(45.dp))
-            Box(
-                modifier = Modifier
-                    .width(270.dp)
-                    .height(20.dp)
-                    .clickable { loginNavBack() }
-            ) {
+            Spacer(modifier = Modifier.height(60.dp))
+            Box(modifier = Modifier.wrapContentSize()) {
                 Text(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.clickable { loginNavBack() },
                     text = "이전 화면으로 돌아가기",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 15.sp,
+                    fontSize = 18.sp,
                     textAlign = TextAlign.Center,
                     textDecoration = TextDecoration.Underline
                 )

@@ -3,13 +3,16 @@ package com.example.haengsha.ui.screens.login
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,6 +22,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -58,131 +63,121 @@ fun LoginScreen(
     var isEmailError by remember { mutableStateOf(false) }
     var isPasswordError by remember { mutableStateOf(false) }
     var isLoginFailedDialogVisible by remember { mutableStateOf(false) }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-    LazyColumn(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 90.dp),
+            .padding(top = 60.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = { keyboardController?.hide() })
+            },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        items(1) {
-            Text(text = "Welcome to", style = TextStyle(fontSize = 24.sp, fontFamily = poppins))
-            Text(
-                text = "행샤",
-                style = TextStyle(
-                    fontSize = 30.sp,
-                    fontFamily = poppins,
-                    fontWeight = FontWeight.Bold,
-                    color = ButtonBlue
-                )
+        Text(text = "Welcome to", style = TextStyle(fontSize = 28.sp, fontFamily = poppins))
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = "행샤",
+            style = TextStyle(
+                fontSize = 36.sp,
+                fontFamily = poppins,
+                fontWeight = FontWeight.Bold,
+                color = ButtonBlue
             )
-            Spacer(modifier = Modifier.height(45.dp))
+        )
+        Spacer(modifier = Modifier.height(45.dp))
+        Text(
+            modifier = Modifier.width(270.dp),
+            text = "SNU Email을 입력하세요.",
+            fontFamily = poppins,
+            fontWeight = FontWeight.Normal,
+            fontSize = 18.sp
+        )
+        Spacer(modifier = Modifier.height(15.dp))
+        emailInput = suffixTextField(
+            isEmptyError = isEmailError,
+            placeholder = "SNU Email",
+            //suffix = "@snu.ac.kr"
+        )
+        Spacer(modifier = Modifier.height(40.dp))
+        Text(
+            modifier = Modifier.width(270.dp),
+            text = "비밀번호를 입력하세요.",
+            fontFamily = poppins,
+            fontWeight = FontWeight.Normal,
+            fontSize = 18.sp
+        )
+        Spacer(modifier = Modifier.height(15.dp))
+        passwordInput = passwordTextField(
+            isEmptyError = isPasswordError,
+            placeholder = "비밀번호"
+        )
+        Spacer(modifier = Modifier.height(15.dp))
+        Row(
+            modifier = Modifier.width(270.dp),
+            horizontalArrangement = Arrangement.End
+        ) {
             Text(
-                modifier = Modifier.width(270.dp),
-                text = "SNU Email을 입력하세요.",
+                modifier = Modifier.clickable { loginNavController.navigate(LoginRoute.FindPassword.route) },
+                text = "아이디/비밀번호 찾기",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp
+                fontSize = 14.sp,
+                textAlign = TextAlign.End,
+                color = FieldStrokeBlue
             )
-            Spacer(modifier = Modifier.height(10.dp))
-            emailInput = suffixTextField(
-                isEmptyError = isEmailError,
-                placeholder = "SNU Email",
-                suffix = "@snu.ac.kr"
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                modifier = Modifier.width(270.dp),
-                text = "비밀번호를 입력하세요.",
-                fontFamily = poppins,
-                fontWeight = FontWeight.Normal,
-                fontSize = 14.sp
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            passwordInput = passwordTextField(
-                isEmptyError = isPasswordError,
-                placeholder = "비밀번호"
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Box(
-                modifier = Modifier
-                    .width(270.dp)
-                    .height(20.dp)
-                    .clickable { loginNavController.navigate(LoginRoute.FindPassword.route) }
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxSize(),
-                    text = "아이디/비밀번호 찾기",
-                    fontFamily = poppins,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 11.sp,
-                    textAlign = TextAlign.End,
-                    color = FieldStrokeBlue
-                )
-            }
-            Spacer(modifier = Modifier.height(50.dp))
-            CommonBlueButton(text = "로그인하기",
-                onClick = {
-                    //TODO 자동 로그인
-//                    emailInput = "groupuser52"
-//                    passwordInput = "groupuser52"
-
-                    if (emailInput.trimStart() == "") {
-                        isEmailError = true
-                        Toasty.error(
-                            loginContext,
-                            "이메일을 입력해주세요",
-                            Toast.LENGTH_SHORT,
-                            true
-                        ).show()
-                    } else if (passwordInput.trimStart() == "") {
-                        isPasswordError = true
-                        Toasty.error(
-                            loginContext,
-                            "비밀번호를 입력해주세요",
-                            Toast.LENGTH_SHORT,
-                            true
-                        ).show()
-                    } else {
-                        loginApiViewModel.login("$emailInput@snu.ac.kr", passwordInput)
-                    }
-                })
-            if (isLoginFailedDialogVisible) {
-                ConfirmOnlyDialog(
-                    onDismissRequest = { isLoginFailedDialogVisible = false },
-                    onClick = { isLoginFailedDialogVisible = false },
-                    text = "로그인 정보를 확인해주세요."
-                )
-            }
-            Spacer(modifier = Modifier.height(45.dp))
-            Text(
-                text = "No Account?",
-                fontFamily = poppins,
-                fontWeight = FontWeight.Light,
-                fontSize = 12.sp,
-                color = md_theme_light_outline
-            )
-            Spacer(modifier = Modifier.height(5.dp))
-            Box(
-                modifier = Modifier
-                    .width(270.dp)
-                    .height(20.dp)
-                    .clickable { loginNavController.navigate(LoginRoute.SignupType.route) }
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxSize(),
-                    text = AnnotatedString("회원가입하기"),
-                    fontFamily = poppins,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 15.sp,
-                    textAlign = TextAlign.Center,
-                    textDecoration = TextDecoration.Underline,
-                    color = ButtonBlue
-                )
-            }
         }
+        Spacer(modifier = Modifier.height(50.dp))
+        CommonBlueButton(text = "로그인하기",
+            onClick = {
+                if (emailInput.trimStart() == "") {
+                    isEmailError = true
+                    Toasty.error(
+                        loginContext,
+                        "이메일을 입력해주세요",
+                        Toast.LENGTH_SHORT,
+                        true
+                    ).show()
+                } else if (passwordInput.trimStart() == "") {
+                    isPasswordError = true
+                    Toasty.error(
+                        loginContext,
+                        "비밀번호를 입력해주세요",
+                        Toast.LENGTH_SHORT,
+                        true
+                    ).show()
+                } else {
+                    loginApiViewModel.login(emailInput, passwordInput)
+                }
+            })
+        if (isLoginFailedDialogVisible) {
+            ConfirmOnlyDialog(
+                onDismissRequest = { isLoginFailedDialogVisible = false },
+                onClick = { isLoginFailedDialogVisible = false },
+                text = "로그인 정보를 확인해주세요."
+            )
+        }
+        Spacer(modifier = Modifier.height(45.dp))
+        Text(
+            text = "No Account?",
+            fontFamily = poppins,
+            fontWeight = FontWeight.Light,
+            fontSize = 15.sp,
+            color = md_theme_light_outline
+        )
+        Spacer(modifier = Modifier.height(15.dp))
+        Text(
+            modifier = Modifier
+                .wrapContentSize()
+                .clickable { loginNavController.navigate(LoginRoute.SignupType.route) },
+            text = AnnotatedString("회원가입하기"),
+            fontFamily = poppins,
+            fontWeight = FontWeight.Medium,
+            fontSize = 20.sp,
+            textAlign = TextAlign.Center,
+            textDecoration = TextDecoration.Underline,
+            color = ButtonBlue
+        )
     }
 
     when (loginUiState) {
@@ -199,6 +194,7 @@ fun LoginScreen(
 
         is LoginApiUiState.HttpError -> {
             isLoginFailedDialogVisible = true
+            loginApiViewModel.resetLoginApiUiState()
         }
 
         is LoginApiUiState.NetworkError -> {

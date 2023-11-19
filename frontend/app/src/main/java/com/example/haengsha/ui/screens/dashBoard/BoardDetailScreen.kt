@@ -60,7 +60,9 @@ fun BoardDetailScreen(
 ) {
     val boardContext = LocalContext.current
     val boardDetailUiState = boardApiViewModel.boardDetailUiState
+
     LaunchedEffect(Unit) {
+        boardApiViewModel.resetLikePostUiState()
         boardApiViewModel.getBoardDetail(userUiState.token, eventId)
     }
 
@@ -100,8 +102,11 @@ fun BoardDetailScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
-            )
+                    .padding(innerPadding),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
         }
 
         is BoardDetailUiState.BoardDetailResult -> {

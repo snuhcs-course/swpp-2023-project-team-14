@@ -36,7 +36,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -69,7 +68,7 @@ fun commonTextField(
             Text(
                 text = placeholder,
                 fontFamily = poppins,
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Light,
                 color = PlaceholderGrey,
             )
@@ -105,7 +104,7 @@ fun codeVerifyField(
             Text(
                 text = placeholder,
                 fontFamily = poppins,
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Light,
                 color = PlaceholderGrey,
             )
@@ -130,7 +129,7 @@ fun codeVerifyField(
 fun suffixTextField(
     isEmptyError: Boolean,
     placeholder: String,
-    suffix: String
+//    suffix: String
 ): String {
     var input by rememberSaveable { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
@@ -147,21 +146,22 @@ fun suffixTextField(
             Text(
                 text = placeholder,
                 fontFamily = poppins,
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Light,
                 color = PlaceholderGrey,
             )
         },
-        suffix = {
-            Text(
-                text = suffix,
-                fontFamily = poppins,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Light,
-                fontStyle = FontStyle.Italic,
-                color = PlaceholderGrey,
-            )
-        },
+        // 그룹 유저는 SNU 메일이 아닐 수 있음 & 개인 유저도 뒤에 @snu.ac.kr가 자동 입력되는지 모를 수 있음
+//        suffix = {
+//            Text(
+//                text = suffix,
+//                fontFamily = poppins,
+//                fontSize = 15.sp,
+//                fontWeight = FontWeight.Light,
+//                fontStyle = FontStyle.Italic,
+//                color = PlaceholderGrey,
+//            )
+//        },
         isError = isError,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Email,
@@ -198,7 +198,7 @@ fun passwordTextField(
             Text(
                 text = placeholder,
                 fontFamily = poppins,
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Light,
                 color = PlaceholderGrey
             )
@@ -256,7 +256,7 @@ fun passwordSetField(
             Text(
                 text = placeholder,
                 fontFamily = poppins,
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Light,
                 color = PlaceholderGrey
             )
@@ -301,7 +301,7 @@ fun passwordCheckTextField(
             Text(
                 text = placeholder,
                 fontFamily = poppins,
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Light,
                 color = PlaceholderGrey,
             )

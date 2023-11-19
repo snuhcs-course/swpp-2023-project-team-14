@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,24 +35,19 @@ fun SignUpOrganizerScreen(loginNavBack: () -> Unit) {
                 modifier = Modifier.width(300.dp),
                 text = "단체 인증",
                 fontFamily = poppins,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Normal
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Medium
             )
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(40.dp))
             OrganizerSignupInstructionText()
             Spacer(modifier = Modifier.height(60.dp))
-            Box(
-                modifier = Modifier
-                    .width(270.dp)
-                    .height(20.dp)
-                    .clickable { loginNavBack() }
-            ) {
+            Box(modifier = Modifier.wrapContentSize()) {
                 Text(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.clickable { loginNavBack() },
                     text = "이전 화면으로 돌아가기",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 15.sp,
+                    fontSize = 18.sp,
                     textAlign = TextAlign.Center,
                     textDecoration = TextDecoration.Underline
                 )

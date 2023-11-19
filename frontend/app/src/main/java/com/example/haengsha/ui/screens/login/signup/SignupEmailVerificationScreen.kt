@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -63,7 +64,7 @@ fun SignupEmailVerificationScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 90.dp),
+            .padding(top = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(1) {
@@ -72,28 +73,29 @@ fun SignupEmailVerificationScreen(
                 text = "SNU Email 인증",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Medium,
-                fontSize = 24.sp
+                fontSize = 30.sp
             )
-            Spacer(modifier = Modifier.height(45.dp))
+            Spacer(modifier = Modifier.height(60.dp))
             Text(
                 modifier = Modifier.width(270.dp),
                 text = "SNU Email을 입력하세요.",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp
+                fontSize = 18.sp
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             emailInput = suffixTextField(
                 isEmptyError = isEmailError,
                 placeholder = "SNU Email",
-                suffix = "@snu.ac.kr"
+                //suffix = "@snu.ac.kr"
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             Box(
-                modifier = Modifier
-                    .width(270.dp)
-                    .height(20.dp)
-                    .clickable {
+                modifier = Modifier.width(270.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Text(
+                    modifier = Modifier.clickable {
                         if (emailInput.trimStart() == "") {
                             isEmailError = true
                             Toasty
@@ -102,18 +104,14 @@ fun SignupEmailVerificationScreen(
                         } else {
                             isEmailError = false
                             emailVerifyTrigger = true
-                            loginApiViewModel.signupEmailVerify("$emailInput@snu.ac.kr")
                         }
                     },
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxSize(),
                     text = "인증번호 " + if (codeSent == 0) "" else {
                         "재"
                     } + "발송",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 11.sp,
+                    fontSize = 14.sp,
                     textAlign = TextAlign.End,
                     color = FieldStrokeBlue
                 )
@@ -125,20 +123,20 @@ fun SignupEmailVerificationScreen(
                     text = "이미 가입된 계정입니다."
                 )
             }
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(40.dp))
             Text(
                 modifier = Modifier.width(270.dp),
                 text = "인증번호를 입력하세요.",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp
+                fontSize = 18.sp
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             codeInput = codeVerifyField(
                 isError = isCodeError,
                 placeholder = "인증번호 6자리"
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             Box(
                 modifier = Modifier
                     .width(270.dp)
@@ -149,12 +147,12 @@ fun SignupEmailVerificationScreen(
                     text = if (codeSent == 0) "" else "남은 시간 $codeExpireMinute:$codeExpireSecond",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 11.sp,
+                    fontSize = 14.sp,
                     textAlign = TextAlign.End,
                     color = FieldStrokeBlue
                 )
             }
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(60.dp))
             CommonBlueButton(text = "다음",
                 onClick = {
                     if (emailInput.trimStart() == "") {
@@ -176,22 +174,16 @@ fun SignupEmailVerificationScreen(
                         ).show()
                     } else {
                         codeVerifyTrigger = true
-                        loginApiViewModel.loginCodeVerify(emailInput, codeInput)
                     }
                 })
-            Spacer(modifier = Modifier.height(45.dp))
-            Box(
-                modifier = Modifier
-                    .width(270.dp)
-                    .height(20.dp)
-                    .clickable { loginNavBack() }
-            ) {
+            Spacer(modifier = Modifier.height(60.dp))
+            Box(modifier = Modifier.wrapContentSize()) {
                 Text(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.clickable { loginNavBack() },
                     text = "이전 화면으로 돌아가기",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 15.sp,
+                    fontSize = 18.sp,
                     textAlign = TextAlign.Center,
                     textDecoration = TextDecoration.Underline
                 )
@@ -208,6 +200,7 @@ fun SignupEmailVerificationScreen(
     }
 
     if (emailVerifyTrigger) {
+        LaunchedEffect(Unit) { loginApiViewModel.signupEmailVerify(emailInput) }
         when (loginUiState) {
             is LoginApiUiState.Success -> {
                 Toasty
@@ -227,7 +220,7 @@ fun SignupEmailVerificationScreen(
                     isEmailAlreadyExistDialogVisible = true
                 } else {
                     Toasty
-                        .error(
+                        .warning(
                             loginContext,
                             loginUiState.message,
                             Toast.LENGTH_SHORT,
@@ -262,6 +255,7 @@ fun SignupEmailVerificationScreen(
     }
 
     if (codeVerifyTrigger) {
+        LaunchedEffect(Unit) { loginApiViewModel.loginCodeVerify(emailInput, codeInput) }
         when (loginUiState) {
             is LoginApiUiState.Success -> {
                 signupEmailUpdate(emailInput)
@@ -270,9 +264,9 @@ fun SignupEmailVerificationScreen(
 
             is LoginApiUiState.HttpError -> {
                 Toasty
-                    .error(
+                    .warning(
                         loginContext,
-                        loginUiState.message,
+                        "loginUiState.message",
                         Toast.LENGTH_SHORT,
                         true
                     )

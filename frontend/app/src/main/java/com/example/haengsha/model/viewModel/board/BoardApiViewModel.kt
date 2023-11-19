@@ -66,6 +66,7 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
 
     fun getBoardDetail(token: String, postId: Int) {
         viewModelScope.launch {
+            boardDetailUiState = BoardDetailUiState.Loading
             boardDetailUiState = try {
                 val authToken = "Token: $token"
                 val boardDetailResult = boardDataRepository.getBoardDetail(authToken, postId)
@@ -84,7 +85,7 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
         viewModelScope.launch {
             boardFavoriteUiState = BoardFavoriteUiState.Loading
             boardFavoriteUiState = try {
-                val authToken = "Token: $token"
+                val authToken = "Token $token"
                 val boardFavoriteResult = boardDataRepository.getFavoriteList(authToken)
                 BoardFavoriteUiState.BoardListResult(boardFavoriteResult)
             } catch (e: HttpException) {
@@ -155,6 +156,10 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
                 PostLikeFavoriteUiState.Error
             }
         }
+    }
+
+    fun resetLikePostUiState() {
+        postLikeFavoriteUiState = PostLikeFavoriteUiState.Loading
     }
 
     fun searchEvent(searchRequest: SearchRequest) {

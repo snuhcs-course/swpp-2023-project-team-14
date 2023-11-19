@@ -1,5 +1,7 @@
 package com.example.haengsha.ui.screens.dashBoard
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,7 +42,33 @@ fun Board(
                 userUiState = userUiState
             )
         }
-        composable(BoardRoute.BoardDetail.route) {
+        composable(
+            BoardRoute.BoardDetail.route,
+            enterTransition = {
+                when (initialState.destination.route) {
+                    "Board" -> {
+                        slideIntoContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Left,
+                            animationSpec = tween(700)
+                        )
+                    }
+
+                    else -> null
+                }
+            },
+            exitTransition = {
+                when (targetState.destination.route) {
+                    "Board" -> {
+                        slideOutOfContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Right,
+                            animationSpec = tween(700)
+                        )
+                    }
+
+                    else -> null
+                }
+            }
+        ) {
             navigationViewModel.updateRouteUiState("Board", BoardRoute.BoardDetail.route)
             BoardDetailScreen(
                 innerPadding = innerPadding,
@@ -49,7 +77,33 @@ fun Board(
                 eventId = eventId
             )
         }
-        composable(BoardRoute.BoardPost.route) {
+        composable(
+            BoardRoute.BoardPost.route,
+            enterTransition = {
+                when (initialState.destination.route) {
+                    "Board" -> {
+                        slideIntoContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Up,
+                            animationSpec = tween(700)
+                        )
+                    }
+
+                    else -> null
+                }
+            },
+            exitTransition = {
+                when (targetState.destination.route) {
+                    "Board" -> {
+                        slideOutOfContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Down,
+                            animationSpec = tween(700)
+                        )
+                    }
+
+                    else -> null
+                }
+            }
+        ) {
             navigationViewModel.updateRouteUiState("Board", BoardRoute.BoardPost.route)
             BoardPostScreen(
                 innerPadding = innerPadding,

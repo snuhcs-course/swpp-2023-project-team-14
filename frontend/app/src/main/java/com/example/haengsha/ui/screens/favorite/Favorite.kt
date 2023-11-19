@@ -1,5 +1,7 @@
 package com.example.haengsha.ui.screens.favorite
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,7 +40,33 @@ fun Favorite(
                 userUiState = userUiState
             )
         }
-        composable(FavoriteRoute.FavoriteDetail.route) {
+        composable(
+            FavoriteRoute.FavoriteDetail.route,
+            enterTransition = {
+                when (initialState.destination.route) {
+                    "Favorite" -> {
+                        slideIntoContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Left,
+                            animationSpec = tween(700)
+                        )
+                    }
+
+                    else -> null
+                }
+            },
+            exitTransition = {
+                when (targetState.destination.route) {
+                    "Favorite" -> {
+                        slideOutOfContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Right,
+                            animationSpec = tween(700)
+                        )
+                    }
+
+                    else -> null
+                }
+            }
+        ) {
             navigationViewModel.updateRouteUiState("Favorite", FavoriteRoute.FavoriteDetail.route)
             BoardDetailScreen(
                 innerPadding = innerPadding,

@@ -43,7 +43,7 @@ fun CommonBlueButton(text: String, onClick: () -> Unit) {
             text = text,
             color = Color.White,
             fontFamily = poppins,
-            fontSize = 18.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center
         )
@@ -64,7 +64,7 @@ fun CommonGreyButton(text: String) {
             text = text,
             color = Color.White,
             fontFamily = poppins,
-            fontSize = 18.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center
         )
