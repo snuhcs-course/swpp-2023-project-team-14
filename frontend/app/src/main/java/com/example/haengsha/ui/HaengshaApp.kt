@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.model.route.MainRoute
 import com.example.haengsha.model.uiState.login.LoginApiUiState
@@ -43,6 +44,7 @@ fun HaengshaApp() {
     val navigationUiState by navigationViewModel.uiState.collectAsState()
 
     val mainNavController = rememberNavController()
+    val backStackEntry = mainNavController.currentBackStackEntryAsState()
     val currentScreenName = navigationUiState.screen
     val currentScreenType = navigationUiState.type
     val canNavigateBack = currentScreenName == "Details" || currentScreenName == "Write"
@@ -57,8 +59,19 @@ fun HaengshaApp() {
                     currentScreen = currentScreenName,
                     canNavigateBack = canNavigateBack,
                     navigateBack = {
-                        if (currentScreenType == "Board") mainNavController.navigate(MainRoute.Dashboard.route)
-                        else mainNavController.navigate(MainRoute.Favorite.route)
+                        if (currentScreenType == "Board") {
+                            mainNavController.navigate(MainRoute.Dashboard.route) {
+                                if (backStackEntry.value?.destination?.route == "Dashboard") {
+                                    mainNavController.popBackStack()
+                                }
+                            }
+                        } else {
+                            mainNavController.navigate(MainRoute.Favorite.route) {
+                                if (backStackEntry.value?.destination?.route == "Favorite") {
+                                    mainNavController.popBackStack()
+                                }
+                            }
+                        }
                     },
                     logout = {
                         isLogoutClick = true
@@ -69,9 +82,27 @@ fun HaengshaApp() {
         bottomBar = {
             if (currentScreenName != "Login") {
                 HaengshaBottomAppBar(
-                    navigateFavorite = { mainNavController.navigate(MainRoute.Favorite.route) },
-                    navigateHome = { mainNavController.navigate(MainRoute.Home.route) },
-                    navigateBoard = { mainNavController.navigate(MainRoute.Dashboard.route) }
+                    navigateFavorite = {
+                        mainNavController.navigate(MainRoute.Favorite.route) {
+                            if (backStackEntry.value?.destination?.route == "Favorite") {
+                                mainNavController.popBackStack()
+                            }
+                        }
+                    },
+                    navigateHome = {
+                        mainNavController.navigate(MainRoute.Home.route) {
+                            if (backStackEntry.value?.destination?.route == "Home") {
+                                mainNavController.popBackStack()
+                            }
+                        }
+                    },
+                    navigateBoard = {
+                        mainNavController.navigate(MainRoute.Dashboard.route) {
+                            if (backStackEntry.value?.destination?.route == "Board") {
+                                mainNavController.popBackStack()
+                            }
+                        }
+                    }
                 )
             }
         }
