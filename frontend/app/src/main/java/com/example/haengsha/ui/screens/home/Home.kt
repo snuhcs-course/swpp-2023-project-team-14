@@ -40,6 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.haengsha.R
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.viewModel.event.EventApiViewModel
+import com.example.haengsha.model.viewModel.event.RecommendationViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.poppins
 import com.kizitonwose.calendar.compose.WeekCalendar
@@ -99,6 +100,8 @@ fun HomeScreen(
     val startDate = remember { currentMonth.minusMonths(100).atStartOfMonth() } // Adjust as needed
     val endDate = remember { currentMonth.plusMonths(100).atEndOfMonth() } // Adjust as needed
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
+    val recommendationViewModel: RecommendationViewModel = viewModel(factory = RecommendationViewModel.Factory)
+    recommendationViewModel.getRecommendationList(token = userUiState.token)
 
     eventApiViewModel.getEventByDate(selection)
     val state = rememberWeekCalendarState(

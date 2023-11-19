@@ -3,6 +3,7 @@ package com.example.haengsha.model.dataSource
 import com.example.haengsha.model.network.apiService.BoardApiService
 import com.example.haengsha.model.network.apiService.EventApiService
 import com.example.haengsha.model.network.apiService.LoginApiService
+import com.example.haengsha.model.network.apiService.RecommendationApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -14,6 +15,7 @@ interface AppContainer {
     val loginDataRepository: LoginDataRepository
     val eventDataRepository: EventDataRepository
     val boardDataRepository: BoardDataRepository
+    val recommendationDataRepository: RecommendationDataRepository
 }
 
 class HaengshaAppContainer : AppContainer {
@@ -49,6 +51,16 @@ class HaengshaAppContainer : AppContainer {
     override val eventDataRepository: EventDataRepository by lazy {
         NetworkEventDataRepository(
             retrofitEventService
+        )
+    }
+
+    private val retrofitRecommendationService: RecommendationApiService by lazy {
+        retrofit.create(RecommendationApiService::class.java)
+    }
+
+    override val recommendationDataRepository: RecommendationDataRepository by lazy{
+        NetworkRecommendationRepository(
+            retrofitRecommendationService
         )
     }
 
