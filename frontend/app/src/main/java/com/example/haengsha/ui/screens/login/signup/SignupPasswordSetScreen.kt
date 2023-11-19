@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,7 +48,7 @@ fun SignupPasswordSetScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 90.dp),
+            .padding(top = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(1) {
@@ -56,39 +57,39 @@ fun SignupPasswordSetScreen(
                 text = "비밀번호 설정",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Medium,
-                fontSize = 24.sp
+                fontSize = 30.sp
             )
-            Spacer(modifier = Modifier.height(45.dp))
+            Spacer(modifier = Modifier.height(60.dp))
             Row {
                 Spacer(modifier = Modifier.width(50.dp))
                 Text(
                     modifier = Modifier.width(320.dp),
-                    text = "비밀번호를 입력하세요. (영문+숫자 4~10자)",
+                    text = "비밀번호를 입력하세요.\n(영문+숫자 4~10자)",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp
+                    fontSize = 18.sp
                 )
             }
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             passwordInput = passwordSetField(
                 isEmptyError = isPasswordError,
                 placeholder = "Password",
                 context = loginContext
             )
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(60.dp))
             Text(
-                modifier = Modifier.width(270.dp),
+                modifier = Modifier.width(280.dp),
                 text = "비밀번호를 다시 한 번 입력하세요.",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp
+                fontSize = 18.sp
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             passwordCheckInput = passwordCheckTextField(
                 isError = isPasswordCheckError,
                 placeholder = "Password"
             )
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(80.dp))
             CommonBlueButton(
                 text = "다음",
                 onClick = {
@@ -116,18 +117,13 @@ fun SignupPasswordSetScreen(
                     }
                 })
             Spacer(modifier = Modifier.height(45.dp))
-            Box(
-                modifier = Modifier
-                    .width(270.dp)
-                    .height(20.dp)
-                    .clickable { loginNavBack() }
-            ) {
+            Box(modifier = Modifier.wrapContentSize()) {
                 Text(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.clickable { loginNavBack() },
                     text = "이전 화면으로 돌아가기",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 15.sp,
+                    fontSize = 18.sp,
                     textAlign = TextAlign.Center,
                     textDecoration = TextDecoration.Underline
                 )

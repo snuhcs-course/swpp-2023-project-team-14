@@ -284,27 +284,29 @@ fun HaengshaApp() {
                 text = "로그아웃 하시겠어요?"
             )
         }
-        when (loginApiUiState) {
-            is LoginApiUiState.Success -> {
-                userViewModel.resetUserData()
-                isLogoutClick = false
-                mainNavController.navigate(MainRoute.Login.route) {
-                    popUpTo(mainNavController.graph.id) { inclusive = true }
+        if (isLogoutClick) {
+            when (loginApiUiState) {
+                is LoginApiUiState.Success -> {
+                    userViewModel.resetUserData()
+                    mainNavController.navigate(MainRoute.Login.route) {
+                        popUpTo(mainNavController.graph.id) { inclusive = true }
+                    }
+                    LaunchedEffect(Unit) {
+                        Toasty.success(context, "로그아웃 되었습니다.", Toasty.LENGTH_SHORT).show()
+                    }
+                    isLogoutClick = false
                 }
-                LaunchedEffect(Unit) {
-                    Toasty.success(context, "로그아웃 되었습니다.", Toasty.LENGTH_SHORT).show()
+
+                is LoginApiUiState.HttpError -> {
+                    Toasty.warning(context, loginApiUiState.message, Toasty.LENGTH_SHORT).show()
                 }
-            }
 
-            is LoginApiUiState.HttpError -> {
-                Toasty.warning(context, loginApiUiState.message, Toasty.LENGTH_SHORT).show()
-            }
+                is LoginApiUiState.NetworkError -> {
+                    Toasty.error(context, "인터넷 연결을 확인해주세요.", Toasty.LENGTH_SHORT).show()
+                }
 
-            is LoginApiUiState.NetworkError -> {
-                Toasty.error(context, "인터넷 연결을 확인해주세요.", Toasty.LENGTH_SHORT).show()
-            }
-
-            else -> { /*do nothing*/
+                else -> { /*do nothing*/
+                }
             }
         }
     }

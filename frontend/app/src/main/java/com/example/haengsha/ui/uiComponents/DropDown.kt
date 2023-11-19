@@ -78,7 +78,7 @@ fun dropDown(category: String): String {
                         modifier = Modifier.padding(top = 2.dp),
                         text = category,
                         fontFamily = poppins,
-                        fontSize = 13.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Light,
                         color = PlaceholderGrey,
                     )
@@ -177,7 +177,7 @@ fun multiSelectDropDown(category: String): List<String> {
                         modifier = Modifier.padding(top = 2.dp),
                         text = category,
                         fontFamily = poppins,
-                        fontSize = 13.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Light,
                         color = PlaceholderGrey,
                     )

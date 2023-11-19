@@ -66,7 +66,6 @@ fun OrganizerFindPasswordInstructionText() {
 @Composable
 fun TermsOfUseScreenText() {
     Text(
-        modifier = Modifier.width(300.dp),
         text = buildAnnotatedString {
             withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("1. 목적") }
             append("\n본 약관은 \'행샤\'(이하 \"조직\")에서 제공하는 커뮤니티 서비스(이하 \"서비스\")의 이용과 관련하여 조직과 이용자의 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다. \n\n")
@@ -104,7 +103,6 @@ fun TermsOfUseScreenText() {
 @Composable
 fun TermsOfUseModalText() {
     Text(
-        modifier = Modifier.width(240.dp),
         text = buildAnnotatedString {
             withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("1. 목적") }
             append("\n본 약관은 \'행샤\'(이하 \"조직\")에서 제공하는 커뮤니티 서비스(이하 \"서비스\")의 이용과 관련하여 조직과 이용자의 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다. \n\n")
@@ -134,7 +132,7 @@ fun TermsOfUseModalText() {
             append("\n본 약관에 관한 분쟁은 대한민국의 법률을 준거법으로 하며, 분쟁의 해결은 민사소송법상의 관할법원에서 진행됩니다.")
         },
         fontFamily = poppins,
-        fontSize = 15.sp,
+        fontSize = 16.sp,
         fontWeight = FontWeight.Normal
     )
 }
@@ -142,7 +140,6 @@ fun TermsOfUseModalText() {
 @Composable
 fun PrivacyPolicyScreenText() {
     Text(
-        modifier = Modifier.width(300.dp),
         text = buildAnnotatedString {
             append("본 개인정보 수집 및 처리 방침은 \'행샤\'(이하 \"조직\")에서 운영하는 커뮤니티 서비스(이하 \"서비스\")에 적용됩니다. \n\n")
 
@@ -167,7 +164,6 @@ fun PrivacyPolicyScreenText() {
 @Composable
 fun PrivacyPolicyModalText() {
     Text(
-        modifier = Modifier.width(240.dp),
         text = buildAnnotatedString {
             append("본 개인정보 수집 및 처리 방침은 \'행샤\'(이하 \"조직\")에서 운영하는 커뮤니티 서비스(이하 \"서비스\")에 적용됩니다. \n\n")
 
@@ -184,7 +180,7 @@ fun PrivacyPolicyModalText() {
             append("\n\n조직은 원칙적으로 개인정보 수집 및 이용목적이 달성된 후에는 해당 정보를 지체 없이 파기합니다. 파기 절차 및 방법은 다음과 같습니다. \n\n파기 절차: 이용자가 회원가입 등을 위해 입력한 정보는 목적이 달성된 후 별도의 DB에 옮겨져 내부 방침 및 기타 관련 법령에 따라 일정 기간 저장된 후 혹은 즉시 파기됩니다. \n파기 방법: 전자적 파일 형태의 정보는 기록을 재생할 수 없는 기술적 방법을 사용하여 삭제합니다.")
         },
         fontFamily = poppins,
-        fontSize = 15.sp,
+        fontSize = 16.sp,
         fontWeight = FontWeight.Normal
     )
 }

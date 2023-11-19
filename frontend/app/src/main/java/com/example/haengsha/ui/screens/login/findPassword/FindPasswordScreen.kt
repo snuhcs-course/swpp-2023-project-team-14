@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -63,7 +64,7 @@ fun FindPasswordScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 90.dp),
+            .padding(top = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(1) {
@@ -72,7 +73,7 @@ fun FindPasswordScreen(
                 text = "SNU Email 인증",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Medium,
-                fontSize = 24.sp
+                fontSize = 30.sp
             )
             Spacer(modifier = Modifier.height(45.dp))
             Text(
@@ -80,20 +81,23 @@ fun FindPasswordScreen(
                 text = "SNU Email을 입력하세요.",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp
+                fontSize = 18.sp
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             emailInput = suffixTextField(
                 isEmptyError = isEmailError,
                 placeholder = "SNU Email",
-                suffix = "@snu.ac.kr"
+                //suffix = "@snu.ac.kr"
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             Box(
                 modifier = Modifier
                     .width(270.dp)
-                    .height(20.dp)
-                    .clickable {
+                    .height(20.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Text(
+                    modifier = Modifier.clickable {
                         if (emailInput.trimStart() == "") {
                             isEmailError = true
                             Toasty
@@ -105,15 +109,12 @@ fun FindPasswordScreen(
                             loginApiViewModel.findEmailVerify(emailInput)
                         }
                     },
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxSize(),
                     text = "인증번호 " + if (codeSent == 0) "" else {
                         "재"
                     } + "발송",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 11.sp,
+                    fontSize = 14.sp,
                     textAlign = TextAlign.End,
                     color = FieldStrokeBlue
                 )
@@ -125,15 +126,15 @@ fun FindPasswordScreen(
                     text = "등록되지 않은 계정입니다."
                 )
             }
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(40.dp))
             Text(
                 modifier = Modifier.width(270.dp),
                 text = "인증번호를 입력하세요.",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp
+                fontSize = 18.sp
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             codeInput = codeVerifyField(
                 isError = isCodeError,
                 placeholder = "인증번호 6자리"
@@ -179,11 +180,10 @@ fun FindPasswordScreen(
                         loginApiViewModel.loginCodeVerify(emailInput, codeInput)
                     }
                 })
-            Spacer(modifier = Modifier.height(45.dp))
+            Spacer(modifier = Modifier.height(60.dp))
             Box(
                 modifier = Modifier
                     .width(270.dp)
-                    .height(20.dp)
                     .clickable { loginNavController.navigate(LoginRoute.FindPasswordOrganizer.route) }
             ) {
                 Text(
@@ -191,24 +191,21 @@ fun FindPasswordScreen(
                     text = "단체 계정 아이디/비밀번호 찾기",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 15.sp,
+                    fontSize = 18.sp,
                     textAlign = TextAlign.Center,
                     textDecoration = TextDecoration.Underline
                 )
             }
-            Spacer(modifier = Modifier.height(45.dp))
+            Spacer(modifier = Modifier.height(30.dp))
             Box(
-                modifier = Modifier
-                    .width(270.dp)
-                    .height(20.dp)
-                    .clickable { loginNavBack() }
+                modifier = Modifier.wrapContentWidth()
             ) {
                 Text(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.clickable { loginNavBack() },
                     text = "이전 화면으로 돌아가기",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 15.sp,
+                    fontSize = 16.sp,
                     textAlign = TextAlign.Center,
                     textDecoration = TextDecoration.Underline
                 )
