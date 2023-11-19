@@ -125,7 +125,7 @@ fun SignupUserInfoScreen(
                     text = "중복 확인",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 11.sp,
+                    fontSize = 14.sp,
                     textAlign = TextAlign.End,
                     color = FieldStrokeBlue
                 )
@@ -229,41 +229,41 @@ fun SignupUserInfoScreen(
         }
     }
 
-            when (loginUiState) {
-                is LoginApiUiState.Success -> {
-                    isNicknameError = false
-                    signupViewModel.updateNickname(nickname)
-                    Toasty
-                        .success(loginContext, "사용 가능한 닉네임입니다", Toast.LENGTH_SHORT, true)
-                        .show()
-                }
+    when (loginUiState) {
+        is LoginApiUiState.Success -> {
+            isNicknameError = false
+            signupViewModel.updateNickname(nickname)
+            Toasty
+                .success(loginContext, "사용 가능한 닉네임입니다", Toast.LENGTH_SHORT, true)
+                .show()
+        }
 
-                is LoginApiUiState.HttpError -> {
-                    isNicknameError = true
-                    Toasty
-                        .warning(loginContext, "이미 존재하는 닉네임입니다", Toast.LENGTH_SHORT, true)
-                        .show()
-                }
+        is LoginApiUiState.HttpError -> {
+            isNicknameError = true
+            Toasty
+                .warning(loginContext, "이미 존재하는 닉네임입니다", Toast.LENGTH_SHORT, true)
+                .show()
+        }
 
-                is LoginApiUiState.NetworkError -> {
-                    Toasty
-                        .error(
-                            loginContext,
-                            "인터넷 연결을 확인해주세요",
-                            Toast.LENGTH_SHORT,
-                            true
-                        )
-                        .show()
-                }
+        is LoginApiUiState.NetworkError -> {
+            Toasty
+                .error(
+                    loginContext,
+                    "인터넷 연결을 확인해주세요",
+                    Toast.LENGTH_SHORT,
+                    true
+                )
+                .show()
+        }
 
-                is LoginApiUiState.Loading -> {
-                    /* Loading State, may add some loading UI */
-                }
+        is LoginApiUiState.Loading -> {
+            /* Loading State, may add some loading UI */
+        }
 
-                else -> {
-                    /* Other Success State, do nothing */
-                }
-            }
+        else -> {
+            /* Other Success State, do nothing */
+        }
+    }
 }
 
 //@Preview(showBackground = true)

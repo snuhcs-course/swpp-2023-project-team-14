@@ -2,7 +2,9 @@ package com.example.haengsha.ui.uiComponents
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,6 +15,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -28,11 +31,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.haengsha.model.dataSource.SignupInfo
+import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.HaengshaGrey
 import com.example.haengsha.ui.theme.HaengshaTheme
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.md_theme_light_background
-import com.example.haengsha.ui.theme.md_theme_light_primaryContainer
 import com.example.haengsha.ui.theme.poppins
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -102,13 +105,27 @@ fun dropDown(category: String): String {
                 options.forEach { selectionOption ->
                     DropdownMenuItem(
                         modifier = Modifier
-                            .height(60.dp),
-                        text = { Text(selectionOption) },
+                            .height(60.dp)
+                            .padding(horizontal = 5.dp),
+                        text = {
+                            Text(
+                                text = selectionOption,
+                                fontFamily = poppins,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 16.sp
+                            )
+                        },
                         onClick = {
                             selectedOptionText = selectionOption
                             expanded = false
                         }
                     )
+                    if (options.indexOf(selectionOption) != options.size - 1) {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 15.dp),
+                            color = Color(0xFFE0E0E0)
+                        )
+                    }
                 }
             }
         }
@@ -198,13 +215,26 @@ fun multiSelectDropDown(category: String): List<String> {
                     DropdownMenuItem(
                         modifier = Modifier
                             .height(60.dp)
-                            .background(
-                                color =
-                                if (isSelected) {
-                                    md_theme_light_primaryContainer
-                                } else Color.Transparent
-                            ),
-                        text = { Text(selectionOption) },
+                            .padding(horizontal = 10.dp)
+                            .background(color = Color.Transparent),
+                        text = {
+                            Row(
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = selectionOption,
+                                    fontFamily = poppins,
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 16.sp
+                                )
+                                CheckBox(
+                                    color = if (isSelected) ButtonBlue else Color.Transparent,
+                                    size = 20
+                                )
+                            }
+                        },
                         onClick = {
                             if (selectedOptionText.contains(selectionOption)) {
                                 isSelected = false
@@ -216,6 +246,12 @@ fun multiSelectDropDown(category: String): List<String> {
                             }
                         }
                     )
+                    if (options.indexOf(selectionOption) != options.size - 1) {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 20.dp),
+                            color = Color(0xFFE0E0E0)
+                        )
+                    }
                 }
             }
         }
