@@ -24,7 +24,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 class LoginApiViewModel(private val loginDataRepository: LoginDataRepository) : ViewModel() {
-    var loginUiState: LoginApiUiState by mutableStateOf(LoginApiUiState.Loading)
+    var loginApiUiState: LoginApiUiState by mutableStateOf(LoginApiUiState.Loading)
         private set
 
     companion object {
@@ -39,8 +39,8 @@ class LoginApiViewModel(private val loginDataRepository: LoginDataRepository) : 
 
     fun login(email: String, password: String) {
         viewModelScope.launch {
-            loginUiState = LoginApiUiState.Loading
-            loginUiState = try {
+            loginApiUiState = LoginApiUiState.Loading
+            loginApiUiState = try {
                 val loginSuccessResult = loginDataRepository.login(LoginRequest(email, password))
                 LoginApiUiState.LoginSuccess(
                     loginSuccessResult.token,
@@ -58,8 +58,8 @@ class LoginApiViewModel(private val loginDataRepository: LoginDataRepository) : 
 
     fun loginCodeVerify(email: String, code: String) {
         viewModelScope.launch {
-            loginUiState = LoginApiUiState.Loading
-            loginUiState = try {
+            loginApiUiState = LoginApiUiState.Loading
+            loginApiUiState = try {
                 val loginCodeVerificationResult =
                     loginDataRepository.loginCodeVerify(LoginCodeVerifyRequest(email, code))
                 LoginApiUiState.Success(loginCodeVerificationResult.message)
@@ -73,8 +73,8 @@ class LoginApiViewModel(private val loginDataRepository: LoginDataRepository) : 
 
     fun signupEmailVerify(email: String) {
         viewModelScope.launch {
-            loginUiState = LoginApiUiState.Loading
-            loginUiState = try {
+            loginApiUiState = LoginApiUiState.Loading
+            loginApiUiState = try {
                 val signupEmailVerifyResult = loginDataRepository.signupEmailVerify(
                     SignupEmailVerifyRequest(email)
                 )
@@ -97,8 +97,8 @@ class LoginApiViewModel(private val loginDataRepository: LoginDataRepository) : 
         interest: String
     ) {
         viewModelScope.launch {
-            loginUiState = LoginApiUiState.Loading
-            loginUiState = try {
+            loginApiUiState = LoginApiUiState.Loading
+            loginApiUiState = try {
                 val signupRegisterResult = loginDataRepository.signupRegister(
                     SignupRegisterRequest(
                         nickname,
@@ -121,8 +121,8 @@ class LoginApiViewModel(private val loginDataRepository: LoginDataRepository) : 
 
     fun checkNickname(nickname: String) {
         viewModelScope.launch {
-            loginUiState = LoginApiUiState.Loading
-            loginUiState = try {
+            loginApiUiState = LoginApiUiState.Loading
+            loginApiUiState = try {
                 val checkNicknameResult = loginDataRepository.checkNickname(
                     CheckNicknameRequest(nickname)
                 )
@@ -137,8 +137,8 @@ class LoginApiViewModel(private val loginDataRepository: LoginDataRepository) : 
 
     fun findEmailVerify(email: String) {
         viewModelScope.launch {
-            loginUiState = LoginApiUiState.Loading
-            loginUiState = try {
+            loginApiUiState = LoginApiUiState.Loading
+            loginApiUiState = try {
                 val findEmailVerifyResult = loginDataRepository.findEmailVerify(
                     FindEmailVerifyRequest(email)
                 )
@@ -153,14 +153,29 @@ class LoginApiViewModel(private val loginDataRepository: LoginDataRepository) : 
 
     fun findChangePassword(email: String, newPassword: String, newPasswordAgain: String) {
         viewModelScope.launch {
-            loginUiState = LoginApiUiState.Loading
-            loginUiState = try {
+            loginApiUiState = LoginApiUiState.Loading
+            loginApiUiState = try {
                 val findChangePasswordResult = loginDataRepository.findChangePassword(
                     FindChangePasswordRequest(email, newPassword, newPasswordAgain)
                 )
                 LoginApiUiState.Success(findChangePasswordResult.message)
             } catch (e: HttpException) {
                 LoginApiUiState.HttpError("입력한 정보를 확인해주세요")
+            } catch (e: IOException) {
+                LoginApiUiState.NetworkError
+            }
+        }
+    }
+
+    fun logout(token: String) {
+        viewModelScope.launch {
+            loginApiUiState = LoginApiUiState.Loading
+            loginApiUiState = try {
+                val authToken = "Token $token"
+                loginDataRepository.logout(authToken)
+                LoginApiUiState.Success("로그아웃 성공")
+            } catch (e: HttpException) {
+                LoginApiUiState.HttpError("로그아웃에 실패하였습니다. 다시 시도해주세요")
             } catch (e: IOException) {
                 LoginApiUiState.NetworkError
             }

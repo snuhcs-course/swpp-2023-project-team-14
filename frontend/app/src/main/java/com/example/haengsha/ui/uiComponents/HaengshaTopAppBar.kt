@@ -13,9 +13,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.haengsha.R
 import com.example.haengsha.ui.theme.md_theme_light_primaryContainer
 import com.example.haengsha.ui.theme.poppins
 
@@ -24,7 +27,8 @@ import com.example.haengsha.ui.theme.poppins
 fun HaengshaTopAppBar(
     currentScreen: String,
     canNavigateBack: Boolean,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    logout: () -> Unit
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -49,7 +53,18 @@ fun HaengshaTopAppBar(
                 }
             }
         },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(md_theme_light_primaryContainer)
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(md_theme_light_primaryContainer),
+        actions = {
+            IconButton(
+                onClick = logout
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.logout_icon),
+                    contentDescription = "logout icon",
+                )
+            }
+        }
+
 //        TODO setting 화면 가능하면 추가
 //        actions = {
 //            if (!isSettingScreen) {
