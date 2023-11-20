@@ -68,7 +68,7 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
         viewModelScope.launch {
             boardDetailUiState = BoardDetailUiState.Loading
             boardDetailUiState = try {
-                val authToken = "Token: $token"
+                val authToken = "Token $token"
                 val boardDetailResult = boardDataRepository.getBoardDetail(authToken, postId)
                 BoardDetailUiState.BoardDetailResult(boardDetailResult)
             } catch (e: HttpException) {
@@ -176,5 +176,9 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
                 BoardListUiState.Error
             }
         }
+    }
+
+    fun resetBoardListUiState() {
+        boardListUiState = BoardListUiState.Loading
     }
 }

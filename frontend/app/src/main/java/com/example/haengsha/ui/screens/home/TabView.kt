@@ -22,6 +22,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
@@ -52,10 +53,16 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.haengsha.R
+import com.example.haengsha.model.network.apiService.stringToDate
+import com.example.haengsha.model.route.BoardRoute
+import com.example.haengsha.model.uiState.recommendation.RecommendationApiUiState
+import com.example.haengsha.model.viewModel.event.RecommendationApiViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.LikePink
+import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.md_theme_light_onSurfaceVariant
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.boardList
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -80,9 +87,14 @@ data class EventCardData(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate) {
+fun TabView(
+    sharedViewModel: SharedViewModel,
+    recommendationApiViewModel: RecommendationApiViewModel,
+    selectedDate: LocalDate
+) {
     val academicItems by sharedViewModel.academicItems.observeAsState()
     val festivalItems by sharedViewModel.festivalItems.observeAsState()
+    val recommendationApiUiState = recommendationApiViewModel.recommendationUiState
     var showDialog by remember { mutableStateOf(false) }
     var selectedEvent: EventCardData? by remember { mutableStateOf(null) }
     var showEventCardPopup by remember { mutableStateOf(false) }
@@ -106,6 +118,7 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate) {
     val coroutineScope = rememberCoroutineScope()
 
     val eventContext = LocalContext.current
+
 
     Column(modifier = Modifier.fillMaxSize()) {
         // Tab row
@@ -255,42 +268,40 @@ fun TabView(sharedViewModel: SharedViewModel, selectedDate: LocalDate) {
                         .verticalScroll(recommendScrollState),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    EventCard( // Demo 용으로 필요하면 추가
-                        organizer = "수리과학부",
-                        eventTitle = "수리과학부 강연",
-                        startDate = LocalDate.now().plusDays(5),
-                        endDate = LocalDate.now().plusDays(5),
-                        likes = 28
-                    )
-                    EventCard(
-                        organizer = "데이터사이언스 대학원",
-                        eventTitle = "인공지능의 투명성: 소셜 봇 대응의 최선의 방법",
-                        startDate = LocalDate.now().plusDays(1),
-                        endDate = LocalDate.now().plusDays(1),
-                        likes = 52
-                    )
-                    EventCard(
-                        organizer = "대학생문화원",
-                        eventTitle = "대학생문화원 자살예방교육",
-                        startDate = LocalDate.now().plusDays(3),
-                        endDate = LocalDate.now().plusDays(15),
-                        likes = 11
-                    )
-                    EventCard(
-                        organizer = "통일평화연구원",
-                        eventTitle = "통일평화연구원 통일학포럼",
-                        startDate = LocalDate.now(),
-                        endDate = LocalDate.now().plusDays(1),
-                        likes = 173
-                    )
-                    EventCard(
-                        organizer = "경영학과",
-                        eventTitle = "삼성 파운드리의 현재와 미래",
-                        startDate = LocalDate.now().plusDays(2),
-                        endDate = LocalDate.now().plusDays(2),
-                        likes = 81
-                    )
 
+                    when (recommendationApiUiState) {
+                        is RecommendationApiUiState.RecommendationListResult -> {
+                            for (i in recommendationApiUiState.recommendationList.indices) {
+                                val recommendationItem =
+                                    recommendationApiUiState.recommendationList[i]
+                                val startDate =
+                                    stringToDate(recommendationItem.eventDurations[0].eventDay)
+                                var endDate = startDate
+                                if (recommendationItem.eventDurations.size > 1) {
+                                    endDate =
+                                        stringToDate(recommendationItem.eventDurations[recommendationItem.eventDurations.size - 1].eventDay)
+                                }
+
+                                EventCard(
+                                    organizer = recommendationItem.author.nickname,
+                                    eventTitle = recommendationItem.title,
+                                    startDate = startDate,
+                                    endDate = endDate,
+                                    likes = recommendationItem.likeCount,
+                                )
+                            }
+                        }
+
+                        else -> {
+//                            EventCard( // Demo 용으로 필요하면 추가
+//                                organizer = "수리과학부",
+//                                eventTitle = "수리과학부 강연",
+//                                startDate = LocalDate.now().plusDays(5),
+//                                endDate = LocalDate.now().plusDays(5),
+//                                likes = 28
+//                            )
+                        }
+                    }
                 }
 
             },

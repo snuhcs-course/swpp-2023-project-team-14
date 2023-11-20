@@ -278,7 +278,10 @@ fun boardScreen(
                 boardViewModel = boardViewModel,
                 boardUiState = boardUiState.value,
                 context = boardContext,
-                onSubmit = { boardApiViewModel.searchEvent(it) },
+                onSubmit = {
+                    boardApiViewModel.searchEvent(it)
+                    boardViewModel.updateInitialState()
+                },
                 onDismissRequest = { filterModal = false },
                 onStartDatePick = { startDatePick = true },
                 onEndDatePick = { endDatePick = true }

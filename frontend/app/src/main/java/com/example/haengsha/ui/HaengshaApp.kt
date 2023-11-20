@@ -22,6 +22,7 @@ import com.example.haengsha.model.viewModel.NavigationViewModel
 import com.example.haengsha.model.viewModel.UserViewModel
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.model.viewModel.board.BoardViewModel
+import com.example.haengsha.model.viewModel.event.RecommendationApiViewModel
 import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.screens.dashBoard.Board
 import com.example.haengsha.ui.screens.favorite.Favorite
@@ -42,6 +43,8 @@ fun HaengshaApp() {
     val boardApiViewModel: BoardApiViewModel = viewModel(factory = BoardApiViewModel.Factory)
     val navigationViewModel: NavigationViewModel = viewModel()
     val navigationUiState by navigationViewModel.uiState.collectAsState()
+    val recommendationApiViewModel: RecommendationApiViewModel =
+        viewModel(factory = RecommendationApiViewModel.Factory)
 
     val mainNavController = rememberNavController()
     val backStackEntry = mainNavController.currentBackStackEntryAsState()
@@ -164,6 +167,7 @@ fun HaengshaApp() {
             ) {
                 navigationViewModel.updateRouteUiState("Main", MainRoute.Home.route)
                 Home(
+                    recommendationApiViewModel = recommendationApiViewModel,
                     innerPadding = innerPadding,
                     userUiState = userUiState,
                 )
@@ -288,6 +292,8 @@ fun HaengshaApp() {
             when (loginApiUiState) {
                 is LoginApiUiState.Success -> {
                     userViewModel.resetUserData()
+                    boardViewModel.resetBoardUiState()
+                    boardApiViewModel.resetBoardListUiState()
                     mainNavController.navigate(MainRoute.Login.route) {
                         popUpTo(mainNavController.graph.id) { inclusive = true }
                     }

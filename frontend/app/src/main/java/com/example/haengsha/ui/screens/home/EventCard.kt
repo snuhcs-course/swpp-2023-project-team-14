@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.example.haengsha.ui.theme.LikePink
 import com.example.haengsha.ui.theme.md_theme_light_onSurfaceVariant
 import com.example.haengsha.ui.theme.poppins
+import java.io.Serializable
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
