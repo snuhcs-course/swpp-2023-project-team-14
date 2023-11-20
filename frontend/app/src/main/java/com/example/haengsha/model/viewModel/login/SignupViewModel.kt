@@ -60,17 +60,17 @@ class FindPasswordViewModel : ViewModel() {
     val uiState: StateFlow<FindPasswordUiState> = _uiState.asStateFlow()
 
     fun updateEmail(email: String = "") {
-        updateFindPasswordData(email, "email")
+        updateFindPasswordData(email)
     }
 
     fun resetFindPasswordData() {
         _uiState.value = FindPasswordUiState()
     }
 
-    private fun updateFindPasswordData(newFindPasswordData: String, type: String) {
+    private fun updateFindPasswordData(newFindPasswordData: String) {
         _uiState.update { currentState ->
             currentState.copy(
-                email = if (type == "email") newFindPasswordData else currentState.email
+                email = newFindPasswordData
             )
         }
     }

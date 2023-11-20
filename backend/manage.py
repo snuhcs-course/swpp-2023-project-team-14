@@ -5,6 +5,7 @@ import sys
 from decouple import config 
 
 
+
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'haengsha.settings')

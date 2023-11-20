@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LoginResponse(
     val token: String,
+    val nickname: String,
     val role: String,
     val message: String
 )
@@ -16,6 +17,7 @@ data class LoginRequest(
     val password: String
 )
 
+// TODO 쓸모없는 response 받지 말기
 @Serializable
 data class LoginCodeVerifyResponse(
     val message: String

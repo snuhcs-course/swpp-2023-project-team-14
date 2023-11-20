@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haengsha.model.route.LoginRoute
-import com.example.haengsha.model.uiState.login.LoginUiState
-import com.example.haengsha.model.viewModel.login.LoginViewModel
+import com.example.haengsha.model.uiState.login.LoginApiUiState
+import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
@@ -41,16 +42,16 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun SignupEmailVerificationScreen(
-    loginViewModel: LoginViewModel,
-    loginUiState: LoginUiState,
+    loginApiViewModel: LoginApiViewModel,
+    loginUiState: LoginApiUiState,
     signupEmailUpdate: (String) -> Unit,
     loginNavController: NavController,
     loginNavBack: () -> Unit,
     loginContext: Context
 ) {
-    var emailVerifyTrigger by remember { mutableIntStateOf(0) }
-    var codeVerifyTrigger by remember { mutableIntStateOf(0) }
-    var isCodeSent by remember { mutableIntStateOf(0) }
+    var emailVerifyTrigger by remember { mutableStateOf(false) }
+    var codeVerifyTrigger by remember { mutableStateOf(false) }
+    var codeSent by remember { mutableIntStateOf(0) }
     var codeExpireTime by remember { mutableIntStateOf(180) }
     val codeExpireMinute = String.format("%02d", codeExpireTime / 60)
     val codeExpireSecond = String.format("%02d", codeExpireTime % 60)
@@ -63,7 +64,7 @@ fun SignupEmailVerificationScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 90.dp),
+            .padding(top = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(1) {
@@ -72,28 +73,29 @@ fun SignupEmailVerificationScreen(
                 text = "SNU Email 인증",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Medium,
-                fontSize = 24.sp
+                fontSize = 30.sp
             )
-            Spacer(modifier = Modifier.height(45.dp))
+            Spacer(modifier = Modifier.height(60.dp))
             Text(
                 modifier = Modifier.width(270.dp),
                 text = "SNU Email을 입력하세요.",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp
+                fontSize = 18.sp
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             emailInput = suffixTextField(
                 isEmptyError = isEmailError,
                 placeholder = "SNU Email",
-                suffix = "@snu.ac.kr"
+                //suffix = "@snu.ac.kr"
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             Box(
-                modifier = Modifier
-                    .width(270.dp)
-                    .height(20.dp)
-                    .clickable {
+                modifier = Modifier.width(270.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Text(
+                    modifier = Modifier.clickable {
                         if (emailInput.trimStart() == "") {
                             isEmailError = true
                             Toasty
@@ -101,19 +103,15 @@ fun SignupEmailVerificationScreen(
                                 .show()
                         } else {
                             isEmailError = false
-                            emailVerifyTrigger++
-                            loginViewModel.signupEmailVerify(emailInput)
+                            emailVerifyTrigger = true
                         }
                     },
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxSize(),
-                    text = "인증번호 " + if (isCodeSent == 0) "" else {
+                    text = "인증번호 " + if (codeSent == 0) "" else {
                         "재"
                     } + "발송",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 11.sp,
+                    fontSize = 14.sp,
                     textAlign = TextAlign.End,
                     color = FieldStrokeBlue
                 )
@@ -125,20 +123,20 @@ fun SignupEmailVerificationScreen(
                     text = "이미 가입된 계정입니다."
                 )
             }
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(40.dp))
             Text(
                 modifier = Modifier.width(270.dp),
                 text = "인증번호를 입력하세요.",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp
+                fontSize = 18.sp
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             codeInput = codeVerifyField(
                 isError = isCodeError,
                 placeholder = "인증번호 6자리"
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             Box(
                 modifier = Modifier
                     .width(270.dp)
@@ -146,15 +144,15 @@ fun SignupEmailVerificationScreen(
             ) {
                 Text(
                     modifier = Modifier.fillMaxSize(),
-                    text = if (isCodeSent == 0) "" else "남은 시간 $codeExpireMinute:$codeExpireSecond",
+                    text = if (codeSent == 0) "" else "남은 시간 $codeExpireMinute:$codeExpireSecond",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 11.sp,
+                    fontSize = 14.sp,
                     textAlign = TextAlign.End,
                     color = FieldStrokeBlue
                 )
             }
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(60.dp))
             CommonBlueButton(text = "다음",
                 onClick = {
                     if (emailInput.trimStart() == "") {
@@ -165,7 +163,7 @@ fun SignupEmailVerificationScreen(
                             Toast.LENGTH_SHORT,
                             true
                         ).show()
-                    } else if (isCodeSent == 0) {
+                    } else if (codeSent == 0) {
                         isEmailError = false
                         isCodeError = true
                         Toasty.error(
@@ -175,23 +173,17 @@ fun SignupEmailVerificationScreen(
                             true
                         ).show()
                     } else {
-                        codeVerifyTrigger++
-                        loginViewModel.loginCodeVerify(emailInput, codeInput)
+                        codeVerifyTrigger = true
                     }
                 })
-            Spacer(modifier = Modifier.height(45.dp))
-            Box(
-                modifier = Modifier
-                    .width(270.dp)
-                    .height(20.dp)
-                    .clickable { loginNavBack() }
-            ) {
+            Spacer(modifier = Modifier.height(60.dp))
+            Box(modifier = Modifier.wrapContentSize()) {
                 Text(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.clickable { loginNavBack() },
                     text = "이전 화면으로 돌아가기",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 15.sp,
+                    fontSize = 18.sp,
                     textAlign = TextAlign.Center,
                     textDecoration = TextDecoration.Underline
                 )
@@ -199,7 +191,7 @@ fun SignupEmailVerificationScreen(
         }
     }
 
-    LaunchedEffect(key1 = isCodeSent) {
+    LaunchedEffect(key1 = codeSent) {
         codeExpireTime = 180
         while (codeExpireTime > 0) {
             delay(1000L)
@@ -207,102 +199,100 @@ fun SignupEmailVerificationScreen(
         }
     }
 
-    if (emailVerifyTrigger > 0) {
-        LaunchedEffect(key1 = loginUiState) {
-            when (loginUiState) {
-                is LoginUiState.Success -> {
-                    Toasty
-                        .success(
-                            loginContext,
-                            "인증코드가 발송되었습니다.",
-                            Toast.LENGTH_SHORT,
-                            true
-                        )
-                        .show()
-                    isCodeSent++
-                    emailVerifyTrigger = 0
-                }
-
-                is LoginUiState.HttpError -> {
-                    if (loginUiState.message.contains("exist")) {
-                        isEmailAlreadyExistDialogVisible = true
-                    } else {
-                        Toasty
-                            .error(
-                                loginContext,
-                                loginUiState.message,
-                                Toast.LENGTH_SHORT,
-                                true
-                            )
-                            .show()
-                    }
-                    isEmailError = true
-                    emailVerifyTrigger = 0
-                }
-
-                is LoginUiState.NetworkError -> {
-                    Toasty
-                        .error(
-                            loginContext,
-                            "인터넷 연결을 확인해주세요",
-                            Toast.LENGTH_SHORT,
-                            true
-                        )
-                        .show()
-                    emailVerifyTrigger = 0
-                }
-
-                is LoginUiState.Loading -> {
-                    /* Loading State, may add some loading UI or throw error after long time */
-                }
-
-                else -> {
-                    /* Other Success State, do nothing */
-                }
+    if (emailVerifyTrigger) {
+        LaunchedEffect(Unit) { loginApiViewModel.signupEmailVerify(emailInput) }
+        when (loginUiState) {
+            is LoginApiUiState.Success -> {
+                Toasty
+                    .success(
+                        loginContext,
+                        "인증코드가 발송되었습니다.",
+                        Toast.LENGTH_SHORT,
+                        true
+                    )
+                    .show()
+                codeSent++
+                emailVerifyTrigger = false
             }
-        }
-    }
 
-    if (codeVerifyTrigger > 0) {
-        LaunchedEffect(key1 = loginUiState) {
-            when (loginUiState) {
-                is LoginUiState.Success -> {
-                    signupEmailUpdate(emailInput)
-                    loginNavController.navigate(LoginRoute.SignupPassword.route)
-                }
-
-                is LoginUiState.HttpError -> {
+            is LoginApiUiState.HttpError -> {
+                if (loginUiState.message.contains("exist")) {
+                    isEmailAlreadyExistDialogVisible = true
+                } else {
                     Toasty
-                        .error(
+                        .warning(
                             loginContext,
                             loginUiState.message,
                             Toast.LENGTH_SHORT,
                             true
                         )
                         .show()
-                    isCodeError = true
-                    codeVerifyTrigger = 0
                 }
+                isEmailError = true
+                emailVerifyTrigger = false
+            }
 
-                is LoginUiState.NetworkError -> {
-                    Toasty
-                        .error(
-                            loginContext,
-                            "인터넷 연결을 확인해주세요",
-                            Toast.LENGTH_SHORT,
-                            true
-                        )
-                        .show()
-                    codeVerifyTrigger = 0
-                }
+            is LoginApiUiState.NetworkError -> {
+                Toasty
+                    .error(
+                        loginContext,
+                        "인터넷 연결을 확인해주세요",
+                        Toast.LENGTH_SHORT,
+                        true
+                    )
+                    .show()
+                emailVerifyTrigger = false
+            }
 
-                is LoginUiState.Loading -> {
-                    /* Loading State, may add some loading UI or throw error after long time */
-                }
+            is LoginApiUiState.Loading -> {
+                /* Loading State, may add some loading UI  */
+            }
 
-                else -> {
-                    /* Other Success State, do nothing */
-                }
+            else -> {
+                /* Other Success State, do nothing */
+            }
+        }
+    }
+
+    if (codeVerifyTrigger) {
+        LaunchedEffect(Unit) { loginApiViewModel.loginCodeVerify(emailInput, codeInput) }
+        when (loginUiState) {
+            is LoginApiUiState.Success -> {
+                signupEmailUpdate(emailInput)
+                loginNavController.navigate(LoginRoute.SignupPassword.route)
+            }
+
+            is LoginApiUiState.HttpError -> {
+                Toasty
+                    .warning(
+                        loginContext,
+                        "loginUiState.message",
+                        Toast.LENGTH_SHORT,
+                        true
+                    )
+                    .show()
+                isCodeError = true
+                codeVerifyTrigger = false
+            }
+
+            is LoginApiUiState.NetworkError -> {
+                Toasty
+                    .error(
+                        loginContext,
+                        "인터넷 연결을 확인해주세요",
+                        Toast.LENGTH_SHORT,
+                        true
+                    )
+                    .show()
+                codeVerifyTrigger = false
+            }
+
+            is LoginApiUiState.Loading -> {
+                /* Loading State, may add some loading UI */
+            }
+
+            else -> {
+                /* Other Success State, do nothing */
             }
         }
     }

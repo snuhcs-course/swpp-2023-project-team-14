@@ -2,19 +2,27 @@ package com.example.haengsha.ui.uiComponents
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TextFieldDefaults.indicatorLine
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,14 +34,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.haengsha.model.network.dataModel.SearchRequest
+import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.FieldStrokeRed
 import com.example.haengsha.ui.theme.HaengshaGrey
@@ -56,7 +68,7 @@ fun commonTextField(
             Text(
                 text = placeholder,
                 fontFamily = poppins,
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Light,
                 color = PlaceholderGrey,
             )
@@ -92,7 +104,7 @@ fun codeVerifyField(
             Text(
                 text = placeholder,
                 fontFamily = poppins,
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Light,
                 color = PlaceholderGrey,
             )
@@ -117,7 +129,7 @@ fun codeVerifyField(
 fun suffixTextField(
     isEmptyError: Boolean,
     placeholder: String,
-    suffix: String
+//    suffix: String
 ): String {
     var input by rememberSaveable { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
@@ -134,21 +146,22 @@ fun suffixTextField(
             Text(
                 text = placeholder,
                 fontFamily = poppins,
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Light,
                 color = PlaceholderGrey,
             )
         },
-        suffix = {
-            Text(
-                text = suffix,
-                fontFamily = poppins,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Light,
-                fontStyle = FontStyle.Italic,
-                color = PlaceholderGrey,
-            )
-        },
+        // 그룹 유저는 SNU 메일이 아닐 수 있음 & 개인 유저도 뒤에 @snu.ac.kr가 자동 입력되는지 모를 수 있음
+//        suffix = {
+//            Text(
+//                text = suffix,
+//                fontFamily = poppins,
+//                fontSize = 15.sp,
+//                fontWeight = FontWeight.Light,
+//                fontStyle = FontStyle.Italic,
+//                color = PlaceholderGrey,
+//            )
+//        },
         isError = isError,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Email,
@@ -185,7 +198,7 @@ fun passwordTextField(
             Text(
                 text = placeholder,
                 fontFamily = poppins,
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Light,
                 color = PlaceholderGrey
             )
@@ -243,7 +256,7 @@ fun passwordSetField(
             Text(
                 text = placeholder,
                 fontFamily = poppins,
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Light,
                 color = PlaceholderGrey
             )
@@ -288,7 +301,7 @@ fun passwordCheckTextField(
             Text(
                 text = placeholder,
                 fontFamily = poppins,
-                fontSize = 13.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Light,
                 color = PlaceholderGrey,
             )
@@ -311,8 +324,13 @@ fun passwordCheckTextField(
 }
 
 @Composable
-fun searchBar(): String {
-    var input by rememberSaveable { mutableStateOf("") }
+fun SearchBar(
+    boardViewModel: BoardViewModel,
+    keyword: String,
+    onSubmit: (SearchRequest) -> Unit
+) {
+    var input by remember { mutableStateOf(keyword) }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     OutlinedTextField(
         modifier = Modifier
@@ -336,7 +354,22 @@ fun searchBar(): String {
         },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Done
+            imeAction = ImeAction.Search
+        ),
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                boardViewModel.updateKeyword(input)
+                onSubmit(
+                    SearchRequest(
+                        boardViewModel.uiState.value.token,
+                        input,
+                        boardViewModel.uiState.value.isFestival,
+                        boardViewModel.uiState.value.startDate,
+                        boardViewModel.uiState.value.endDate
+                    )
+                )
+                keyboardController?.hide()
+            }
         ),
         singleLine = true,
         shape = RoundedCornerShape(30.dp),
@@ -345,7 +378,6 @@ fun searchBar(): String {
             unfocusedBorderColor = HaengshaGrey,
         )
     )
-    return input
 }
 
 @Composable
@@ -379,14 +411,84 @@ fun commentTextField(): String {
     return input
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun customTextField(placeholder: String, enabled: Boolean): String {
+    var input by remember { mutableStateOf("") }
+    val interactionSource = remember { MutableInteractionSource() }
+
+    BasicTextField(
+        value = input,
+        onValueChange = { input = it },
+        modifier = Modifier
+            .indicatorLine(
+                enabled = false,
+                isError = false,
+                interactionSource = interactionSource,
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                )
+            )
+            .fillMaxWidth()
+            .height(40.dp)
+            .background(color = Color(0x00F8F8F8)),
+        enabled = enabled,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Done
+        ),
+        singleLine = true,
+        textStyle = TextStyle(
+            color = Color.Black,
+            fontSize = 16.sp,
+            fontFamily = poppins,
+            fontWeight = FontWeight.Normal,
+        ),
+        decorationBox = { innerTextField ->
+            TextFieldDefaults.DecorationBox(
+                value = input,
+                innerTextField = innerTextField,
+                enabled = enabled,
+                singleLine = true,
+                visualTransformation = VisualTransformation.None,
+                interactionSource = interactionSource,
+                contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(
+                    top = 0.dp,
+                    bottom = 0.dp
+                ),
+                placeholder = {
+                    Text(
+                        text = placeholder,
+                        color = if (enabled) HaengshaGrey else Color.Black,
+                        fontSize = 16.sp,
+                        fontFamily = poppins,
+                        fontWeight = FontWeight.Normal,
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    focusedContainerColor = Color(0x00F8F8F8),
+                    unfocusedContainerColor = Color(0x00F8F8F8),
+                    disabledContainerColor = Color(0x00F8F8F8)
+                )
+            )
+        }
+    )
+    return input
+}
+
 @Preview(showBackground = true)
 @Composable
-fun CommonTextFieldPreview() {
+fun TextFieldPreview() {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        commonTextField(false, "placeholder")
+        customTextField("자하연 앞", true)
     }
 }

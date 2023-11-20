@@ -1,89 +1,54 @@
 package com.example.haengsha.model.viewModel.board
 
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.haengsha.HaengshaApplication
-import com.example.haengsha.model.dataSource.BoardDataRepository
-import com.example.haengsha.model.uiState.board.BoardDetailUiState
-import com.example.haengsha.model.uiState.board.BoardListUiState
-import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.io.IOException
+import com.example.haengsha.model.uiState.board.BoardUiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
-class BoardViewModel(private val boardDataRepository: BoardDataRepository) : ViewModel() {
-    var boardListUiState: BoardListUiState by mutableStateOf(BoardListUiState.Loading)
-        private set
+class BoardViewModel : ViewModel() {
+    private val _uiState = MutableStateFlow(BoardUiState())
+    val uiState = _uiState.asStateFlow()
 
-    var boardDetailUiState: BoardDetailUiState by mutableStateOf(BoardDetailUiState.Loading)
-        private set
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = this[APPLICATION_KEY] as HaengshaApplication
-                val boardDataRepository = application.container.boardDataRepository
-                BoardViewModel(boardDataRepository)
-            }
+    fun saveToken(token: String) {
+        val authToken = "Token $token"
+        _uiState.update { currentState ->
+            currentState.copy(
+                token = authToken,
+                keyword = currentState.keyword,
+                isFestival = currentState.isFestival,
+                startDate = currentState.startDate,
+                endDate = currentState.endDate,
+                initialState = currentState.initialState
+            )
         }
     }
 
-    fun getBoardList(startDate: String) {
-        viewModelScope.launch {
-            boardListUiState = BoardListUiState.Loading
-            boardListUiState = try {
-                val boardListResult = boardDataRepository.getBoardList(startDate)
-                BoardListUiState.BoardListResult(boardListResult)
-            } catch (e: HttpException) {
-                BoardListUiState.HttpError
-            } catch (e: IOException) {
-                BoardListUiState.NetworkError
-            } catch (e: Exception) {
-                e.message?.let { Log.d("board", it) }
-                BoardListUiState.Error
-            }
-        }
+    fun updateKeyword(newKeyword: String) {
+        updateSearchParameter(newKeyword, "keyword")
     }
 
-    fun getBoardDetail(token: String, postId: Int) {
-        viewModelScope.launch {
-            boardDetailUiState = try {
-                val authToken = "Token: $token"
-                val boardDetailResult = boardDataRepository.getBoardDetail(authToken, postId)
-                BoardDetailUiState.BoardDetailResult(boardDetailResult)
-            } catch (e: HttpException) {
-                BoardDetailUiState.HttpError
-            } catch (e: IOException) {
-                BoardDetailUiState.NetworkError
-            } catch (e: Exception) {
-                e.message?.let { Log.d("detail", it) }
-                BoardDetailUiState.Error
-            }
-        }
+    fun updateIsFestival(newIsFestival: Int) {
+        updateSearchParameter(newIsFestival.toString(), "isFestival")
     }
 
-    fun getFavoriteBoardList(token: String) {
-        viewModelScope.launch {
-            boardListUiState = BoardListUiState.Loading
-            boardListUiState = try {
-                val authToken = "Token: $token"
-                val boardListResult = boardDataRepository.getFavoriteList(authToken)
-                BoardListUiState.BoardListResult(boardListResult)
-            } catch (e: HttpException) {
-                BoardListUiState.HttpError
-            } catch (e: IOException) {
-                BoardListUiState.NetworkError
-            } catch (e: Exception) {
-                e.message?.let { Log.d("board", it) }
-                BoardListUiState.Error
-            }
+    fun updateStartDate(newStartDate: String) {
+        updateSearchParameter(newStartDate, "startDate")
+    }
+
+    fun updateEndDate(newEndDate: String) {
+        updateSearchParameter(newEndDate, "endDate")
+    }
+
+    private fun updateSearchParameter(newParameter: String, type: String) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                keyword = if (type == "keyword") newParameter else currentState.keyword,
+                isFestival = if (type == "isFestival") newParameter.toInt() else currentState.isFestival,
+                startDate = if (type == "startDate") newParameter else currentState.startDate,
+                endDate = if (type == "endDate") newParameter else currentState.endDate,
+                initialState = false
+            )
         }
     }
 }

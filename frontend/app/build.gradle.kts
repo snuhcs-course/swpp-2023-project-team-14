@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.haengsha"
-        minSdk = 24
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -48,6 +48,9 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -66,6 +69,7 @@ dependencies {
     implementation("androidx.navigation:navigation-runtime-ktx:2.7.5")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.5")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.33.2-alpha")
 
     implementation("androidx.room:room-ktx:2.6.0")
     implementation("androidx.work:work-runtime-ktx:2.8.1")
@@ -77,8 +81,10 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.2")
+    implementation("com.squareup.okhttp3:okhttp-urlconnection:4.9.1")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.1")
 
     implementation("com.github.GrenderG:Toasty:1.5.2")
     // The view calendar library

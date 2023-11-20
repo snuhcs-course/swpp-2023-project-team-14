@@ -32,7 +32,7 @@ fun SignupCompleteScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 200.dp),
+            .padding(top = 240.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -44,14 +44,14 @@ fun SignupCompleteScreen(
                         color = Color(0xFF0089ED)
                     )
                 ) { append("행샤") }
-                append(" 가입이\n완료되었습니다!")
+                append(" 가입이\n\n\n완료되었습니다!")
             },
             fontFamily = poppins,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Normal,
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.height(100.dp))
+        Spacer(modifier = Modifier.height(120.dp))
         CommonBlueButton(text = "로그인 하러 가기") {
             loginNavController.navigate(LoginRoute.Login.route) {
                 popUpTo(LoginRoute.Login.route) { inclusive = true }

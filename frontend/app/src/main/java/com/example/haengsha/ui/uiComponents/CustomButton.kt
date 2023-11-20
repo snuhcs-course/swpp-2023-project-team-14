@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -27,8 +26,6 @@ import androidx.compose.ui.unit.sp
 import com.example.haengsha.R
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.ButtonGrey
-import com.example.haengsha.ui.theme.CommentBlue
-import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.poppins
 
 @Composable
@@ -46,7 +43,7 @@ fun CommonBlueButton(text: String, onClick: () -> Unit) {
             text = text,
             color = Color.White,
             fontFamily = poppins,
-            fontSize = 18.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center
         )
@@ -67,7 +64,7 @@ fun CommonGreyButton(text: String) {
             text = text,
             color = Color.White,
             fontFamily = poppins,
-            fontSize = 18.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center
         )

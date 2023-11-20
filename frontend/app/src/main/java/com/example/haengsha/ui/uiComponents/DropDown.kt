@@ -2,11 +2,12 @@ package com.example.haengsha.ui.uiComponents
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,6 +15,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -28,14 +30,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.haengsha.model.dataSource.DateInfo
 import com.example.haengsha.model.dataSource.SignupInfo
-import com.example.haengsha.ui.theme.HaengshaBlue
+import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.HaengshaGrey
 import com.example.haengsha.ui.theme.HaengshaTheme
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.md_theme_light_background
-import com.example.haengsha.ui.theme.md_theme_light_primaryContainer
 import com.example.haengsha.ui.theme.poppins
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,7 +78,7 @@ fun dropDown(category: String): String {
                         modifier = Modifier.padding(top = 2.dp),
                         text = category,
                         fontFamily = poppins,
-                        fontSize = 13.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Light,
                         color = PlaceholderGrey,
                     )
@@ -105,13 +105,27 @@ fun dropDown(category: String): String {
                 options.forEach { selectionOption ->
                     DropdownMenuItem(
                         modifier = Modifier
-                            .height(60.dp),
-                        text = { Text(selectionOption) },
+                            .height(60.dp)
+                            .padding(horizontal = 5.dp),
+                        text = {
+                            Text(
+                                text = selectionOption,
+                                fontFamily = poppins,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 16.sp
+                            )
+                        },
                         onClick = {
                             selectedOptionText = selectionOption
                             expanded = false
                         }
                     )
+                    if (options.indexOf(selectionOption) != options.size - 1) {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 15.dp),
+                            color = Color(0xFFE0E0E0)
+                        )
+                    }
                 }
             }
         }
@@ -163,7 +177,7 @@ fun multiSelectDropDown(category: String): List<String> {
                         modifier = Modifier.padding(top = 2.dp),
                         text = category,
                         fontFamily = poppins,
-                        fontSize = 13.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Light,
                         color = PlaceholderGrey,
                     )
@@ -201,13 +215,26 @@ fun multiSelectDropDown(category: String): List<String> {
                     DropdownMenuItem(
                         modifier = Modifier
                             .height(60.dp)
-                            .background(
-                                color =
-                                if (isSelected) {
-                                    md_theme_light_primaryContainer
-                                } else Color.Transparent
-                            ),
-                        text = { Text(selectionOption) },
+                            .padding(horizontal = 10.dp)
+                            .background(color = Color.Transparent),
+                        text = {
+                            Row(
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = selectionOption,
+                                    fontFamily = poppins,
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 16.sp
+                                )
+                                CheckBox(
+                                    color = if (isSelected) ButtonBlue else Color.Transparent,
+                                    size = 20
+                                )
+                            }
+                        },
                         onClick = {
                             if (selectedOptionText.contains(selectionOption)) {
                                 isSelected = false
@@ -219,87 +246,12 @@ fun multiSelectDropDown(category: String): List<String> {
                             }
                         }
                     )
-                }
-            }
-        }
-    }
-    return selectedOptionText
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun searchFilterDropDown(type: String): String {
-    val options =
-        if (type == "연") {
-            DateInfo.year
-        } else {
-            DateInfo.month
-        }
-    var expanded by rememberSaveable { mutableStateOf(false) }
-    var selectedOptionText by rememberSaveable { mutableStateOf("") }
-
-    Box(
-        modifier = Modifier.size(width = 165.dp, height = 25.dp)
-    ) {
-        ExposedDropdownMenuBox(
-            modifier = Modifier
-                .border(
-                    width = 1.dp,
-                    color = HaengshaBlue,
-                    shape = RoundedCornerShape(10.dp)
-                )
-                .wrapContentHeight(),
-            expanded = expanded,
-            onExpandedChange = {
-                expanded = !expanded
-            }
-        ) {
-            TextField(
-                modifier = Modifier
-                    .menuAnchor()
-                    .height(25.dp),
-                readOnly = true,
-                value = selectedOptionText,
-                onValueChange = { },
-                placeholder = {
-                    // TODO placeholder가 보이질 않아요...
-                    Text(
-                        text = if (selectedOptionText == "") "선택 안 함" else selectedOptionText,
-                        fontFamily = poppins,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Light,
-                        color = HaengshaBlue,
-                    )
-                },
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(
-                        expanded = expanded
-                    )
-                },
-                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color.Transparent,
-                    unfocusedBorderColor = Color.Transparent,
-                )
-            )
-            ExposedDropdownMenu(
-                modifier = Modifier.background(
-                    color = md_theme_light_background,
-                ),
-                expanded = expanded,
-                onDismissRequest = {
-                    expanded = false
-                }
-            ) {
-                options.forEach { selectionOption ->
-                    DropdownMenuItem(
-                        modifier = Modifier
-                            .height(25.dp),
-                        text = { Text(selectionOption) },
-                        onClick = {
-                            selectedOptionText = selectionOption
-                            expanded = false
-                        }
-                    )
+                    if (options.indexOf(selectionOption) != options.size - 1) {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 20.dp),
+                            color = Color(0xFFE0E0E0)
+                        )
+                    }
                 }
             }
         }
@@ -316,7 +268,7 @@ fun PreviewExposedDropDown() {
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            searchFilterDropDown(type = "연")
+            dropDown("학과")
         }
     }
 }
