@@ -54,8 +54,10 @@ def recover_scale(df, randomness=0):
     return np.vstack(df)
 
 if __name__ == '__main__':
-    userEmbeddingsDf = pd.read_csv('userEmbedding.csv')
-    itemEmbeddingsDf = pd.read_csv('eventEmbedding.csv')
+
+    data_dir = "../data/"
+    userEmbeddingsDf = pd.read_csv(data_dir+'userEmbedding.csv')
+    itemEmbeddingsDf = pd.read_csv(data_dir+'eventEmbedding.csv')
 
     
     #HYPER-PARAMETERS
@@ -102,10 +104,10 @@ if __name__ == '__main__':
     index = np.arange(1, allRecommends.shape[0] + 1).reshape(-1, 1)
     allRecommends_with_index = np.hstack((index, allRecommends))
     header = "Index, Recommend1, Recommend2, Recommend3, Recommend4,Recommend5, Recommend6, Recommend7, Recommend8, Recommend9, Recommend10"
-    np.savetxt('all_recommends.csv', allRecommends_with_index, delimiter=",", header=header, comments='', fmt='%s')
+    np.savetxt(data_dir+'all_recommends.csv', allRecommends_with_index, delimiter=",", header=header, comments='', fmt='%s')
 
     allRecommendsIndices = np.asarray([get_recommend(userIdx, False, True) for userIdx in range(len(userkoBertEmbeddings))])
     recommended_items_by_index = np.hstack((index, allRecommendsIndices))
     # note: all_recommends_index = (index of event in eventData.csv) - 2
     # reason: all_recommends_index gives zero-based indices to events in eventData.csv, but the events in eventData.csv have one-based indices that also takes the header into account.
-    np.savetxt('all_recommends_index.csv', recommended_items_by_index, delimiter=",", header=header, comments='', fmt='%s')
+    np.savetxt(data_dir+'all_recommends_index.csv', recommended_items_by_index, delimiter=",", header=header, comments='', fmt='%s')

@@ -12,12 +12,13 @@ def getEmbedding(sentence, model, tokenizer):
     embedding = output.last_hidden_state.mean(dim=1).detach().numpy()
     return embedding
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('type', type=int)
     args = parser.parse_args()
     dataType = args.type
     
+    data_dir = "../data/"
     # Load Pretrained Models
     koelectra_model_name = "monologg/koelectra-base-v3-discriminator"
     kobert_model_name = "snunlp/KR-BERT-char16424"
@@ -31,11 +32,11 @@ if __name__ == '__main__':
     
     ## DataType: User(1), Event(0)
     if dataType == 1:
-        beforePreprocessFileName = "userData.csv"
-        afterPreprocessFileName = "userEmbedding.csv"
+        beforePreprocessFileName = data_dir+"userData.csv"
+        afterPreprocessFileName = data_dir+"userEmbedding.csv"
     elif dataType == 0:
-        beforePreprocessFileName = "eventData.csv"
-        afterPreprocessFileName = "eventEmbedding.csv"
+        beforePreprocessFileName = data_dir+"eventData.csv"
+        afterPreprocessFileName = data_dir+"eventEmbedding.csv"
     else:
         raise Exception
         
@@ -47,3 +48,6 @@ if __name__ == '__main__':
     df['koBertEmbedding'] = df['description'].apply(lambda x: getEmbedding(x, kobert_model, kobert_tokenizer))
 
     df.to_csv(afterPreprocessFileName, index=False)
+
+if __name__ == '__main__':
+    main()
