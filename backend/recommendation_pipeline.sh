@@ -23,6 +23,6 @@ while true; do
         python3 transfer.py -l
         echo "[$current_timestamp] Finished!"
     fi
-    sleep 60
+    sleep 3600
 done
 
