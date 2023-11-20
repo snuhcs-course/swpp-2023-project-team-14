@@ -63,6 +63,7 @@ def save_event_data(save_dir, filename='eventData.csv'):
         event_duration = post.event_durations.first()         # Retrieve the starting date only from event_duration
 
         post_info = {
+            'post_id': post.id,
             '구분': category,
             '행사명': post.title,
             '날짜': event_duration.event_day if event_duration else "",

@@ -4,6 +4,9 @@ from transformers import ElectraTokenizer, ElectraModel, BertTokenizer, BertMode
 import torch
 import argparse
 
+# Max Sequence
+max_sequence_length = 512
+
 def getEmbedding(sentence, model, tokenizer):
     sentence = sentence[:max_sequence_length]
     tokens = tokenizer(sentence, return_tensors="pt", padding=True, truncation=True)
@@ -18,7 +21,8 @@ def main():
     args = parser.parse_args()
     dataType = args.type
     
-    data_dir = "../data/"
+    data_dir = "./data/"
+
     # Load Pretrained Models
     koelectra_model_name = "monologg/koelectra-base-v3-discriminator"
     kobert_model_name = "snunlp/KR-BERT-char16424"
@@ -27,8 +31,7 @@ def main():
     koelectra_model = ElectraModel.from_pretrained(koelectra_model_name)
     kobert_model = BertModel.from_pretrained(kobert_model_name)
 
-    # Max Sequence
-    max_sequence_length = 512
+
     
     ## DataType: User(1), Event(0)
     if dataType == 1:
