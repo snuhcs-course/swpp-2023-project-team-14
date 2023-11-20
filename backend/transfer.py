@@ -3,6 +3,7 @@ import os, environ
 import pymysql
 import pandas as pd
 import argparse
+from django.utils import timezone
 
 pymysql.install_as_MySQLdb()
 
@@ -53,7 +54,8 @@ def save_user_data(save_dir, filename='userData.csv'):
     return filename
 
 def save_event_data(save_dir, filename='eventData.csv'):
-    posts = Post.objects.all()
+    today = timezone.now().date()
+    posts = Post.objects.filter(event_durations__event_day__gte=today).distinct()
     event_data = []
 
     for post in posts:
