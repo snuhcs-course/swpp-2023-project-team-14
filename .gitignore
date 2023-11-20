@@ -14,6 +14,11 @@ swpp-env/
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+/.idea/gradle.xml
+/.idea/misc.xml
+/.idea/compiler.xml
+.idea/*
+
 .DS_Store
 /build
 /captures
