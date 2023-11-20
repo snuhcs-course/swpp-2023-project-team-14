@@ -105,7 +105,8 @@ if __name__ == '__main__':
     ## Get List of recommendations for All Users
     allRecommends = np.asarray([get_recommend(userIdx, False, False) for userIdx in range(len(userkoBertEmbeddings))])
     allRecommends = np.char.replace(np.char.replace(np.char.replace(np.char.replace(allRecommends.astype(str), ',', ''), '\'', ''), '\"', ''), "\n", '')
-    
+    allRecommends = np.array([np.concatenate([rec, np.full(10 - len(rec), -1)]) for rec in allRecommends])
+
     index = np.arange(1, allRecommends.shape[0] + 1).reshape(-1, 1)
     allRecommends_with_index = np.hstack((index, allRecommends))
     header = "Index, userIdx, Recommend1, Recommend2, Recommend3, Recommend4, Recommend5, Recommend6, Recommend7, Recommend8, Recommend9, Recommend10"
@@ -113,6 +114,7 @@ if __name__ == '__main__':
     np.savetxt(data_dir+'all_recommends.csv', allRecommends_with_index, delimiter=",", header=header, comments='', fmt='%s')
 
     allRecommendsIndices = np.asarray([get_recommend(userIdx, False, True) for userIdx in range(len(userkoBertEmbeddings))])
+    allRecommendsIndices = np.array([np.concatenate([rec, np.full(10 - len(rec), -1)]) for rec in allRecommendsIndices])
     recommended_items_by_index = np.hstack((index, np.array(userEmbeddingsDf["user_id"]).reshape(-1,1), allRecommendsIndices))
     # note: all_recommends_index = (index of event in eventData.csv) - 2
     # reason: all_recommends_index gives zero-based indices to events in eventData.csv, but the events in eventData.csv have one-based indices that also takes the header into account.
