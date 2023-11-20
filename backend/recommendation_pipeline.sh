@@ -2,7 +2,6 @@
 
 while true; do
     current_time=$(TZ=Asia/Seoul date +%H:%M)
-
     # Check if the current time is 3:00 AM KST
     if [ "$current_time" == "03:00" ]; then
         current_timestamp=$(date +"%Y-%m-%d %H:%M:%S")
@@ -23,6 +22,5 @@ while true; do
         python3 transfer.py -l
         echo "[$current_timestamp] Finished!"
     fi
-    sleep 3600
 done
 
