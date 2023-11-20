@@ -126,7 +126,6 @@ def main():
 
     if args.load:
         df = put_recommends(save_dir)
-    util_erase_posts_with_no_durations()
-
+    
 if __name__ == '__main__':
     main()
