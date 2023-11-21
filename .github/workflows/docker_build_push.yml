@@ -41,6 +41,7 @@ jobs:
           docker run -d --name haeng -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
           docker exec -it haeng /bin/bash
           tmux new-session -t 0
+          pwd
           bash recommendation_pipeline.sh
           tmux detach-client
           exit
