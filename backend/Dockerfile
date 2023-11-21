@@ -8,4 +8,4 @@ RUN apt-get update && apt-get install -y tmux
 
 COPY . .
 
-CMD ["gunicorn", "haengsha.wsgi:application", "—bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "haengsha.wsgi:application", "--bind", "0.0.0.0:8000"]
