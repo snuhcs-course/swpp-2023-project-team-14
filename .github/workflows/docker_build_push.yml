@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - dev
+      - feat/tmux_fix
       
 
 jobs:
