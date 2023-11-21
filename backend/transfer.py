@@ -63,6 +63,7 @@ def save_event_data(save_dir, filename='eventData.csv'):
         event_duration = post.event_durations.first()         # Retrieve the starting date only from event_duration
 
         post_info = {
+            'post_id': post.id,
             '구분': category,
             '행사명': post.title,
             '날짜': event_duration.event_day if event_duration else "",
@@ -90,6 +91,9 @@ def put_recommends(save_dir, filename='all_recommends_index.csv', save_filename=
             score = int(col.replace('Recommend', ''))
             postIdx = row[col]
 
+            if postIdx == -1: #Under 10 events were passed through the machine
+                continue
+
             try:
                 existing_recommend = Recommend.objects.get(user=user, post=postIdx, score=score)
                 #print("existing", postIdx, user, score)
@@ -104,6 +108,11 @@ def put_recommends(save_dir, filename='all_recommends_index.csv', save_filename=
     transformed_df = pd.DataFrame(transformed_data, columns=['score', 'postIdx', 'userIdx'])
     transformed_df.to_csv(save_dir+save_filename, index=True)
     return transformed_df
+
+def delete_future_recommendations():
+    today = timezone.now().date()
+    future_recommendations = Recommend.objects.filter(post__event_durations__event_day__gte=today)
+    future_recommendations.delete()
 
 # Util Function to check whether recommendation exists
 def recommendation_exists(score, postId, userIdx):
@@ -127,6 +136,7 @@ def main():
         save_event_data(save_dir) #save eventData.csv
 
     if args.load:
+        delete_future_recommendations() #this is to renew the recommendation score!
         df = put_recommends(save_dir)
     
 if __name__ == '__main__':

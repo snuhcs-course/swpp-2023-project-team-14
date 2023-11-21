@@ -24,7 +24,7 @@ jobs:
         docker build -t "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest" .
         docker push "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
     
-    - name: Stop Docker Container, Clean Up, Pull & Run
+    - name: Stop Docker Container, Clean Up, Pull, Run, and Do ML in Tmux Session
       run: | 
         set +x
         echo "${{ secrets.PEM }}" > key.pem 
@@ -38,4 +38,9 @@ jobs:
           echo "Pulling new image..."
           docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
           docker run -d --name haeng -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+          docker exec -it haeng /bin/bash
+          tmux new-session -t 0
+          bash recommendation_pipeline.sh
+          tmux detach-client
+          exit
         EOF

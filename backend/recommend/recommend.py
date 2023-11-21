@@ -45,7 +45,7 @@ def get_recommend(userIdx, printAll = False, index = False):
         print("\n","="*100)
     
     if index:
-        return top_item_indices
+        return recommendedEvents["post_id"]
     return recommendedEvents["행사명"].to_numpy()
 
 def recover_scale(df, randomness=0):
@@ -54,8 +54,10 @@ def recover_scale(df, randomness=0):
     return np.vstack(df)
 
 if __name__ == '__main__':
-    userEmbeddingsDf = pd.read_csv('userEmbedding.csv')
-    itemEmbeddingsDf = pd.read_csv('eventEmbedding.csv')
+
+    data_dir = "./data/"
+    userEmbeddingsDf = pd.read_csv(data_dir+'userEmbedding.csv')
+    itemEmbeddingsDf = pd.read_csv(data_dir+'eventEmbedding.csv')
 
     
     #HYPER-PARAMETERS
@@ -77,8 +79,12 @@ if __name__ == '__main__':
     itemTfidfMatrix = tfidfVectorizer.transform(itemDescriptions)
 
     ## Item Type
-    userFestivalInterest = userEmbeddingsDf["공연/축제 행사의 선호도"]/(userEmbeddingsDf["학술 행사의 선호도"] \
-                                                             + userEmbeddingsDf["공연/축제 행사의 선호도"])
+    userFestivalInterest = userEmbeddingsDf["공연 행사의 선호도"]/(userEmbeddingsDf["학술 행사의 선호도"] \
+                                                             + userEmbeddingsDf["공연 행사의 선호도"])
+
+    # In case the user has no preferences collected
+    userFestivalInterest  = userFestivalInterest.fillna(0.5)
+
     userAcademicInterest = 1-userFestivalInterest
     oneHotItemType = pd.get_dummies(itemEmbeddingsDf['구분'], prefix='구분').values #[학술, 축제]
     userItemTypeInterest = np.array([userFestivalInterest.values, userAcademicInterest.values]).T
@@ -89,6 +95,7 @@ if __name__ == '__main__':
     tfidfSimilarityMatrix = cosine_similarity(userTfidfMatrix, itemTfidfMatrix)
     koElectraSimilarityMatrix = cosine_similarity(userkoElectraEmbeddings, itemkoElectraEmbeddings)
     koBertSimilarityMatrix = cosine_similarity(userkoBertEmbeddings, itemkoBertEmbeddings)
+
     typeSimilarity = cosine_similarity(userItemTypeInterest, oneHotItemType)
     
     similarityMatrix = (scalingVector[0] * tfidfSimilarityMatrix) + (scalingVector[1] * koElectraSimilarityMatrix) \
@@ -98,14 +105,17 @@ if __name__ == '__main__':
     ## Get List of recommendations for All Users
     allRecommends = np.asarray([get_recommend(userIdx, False, False) for userIdx in range(len(userkoBertEmbeddings))])
     allRecommends = np.char.replace(np.char.replace(np.char.replace(np.char.replace(allRecommends.astype(str), ',', ''), '\'', ''), '\"', ''), "\n", '')
-    
+    allRecommends = np.array([np.concatenate([rec, np.full(10 - len(rec), -1)]) for rec in allRecommends])
+
     index = np.arange(1, allRecommends.shape[0] + 1).reshape(-1, 1)
     allRecommends_with_index = np.hstack((index, allRecommends))
-    header = "Index, Recommend1, Recommend2, Recommend3, Recommend4,Recommend5, Recommend6, Recommend7, Recommend8, Recommend9, Recommend10"
-    np.savetxt('all_recommends.csv', allRecommends_with_index, delimiter=",", header=header, comments='', fmt='%s')
+    header = "Index, userIdx, Recommend1, Recommend2, Recommend3, Recommend4, Recommend5, Recommend6, Recommend7, Recommend8, Recommend9, Recommend10"
+    header = header.replace(" ", "")
+    np.savetxt(data_dir+'all_recommends.csv', allRecommends_with_index, delimiter=",", header=header, comments='', fmt='%s')
 
     allRecommendsIndices = np.asarray([get_recommend(userIdx, False, True) for userIdx in range(len(userkoBertEmbeddings))])
-    recommended_items_by_index = np.hstack((index, allRecommendsIndices))
+    allRecommendsIndices = np.array([np.concatenate([rec, np.full(10 - len(rec), -1)]) for rec in allRecommendsIndices])
+    recommended_items_by_index = np.hstack((index, np.array(userEmbeddingsDf["user_id"]).reshape(-1,1), allRecommendsIndices))
     # note: all_recommends_index = (index of event in eventData.csv) - 2
     # reason: all_recommends_index gives zero-based indices to events in eventData.csv, but the events in eventData.csv have one-based indices that also takes the header into account.
-    np.savetxt('all_recommends_index.csv', recommended_items_by_index, delimiter=",", header=header, comments='', fmt='%s')
+    np.savetxt(data_dir+'all_recommends_index.csv', recommended_items_by_index, delimiter=",", header=header, comments='', fmt='%s')
