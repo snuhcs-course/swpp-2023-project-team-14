@@ -16,33 +16,53 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Cache Docker layers
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+
     - name: Login to DockerHub
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build and push Docker image
-      run: |
-        cd backend
-        docker build -t "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest" .
-        docker push "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+      uses: docker/build-push-action@v2
+      with:
+        context: ./backend
+        file: ./backend/Dockerfile
+        tags: ${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest
+        push: true
+        cache-from: type=local,src=/tmp/.buildx-cache
+        cache-to: type=local,dest=/tmp/.buildx-cache-new
     
-    - name: Stop Docker Container, Clean Up, Pull, Run, and Do ML in Tmux Session
-      run: | 
-        set +x
-        echo "${{ secrets.PEM }}" > key.pem 
-        set -x
+    - name: Move Docker cache
+      run: |
+        rm -rf /tmp/.buildx-cache
+        mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+    - name: Deploy to EC2
+      env:
+        PEM_KEY: ${{ secrets.PEM }}
+        CLOUD_URL: ${{ secrets.CLOUD_URL }}
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        CONTAINER_NAME: haeng
+      run: |
+        echo "$PEM_KEY" > key.pem 
         chmod 600 key.pem
-        ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
-          docker stop haeng
-          docker rm haeng
-          echo "Removing unused Docker images..."
-          docker rmi "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-          echo "Killing all tmux sessions..."
-          # add '|| true' to ensure that if there is nothing to stop or remove, the script will continue.
+        ssh -i key.pem -o StrictHostKeyChecking=no ec2-user@$CLOUD_URL << 'EOF'
+          docker stop $CONTAINER_NAME || true
+          docker rm $CONTAINER_NAME || true
+          docker rmi $DOCKER_USERNAME/haengsha-backend:latest || true
           tmux kill-server || true 
-          echo "Pulling new image..."
-          docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-          docker run -d --name haeng -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-          # run the tmux session in detached mode. 
-          tmux new-session -d -s my_session "docker exec haeng /bin/bash -c 'bash recommendation_pipeline.sh'"
-          exit
+          docker pull $DOCKER_USERNAME/haengsha-backend:latest
+          docker run -d --name $CONTAINER_NAME -p 8080:8000 --env-file haengsha-env/.env $DOCKER_USERNAME/haengsha-backend:latest
+          tmux new-session -d -s ml_session "docker exec $CONTAINER_NAME /bin/bash -c 'bash recommendation_pipeline.sh'"
         EOF
