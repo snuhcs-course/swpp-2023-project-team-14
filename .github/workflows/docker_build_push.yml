@@ -50,7 +50,9 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-        echo "$PEM_KEY" > key.pem 
+        set +x
+        echo "${{ secrets.PEM }}" > key.pem 
+        set -x
         chmod 600 key.pem
         ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
           docker stop haeng
