@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - dev
+      - feat/tmux_fix
       
 
 jobs:
@@ -41,7 +42,7 @@ jobs:
           docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
           docker run -d --name haeng -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
           tmux new-session -t 0
-          docker exec -it haeng /bin/bash
+          docker exec haeng /bin/bash
           bash recommendation_pipeline.sh
           tmux detach-client
           exit
