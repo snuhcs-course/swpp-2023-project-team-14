@@ -37,13 +37,13 @@ jobs:
           echo "Removing unused Docker images..."
           docker rmi "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
           echo "Killing all tmux sessions..."
-          tmux kill-server
+          # add '|| true' to ensure that if there is nothing to stop or remove, the script will continue.
+          tmux kill-server || true 
           echo "Pulling new image..."
           docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
           docker run -d --name haeng -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-          tmux new-session -t 0
-          docker exec haeng /bin/bash
-          bash recommendation_pipeline.sh
+          # run the tmux session in detached mode. 
+          tmux new-session -d -s my_session "docker exec haeng /bin/bash -c 'bash recommendation_pipeline.sh'"
           tmux detach-client
           exit
         EOF
