@@ -49,10 +49,6 @@ jobs:
         mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
     - name: Deploy to EC2
-      env:
-        PEM_KEY: ${{ secrets.PEM }}
-        CLOUD_URL: ${{ secrets.CLOUD_URL }}
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       run: |
         echo "$PEM_KEY" > key.pem 
         chmod 600 key.pem
