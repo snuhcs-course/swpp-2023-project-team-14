@@ -53,14 +53,13 @@ jobs:
         PEM_KEY: ${{ secrets.PEM }}
         CLOUD_URL: ${{ secrets.CLOUD_URL }}
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        CONTAINER_NAME: haeng
       run: |
         echo "$PEM_KEY" > key.pem 
         chmod 600 key.pem
         ssh -i key.pem -o StrictHostKeyChecking=no ec2-user@$CLOUD_URL << 'EOF'
-          docker stop $CONTAINER_NAME || true
-          docker rm $CONTAINER_NAME || true
-          docker rmi $DOCKER_USERNAME/haengsha-backend:latest || true
+          docker stop haeng
+          docker rm haeng
+          docker rmi $DOCKER_USERNAME/haengsha-backend:latest
           tmux kill-server || true 
           docker pull $DOCKER_USERNAME/haengsha-backend:latest
           docker run -d --name $CONTAINER_NAME -p 8080:8000 --env-file haengsha-env/.env $DOCKER_USERNAME/haengsha-backend:latest
