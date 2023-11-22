@@ -56,12 +56,12 @@ jobs:
       run: |
         echo "$PEM_KEY" > key.pem 
         chmod 600 key.pem
-        ssh -i key.pem -o StrictHostKeyChecking=no ec2-user@$CLOUD_URL << 'EOF'
+        ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
           docker stop haeng
           docker rm haeng
-          docker rmi $DOCKER_USERNAME/haengsha-backend:latest
+          docker rmi "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
           tmux kill-server || true 
-          docker pull $DOCKER_USERNAME/haengsha-backend:latest
+          docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
           docker run -d --name $CONTAINER_NAME -p 8080:8000 --env-file haengsha-env/.env $DOCKER_USERNAME/haengsha-backend:latest
           tmux new-session -d -s ml_session "docker exec $CONTAINER_NAME /bin/bash -c 'bash recommendation_pipeline.sh'"
         EOF
