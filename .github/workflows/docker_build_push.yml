@@ -23,9 +23,9 @@ jobs:
         cd backend
         docker build -t "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest" .
         docker push "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-    
-    - name: Stop Docker Container, Clean Up, Pull, Run, and Do ML in Tmux Session
-      run: | 
+
+    - name: Deploy to EC2
+      run: |
         set +x
         echo "${{ secrets.PEM }}" > key.pem 
         set -x
@@ -33,16 +33,9 @@ jobs:
         ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
           docker stop haeng
           docker rm haeng
-          echo "Removing unused Docker images..."
           docker rmi "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-          echo "Killing all tmux sessions..."
-          tmux kill-server
-          echo "Pulling new image..."
+          tmux kill-server || true 
           docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
           docker run -d --name haeng -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-          tmux new-session -t 0
-          docker exec -it haeng /bin/bash
-          bash recommendation_pipeline.sh
-          tmux detach-client
-          exit
+          tmux new-session -d -s ml_session "docker exec haeng /bin/bash -c 'bash recommendation_pipeline.sh'"
         EOF
