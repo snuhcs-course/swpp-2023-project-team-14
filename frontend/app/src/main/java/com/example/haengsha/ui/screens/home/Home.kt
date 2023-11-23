@@ -51,6 +51,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -82,7 +83,7 @@ fun HomeScreen(
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
 
     homeApiViewModel.getRecommendationList(token = userUiState.token)
-    
+
     homeApiViewModel.getEventByDate(selection)
     val state = rememberWeekCalendarState(
         startDate = startDate,
@@ -213,7 +214,13 @@ fun MyDatePickerDialog(
     onDateSelected: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val datePickerState = rememberDatePickerState()
+    val currentDate = LocalDate.now()
+    val initialDate = Calendar.getInstance()
+    initialDate.set(currentDate.year, currentDate.monthValue - 1, currentDate.dayOfMonth)
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = initialDate.timeInMillis,
+        yearRange = currentDate.year - 1..currentDate.year + 1
+    )
 
     val selectedDate = datePickerState.selectedDateMillis?.let {
         convertMillisToDate(it)
@@ -240,7 +247,8 @@ fun MyDatePickerDialog(
         }
     ) {
         DatePicker(
-            state = datePickerState
+            state = datePickerState,
+            showModeToggle = false
         )
     }
 }
