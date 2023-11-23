@@ -1,6 +1,6 @@
-package com.example.haengsha.model.uiState.recommendation
+package com.example.haengsha.model.uiState.home
 
-import com.example.haengsha.model.network.apiService.RecommendResponse
+import com.example.haengsha.model.network.dataModel.RecommendResponse
 
 sealed interface RecommendationApiUiState {
     data class RecommendationListResult(

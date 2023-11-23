@@ -1,4 +1,4 @@
-package com.example.haengsha.model.dataSource
+package com.example.haengsha.model.network.dataModel
 
 object DateInfo {
     val year = listOf(

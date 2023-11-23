@@ -22,7 +22,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
@@ -53,23 +52,19 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.haengsha.R
-import com.example.haengsha.model.network.apiService.stringToDate
-import com.example.haengsha.model.route.BoardRoute
-import com.example.haengsha.model.uiState.recommendation.RecommendationApiUiState
-import com.example.haengsha.model.viewModel.event.RecommendationApiViewModel
+import com.example.haengsha.model.uiState.home.RecommendationApiUiState
+import com.example.haengsha.model.viewModel.home.HomeApiViewModel
+import com.example.haengsha.model.viewModel.home.HomeViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.LikePink
-import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.md_theme_light_onSurfaceVariant
 import com.example.haengsha.ui.theme.poppins
-import com.example.haengsha.ui.uiComponents.boardList
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 data class TabItem(
     val title: String, val eventCards: List<EventCardData>
 )
-
 
 data class EventCardData(
     val organizer: String,
@@ -81,20 +76,18 @@ data class EventCardData(
     val eventType: String,
     val place: String = "",
     val time: String = "",
-    val image: String = ""  // Image URL 변경 필요 (임시로 nudge_image 사용함)
+    val image: String = ""
 )
-
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TabView(
-    sharedViewModel: SharedViewModel,
-    recommendationApiViewModel: RecommendationApiViewModel,
-    selectedDate: LocalDate
+    homeViewModel: HomeViewModel,
+    homeApiViewModel: HomeApiViewModel
 ) {
-    val academicItems by sharedViewModel.academicItems.observeAsState()
-    val festivalItems by sharedViewModel.festivalItems.observeAsState()
-    val recommendationApiUiState = recommendationApiViewModel.recommendationUiState
+    val academicItems by homeViewModel.academicItems.observeAsState()
+    val festivalItems by homeViewModel.festivalItems.observeAsState()
+    val recommendationApiUiState = homeApiViewModel.recommendationUiState
     var showDialog by remember { mutableStateOf(false) }
     var selectedEvent: EventCardData? by remember { mutableStateOf(null) }
     var showEventCardPopup by remember { mutableStateOf(false) }
@@ -132,7 +125,7 @@ fun TabView(
                 )
             }) {
             // Tab items
-            tabItems.forEachIndexed { index, item ->
+            tabItems.forEachIndexed { index, _ ->
                 Tab(
                     selected = (index == selectedTabIndex),
                     onClick = {

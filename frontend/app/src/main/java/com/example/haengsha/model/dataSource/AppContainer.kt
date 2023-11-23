@@ -1,9 +1,8 @@
 package com.example.haengsha.model.dataSource
 
 import com.example.haengsha.model.network.apiService.BoardApiService
-import com.example.haengsha.model.network.apiService.EventApiService
+import com.example.haengsha.model.network.apiService.HomeApiService
 import com.example.haengsha.model.network.apiService.LoginApiService
-import com.example.haengsha.model.network.apiService.RecommendationApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -13,9 +12,8 @@ import retrofit2.Retrofit
 
 interface AppContainer {
     val loginDataRepository: LoginDataRepository
-    val eventDataRepository: EventDataRepository
+    val homeDataRepository: HomeDataRepository
     val boardDataRepository: BoardDataRepository
-    val recommendationDataRepository: RecommendationDataRepository
 }
 
 class HaengshaAppContainer : AppContainer {
@@ -44,23 +42,13 @@ class HaengshaAppContainer : AppContainer {
         )
     }
 
-    private val retrofitEventService: EventApiService by lazy {
-        retrofit.create(EventApiService::class.java)
+    private val retrofitHomeService: HomeApiService by lazy {
+        retrofit.create(HomeApiService::class.java)
     }
 
-    override val eventDataRepository: EventDataRepository by lazy {
-        NetworkEventDataRepository(
-            retrofitEventService
-        )
-    }
-
-    private val retrofitRecommendationService: RecommendationApiService by lazy {
-        retrofit.create(RecommendationApiService::class.java)
-    }
-
-    override val recommendationDataRepository: RecommendationDataRepository by lazy{
-        NetworkRecommendationRepository(
-            retrofitRecommendationService
+    override val homeDataRepository: HomeDataRepository by lazy {
+        NetworkHomeDataRepository(
+            retrofitHomeService
         )
     }
 

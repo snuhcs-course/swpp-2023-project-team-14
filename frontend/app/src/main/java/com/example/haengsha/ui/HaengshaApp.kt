@@ -22,7 +22,8 @@ import com.example.haengsha.model.viewModel.NavigationViewModel
 import com.example.haengsha.model.viewModel.UserViewModel
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.model.viewModel.board.BoardViewModel
-import com.example.haengsha.model.viewModel.event.RecommendationApiViewModel
+import com.example.haengsha.model.viewModel.home.HomeApiViewModel
+import com.example.haengsha.model.viewModel.home.HomeViewModel
 import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.screens.dashBoard.Board
 import com.example.haengsha.ui.screens.favorite.Favorite
@@ -43,8 +44,9 @@ fun HaengshaApp() {
     val boardApiViewModel: BoardApiViewModel = viewModel(factory = BoardApiViewModel.Factory)
     val navigationViewModel: NavigationViewModel = viewModel()
     val navigationUiState by navigationViewModel.uiState.collectAsState()
-    val recommendationApiViewModel: RecommendationApiViewModel =
-        viewModel(factory = RecommendationApiViewModel.Factory)
+    val homeViewModel: HomeViewModel = viewModel()
+    val homeApiViewModel: HomeApiViewModel =
+        viewModel(factory = HomeApiViewModel.Factory(homeViewModel))
 
     val mainNavController = rememberNavController()
     val backStackEntry = mainNavController.currentBackStackEntryAsState()
@@ -167,7 +169,8 @@ fun HaengshaApp() {
             ) {
                 navigationViewModel.updateRouteUiState("Main", MainRoute.Home.route)
                 Home(
-                    recommendationApiViewModel = recommendationApiViewModel,
+                    homeViewModel = homeViewModel,
+                    homeApiViewModel = homeApiViewModel,
                     innerPadding = innerPadding,
                     userUiState = userUiState,
                 )

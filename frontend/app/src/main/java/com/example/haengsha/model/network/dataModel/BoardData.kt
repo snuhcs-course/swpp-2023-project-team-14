@@ -1,7 +1,5 @@
 package com.example.haengsha.model.network.dataModel
 
-import com.example.haengsha.model.network.apiService.Author
-import com.example.haengsha.model.network.apiService.EventDurationResponse
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import okhttp3.MultipartBody
