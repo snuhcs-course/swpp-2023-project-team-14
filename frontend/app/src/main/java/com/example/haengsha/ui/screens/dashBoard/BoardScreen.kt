@@ -233,21 +233,38 @@ fun boardScreen(
                     }
 
                     is BoardListUiState.BoardListResult -> {
-                        for (i in boardListUiState.boardList.indices) {
-                            Column(modifier = Modifier.clickable {
-                                eventId = boardListUiState.boardList[i].id
-                                boardNavController.navigate(BoardRoute.BoardDetail.route)
-                            }) {
-                                boardList(
-                                    isFavorite = false,
-                                    event = boardListUiState.boardList[i]
+                        if (boardListUiState.boardList.isEmpty()) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(innerPadding),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "찾는 행사가 없어요 :(",
+                                    fontFamily = poppins,
+                                    fontSize = 30.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    textAlign = TextAlign.Center
                                 )
                             }
-                            HorizontalDivider(
-                                modifier = Modifier.fillMaxWidth(),
-                                thickness = 1.dp,
-                                color = PlaceholderGrey
-                            )
+                        } else {
+                            for (i in boardListUiState.boardList.indices) {
+                                Column(modifier = Modifier.clickable {
+                                    eventId = boardListUiState.boardList[i].id
+                                    boardNavController.navigate(BoardRoute.BoardDetail.route)
+                                }) {
+                                    boardList(
+                                        isFavorite = false,
+                                        event = boardListUiState.boardList[i]
+                                    )
+                                }
+                                HorizontalDivider(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    thickness = 1.dp,
+                                    color = PlaceholderGrey
+                                )
+                            }
                         }
                     }
                 }
