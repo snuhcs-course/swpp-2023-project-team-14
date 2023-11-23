@@ -40,6 +40,14 @@ class BoardViewModel : ViewModel() {
         updateSearchParameter(newEndDate, "endDate")
     }
 
+    fun updateInitialState() {
+        updateSearchParameter("foo", "bar")
+    }
+
+    fun resetBoardUiState() {
+        _uiState.value = BoardUiState()
+    }
+
     private fun updateSearchParameter(newParameter: String, type: String) {
         _uiState.update { currentState ->
             currentState.copy(

@@ -40,6 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.haengsha.R
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.viewModel.event.EventApiViewModel
+import com.example.haengsha.model.viewModel.event.RecommendationApiViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.poppins
 import com.kizitonwose.calendar.compose.WeekCalendar
@@ -58,24 +59,14 @@ import java.util.Locale
 
 class SharedViewModel : ViewModel() {
     private val _selectedDate = MutableLiveData(LocalDate.now())
-
     val selectedDate: LiveData<LocalDate> = _selectedDate
-
-    // Initialize _festivalItems and _academicItems with initial data
     private val _festivalItems = MutableLiveData<List<EventCardData>?>()
-
     private val _academicItems = MutableLiveData<List<EventCardData>?>()
-
-
     val festivalItems: MutableLiveData<List<EventCardData>?> = _festivalItems
-
-
     val academicItems: MutableLiveData<List<EventCardData>?> = _academicItems
 
-
-    // Update functions to set LiveData properties
     fun updateSelectedDate(newDate: LocalDate) {
-        _selectedDate.value = newDate
+        _selectedDate.value = newDate     // Update functions to set LiveData properties
     }
 
     fun updateEventItems(festivalItems: List<EventCardData>?, academicItems: List<EventCardData>?) {
@@ -88,6 +79,7 @@ class SharedViewModel : ViewModel() {
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
+    recommendationApiViewModel: RecommendationApiViewModel,
     innerPadding: PaddingValues,
     userUiState: UserUiState,
     sharedViewModel: SharedViewModel
@@ -99,6 +91,8 @@ fun HomeScreen(
     val startDate = remember { currentMonth.minusMonths(100).atStartOfMonth() } // Adjust as needed
     val endDate = remember { currentMonth.plusMonths(100).atEndOfMonth() } // Adjust as needed
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
+
+    recommendationApiViewModel.getRecommendationList(token = userUiState.token)
 
     eventApiViewModel.getEventByDate(selection)
     val state = rememberWeekCalendarState(
@@ -188,7 +182,7 @@ fun HomeScreen(
             },
         )
 
-        TabView(sharedViewModel, selection)
+        TabView(sharedViewModel, recommendationApiViewModel, selection)
 
 
     }
@@ -298,18 +292,23 @@ private fun convertMillisToDate(millis: Long): String {
 
 @Composable
 fun Home(
+    recommendationApiViewModel: RecommendationApiViewModel,
     innerPadding: PaddingValues,
     userUiState: UserUiState
 ) {
     val sharedViewModel = viewModel<SharedViewModel>()
 
-    HomeScreen(innerPadding, userUiState, sharedViewModel)
+    HomeScreen(recommendationApiViewModel, innerPadding, userUiState, sharedViewModel)
 }
 
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
+    val recommendationApiViewModel: RecommendationApiViewModel =
+        viewModel(factory = RecommendationApiViewModel.Factory)
+
     Home(
+        recommendationApiViewModel = recommendationApiViewModel,
         innerPadding = PaddingValues(0.dp),
         userUiState = UserUiState("foo", "bar")
     )
