@@ -55,15 +55,15 @@ android {
 
 dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.activity:activity-compose:1.8.0")
+    implementation("androidx.activity:activity-compose:1.8.1")
 
     implementation(platform("androidx.compose:compose-bom:2023.10.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
 
-    implementation("com.google.android.material:material:1.11.0-beta01")
-    implementation("androidx.compose.material3:material3-android:1.2.0-alpha10")
+    implementation("com.google.android.material:material:1.12.0-alpha01")
+    implementation("androidx.compose.material3:material3-android:1.2.0-alpha11")
 
     implementation("androidx.navigation:navigation-compose:2.7.5")
     implementation("androidx.navigation:navigation-runtime-ktx:2.7.5")
@@ -76,7 +76,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
-    implementation("androidx.collection:collection-ktx:1.4.0-alpha02")
+    implementation("androidx.collection:collection-ktx:1.4.0-beta01")
 
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
@@ -93,7 +93,7 @@ dependencies {
     implementation("com.kizitonwose.calendar:compose:2.5.0-alpha01")
     implementation("com.google.accompanist:accompanist-pager:0.12.0")
     implementation("androidx.tv:tv-material:1.0.0-alpha10")
-    implementation("androidx.compose.runtime:runtime-livedata:1.6.0-alpha08")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.0-beta01")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
@@ -109,5 +109,5 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.0-alpha08")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.0-beta01")
 }
