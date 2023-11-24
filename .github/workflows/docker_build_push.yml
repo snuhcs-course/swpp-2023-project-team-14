@@ -29,8 +29,8 @@ jobs:
         if docker run --rm "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest" cat /app_checksum.txt > container_checksum.txt; then
           echo "Checksum file retrieved successfully."
         else
-          echo "Checksum file not found in Docker image. Create an empty file."
-          touch code_checksum.txt
+          echo "Checksum file not found in Docker image. Create a dummy checksum file."
+          echo "dummychecksum" > filename.txt
 
         if ! cmp -s code_checksum.txt container_checksum.txt; then
           echo "Checksums do not match, proceed with build and pull."
@@ -47,7 +47,6 @@ jobs:
             docker rmi "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
             docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
             docker run -d --name haeng -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-          EOF      
+          EOF
         else
           echo "Checksums match, no need to build."
-
