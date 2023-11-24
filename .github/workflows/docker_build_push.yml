@@ -30,7 +30,7 @@ jobs:
           echo "Checksum file retrieved successfully."
         else
           echo "Checksum file not found in Docker image. Create a dummy checksum file."
-          echo "dummychecksum" > filename.txt
+          echo "dummychecksum" > container_checksum.txt
 
         if ! cmp -s code_checksum.txt container_checksum.txt; then
           echo "Checksums do not match, proceed with build and pull."
