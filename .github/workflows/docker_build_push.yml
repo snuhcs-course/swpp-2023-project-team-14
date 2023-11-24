@@ -5,7 +5,6 @@ on:
     branches:
       - main
       - dev
-      - feat/tmux_fix
       
 
 jobs:
@@ -19,34 +18,24 @@ jobs:
     - name: Login to DockerHub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-    - name: Generate Checksum of Backend Code
-      run: find backend/ -type f -exec sha256sum {} + > code_checksum.txt
-
-    - name: Compare Checksums and Build if Different
+    - name: Build and push Docker image
       run: |
-        # try to retrieve checksum from latest Docker image
-        docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-        if docker run --rm "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest" cat /app_checksum.txt > container_checksum.txt; then
-          echo "Checksum file retrieved successfully."
-        else
-          echo "Checksum file not found in Docker image. Create a dummy checksum file."
-          echo "dummychecksum" > container_checksum.txt
-
-        if ! cmp -s code_checksum.txt container_checksum.txt; then
-          echo "Checksums do not match, proceed with build and pull."
-          cd backend
-          docker build -t "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest" .
-          docker push "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-          set +x
-          echo "${{ secrets.PEM }}" > key.pem 
-          set -x
-          chmod 600 key.pem
-          ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
-            docker stop haeng
-            docker rm haeng
-            docker rmi "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-            docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-            docker run -d --name haeng -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-          EOF
-        else
-          echo "Checksums match, no need to build."
+        cd backend
+        docker build -t "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest" .
+        docker push "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+    
+    - name: Stop Docker Container, Clean Up, Pull & Run
+      run: | 
+        set +x
+        echo "${{ secrets.PEM }}" > key.pem 
+        set -x
+        chmod 600 key.pem
+        ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
+          docker stop haeng
+          docker rm haeng
+          echo "Removing unused Docker images..."
+          docker rmi "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+          echo "Pulling new image..."
+          docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+          docker run -d --name haeng -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+        EOF
