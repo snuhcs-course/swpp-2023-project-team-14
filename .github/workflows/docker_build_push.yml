@@ -20,7 +20,7 @@ jobs:
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
     - name: Generate Checksum of Backend Code
-      run: sha256sum backend/* > code_checksum.txt
+      run: find backend/ -type f -exec sha256sum {} + > code_checksum.txt
 
     - name: Compare Checksums and Build if Different
       run: |
