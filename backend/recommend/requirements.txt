@@ -1,7 +1,0 @@
-awscli
-numpy
-pandas
-scikit-learn
-torch
-torchvision
-transformers
