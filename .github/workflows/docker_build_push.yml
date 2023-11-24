@@ -35,19 +35,19 @@ jobs:
         if ! cmp -s code_checksum.txt container_checksum.txt; then
           echo "Checksums do not match, proceed with build and pull."
           cd backend
-            docker build -t "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest" .
-            docker push "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-            set +x
-            echo "${{ secrets.PEM }}" > key.pem 
-            set -x
-            chmod 600 key.pem
-            ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
-              docker stop haeng
-              docker rm haeng
-              docker rmi "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-              docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-              docker run -d --name haeng -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-            EOF      
+          docker build -t "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest" .
+          docker push "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+          set +x
+          echo "${{ secrets.PEM }}" > key.pem 
+          set -x
+          chmod 600 key.pem
+          ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
+            docker stop haeng
+            docker rm haeng
+            docker rmi "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+            docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+            docker run -d --name haeng -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+          EOF      
         else
           echo "Checksums match, no need to build."
 
