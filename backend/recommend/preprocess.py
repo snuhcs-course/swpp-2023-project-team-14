@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 from transformers import ElectraTokenizer, ElectraModel, BertTokenizer, BertModel
 import torch
+import time 
+from datetime import datetime
 import argparse
 
 # Max Sequence
@@ -42,11 +44,33 @@ def main():
         afterPreprocessFileName = data_dir+"eventEmbedding.csv"
     else:
         raise Exception
-        
+    
+
+    # Get the current time in seconds since the epoch
+    timestamp = time.time()
+
+    # Convert the timestamp to a datetime object
+    dt_object = datetime.fromtimestamp(timestamp)
+
+    # Format the datetime object as a string in the desired format
+    formatted_time = dt_object.strftime("%Y-%m-%d %H:%M:%S")
+
+    print(f'preprocess: reading data. time={formatted_time}')
     df = pd.read_csv(beforePreprocessFileName)
 
     df.fillna("없음", inplace=True)
     df['description'] = df.apply(lambda row: ' '.join([f'{col}: {val},' for col, val in row.items()]), axis=1)
+
+    # Get the current time in seconds since the epoch
+    timestamp = time.time()
+
+    # Convert the timestamp to a datetime object
+    dt_object = datetime.fromtimestamp(timestamp)
+
+    # Format the datetime object as a string in the desired format
+    formatted_time = dt_object.strftime("%Y-%m-%d %H:%M:%S")
+    print(f'preprocess: getting embeddings. time={formatted_time}')
+
     df['koElectraEmbedding'] = df['description'].apply(lambda x: getEmbedding(x, koelectra_model, koelectra_tokenizer))
     df['koBertEmbedding'] = df['description'].apply(lambda x: getEmbedding(x, kobert_model, kobert_tokenizer))
 

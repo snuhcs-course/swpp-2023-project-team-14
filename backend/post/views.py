@@ -1,4 +1,6 @@
 import json 
+import os
+import subprocess
 import sys
 import uuid
 import io
@@ -207,6 +209,19 @@ class PostRecommendView(APIView):
     def get(self, request):
         user = request.user
         today = date.today()
+
+        # print(f'user pkey: {user.pk}')
+        
+        script_path = os.path.join(os.getcwd(), 'recommendation_pipeline.sh')
+        # print(f'script_path:\n{script_path}')
+        try:
+            subprocess.run(['chmod', '+x', script_path], check=True)
+            print(f'chmod done')
+            subprocess.run([script_path, '-u', str(user.pk)], check=True)
+            print(f'script done')
+        except subprocess.CalledProcessError as e:
+            print("Error:", e.stderr)
+
         posts = Post.objects.filter(recommend_users=user,event_durations__event_day__gte=today).order_by("-recommend__score")
         # scores = Recommend.objects.filter(user=request.user).values('score')
         serializer = PostRecommendSerializer(posts, many=True, context={'request': request})

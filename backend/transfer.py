@@ -15,8 +15,12 @@ from user.models import PersonalUser
 from post.models import Post, Like, Favorite, Recommend
 from datetime import date
 
-def save_user_data(save_dir, filename='userData.csv'):
-    users = PersonalUser.objects.filter(role='User')
+def save_user_data(save_dir, userpkey=None, filename='userData.csv'):
+    if userpkey is not None:
+        users = PersonalUser.objects.filter(pk=int(userpkey))
+    else:
+        users = PersonalUser.objects.filter(role='User')
+
     user_data = []
 
     for user in users:
@@ -54,7 +58,8 @@ def save_user_data(save_dir, filename='userData.csv'):
     return filename
 
 def save_event_data(save_dir, filename='eventData.csv'):
-    today = timezone.now().date()
+    # today = timezone.now().date()
+    today = '2023-10-01'
     posts = Post.objects.filter(event_durations__event_day__gte=today).distinct()
     event_data = []
 
@@ -104,13 +109,15 @@ def put_recommends(save_dir, filename='all_recommends_index.csv', save_filename=
                 recommend_instance.save()
 
             transformed_data.append([score, postIdx, userIdx])
+        
 
     transformed_df = pd.DataFrame(transformed_data, columns=['score', 'postIdx', 'userIdx'])
     transformed_df.to_csv(save_dir+save_filename, index=True)
     return transformed_df
 
 def delete_future_recommendations():
-    today = timezone.now().date()
+    # today = timezone.now().date()
+    today = '2023-10-01'
     future_recommendations = Recommend.objects.filter(post__event_durations__event_day__gte=today)
     future_recommendations.delete()
 
@@ -128,16 +135,23 @@ def main():
     parser = argparse.ArgumentParser(description='Process recommendations.')
     parser.add_argument('-c', '--collect', action='store_true', help='collect input data for machine input')
     parser.add_argument('-l', '--load', action='store_true', help='Load output from machine to DB')
+    parser.add_argument('-u', '--userpkey', type=str, help="Single user's primary pkey")
     args = parser.parse_args()
+
+    print(f'sanity check: args userpkey = {args.userpkey}')
 
     save_dir = "./data/"
     if args.collect:
-        save_user_data(save_dir) #save userData.csv
+        if args.userpkey != 'invalid':
+            save_user_data(save_dir, args.userpkey) #save userData.csv for one user
+        else:
+            save_user_data(save_dir) #save userData.csv
         save_event_data(save_dir) #save eventData.csv
 
     if args.load:
         delete_future_recommendations() #this is to renew the recommendation score!
         df = put_recommends(save_dir)
+        print(f'recommends df:\n{df}')
     
 if __name__ == '__main__':
     main()
