@@ -5,7 +5,9 @@ on:
     branches:
       - main
       - dev
-      
+      - feat/ML_server
+    paths:
+      - 'backend/**'
 
 jobs:
   build:
