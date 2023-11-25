@@ -21,9 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -56,7 +55,7 @@ fun PasswordResetScreen(
     var passwordCheckInput: String by remember { mutableStateOf("") }
     var isPasswordError by remember { mutableStateOf(false) }
     var isPasswordCheckError by remember { mutableStateOf(false) }
-    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
     LazyColumn(
@@ -64,7 +63,10 @@ fun PasswordResetScreen(
             .fillMaxSize()
             .padding(top = 60.dp)
             .pointerInput(Unit) {
-                detectTapGestures(onTap = { keyboardController?.hide() })
+                detectTapGestures(onTap = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                })
             },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -91,8 +93,7 @@ fun PasswordResetScreen(
             passwordInput = passwordSetField(
                 isEmptyError = isPasswordError,
                 placeholder = "Password",
-                modifier = Modifier.focusRequester(focusRequester),
-                onFocus = { focusRequester.requestFocus() },
+                keyboardActions = { focusManager.clearFocus() },
                 context = loginContext,
             )
             Spacer(modifier = Modifier.height(60.dp))
@@ -107,8 +108,7 @@ fun PasswordResetScreen(
             passwordCheckInput = passwordCheckTextField(
                 isError = isPasswordCheckError,
                 placeholder = "Password",
-                modifier = Modifier.focusRequester(focusRequester),
-                onFocus = { focusRequester.requestFocus() }
+                keyboardActions = { focusManager.clearFocus() }
             )
             Spacer(modifier = Modifier.height(80.dp))
             CommonBlueButton(

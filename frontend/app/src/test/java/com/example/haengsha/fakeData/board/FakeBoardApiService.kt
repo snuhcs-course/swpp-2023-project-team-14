@@ -41,4 +41,14 @@ class FakeBoardApiService : BoardApiService {
     override suspend fun postFavorite(token: String, postId: Int): PostLikeFavoriteResponse {
         return FakeBoardDataSource.postLikeFavoriteResponse
     }
+
+    override suspend fun searchEvent(
+        token: String,
+        keyword: String,
+        isFestival: Int,
+        startDate: String,
+        endDate: String
+    ): List<BoardListResponse> {
+        return FakeBoardDataSource.listOfBoardListResponse
+    }
 }

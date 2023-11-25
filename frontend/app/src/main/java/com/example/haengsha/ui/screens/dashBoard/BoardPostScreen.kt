@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -42,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -49,6 +51,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
@@ -84,6 +87,7 @@ fun BoardPostScreen(
     userUiState: UserUiState
 ) {
     val postContext = LocalContext.current
+    val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val boardPostUiState = boardApiViewModel.boardPostUiState
@@ -107,13 +111,15 @@ fun BoardPostScreen(
     var boardPostRequest: BoardPostRequest
 
     // TODO SDK 버전 28 이상만 가능
-
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)
             .pointerInput(Unit) {
-                detectTapGestures(onTap = { keyboardController?.hide() })
+                detectTapGestures(onTap = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                })
             }
     ) {
         Column {
@@ -136,6 +142,9 @@ fun BoardPostScreen(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { focusManager.moveFocus(FocusDirection.Down) }
                 ),
                 singleLine = true,
                 colors = TextFieldDefaults.colors(
@@ -201,8 +210,7 @@ fun BoardPostScreen(
                             customTextField(
                                 placeholder = userUiState.nickname,
                                 enabled = false,
-                                modifier = Modifier.focusRequester(focusRequester),
-                                onFocus = { focusRequester.requestFocus() }
+                                keyboardActions = {}
                             )
                         }
                         Row(
@@ -225,8 +233,7 @@ fun BoardPostScreen(
                             eventDuration = customTextField(
                                 placeholder = "2023-11-11 ~ 2023-11-13",
                                 enabled = true,
-                                modifier = Modifier.focusRequester(focusRequester),
-                                onFocus = { focusRequester.requestFocus() }
+                                keyboardActions = { focusManager.moveFocus(FocusDirection.Down) }
                             )
                         }
                         Row(
@@ -249,8 +256,7 @@ fun BoardPostScreen(
                             eventPlace = customTextField(
                                 placeholder = "자하연 앞",
                                 enabled = true,
-                                modifier = Modifier.focusRequester(focusRequester),
-                                onFocus = { focusRequester.requestFocus() }
+                                keyboardActions = { focusManager.moveFocus(FocusDirection.Down) }
                             )
                         }
                         Row(
@@ -273,8 +279,7 @@ fun BoardPostScreen(
                             eventTime = customTextField(
                                 placeholder = "오후 1시 ~ 오후 6시",
                                 enabled = true,
-                                modifier = Modifier.focusRequester(focusRequester),
-                                onFocus = { focusRequester.requestFocus() }
+                                keyboardActions = { focusManager.clearFocus() }
                             )
                         }
                         Row(
@@ -369,7 +374,8 @@ fun BoardPostScreen(
                     TextField(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .heightIn(min = 600.dp),
+                            .heightIn(min = 600.dp)
+                            .focusRequester(focusRequester),
                         value = eventContent,
                         onValueChange = { eventContent = it },
                         placeholder = {
@@ -390,6 +396,7 @@ fun BoardPostScreen(
                             focusedContainerColor = Color(0x00F8F8F8)
                         )
                     )
+
                 }
             }
         }

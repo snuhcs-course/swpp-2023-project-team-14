@@ -18,15 +18,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -66,7 +64,7 @@ fun SignupUserInfoScreen(
     var interest by rememberSaveable { mutableStateOf(listOf("")) }
     var isNicknameError by rememberSaveable { mutableStateOf(false) }
     var isNicknameChecked by rememberSaveable { mutableStateOf(false) }
-    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
     LazyColumn(
@@ -74,7 +72,12 @@ fun SignupUserInfoScreen(
             .fillMaxSize()
             .padding(vertical = 60.dp)
             .pointerInput(Unit) {
-                detectTapGestures(onTap = { keyboardController?.hide() })
+                detectTapGestures(
+                    onTap = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    }
+                )
             },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -101,8 +104,7 @@ fun SignupUserInfoScreen(
             nickname = commonTextField(
                 isError = isNicknameError,
                 placeholder = "닉네임",
-                modifier = Modifier.focusRequester(focusRequester),
-                onFocus = { focusRequester.requestFocus() },
+                keyboardActions = { focusManager.clearFocus() },
             )
             Spacer(modifier = Modifier.height(15.dp))
             Row(

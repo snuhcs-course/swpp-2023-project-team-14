@@ -6,6 +6,7 @@ import com.example.haengsha.model.network.dataModel.BoardListResponse
 import com.example.haengsha.model.network.dataModel.BoardPostRequest
 import com.example.haengsha.model.network.dataModel.BoardPostResponse
 import com.example.haengsha.model.network.dataModel.PostLikeFavoriteResponse
+import com.example.haengsha.model.network.dataModel.SearchRequest
 
 class FakeNetworkBoardDataRepository : BoardDataRepository {
     override suspend fun getBoardList(startDate: String): List<BoardListResponse> {
@@ -30,5 +31,9 @@ class FakeNetworkBoardDataRepository : BoardDataRepository {
 
     override suspend fun postFavorite(token: String, postId: Int): PostLikeFavoriteResponse {
         return FakeBoardDataSource.postLikeFavoriteResponse
+    }
+
+    override suspend fun searchEvent(searchRequest: SearchRequest): List<BoardListResponse> {
+        return FakeBoardDataSource.listOfBoardListResponse
     }
 }

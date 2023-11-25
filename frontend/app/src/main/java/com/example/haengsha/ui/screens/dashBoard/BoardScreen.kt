@@ -34,12 +34,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -85,7 +84,7 @@ fun boardScreen(
     var startDatePick by rememberSaveable { mutableStateOf(false) }
     var endDatePick by remember { mutableStateOf(false) }
 
-    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Box(
@@ -93,7 +92,10 @@ fun boardScreen(
             .fillMaxSize()
             .padding(innerPadding)
             .pointerInput(Unit) {
-                detectTapGestures(onTap = { keyboardController?.hide() })
+                detectTapGestures(onTap = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                })
             }
     ) {
         Column(
@@ -103,8 +105,7 @@ fun boardScreen(
             SearchBar(
                 boardViewModel = boardViewModel,
                 keyword = boardUiState.value.keyword,
-                modifier = Modifier.focusRequester(focusRequester),
-                onFocus = { focusRequester.requestFocus() }
+                keyboardActions = { focusManager.clearFocus() }
             ) { boardApiViewModel.searchEvent(it) }
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier = Modifier.fillMaxWidth()) {

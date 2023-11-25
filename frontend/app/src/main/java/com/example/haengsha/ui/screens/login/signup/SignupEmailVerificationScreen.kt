@@ -23,9 +23,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -65,7 +64,7 @@ fun SignupEmailVerificationScreen(
     var isEmailError by remember { mutableStateOf(false) }
     var isCodeError by remember { mutableStateOf(false) }
     var isEmailAlreadyExistDialogVisible by remember { mutableStateOf(false) }
-    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
     LazyColumn(
@@ -73,7 +72,11 @@ fun SignupEmailVerificationScreen(
             .fillMaxSize()
             .padding(top = 60.dp)
             .pointerInput(Unit) {
-                detectTapGestures(onTap = { keyboardController?.hide() })
+                detectTapGestures(
+                    onTap = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    })
             },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -97,8 +100,7 @@ fun SignupEmailVerificationScreen(
             emailInput = suffixTextField(
                 isEmptyError = isEmailError,
                 placeholder = "SNU Email",
-                modifier = Modifier.focusRequester(focusRequester),
-                onFocus = { focusRequester.requestFocus() },
+                keyboardActions = { focusManager.clearFocus() },
                 //suffix = "@snu.ac.kr"
             )
             Spacer(modifier = Modifier.height(15.dp))
@@ -147,8 +149,7 @@ fun SignupEmailVerificationScreen(
             codeInput = codeVerifyField(
                 isError = isCodeError,
                 placeholder = "인증번호 6자리",
-                modifier = Modifier.focusRequester(focusRequester),
-                onFocus = { focusRequester.requestFocus() }
+                keyboardActions = { focusManager.clearFocus() }
             )
             Spacer(modifier = Modifier.height(15.dp))
             Box(

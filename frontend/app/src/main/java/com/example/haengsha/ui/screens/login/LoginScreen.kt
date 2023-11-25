@@ -22,9 +22,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -65,7 +65,7 @@ fun LoginScreen(
     var isEmailError by remember { mutableStateOf(false) }
     var isPasswordError by remember { mutableStateOf(false) }
     var isLoginFailedDialogVisible by remember { mutableStateOf(false) }
-    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
@@ -73,7 +73,10 @@ fun LoginScreen(
             .fillMaxSize()
             .padding(top = 60.dp)
             .pointerInput(Unit) {
-                detectTapGestures(onTap = { keyboardController?.hide() })
+                detectTapGestures(onTap = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                })
             },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -100,8 +103,7 @@ fun LoginScreen(
         emailInput = suffixTextField(
             isEmptyError = isEmailError,
             placeholder = "SNU Email",
-            modifier = Modifier.focusRequester(focusRequester),
-            onFocus = { focusRequester.requestFocus() },
+            keyboardActions = { focusManager.moveFocus(FocusDirection.Down) },
             //suffix = "@snu.ac.kr"
         )
         Spacer(modifier = Modifier.height(40.dp))
@@ -116,8 +118,7 @@ fun LoginScreen(
         passwordInput = passwordTextField(
             isEmptyError = isPasswordError,
             placeholder = "비밀번호",
-            modifier = Modifier.focusRequester(focusRequester),
-            onFocus = { focusRequester.requestFocus() },
+            keyboardActions = { focusManager.clearFocus() },
         )
         Spacer(modifier = Modifier.height(15.dp))
         Row(
