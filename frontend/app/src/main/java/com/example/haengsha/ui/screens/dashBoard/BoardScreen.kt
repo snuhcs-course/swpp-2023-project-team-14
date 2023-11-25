@@ -34,6 +34,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
@@ -83,6 +85,7 @@ fun boardScreen(
     var startDatePick by rememberSaveable { mutableStateOf(false) }
     var endDatePick by remember { mutableStateOf(false) }
 
+    val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Box(
@@ -100,6 +103,8 @@ fun boardScreen(
             SearchBar(
                 boardViewModel = boardViewModel,
                 keyword = boardUiState.value.keyword,
+                modifier = Modifier.focusRequester(focusRequester),
+                onFocus = { focusRequester.requestFocus() }
             ) { boardApiViewModel.searchEvent(it) }
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier = Modifier.fillMaxWidth()) {

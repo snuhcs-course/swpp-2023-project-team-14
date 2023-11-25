@@ -3,6 +3,7 @@ package com.example.haengsha.ui.screens.login.signup
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -44,11 +49,16 @@ fun SignupPasswordSetScreen(
     var passwordCheckInput: String by remember { mutableStateOf("") }
     var isPasswordError by remember { mutableStateOf(false) }
     var isPasswordCheckError by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 60.dp),
+            .padding(top = 60.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = { keyboardController?.hide() })
+            },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(1) {
@@ -74,6 +84,8 @@ fun SignupPasswordSetScreen(
             passwordInput = passwordSetField(
                 isEmptyError = isPasswordError,
                 placeholder = "Password",
+                modifier = Modifier.focusRequester(focusRequester),
+                onFocus = { focusRequester.requestFocus() },
                 context = loginContext
             )
             Spacer(modifier = Modifier.height(60.dp))
@@ -87,7 +99,9 @@ fun SignupPasswordSetScreen(
             Spacer(modifier = Modifier.height(15.dp))
             passwordCheckInput = passwordCheckTextField(
                 isError = isPasswordCheckError,
-                placeholder = "Password"
+                placeholder = "Password",
+                modifier = Modifier.focusRequester(focusRequester),
+                onFocus = { focusRequester.requestFocus() }
             )
             Spacer(modifier = Modifier.height(80.dp))
             CommonBlueButton(

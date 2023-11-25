@@ -3,6 +3,7 @@ package com.example.haengsha.ui.uiComponents
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -56,12 +56,16 @@ import es.dmoral.toasty.Toasty
 @Composable
 fun commonTextField(
     isError: Boolean,
-    placeholder: String
+    placeholder: String,
+    modifier: Modifier,
+    onFocus: () -> Unit
 ): String {
     var input by rememberSaveable { mutableStateOf("") }
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        modifier = modifier
+            .size(width = 270.dp, height = 60.dp)
+            .clickable { onFocus() },
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -92,12 +96,16 @@ fun commonTextField(
 @Composable
 fun codeVerifyField(
     isError: Boolean,
-    placeholder: String
+    placeholder: String,
+    modifier: Modifier,
+    onFocus: () -> Unit
 ): String {
     var input by remember { mutableStateOf("") }
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        modifier = modifier
+            .size(width = 270.dp, height = 60.dp)
+            .clickable { onFocus() },
         value = input,
         onValueChange = { if (it.length <= 6) input = it },
         placeholder = {
@@ -129,6 +137,8 @@ fun codeVerifyField(
 fun suffixTextField(
     isEmptyError: Boolean,
     placeholder: String,
+    modifier: Modifier,
+    onFocus: () -> Unit
 //    suffix: String
 ): String {
     var input by rememberSaveable { mutableStateOf("") }
@@ -139,7 +149,9 @@ fun suffixTextField(
     } else false
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        modifier = modifier
+            .size(width = 270.dp, height = 60.dp)
+            .clickable { onFocus() },
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -182,6 +194,8 @@ fun suffixTextField(
 fun passwordTextField(
     isEmptyError: Boolean,
     placeholder: String = "",
+    modifier: Modifier,
+    onFocus: () -> Unit
 ): String {
     var input by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
@@ -191,7 +205,9 @@ fun passwordTextField(
     } else false
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        modifier = modifier
+            .size(width = 270.dp, height = 60.dp)
+            .clickable { onFocus() },
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -224,6 +240,8 @@ fun passwordTextField(
 fun passwordSetField(
     isEmptyError: Boolean,
     placeholder: String = "",
+    modifier: Modifier,
+    onFocus: () -> Unit,
     context: Context
 ): String {
     var input by remember { mutableStateOf("") }
@@ -238,8 +256,9 @@ fun passwordSetField(
     } else isRegexError
 
     OutlinedTextField(
-        modifier = Modifier
+        modifier = modifier
             .size(width = 270.dp, height = 60.dp)
+            .clickable { onFocus() }
             .focusRequester(textField),
         value = input,
         onValueChange = {
@@ -289,12 +308,16 @@ fun passwordSetField(
 @Composable
 fun passwordCheckTextField(
     isError: Boolean = false,
-    placeholder: String = ""
+    placeholder: String = "",
+    modifier: Modifier,
+    onFocus: () -> Unit
 ): String {
     var input by remember { mutableStateOf("") }
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        modifier = modifier
+            .size(width = 270.dp, height = 60.dp)
+            .clickable { onFocus() },
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -327,14 +350,16 @@ fun passwordCheckTextField(
 fun SearchBar(
     boardViewModel: BoardViewModel,
     keyword: String,
+    modifier: Modifier,
+    onFocus: () -> Unit,
     onSubmit: (SearchRequest) -> Unit
 ) {
     var input by remember { mutableStateOf(keyword) }
-    val keyboardController = LocalSoftwareKeyboardController.current
 
     OutlinedTextField(
-        modifier = Modifier
-            .size(width = 340.dp, height = 60.dp),
+        modifier = modifier
+            .size(width = 340.dp, height = 60.dp)
+            .clickable { onFocus() },
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -368,7 +393,6 @@ fun SearchBar(
                         boardViewModel.uiState.value.endDate
                     )
                 )
-                keyboardController?.hide()
             }
         ),
         singleLine = true,
@@ -381,11 +405,16 @@ fun SearchBar(
 }
 
 @Composable
-fun commentTextField(): String {
+fun commentTextField(
+    modifier: Modifier,
+    onFocus: () -> Unit
+): String {
     var input by rememberSaveable { mutableStateOf("") }
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 280.dp, height = 60.dp),
+        modifier = modifier
+            .size(width = 280.dp, height = 60.dp)
+            .clickable { onFocus() },
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -413,14 +442,20 @@ fun commentTextField(): String {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun customTextField(placeholder: String, enabled: Boolean): String {
+fun customTextField(
+    placeholder: String,
+    enabled: Boolean,
+    modifier: Modifier,
+    onFocus: () -> Unit
+): String {
     var input by remember { mutableStateOf("") }
     val interactionSource = remember { MutableInteractionSource() }
 
     BasicTextField(
         value = input,
         onValueChange = { input = it },
-        modifier = Modifier
+        modifier = modifier
+            .clickable { onFocus() }
             .indicatorLine(
                 enabled = false,
                 isError = false,
@@ -489,6 +524,6 @@ fun TextFieldPreview() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        customTextField("자하연 앞", true)
+        customTextField("자하연 앞", true, Modifier) {}
     }
 }
