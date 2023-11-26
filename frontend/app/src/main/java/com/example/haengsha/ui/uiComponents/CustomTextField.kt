@@ -34,6 +34,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -43,6 +45,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.haengsha.R
 import com.example.haengsha.model.network.dataModel.SearchRequest
 import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
@@ -61,7 +64,9 @@ fun commonTextField(
     var input by rememberSaveable { mutableStateOf("") }
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        modifier = Modifier
+            .size(width = 270.dp, height = 60.dp)
+            .testTag(stringResource(R.string.commonTextField)),
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -101,7 +106,9 @@ fun codeVerifyField(
     var input by remember { mutableStateOf("") }
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        modifier = Modifier
+            .size(width = 270.dp, height = 60.dp)
+            .testTag(stringResource(R.string.codeVerifyField)),
         value = input,
         onValueChange = { if (it.length <= 6) input = it },
         placeholder = {
@@ -147,7 +154,9 @@ fun suffixTextField(
     } else false
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        modifier = Modifier
+            .size(width = 270.dp, height = 60.dp)
+            .testTag(stringResource(R.string.suffixTextField)),
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -203,7 +212,9 @@ fun passwordTextField(
     } else false
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        modifier = Modifier
+            .size(width = 270.dp, height = 60.dp)
+            .testTag(stringResource(R.string.passwordTextField)),
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -256,7 +267,8 @@ fun passwordSetField(
     OutlinedTextField(
         modifier = Modifier
             .size(width = 270.dp, height = 60.dp)
-            .focusRequester(focusRequester),
+            .focusRequester(focusRequester)
+            .testTag(stringResource(R.string.passwordSetField)),
         value = input,
         onValueChange = {
             input = it
@@ -314,7 +326,9 @@ fun passwordCheckTextField(
     var input by remember { mutableStateOf("") }
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        modifier = Modifier
+            .size(width = 270.dp, height = 60.dp)
+            .testTag(stringResource(R.string.passwordCheckTextField)),
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -356,7 +370,9 @@ fun SearchBar(
     var input by remember { mutableStateOf(keyword) }
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 340.dp, height = 60.dp),
+        modifier = Modifier
+            .size(width = 340.dp, height = 60.dp)
+            .testTag(stringResource(R.string.searchBar)),
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -409,7 +425,9 @@ fun commentTextField(
     var input by rememberSaveable { mutableStateOf("") }
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 280.dp, height = 60.dp),
+        modifier = Modifier
+            .size(width = 280.dp, height = 60.dp)
+            .testTag(stringResource(R.string.commentTextField)),
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -452,6 +470,7 @@ fun customTextField(
         value = input,
         onValueChange = { input = it },
         modifier = Modifier
+            .testTag(stringResource(R.string.customTextField))
             .indicatorLine(
                 enabled = false,
                 isError = false,
