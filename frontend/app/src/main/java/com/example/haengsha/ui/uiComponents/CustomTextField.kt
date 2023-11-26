@@ -34,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -56,7 +55,8 @@ import es.dmoral.toasty.Toasty
 @Composable
 fun commonTextField(
     isError: Boolean,
-    placeholder: String
+    placeholder: String,
+    keyboardActions: () -> Unit
 ): String {
     var input by rememberSaveable { mutableStateOf("") }
 
@@ -78,6 +78,9 @@ fun commonTextField(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Done
         ),
+        keyboardActions = KeyboardActions(
+            onDone = { keyboardActions() }
+        ),
         singleLine = true,
         shape = RoundedCornerShape(10.dp),
         colors = OutlinedTextFieldDefaults.colors(
@@ -92,7 +95,8 @@ fun commonTextField(
 @Composable
 fun codeVerifyField(
     isError: Boolean,
-    placeholder: String
+    placeholder: String,
+    keyboardActions: () -> Unit
 ): String {
     var input by remember { mutableStateOf("") }
 
@@ -114,6 +118,9 @@ fun codeVerifyField(
             keyboardType = KeyboardType.Number,
             imeAction = ImeAction.Done
         ),
+        keyboardActions = KeyboardActions(
+            onDone = { keyboardActions() }
+        ),
         singleLine = true,
         shape = RoundedCornerShape(10.dp),
         colors = OutlinedTextFieldDefaults.colors(
@@ -129,6 +136,7 @@ fun codeVerifyField(
 fun suffixTextField(
     isEmptyError: Boolean,
     placeholder: String,
+    keyboardActions: () -> Unit
 //    suffix: String
 ): String {
     var input by rememberSaveable { mutableStateOf("") }
@@ -165,7 +173,10 @@ fun suffixTextField(
         isError = isError,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Done
+            imeAction = ImeAction.Next
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = { keyboardActions() }
         ),
         singleLine = true,
         shape = RoundedCornerShape(10.dp),
@@ -182,6 +193,7 @@ fun suffixTextField(
 fun passwordTextField(
     isEmptyError: Boolean,
     placeholder: String = "",
+    keyboardActions: () -> Unit
 ): String {
     var input by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
@@ -209,6 +221,9 @@ fun passwordTextField(
             keyboardType = KeyboardType.Password,
             imeAction = ImeAction.Done
         ),
+        keyboardActions = KeyboardActions(
+            onDone = { keyboardActions() }
+        ),
         singleLine = true,
         shape = RoundedCornerShape(10.dp),
         colors = OutlinedTextFieldDefaults.colors(
@@ -224,10 +239,11 @@ fun passwordTextField(
 fun passwordSetField(
     isEmptyError: Boolean,
     placeholder: String = "",
+    keyboardActions: () -> Unit,
     context: Context
 ): String {
     var input by remember { mutableStateOf("") }
-    val textField = FocusRequester()
+    val focusRequester = FocusRequester()
     val pattern = "^(?=.*[a-zA-Z])(?=.*\\d)[a-zA-Z\\d]{4,10}$".toRegex()
     var isError by remember { mutableStateOf(false) }
     var isRegexError by remember { mutableStateOf(false) }
@@ -240,16 +256,16 @@ fun passwordSetField(
     OutlinedTextField(
         modifier = Modifier
             .size(width = 270.dp, height = 60.dp)
-            .focusRequester(textField),
+            .focusRequester(focusRequester),
         value = input,
         onValueChange = {
             input = it
             if (pattern.matches(input)) {
                 isRegexError = false
-                textField.freeFocus()
+                focusRequester.freeFocus()
             } else {
                 isRegexError = true
-                textField.captureFocus()
+                focusRequester.captureFocus()
             }
         },
         placeholder = {
@@ -265,14 +281,17 @@ fun passwordSetField(
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done
+            imeAction = ImeAction.Next
         ),
         keyboardActions = KeyboardActions(
-            onDone = {
+            onNext = {
                 if (isRegexError) {
                     Toasty.error(context, "비밀번호 형식이 맞지 않습니다", Toast.LENGTH_SHORT, true)
                         .show()
-                } else defaultKeyboardAction(ImeAction.Done)
+                    keyboardActions()
+                } else {
+                    defaultKeyboardAction(ImeAction.Next)
+                }
             }
         ),
         singleLine = true,
@@ -289,7 +308,8 @@ fun passwordSetField(
 @Composable
 fun passwordCheckTextField(
     isError: Boolean = false,
-    placeholder: String = ""
+    placeholder: String = "",
+    keyboardActions: () -> Unit
 ): String {
     var input by remember { mutableStateOf("") }
 
@@ -312,6 +332,9 @@ fun passwordCheckTextField(
             keyboardType = KeyboardType.Password,
             imeAction = ImeAction.Done
         ),
+        keyboardActions = KeyboardActions(
+            onDone = { keyboardActions() }
+        ),
         singleLine = true,
         shape = RoundedCornerShape(10.dp),
         colors = OutlinedTextFieldDefaults.colors(
@@ -327,14 +350,13 @@ fun passwordCheckTextField(
 fun SearchBar(
     boardViewModel: BoardViewModel,
     keyword: String,
+    keyboardActions: () -> Unit,
     onSubmit: (SearchRequest) -> Unit
 ) {
     var input by remember { mutableStateOf(keyword) }
-    val keyboardController = LocalSoftwareKeyboardController.current
 
     OutlinedTextField(
-        modifier = Modifier
-            .size(width = 340.dp, height = 60.dp),
+        modifier = Modifier.size(width = 340.dp, height = 60.dp),
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -368,7 +390,7 @@ fun SearchBar(
                         boardViewModel.uiState.value.endDate
                     )
                 )
-                keyboardController?.hide()
+                keyboardActions()
             }
         ),
         singleLine = true,
@@ -381,7 +403,9 @@ fun SearchBar(
 }
 
 @Composable
-fun commentTextField(): String {
+fun commentTextField(
+    keyboardActions: () -> Unit
+): String {
     var input by rememberSaveable { mutableStateOf("") }
 
     OutlinedTextField(
@@ -401,6 +425,9 @@ fun commentTextField(): String {
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Done
         ),
+        keyboardActions = KeyboardActions(
+            onDone = { keyboardActions() }
+        ),
         singleLine = true,
         shape = RoundedCornerShape(20.dp),
         colors = OutlinedTextFieldDefaults.colors(
@@ -413,7 +440,11 @@ fun commentTextField(): String {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun customTextField(placeholder: String, enabled: Boolean): String {
+fun customTextField(
+    placeholder: String,
+    enabled: Boolean,
+    keyboardActions: () -> Unit
+): String {
     var input by remember { mutableStateOf("") }
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -438,6 +469,9 @@ fun customTextField(placeholder: String, enabled: Boolean): String {
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = { keyboardActions() }
         ),
         singleLine = true,
         textStyle = TextStyle(
@@ -489,6 +523,6 @@ fun TextFieldPreview() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        customTextField("자하연 앞", true)
+        customTextField("자하연 앞", true) {}
     }
 }

@@ -74,4 +74,13 @@ class NetworkLoginDataRepositoryTest {
                 repository.findChangePassword(FakeLoginDataSource.findChangePasswordRequest)
             )
         }
+
+    @Test
+    fun networkLoginDataRepository_logout_verifyResponse() =
+        runTest {
+            assertEquals(
+                Unit,
+                repository.logout(FakeLoginDataSource.token)
+            )
+        }
 }

@@ -3,6 +3,7 @@ package com.example.haengsha.ui.screens.login.signup
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -43,7 +47,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SignupEmailVerificationScreen(
     loginApiViewModel: LoginApiViewModel,
-    loginUiState: LoginApiUiState,
+    loginApiUiState: LoginApiUiState,
     signupEmailUpdate: (String) -> Unit,
     loginNavController: NavController,
     loginNavBack: () -> Unit,
@@ -60,11 +64,20 @@ fun SignupEmailVerificationScreen(
     var isEmailError by remember { mutableStateOf(false) }
     var isCodeError by remember { mutableStateOf(false) }
     var isEmailAlreadyExistDialogVisible by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 60.dp),
+            .padding(top = 60.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    })
+            },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(1) {
@@ -87,6 +100,7 @@ fun SignupEmailVerificationScreen(
             emailInput = suffixTextField(
                 isEmptyError = isEmailError,
                 placeholder = "SNU Email",
+                keyboardActions = { focusManager.clearFocus() },
                 //suffix = "@snu.ac.kr"
             )
             Spacer(modifier = Modifier.height(15.dp))
@@ -134,7 +148,8 @@ fun SignupEmailVerificationScreen(
             Spacer(modifier = Modifier.height(15.dp))
             codeInput = codeVerifyField(
                 isError = isCodeError,
-                placeholder = "인증번호 6자리"
+                placeholder = "인증번호 6자리",
+                keyboardActions = { focusManager.clearFocus() }
             )
             Spacer(modifier = Modifier.height(15.dp))
             Box(
@@ -201,7 +216,7 @@ fun SignupEmailVerificationScreen(
 
     if (emailVerifyTrigger) {
         LaunchedEffect(Unit) { loginApiViewModel.signupEmailVerify(emailInput) }
-        when (loginUiState) {
+        when (loginApiUiState) {
             is LoginApiUiState.Success -> {
                 Toasty
                     .success(
@@ -213,16 +228,17 @@ fun SignupEmailVerificationScreen(
                     .show()
                 codeSent++
                 emailVerifyTrigger = false
+                loginApiViewModel.resetLoginApiUiState()
             }
 
             is LoginApiUiState.HttpError -> {
-                if (loginUiState.message.contains("exist")) {
+                if (loginApiUiState.message == "이미 가입된 계정입니다") {
                     isEmailAlreadyExistDialogVisible = true
                 } else {
                     Toasty
                         .warning(
                             loginContext,
-                            loginUiState.message,
+                            loginApiUiState.message,
                             Toast.LENGTH_SHORT,
                             true
                         )
@@ -230,6 +246,7 @@ fun SignupEmailVerificationScreen(
                 }
                 isEmailError = true
                 emailVerifyTrigger = false
+                loginApiViewModel.resetLoginApiUiState()
             }
 
             is LoginApiUiState.NetworkError -> {
@@ -242,6 +259,7 @@ fun SignupEmailVerificationScreen(
                     )
                     .show()
                 emailVerifyTrigger = false
+                loginApiViewModel.resetLoginApiUiState()
             }
 
             is LoginApiUiState.Loading -> {
@@ -256,23 +274,25 @@ fun SignupEmailVerificationScreen(
 
     if (codeVerifyTrigger) {
         LaunchedEffect(Unit) { loginApiViewModel.loginCodeVerify(emailInput, codeInput) }
-        when (loginUiState) {
+        when (loginApiUiState) {
             is LoginApiUiState.Success -> {
                 signupEmailUpdate(emailInput)
                 loginNavController.navigate(LoginRoute.SignupPassword.route)
+                loginApiViewModel.resetLoginApiUiState()
             }
 
             is LoginApiUiState.HttpError -> {
                 Toasty
                     .warning(
                         loginContext,
-                        "loginUiState.message",
+                        loginApiUiState.message,
                         Toast.LENGTH_SHORT,
                         true
                     )
                     .show()
                 isCodeError = true
                 codeVerifyTrigger = false
+                loginApiViewModel.resetLoginApiUiState()
             }
 
             is LoginApiUiState.NetworkError -> {
@@ -285,6 +305,7 @@ fun SignupEmailVerificationScreen(
                     )
                     .show()
                 codeVerifyTrigger = false
+                loginApiViewModel.resetLoginApiUiState()
             }
 
             is LoginApiUiState.Loading -> {

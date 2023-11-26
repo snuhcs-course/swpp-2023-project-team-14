@@ -71,4 +71,14 @@ class NetworkBoardDataRepositoryTest {
             )
         }
     }
+
+    @Test
+    fun networkBoardDataRepository_searchEvent_verifyResponse() {
+        runTest {
+            assertEquals(
+                FakeBoardDataSource.listOfBoardListResponse,
+                repository.searchEvent(FakeBoardDataSource.searchRequest)
+            )
+        }
+    }
 }

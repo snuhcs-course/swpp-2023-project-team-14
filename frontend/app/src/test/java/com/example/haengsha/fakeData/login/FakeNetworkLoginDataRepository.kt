@@ -44,4 +44,8 @@ class FakeNetworkLoginDataRepository : LoginDataRepository {
     override suspend fun findChangePassword(findChangePasswordRequest: FindChangePasswordRequest): FindChangePasswordResponse {
         return FakeLoginDataSource.findChangePasswordResponse
     }
+
+    override suspend fun logout(token: String) {
+        // return nothing
+    }
 }

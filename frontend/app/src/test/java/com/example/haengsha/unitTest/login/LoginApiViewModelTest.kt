@@ -108,4 +108,16 @@ class LoginApiViewModelTest {
             LoginApiUiState.Success(FakeLoginDataSource.message), loginApiViewModel.loginApiUiState
         )
     }
+
+    @Test
+    fun loginViewModel_logout_verifyLoginUiStateSuccess() = runTest {
+        val loginApiViewModel = LoginApiViewModel(
+            loginDataRepository = FakeNetworkLoginDataRepository()
+        )
+        loginApiViewModel.logout(FakeLoginDataSource.token)
+        assertEquals(
+            LoginApiUiState.Success("로그아웃 성공"),
+            loginApiViewModel.loginApiUiState
+        )
+    }
 }
