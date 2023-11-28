@@ -1,4 +1,4 @@
-package com.example.haengsha.instrumentalTest
+package com.example.haengsha.instrumentedTest.navigationTest
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.platform.LocalContext
@@ -34,8 +34,8 @@ class LoginScreenNavigationTest {
     private lateinit var mainNavController: NavHostController
     private lateinit var loginApiViewModel: LoginApiViewModel
     private lateinit var loginApiUiState: LoginApiUiState
-    private val userViewModel = UserViewModel()
-    private val boardViewModel = BoardViewModel()
+    private lateinit var userViewModel: UserViewModel
+    private lateinit var boardViewModel: BoardViewModel
 
     @Before
     fun setupMainNavHost() {
@@ -46,6 +46,9 @@ class LoginScreenNavigationTest {
             mainNavController = rememberNavController()
             loginApiViewModel = viewModel(factory = LoginApiViewModel.Factory)
             loginApiUiState = loginApiViewModel.loginApiUiState
+            userViewModel = UserViewModel()
+            boardViewModel = BoardViewModel()
+
             Login(
                 userViewModel = userViewModel,
                 loginApiViewModel = loginApiViewModel,

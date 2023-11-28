@@ -1,4 +1,4 @@
-package com.example.haengsha.instrumentalTest
+package com.example.haengsha.instrumentedTest.navigationTest
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.platform.LocalContext
