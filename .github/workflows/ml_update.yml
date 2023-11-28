@@ -47,5 +47,5 @@ jobs:
             ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
               docker stop ml-container
               docker rm ml-container
-              docker run -d --name ml-container -v /recommend:/app "${{ secrets.DOCKER_USERNAME }}/ml-image:latest"
+              docker run -d --name ml-container -v /recommend:/app "${{ secrets.DOCKER_USERNAME }}/ml-image:latest" tail -f /dev/null
             EOF
