@@ -24,14 +24,14 @@ jobs:
                 
             - name: Transfer Recommendation Script
               run:
-                scp -i key.pem ./recommendation_pipeline.sh ec2-user@${{ secrets.CLOUD_URL }}:~
+                scp -i ./"key.pem" ./recommendation_pipeline.sh ec2-user@${{ secrets.CLOUD_URL }}:~
 
             - name: Sync ML Code
               run: rsync -avz ./recommend/ ec2-user@${{ secrets.CLOUD_URL }}:/recommend/
 
             - name: Restart ML Container & Mount Code
               run: |
-                ssh -i key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
+                ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
                     docker stop ml-container
                     docker rm ml-container
                     docker run -d --name ml-container -v /recommend:/app "${{ secrets.DOCKER_USERNAME }}/ml-image:latest"
