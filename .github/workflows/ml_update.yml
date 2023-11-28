@@ -17,6 +17,11 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v2
             
+        - name: Add SSH key for EC2 instance
+          run: |
+            mkdir -p ~/.ssh
+            ssh-keyscan -H ${{ secrets.CLOUD_URL }} >> ~/.ssh/known_hosts
+
         - name: Transfer Recommendation Script
           run: | 
             set +x
