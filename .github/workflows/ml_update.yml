@@ -36,7 +36,7 @@ jobs:
             echo "${{ secrets.PEM }}" > key.pem 
             set -x
             chmod 600 key.pem
-            rsync -avz -e "ssh -o StrictHostKeyChecking=no -i ./key.pem" ./recommend/ ec2-user@${{ secrets.CLOUD_URL }}:/recommend/
+            rsync -avz -e "ssh -o StrictHostKeyChecking=no -i ./key.pem" ./recommend/ ec2-user@${{ secrets.CLOUD_URL }}:/home/ec2-user/recommend/
 
         - name: Restart ML Container & Mount Code
           run: |

@@ -26,6 +26,11 @@ jobs:
         docker build -t "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest" .
         docker push "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
     
+    - name: Add SSH key for EC2 instance
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H ${{ secrets.CLOUD_URL }} >> ~/.ssh/known_hosts
+
     - name: Stop Docker Container, Clean Up, Pull & Run
       run: | 
         set +x
