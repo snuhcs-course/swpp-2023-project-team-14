@@ -68,7 +68,8 @@ fun boardScreen(
     boardViewModel: BoardViewModel,
     boardApiViewModel: BoardApiViewModel,
     boardNavController: NavController,
-    userUiState: UserUiState
+    userUiState: UserUiState,
+    isTest: Boolean
 ): Int {
     val boardUiState = boardViewModel.uiState.collectAsState()
     val boardListUiState = boardApiViewModel.boardListUiState
@@ -225,6 +226,12 @@ fun boardScreen(
                                     fontWeight = FontWeight.SemiBold,
                                     textAlign = TextAlign.Center
                                 )
+                                if (isTest) {
+                                    Column(modifier = Modifier.clickable {
+                                        eventId = 0
+                                        boardNavController.navigate(BoardRoute.BoardDetail.route)
+                                    }) { Text("test") }
+                                }
                             }
                         } else {
                             Box(
@@ -277,7 +284,7 @@ fun boardScreen(
             }
         }
 
-        if (userUiState.role == "Group") {
+        if (userUiState.role == "Group" || isTest) {
             Box(modifier = Modifier.offset(330.dp, 600.dp)) {
                 Box(
                     modifier = Modifier
