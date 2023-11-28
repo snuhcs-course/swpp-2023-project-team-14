@@ -4,28 +4,21 @@
 current_time=$(TZ=Asia/Seoul date +%H:%M) 
 current_timestamp=$(date +"%Y-%m-%d %H:%M:%S")
 echo "[$current_timestamp] Connecting to the backend container..."
-
-docker exec haeng bash <<'EOF'    # change this back to 'EOF'
-current_time=$(TZ=Asia/Seoul date +%H:%M)
-current_timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-echo "[$current_timestamp] Start collecting data..."    
-python3 transfer.py -c
-
-current_timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-echo "[$current_timestamp] Start transferring userData & eventData to shared volume..."
-USER_FILE="userData.csv"
-EVENT_FILE="eventData.csv"
-USER_SRC_PATH="/app/data/$USER_FILE"
-EVENT_SRC_PATH="/app/data/$EVENT_FILE"
-VOLUME_PATH="/var/lib/docker/volumes/shared-volume/_data/"
-
-cp $USER_SRC_PATH $VOLUME_PATH
-cp $EVENT_SRC_PATH $VOLUME_PATH
-
-current_timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-echo "[$current_timestamp] Finished!"
-
-EOF
+docker exec haeng bash -c "current_time=\$(TZ=Asia/Seoul date +%H:%M); \
+current_timestamp=\$(date +'%Y-%m-%d %H:%M:%S'); \
+echo \"[\$current_timestamp] Start collecting data...\"; \
+python3 transfer.py -c; \
+current_timestamp=\$(date +'%Y-%m-%d %H:%M:%S'); \
+echo \"[\$current_timestamp] Start transferring userData & eventData to shared volume...\"; \
+USER_FILE='userData.csv'; \
+EVENT_FILE='eventData.csv'; \
+USER_SRC_PATH=\"/app/data/\$USER_FILE\"; \
+EVENT_SRC_PATH=\"/app/data/\$EVENT_FILE\"; \
+VOLUME_PATH=\"/var/lib/docker/volumes/shared-volume/_data/\"; \
+cp \$USER_SRC_PATH \$VOLUME_PATH; \
+cp \$EVENT_SRC_PATH \$VOLUME_PATH; \
+current_timestamp=\$(date +'%Y-%m-%d %H:%M:%S'); \
+echo \"[\$current_timestamp] Finished!\";"
 
 # go into the ML container and do the second part
 current_timestamp=$(date +"%Y-%m-%d %H:%M:%S")
