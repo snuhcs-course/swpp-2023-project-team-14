@@ -56,7 +56,8 @@ fun SignupUserInfoScreen(
     signupNickname: String,
     loginNavController: NavController,
     loginNavBack: () -> Unit,
-    loginContext: Context
+    loginContext: Context,
+    isTest: Boolean
 ) {
     var nickname by rememberSaveable { mutableStateOf("") }
     var college by rememberSaveable { mutableStateOf("") }
@@ -192,6 +193,9 @@ fun SignupUserInfoScreen(
             CommonBlueButton(
                 text = "다음",
                 onClick = {
+                    if (isTest) {
+                        loginNavController.navigate(LoginRoute.SignupTerms.route)
+                    }
                     if (nickname == "" || college == "" || studentId == "" || interest == listOf("")) {
                         Toasty
                             .error(loginContext, "정보 입력을 완료해주세요!", Toast.LENGTH_SHORT, true)

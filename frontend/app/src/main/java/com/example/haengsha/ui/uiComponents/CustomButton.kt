@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -35,7 +36,8 @@ fun CommonBlueButton(text: String, onClick: () -> Unit) {
             .size(width = 270.dp, height = 50.dp)
             .shadow(elevation = 8.dp, shape = RoundedCornerShape(10.dp))
             .background(color = ButtonBlue)
-            .clickable(onClick = onClick),
+            .clickable(onClick = onClick)
+            .testTag(text),
         contentAlignment = Alignment.Center
     ) {
         Text(

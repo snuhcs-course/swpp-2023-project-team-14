@@ -30,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.haengsha.model.network.dataModel.SignupInfo
+import com.example.haengsha.model.dataSource.SignupInfo
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.HaengshaGrey
 import com.example.haengsha.ui.theme.HaengshaTheme

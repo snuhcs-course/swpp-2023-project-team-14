@@ -1,4 +1,4 @@
-package com.example.haengsha.model.network.dataModel
+package com.example.haengsha.model.dataSource
 
 object SignupInfo {
     val college = listOf(

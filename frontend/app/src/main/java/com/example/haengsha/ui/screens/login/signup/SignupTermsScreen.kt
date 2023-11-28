@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -62,7 +63,8 @@ fun SignupTermsScreen(
     signupUiState: SignupUiState,
     loginNavController: NavController,
     loginNavBack: () -> Unit,
-    loginContext: Context
+    loginContext: Context,
+    isTest: Boolean
 ) {
     var isAllChecked by rememberSaveable { mutableStateOf(false) }
     var isTermsChecked by rememberSaveable { mutableStateOf(false) }
@@ -96,16 +98,18 @@ fun SignupTermsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
-                        modifier = Modifier.clickable {
-                            isAllChecked = !isAllChecked
-                            if (isAllChecked) {
-                                isTermsChecked = true
-                                isPolicyChecked = true
-                            } else {
-                                isTermsChecked = false
-                                isPolicyChecked = false
+                        modifier = Modifier
+                            .clickable {
+                                isAllChecked = !isAllChecked
+                                if (isAllChecked) {
+                                    isTermsChecked = true
+                                    isPolicyChecked = true
+                                } else {
+                                    isTermsChecked = false
+                                    isPolicyChecked = false
+                                }
                             }
-                        }
+                            .testTag("전체 동의")
                     ) { CheckBox(color = if (isAllChecked) ButtonBlue else ButtonGrey, size = 28) }
                     Spacer(modifier = Modifier.width(20.dp))
                     Text(
@@ -202,6 +206,13 @@ fun SignupTermsScreen(
                     CommonBlueButton(
                         text = "동의 후 회원가입",
                         onClick = {
+                            if (isTest) {
+                                signupStateReset()
+                                loginNavController.navigate(LoginRoute.SignupComplete.route) {
+                                    popUpTo(LoginRoute.Login.route) { inclusive = false }
+                                }
+                                loginApiViewModel.resetLoginApiUiState()
+                            }
                             loginApiViewModel.signupRegister(
                                 email = signupUiState.email,
                                 password = signupUiState.password,
