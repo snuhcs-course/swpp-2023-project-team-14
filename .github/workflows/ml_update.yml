@@ -1,46 +1,46 @@
 name: Update ML Container
 
 on:
-    push:
-        branches:
-            - main
-            - dev
-            - feat/ML_server
-        paths:
-            - 'recommend/**'
+  push:
+    branches:
+      - main
+      - dev
+      - feat/ML_server
+    paths:
+      - 'recommend/**'
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
-                
-            # - name: Transfer Recommendation Script
-            #   run: | 
-            #     set +x
-            #     echo "${{ secrets.PEM }}" > key.pem 
-            #     set -x
-            #     chmod 600 key.pem
-            #     scp -i ./"key.pem" ./recommendation_pipeline.sh -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }}:~
+    steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+            
+        - name: Transfer Recommendation Script
+          run: | 
+            set +x
+            echo "${{ secrets.PEM }}" > key.pem 
+            set -x
+            chmod 600 key.pem
+            scp -i ./"key.pem" ./recommendation_pipeline.sh -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }}:~
 
-            - name: Sync ML Code
-              run: |
-                set +x
-                echo "${{ secrets.PEM }}" > key.pem 
-                set -x
-                chmod 600 key.pem
-                rsync -avz ./recommend/ -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }}:/recommend/
+        - name: Sync ML Code
+          run: |
+            set +x
+            echo "${{ secrets.PEM }}" > key.pem 
+            set -x
+            chmod 600 key.pem
+            rsync -avz ./recommend/ -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }}:/recommend/
 
-            - name: Restart ML Container & Mount Code
-              run: |
-                set +x
-                echo "${{ secrets.PEM }}" > key.pem 
-                set -x
-                chmod 600 key.pem
-                ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
-                    docker stop ml-container
-                    docker rm ml-container
-                    docker run -d --name ml-container -v /recommend:/app "${{ secrets.DOCKER_USERNAME }}/ml-image:latest"
-                EOF
+        - name: Restart ML Container & Mount Code
+          run: |
+            set +x
+            echo "${{ secrets.PEM }}" > key.pem 
+            set -x
+            chmod 600 key.pem
+            ssh -i ./"key.pem" -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
+              docker stop ml-container
+              docker rm ml-container
+              docker run -d --name ml-container -v /recommend:/app "${{ secrets.DOCKER_USERNAME }}/ml-image:latest"
+            EOF
