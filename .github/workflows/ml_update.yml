@@ -1,0 +1,38 @@
+name: Update ML Container
+
+on:
+    push:
+        branches:
+            - main
+            - dev
+            - feat/ML_server
+        paths:
+            - 'recommend/**'
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Setup SSH Key
+              run: |
+                echo "${{ secrets.PEM }}" > key.pem 
+                chmod 600 key.pem
+                
+            - name: Transfer Recommendation Script
+              run:
+                scp -i key.pem ./recommendation_pipeline.sh ec2-user@${{ secrets.CLOUD_URL }}:~
+
+            - name: Sync ML Code
+              run: rsync -avz ./recommend/ ec2-user@${{ secrets.CLOUD_URL }}:/recommend/
+
+            - name: Restart ML Container & Mount Code
+              run: |
+                ssh -i key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.CLOUD_URL }} <<EOF
+                    docker stop ml-container
+                    docker rm ml-container
+                    docker run -d --name ml-container -v /recommend:/app "${{ secrets.DOCKER_USERNAME }}/ml-image:latest"
+                EOF
