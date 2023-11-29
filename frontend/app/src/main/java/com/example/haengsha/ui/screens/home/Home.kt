@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,6 +39,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.haengsha.R
 import com.example.haengsha.model.network.dataModel.EventResponse
 import com.example.haengsha.model.uiState.UserUiState
+import com.example.haengsha.model.uiState.home.HomeApiUiState
 import com.example.haengsha.model.viewModel.home.HomeApiViewModel
 import com.example.haengsha.model.viewModel.home.HomeViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
@@ -76,15 +79,17 @@ fun HomeScreen(
     userUiState: UserUiState,
     homeViewModel: HomeViewModel
 ) {
+    val homeApiUiState = homeApiViewModel.homeApiUiState
     var selection by remember { mutableStateOf(LocalDate.now()) }
     val currentMonth = selection.yearMonth
     val startDate = remember { currentMonth.minusMonths(100).atStartOfMonth() } // Adjust as needed
     val endDate = remember { currentMonth.plusMonths(100).atEndOfMonth() } // Adjust as needed
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
 
-    homeApiViewModel.getRecommendationList(token = userUiState.token)
+    LaunchedEffect(Unit) {
+        homeApiViewModel.getEventByDate(selection)
+    }
 
-    homeApiViewModel.getEventByDate(selection)
     val state = rememberWeekCalendarState(
         startDate = startDate,
         endDate = endDate,
@@ -105,7 +110,6 @@ fun HomeScreen(
             onDismiss = { showDatePicker = false }
         )
     }
-
 
     Column(
         modifier = Modifier
@@ -167,7 +171,81 @@ fun HomeScreen(
             },
         )
 
-        TabView(homeViewModel, homeApiViewModel)
+        when (homeApiUiState) {
+            is HomeApiUiState.Success -> {
+                TabView(homeViewModel, homeApiViewModel, userUiState)
+            }
+
+            is HomeApiUiState.Loading -> {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    CircularProgressIndicator(
+                        color = HaengshaBlue,
+                        strokeWidth = 3.dp
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(
+                        text = "행사 불러오는 중...",
+                        fontFamily = poppins,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = HaengshaBlue
+                    )
+                }
+            }
+
+            is HomeApiUiState.HttpError -> {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        text = "이벤트를 불러오는 중 문제가 발생했어요!\n\n다시 시도해주세요.",
+                        fontFamily = poppins,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = HaengshaBlue
+                    )
+                }
+            }
+
+            is HomeApiUiState.NetworkError -> {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        text = "인터넷 연결을 확인해주세요.",
+                        fontFamily = poppins,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = HaengshaBlue
+                    )
+                }
+            }
+
+            is HomeApiUiState.Error -> {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        text = "알 수 없는 문제가 발생했어요!\n\n메일로 문의해주세요.",
+                        fontFamily = poppins,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = HaengshaBlue
+                    )
+                }
+            }
+        }
+
     }
 }
 
