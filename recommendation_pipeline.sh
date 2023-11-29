@@ -16,57 +16,47 @@ EVENT_FILE='eventData.csv'; \
 USER_SRC_PATH=\"/app/data/\$USER_FILE\"; \
 EVENT_SRC_PATH=\"/app/data/\$EVENT_FILE\"; \
 VOLUME_PATH=\"/haengvolume\"; \
-cp \$USER_SRC_PATH \$VOLUME_PATH\$USER_FILE; \
-cp \$EVENT_SRC_PATH \$VOLUME_PATH\$EVENT_FILE; \
+cp \$USER_SRC_PATH \$VOLUME_PATH; \
+cp \$EVENT_SRC_PATH \$VOLUME_PATH; \
 current_timestamp=\$(date +'%Y-%m-%d %H:%M:%S'); \
 echo \"[\$current_timestamp] Finished!\";"
 
 # go into the ML container and do the second part
 current_timestamp=$(date +"%Y-%m-%d %H:%M:%S")
 echo "[$current_timestamp] Connecting to the ML container..."
+docker exec ml-container bash -c "current_time=\$(TZ=Asia/Seoul date +%H:%M); \
+current_timestamp=\$(date +'%Y-%m-%d %H:%M:%S'); \
+echo \"[\$current_timestamp] Start copying userData & eventData from shared volume...\"; \
+VOLUME_PATH=\"/mlvolume/\"; \
+USER_FILE="userData.csv"; \
+EVENT_FILE="eventData.csv"; \
+USER_DST_PATH=\"/app/data/\$USER_FILE\"; \
+EVENT_DST_PATH=\"/app/data/\$EVENT_FILE\"; \
+RECOMMENDATION_FILE="all_recommends_index.csv"; \
+RECOMMENDATION_PATH=\"/app/\$RECOMMENDATION_FILE\"; \
+cp \$VOLUME_PATH\$USER_FILE \$USER_DST_PATH; \
+cp \$VOLUME_PATH\$EVENT_FILE \$EVENT_DST_PATH; \
+current_timestamp=\$(date +'%Y-%m-%d %H:%M:%S'); \
+echo \"[\$current_timestamp] Start preprocessing & Extracting embedding...\"; \
+python /app/preprocess.py 1; \
+python /app/preprocess.py 0; \
+current_timestamp=\$(date +'%Y-%m-%d %H:%M:%S'); \
+echo \"[\$current_timestamp] Compare similarity & Make recommendation...\"; \
+python /app/recommend.py; \
+cp \$RECOMMENDATION_PATH \$VOLUME_PATH;"
 
-docker exec ml-container bash <<'EOF'
-current_time=$(TZ=Asia/Seoul date +%H:%M)
+# # go into the backend container and do the third part
+# current_timestamp=\$(date +"%Y-%m-%d %H:%M:%S")
+# echo "[$current_timestamp] Connecting to the backend container..."
 
-current_timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-echo "[$current_timestamp] Start copying userData & eventData from shared volume..."
-VOLUME_PATH="/var/lib/docker/volumes/shared-volume/_data/"
-USER_FILE="userData.csv"
-EVENT_FILE="eventData.csv"
-USER_DST_PATH="/app/data/$USER_FILE"
-EVENT_DST_PATH="/app/data/$EVENT_FILE"
-RECOMMENDATION_FILE="all_recommends_index.csv"
-
-cp $VOLUME_PATH$USER_FILE $USER_DST_PATH
-cp $VOLUME_PATH$EVENT_FILE $EVENT_DST_PATH
-
-current_timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-echo "[$current_timestamp] Start preprocessing & Extracting embedding..."
-python /app/preprocess.py 1 #User
-python /app/preprocess.py 0 #Event
-
-current_timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-echo "[$current_timestamp] Compare similarity & Make recommendation..."
-python /app/recommend.py
-cp $RECOMMENDATION_FILE $VOLUME_PATH
-EOF
-
-# go into the backend container and do the third part
-current_timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-echo "[$current_timestamp] Connecting to the backend container..."
-docker exec haeng bash<<'EOF'
-
-current_time=$(TZ=Asia/Seoul date +%H:%M)
-current_timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-echo "[$current_timestamp] Copying the recommendation results into the container..."
-RECOMMENDATION_FILE="all_recommends_index.csv"
-VOLUME_PATH="/var/lib/docker/volumes/shared-volume/_data/"
-RECOMMENDATION_DST_PATH="/app/data/$RECOMMENDATION_FILE"
-cp $VOLUME_PATH$RECOMMENDATION_FILE $RECOMMENDATION_DST_PATH
-
-echo "[$current_timestamp] Delete redundant recommendations and load to DB..."
-python3 transfer.py -l
-echo "[$current_timestamp] Finished!"
-EOF
-
+# docker exec haeng bash -c "current_time=\$(TZ=Asia/Seoul date +%H:%M) \
+# current_timestamp=\$(date +"%Y-%m-%d %H:%M:%S") \
+# echo \"[\$current_timestamp] Copying the recommendation results into the container...\" \
+# RECOMMENDATION_FILE="all_recommends_index.csv" \
+# VOLUME_PATH=\"/haengvolume\"; \
+# RECOMMENDATION_DST_PATH="/app/data/\$RECOMMENDATION_FILE" \
+# cp \$VOLUME_PATH\$RECOMMENDATION_FILE \$RECOMMENDATION_DST_PATH \
+# echo \"[\$current_timestamp] Delete redundant recommendations and load to DB...\" \
+# python3 transfer.py -l \
+# echo \"[\$current_timestamp] Finished!\" "
 
