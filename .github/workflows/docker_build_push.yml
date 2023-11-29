@@ -5,7 +5,9 @@ on:
     branches:
       - main
       - dev
-      
+      - feat/ML_server
+    paths:
+      - 'backend/**'
 
 jobs:
   build:
@@ -24,6 +26,11 @@ jobs:
         docker build -t "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest" .
         docker push "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
     
+    - name: Add SSH key for EC2 instance
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H ${{ secrets.CLOUD_URL }} >> ~/.ssh/known_hosts
+
     - name: Stop Docker Container, Clean Up, Pull & Run
       run: | 
         set +x
@@ -37,5 +44,5 @@ jobs:
           docker rmi "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
           echo "Pulling new image..."
           docker pull "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
-          docker run -d --name haeng -p 8080:8000 --env-file haengsha-env/.env "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
+          docker run -d --name haeng -p 8080:8000 --env-file haengsha-env/.env -v shared-volume:/haengvolume "${{ secrets.DOCKER_USERNAME }}/haengsha-backend:latest"
         EOF
