@@ -63,6 +63,4 @@ class FavoriteScreenNavigationTest {
         composeTestRule.onNodeWithText("test").performClick()
         favoriteNavController.assertCurrentRouteName(FavoriteRoute.FavoriteDetail.route)
     }
-
-    // NavigateUp 테스트는 코드 구조상 MainScreen에서 테스트함
 }

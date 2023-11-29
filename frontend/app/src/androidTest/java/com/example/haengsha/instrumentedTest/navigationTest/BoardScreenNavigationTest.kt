@@ -74,6 +74,4 @@ class BoardScreenNavigationTest {
         composeTestRule.onNodeWithContentDescription("event post Button").performClick()
         boardNavController.assertCurrentRouteName(BoardRoute.BoardPost.route)
     }
-
-    // NavigateUp 테스트는 코드 구조상 MainScreen에서 테스트함
 }
