@@ -51,7 +51,8 @@ fun SignupEmailVerificationScreen(
     signupEmailUpdate: (String) -> Unit,
     loginNavController: NavController,
     loginNavBack: () -> Unit,
-    loginContext: Context
+    loginContext: Context,
+    isTest: Boolean
 ) {
     var emailVerifyTrigger by remember { mutableStateOf(false) }
     var codeVerifyTrigger by remember { mutableStateOf(false) }
@@ -168,9 +169,13 @@ fun SignupEmailVerificationScreen(
                 )
             }
             Spacer(modifier = Modifier.height(60.dp))
-            CommonBlueButton(text = "다음",
+            CommonBlueButton(
+                text = "다음",
                 onClick = {
-                    if (emailInput.trimStart() == "") {
+                    if (isTest) {
+                        loginNavController.navigate(LoginRoute.SignupPassword.route)
+                        loginApiViewModel.resetLoginApiUiState()
+                    } else if (emailInput.trimStart() == "") {
                         isEmailError = true
                         Toasty.error(
                             loginContext,

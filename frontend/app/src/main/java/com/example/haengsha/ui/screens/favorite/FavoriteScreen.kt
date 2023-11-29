@@ -47,13 +47,24 @@ fun favoriteScreen(
     innerPadding: PaddingValues,
     boardApiViewModel: BoardApiViewModel,
     favoriteNavController: NavController,
-    userUiState: UserUiState
+    userUiState: UserUiState,
+    isTest: Boolean
 ): Int {
     val boardContext = LocalContext.current
     val boardFavoriteUiState = boardApiViewModel.boardFavoriteUiState
     var eventId by rememberSaveable { mutableIntStateOf(0) }
 
-    if (userUiState.role == "Group") {
+    if (isTest) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .clickable {
+                    eventId = 0
+                    favoriteNavController.navigate(FavoriteRoute.FavoriteDetail.route)
+                }
+        ) { Text("test") }
+    } else if (userUiState.role == "Group") {
         Box(
             modifier = Modifier
                 .fillMaxSize()

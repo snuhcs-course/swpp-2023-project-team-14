@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -22,9 +23,10 @@ fun Favorite(
     innerPadding: PaddingValues,
     userUiState: UserUiState,
     boardApiViewModel: BoardApiViewModel,
-    navigationViewModel: NavigationViewModel
+    navigationViewModel: NavigationViewModel,
+    favoriteNavController: NavHostController = rememberNavController(),
+    isTest: Boolean = false
 ) {
-    val favoriteNavController = rememberNavController()
     var eventId by rememberSaveable { mutableIntStateOf(0) }
 
     NavHost(
@@ -37,7 +39,8 @@ fun Favorite(
                 innerPadding = innerPadding,
                 boardApiViewModel = boardApiViewModel,
                 favoriteNavController = favoriteNavController,
-                userUiState = userUiState
+                userUiState = userUiState,
+                isTest = isTest
             )
         }
         composable(
