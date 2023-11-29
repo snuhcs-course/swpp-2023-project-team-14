@@ -6,9 +6,9 @@
 set -e
 
 # Set environment variables for S3 bucket and file paths
-# S3_BUCKET=${S3_BUCKET}
-# EVENT_FILE="eventData.csv"
-# USER_FILE="userData.csv"
+S3_BUCKET=${S3_BUCKET}
+EVENT_FILE="eventData.csv"
+USER_FILE="userData.csv"
 
 # Use AWS CLI to download the CSV file from S3
 aws s3 cp s3://${S3_BUCKET}/${EVENT_FILE} /app/
