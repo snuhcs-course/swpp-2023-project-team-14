@@ -4,6 +4,7 @@
 current_time=$(TZ=Asia/Seoul date +%H:%M) 
 current_timestamp=$(date +"%Y-%m-%d %H:%M:%S")
 echo "[$current_timestamp] Connecting to the backend container..."
+pwd
 docker exec haeng bash -c "current_time=\$(TZ=Asia/Seoul date +%H:%M); \
 current_timestamp=\$(date +'%Y-%m-%d %H:%M:%S'); \
 echo \"[\$current_timestamp] Start collecting data...\"; \
@@ -14,9 +15,9 @@ USER_FILE='userData.csv'; \
 EVENT_FILE='eventData.csv'; \
 USER_SRC_PATH=\"/app/data/\$USER_FILE\"; \
 EVENT_SRC_PATH=\"/app/data/\$EVENT_FILE\"; \
-VOLUME_PATH=\"/var/lib/docker/volumes/shared-volume/_data/\"; \
-cp \$USER_SRC_PATH \$VOLUME_PATH; \
-cp \$EVENT_SRC_PATH \$VOLUME_PATH; \
+VOLUME_PATH=\"/haengvolume\"; \
+cp \$USER_SRC_PATH \$VOLUME_PATH\$USER_FILE; \
+cp \$EVENT_SRC_PATH \$VOLUME_PATH\$EVENT_FILE; \
 current_timestamp=\$(date +'%Y-%m-%d %H:%M:%S'); \
 echo \"[\$current_timestamp] Finished!\";"
 
