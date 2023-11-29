@@ -1,6 +1,5 @@
 package com.example.haengsha.model.viewModel.home
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,6 +11,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.haengsha.HaengshaApplication
 import com.example.haengsha.model.dataSource.HomeDataRepository
 import com.example.haengsha.model.network.dataModel.EventResponse
+import com.example.haengsha.model.uiState.home.HomeApiUiState
 import com.example.haengsha.model.uiState.home.RecommendationApiUiState
 import com.example.haengsha.ui.screens.home.EventCardData
 import com.example.haengsha.ui.screens.home.toEventCardData
@@ -24,7 +24,12 @@ class HomeApiViewModel(
     private val homeDataRepository: HomeDataRepository,
     private val homeViewModel: HomeViewModel
 ) : ViewModel() {
-    var recommendationUiState: RecommendationApiUiState by mutableStateOf(RecommendationApiUiState.Loading)
+    var homeApiUiState: HomeApiUiState by mutableStateOf(HomeApiUiState.Loading)
+        private set
+
+    var recommendationApiUiState: RecommendationApiUiState by mutableStateOf(
+        RecommendationApiUiState.Loading
+    )
         private set
 
     companion object {
@@ -46,7 +51,8 @@ class HomeApiViewModel(
 
     fun getEventByDate(date: LocalDate) {
         viewModelScope.launch {
-            try {
+            homeApiUiState = HomeApiUiState.Loading
+            homeApiUiState = try {
                 val festivalResponse: List<EventResponse>? =
                     homeDataRepository.getEventByDate(1, date.toString())
 
@@ -60,24 +66,25 @@ class HomeApiViewModel(
                     festivalResponse?.map { it.toEventCardData() }
 
                 homeViewModel.updateEventItems(festivalCardDataList, academicCardDataList)
-
                 homeViewModel.updateSelectedDate(date)
 
+                HomeApiUiState.Success
             } catch (e: HttpException) {
                 homeViewModel.updateEventItems(listOf(), listOf())
                 homeViewModel.updateSelectedDate(date)
+                HomeApiUiState.HttpError
             } catch (e: IOException) {
-                // Error 핸들링
+                HomeApiUiState.NetworkError
             } catch (e: Exception) {
-                // Error 핸들링
+                HomeApiUiState.Error
             }
         }
     }
 
     fun getRecommendationList(token: String) {
         viewModelScope.launch {
-            recommendationUiState = RecommendationApiUiState.Loading
-            recommendationUiState = try {
+            recommendationApiUiState = RecommendationApiUiState.Loading
+            recommendationApiUiState = try {
                 val authToken = "Token $token"
                 val recommendationList =
                     homeDataRepository.getRecommendationList(authToken)
