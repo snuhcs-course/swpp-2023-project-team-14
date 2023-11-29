@@ -22,7 +22,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -55,7 +57,7 @@ fun LoginScreen(
     mainNavController: NavHostController,
     loginNavController: NavHostController,
     loginApiViewModel: LoginApiViewModel,
-    loginUiState: LoginApiUiState,
+    loginApiUiState: LoginApiUiState,
     loginContext: Context
 ) {
     var emailInput: String by rememberSaveable { mutableStateOf("") }
@@ -63,6 +65,7 @@ fun LoginScreen(
     var isEmailError by remember { mutableStateOf(false) }
     var isPasswordError by remember { mutableStateOf(false) }
     var isLoginFailedDialogVisible by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
@@ -70,7 +73,10 @@ fun LoginScreen(
             .fillMaxSize()
             .padding(top = 60.dp)
             .pointerInput(Unit) {
-                detectTapGestures(onTap = { keyboardController?.hide() })
+                detectTapGestures(onTap = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                })
             },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -97,6 +103,7 @@ fun LoginScreen(
         emailInput = suffixTextField(
             isEmptyError = isEmailError,
             placeholder = "SNU Email",
+            keyboardActions = { focusManager.moveFocus(FocusDirection.Down) },
             //suffix = "@snu.ac.kr"
         )
         Spacer(modifier = Modifier.height(40.dp))
@@ -110,7 +117,8 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(15.dp))
         passwordInput = passwordTextField(
             isEmptyError = isPasswordError,
-            placeholder = "비밀번호"
+            placeholder = "비밀번호",
+            keyboardActions = { focusManager.clearFocus() },
         )
         Spacer(modifier = Modifier.height(15.dp))
         Row(
@@ -130,9 +138,6 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(50.dp))
         CommonBlueButton(text = "로그인하기",
             onClick = {
-//                emailInput = "user2@snu.ac.kr"
-//                passwordInput = "user2"
-
                 if (emailInput.trimStart() == "") {
                     isEmailError = true
                     Toasty.error(
@@ -183,16 +188,17 @@ fun LoginScreen(
         )
     }
 
-    when (loginUiState) {
+    when (loginApiUiState) {
         is LoginApiUiState.LoginSuccess -> {
-            userViewModel.updateToken(loginUiState.token)
-            userViewModel.updateRole(loginUiState.role)
-            userViewModel.updateNickname(loginUiState.nickname)
-            boardViewModel.saveToken(loginUiState.token)
+            userViewModel.updateToken(loginApiUiState.token)
+            userViewModel.updateRole(loginApiUiState.role)
+            userViewModel.updateNickname(loginApiUiState.nickname)
+            boardViewModel.saveToken(loginApiUiState.token)
             mainNavController.navigate(MainRoute.Home.route) {
                 popUpTo(LoginRoute.Login.route) { inclusive = true }
                 popUpTo(MainRoute.Login.route) { inclusive = true }
             }
+            loginApiViewModel.resetLoginApiUiState()
         }
 
         is LoginApiUiState.HttpError -> {
@@ -209,6 +215,7 @@ fun LoginScreen(
                     true
                 )
                 .show()
+            loginApiViewModel.resetLoginApiUiState()
         }
 
         is LoginApiUiState.Loading -> {

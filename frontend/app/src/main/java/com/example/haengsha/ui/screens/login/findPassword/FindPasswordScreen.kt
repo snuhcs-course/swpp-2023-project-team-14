@@ -3,6 +3,7 @@ package com.example.haengsha.ui.screens.login.findPassword
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -34,7 +38,6 @@ import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
-import com.example.haengsha.ui.uiComponents.ConfirmOnlyDialog
 import com.example.haengsha.ui.uiComponents.codeVerifyField
 import com.example.haengsha.ui.uiComponents.suffixTextField
 import es.dmoral.toasty.Toasty
@@ -43,7 +46,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun FindPasswordScreen(
     loginApiViewModel: LoginApiViewModel,
-    loginUiState: LoginApiUiState,
+    loginApiUiState: LoginApiUiState,
     findPasswordEmailUpdate: (String) -> Unit,
     loginNavController: NavHostController,
     loginNavBack: () -> Unit,
@@ -59,12 +62,19 @@ fun FindPasswordScreen(
     var codeInput: String by remember { mutableStateOf("") }
     var isEmailError by remember { mutableStateOf(false) }
     var isCodeError by remember { mutableStateOf(false) }
-    var isEmailNotFoundDialogVisible by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 60.dp),
+            .padding(top = 60.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                })
+            },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(1) {
@@ -87,6 +97,7 @@ fun FindPasswordScreen(
             emailInput = suffixTextField(
                 isEmptyError = isEmailError,
                 placeholder = "SNU Email",
+                keyboardActions = { focusManager.clearFocus() },
                 //suffix = "@snu.ac.kr"
             )
             Spacer(modifier = Modifier.height(15.dp))
@@ -119,13 +130,6 @@ fun FindPasswordScreen(
                     color = FieldStrokeBlue
                 )
             }
-            if (isEmailNotFoundDialogVisible) {
-                ConfirmOnlyDialog(
-                    onDismissRequest = { isEmailNotFoundDialogVisible = false },
-                    onClick = { isEmailNotFoundDialogVisible = false },
-                    text = "등록되지 않은 계정입니다."
-                )
-            }
             Spacer(modifier = Modifier.height(40.dp))
             Text(
                 modifier = Modifier.width(270.dp),
@@ -137,7 +141,8 @@ fun FindPasswordScreen(
             Spacer(modifier = Modifier.height(15.dp))
             codeInput = codeVerifyField(
                 isError = isCodeError,
-                placeholder = "인증번호 6자리"
+                placeholder = "인증번호 6자리",
+                keyboardActions = { focusManager.clearFocus() }
             )
             Spacer(modifier = Modifier.height(10.dp))
             Box(
@@ -222,7 +227,7 @@ fun FindPasswordScreen(
     }
 
     if (emailVerifyTrigger) {
-        when (loginUiState) {
+        when (loginApiUiState) {
             is LoginApiUiState.Success -> {
                 Toasty
                     .success(
@@ -234,23 +239,21 @@ fun FindPasswordScreen(
                     .show()
                 codeSent++
                 emailVerifyTrigger = false
+                loginApiViewModel.resetLoginApiUiState()
             }
 
             is LoginApiUiState.HttpError -> {
-                if (loginUiState.message.contains("exist")) {
-                    isEmailNotFoundDialogVisible = true
-                } else {
-                    Toasty
-                        .error(
-                            loginContext,
-                            loginUiState.message,
-                            Toast.LENGTH_SHORT,
-                            true
-                        )
-                        .show()
-                }
+                Toasty
+                    .error(
+                        loginContext,
+                        loginApiUiState.message,
+                        Toast.LENGTH_SHORT,
+                        true
+                    )
+                    .show()
                 isEmailError = true
                 emailVerifyTrigger = false
+                loginApiViewModel.resetLoginApiUiState()
             }
 
             is LoginApiUiState.NetworkError -> {
@@ -263,6 +266,7 @@ fun FindPasswordScreen(
                     )
                     .show()
                 emailVerifyTrigger = false
+                loginApiViewModel.resetLoginApiUiState()
             }
 
             is LoginApiUiState.Loading -> {
@@ -276,24 +280,26 @@ fun FindPasswordScreen(
     }
 
     if (codeVerifyTrigger) {
-        when (loginUiState) {
+        when (loginApiUiState) {
             is LoginApiUiState.Success -> {
                 findPasswordEmailUpdate(emailInput)
                 loginNavController.navigate(LoginRoute.FindPasswordReset.route)
                 codeVerifyTrigger = false
+                loginApiViewModel.resetLoginApiUiState()
             }
 
             is LoginApiUiState.HttpError -> {
                 Toasty
                     .error(
                         loginContext,
-                        loginUiState.message,
+                        loginApiUiState.message,
                         Toast.LENGTH_SHORT,
                         true
                     )
                     .show()
                 isCodeError = true
                 codeVerifyTrigger = false
+                loginApiViewModel.resetLoginApiUiState()
             }
 
             is LoginApiUiState.NetworkError -> {
@@ -306,6 +312,7 @@ fun FindPasswordScreen(
                     )
                     .show()
                 codeVerifyTrigger = false
+                loginApiViewModel.resetLoginApiUiState()
             }
 
             is LoginApiUiState.Loading -> {

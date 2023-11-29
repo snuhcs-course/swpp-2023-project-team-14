@@ -54,7 +54,7 @@ fun Login(
                 mainNavController = mainNavController,
                 loginNavController = loginNavController,
                 loginApiViewModel = loginApiViewModel,
-                loginUiState = loginApiUiState,
+                loginApiUiState = loginApiUiState,
                 loginContext = loginContext
             )
         }
@@ -62,7 +62,7 @@ fun Login(
         composable(LoginRoute.FindPassword.route) {
             FindPasswordScreen(
                 loginApiViewModel = loginApiViewModel,
-                loginUiState = loginApiUiState,
+                loginApiUiState = loginApiUiState,
                 findPasswordEmailUpdate = { findPasswordViewModel.updateEmail(it) },
                 loginNavController = loginNavController,
                 loginNavBack = { loginNavController.popBackStack() },
@@ -77,7 +77,7 @@ fun Login(
         composable(LoginRoute.FindPasswordReset.route) {
             PasswordResetScreen(
                 loginApiViewModel = loginApiViewModel,
-                loginUiState = loginApiUiState,
+                loginApiUiState = loginApiUiState,
                 findPasswordViewModel = findPasswordViewModel,
                 findPasswordUiState = findPasswordUiState,
                 loginNavController = loginNavController,
@@ -105,7 +105,7 @@ fun Login(
         composable(LoginRoute.SignupEmail.route) {
             SignupEmailVerificationScreen(
                 loginApiViewModel = loginApiViewModel,
-                loginUiState = loginApiUiState,
+                loginApiUiState = loginApiUiState,
                 signupEmailUpdate = { signupViewModel.updateEmail(it) },
                 loginNavController = loginNavController,
                 loginNavBack = { loginNavController.popBackStack() },
@@ -123,7 +123,8 @@ fun Login(
         composable(LoginRoute.SignupUserInfo.route) {
             SignupUserInfoScreen(
                 checkNickname = { loginApiViewModel.checkNickname(it) },
-                loginUiState = loginApiUiState,
+                loginApiViewModel = loginApiViewModel,
+                loginApiUiState = loginApiUiState,
                 signupViewModel = signupViewModel,
                 signupNickname = signupUiState.nickname,
                 loginNavController = loginNavController,
@@ -134,7 +135,7 @@ fun Login(
         composable(LoginRoute.SignupTerms.route) {
             SignupTermsScreen(
                 loginApiViewModel = loginApiViewModel,
-                loginUiState = loginApiUiState,
+                loginApiUiState = loginApiUiState,
                 signupStateReset = { signupViewModel.resetSignupData() },
                 signupUiState = signupUiState,
                 loginNavController = loginNavController,

@@ -57,7 +57,7 @@ import es.dmoral.toasty.Toasty
 @Composable
 fun SignupTermsScreen(
     loginApiViewModel: LoginApiViewModel,
-    loginUiState: LoginApiUiState,
+    loginApiUiState: LoginApiUiState,
     signupStateReset: () -> Unit,
     signupUiState: SignupUiState,
     loginNavController: NavController,
@@ -269,23 +269,25 @@ fun SignupTermsScreen(
         }
     }
 
-    when (loginUiState) {
+    when (loginApiUiState) {
         is LoginApiUiState.Success -> {
             signupStateReset()
             loginNavController.navigate(LoginRoute.SignupComplete.route) {
                 popUpTo(LoginRoute.Login.route) { inclusive = false }
             }
+            loginApiViewModel.resetLoginApiUiState()
         }
 
         is LoginApiUiState.HttpError -> {
             Toasty
                 .error(
                     loginContext,
-                    loginUiState.message,
+                    loginApiUiState.message,
                     Toast.LENGTH_SHORT,
                     true
                 )
                 .show()
+            loginApiViewModel.resetLoginApiUiState()
         }
 
         is LoginApiUiState.NetworkError -> {
@@ -297,6 +299,7 @@ fun SignupTermsScreen(
                     true
                 )
                 .show()
+            loginApiViewModel.resetLoginApiUiState()
         }
 
         is LoginApiUiState.Loading -> {

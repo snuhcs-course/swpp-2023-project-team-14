@@ -80,7 +80,11 @@ class LoginApiViewModel(private val loginDataRepository: LoginDataRepository) : 
                 )
                 LoginApiUiState.Success(signupEmailVerifyResult.message)
             } catch (e: HttpException) {
-                LoginApiUiState.HttpError("입력한 정보를 확인해주세요")
+                if (e.code() == 401) {
+                    LoginApiUiState.HttpError("이미 가입된 계정입니다")
+                } else {
+                    LoginApiUiState.HttpError("입력한 정보를 확인해주세요")
+                }
             } catch (e: IOException) {
                 LoginApiUiState.NetworkError
             }

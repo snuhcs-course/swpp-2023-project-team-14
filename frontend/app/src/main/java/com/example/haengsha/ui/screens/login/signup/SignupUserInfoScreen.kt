@@ -3,6 +3,7 @@ package com.example.haengsha.ui.screens.login.signup
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -33,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.haengsha.model.route.LoginRoute
 import com.example.haengsha.model.uiState.login.LoginApiUiState
+import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.model.viewModel.login.SignupViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
 import com.example.haengsha.ui.theme.poppins
@@ -45,7 +50,8 @@ import es.dmoral.toasty.Toasty
 @Composable
 fun SignupUserInfoScreen(
     checkNickname: (String) -> Unit,
-    loginUiState: LoginApiUiState,
+    loginApiViewModel: LoginApiViewModel,
+    loginApiUiState: LoginApiUiState,
     signupViewModel: SignupViewModel,
     signupNickname: String,
     loginNavController: NavController,
@@ -58,11 +64,21 @@ fun SignupUserInfoScreen(
     var interest by rememberSaveable { mutableStateOf(listOf("")) }
     var isNicknameError by rememberSaveable { mutableStateOf(false) }
     var isNicknameChecked by rememberSaveable { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 60.dp),
+            .padding(vertical = 60.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    }
+                )
+            },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(1) {
@@ -88,6 +104,7 @@ fun SignupUserInfoScreen(
             nickname = commonTextField(
                 isError = isNicknameError,
                 placeholder = "닉네임",
+                keyboardActions = { focusManager.clearFocus() },
             )
             Spacer(modifier = Modifier.height(15.dp))
             Row(
@@ -117,7 +134,7 @@ fun SignupUserInfoScreen(
                             } else if (!lengthPattern.matches(nickname)) {
                                 isNicknameError = true
                                 Toasty
-                                    .error(loginContext, "길이 제한을 초과했습니다", Toast.LENGTH_SHORT, true)
+                                    .error(loginContext, "길이 제한을 지켜주세요", Toast.LENGTH_SHORT, true)
                                     .show()
                             } else {
                                 checkNickname(nickname)
@@ -175,7 +192,7 @@ fun SignupUserInfoScreen(
             CommonBlueButton(
                 text = "다음",
                 onClick = {
-                    if (nickname == "" || college == "" || studentId == "" || interest == { "" }) {
+                    if (nickname == "" || college == "" || studentId == "" || interest == listOf("")) {
                         Toasty
                             .error(loginContext, "정보 입력을 완료해주세요!", Toast.LENGTH_SHORT, true)
                             .show()
@@ -226,13 +243,14 @@ fun SignupUserInfoScreen(
         }
     }
 
-    when (loginUiState) {
+    when (loginApiUiState) {
         is LoginApiUiState.Success -> {
             isNicknameError = false
             signupViewModel.updateNickname(nickname)
             Toasty
                 .success(loginContext, "사용 가능한 닉네임입니다", Toast.LENGTH_SHORT, true)
                 .show()
+            loginApiViewModel.resetLoginApiUiState()
         }
 
         is LoginApiUiState.HttpError -> {
@@ -240,6 +258,7 @@ fun SignupUserInfoScreen(
             Toasty
                 .warning(loginContext, "이미 존재하는 닉네임입니다", Toast.LENGTH_SHORT, true)
                 .show()
+            loginApiViewModel.resetLoginApiUiState()
         }
 
         is LoginApiUiState.NetworkError -> {
@@ -251,6 +270,7 @@ fun SignupUserInfoScreen(
                     true
                 )
                 .show()
+            loginApiViewModel.resetLoginApiUiState()
         }
 
         is LoginApiUiState.Loading -> {

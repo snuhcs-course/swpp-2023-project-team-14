@@ -138,6 +138,9 @@ def main():
     if args.load:
         delete_future_recommendations() #this is to renew the recommendation score!
         df = put_recommends(save_dir)
+        # save df to log file
+        with open('logfile.log', 'w') as f:
+            f.write(df.to_string()) 
     
 if __name__ == '__main__':
     main()

@@ -3,6 +3,7 @@ package com.example.haengsha.unitTest.board
 import com.example.haengsha.fakeData.board.FakeBoardDataSource
 import com.example.haengsha.fakeData.board.FakeNetworkBoardDataRepository
 import com.example.haengsha.model.uiState.board.BoardDetailUiState
+import com.example.haengsha.model.uiState.board.BoardFavoriteUiState
 import com.example.haengsha.model.uiState.board.BoardListUiState
 import com.example.haengsha.model.uiState.board.BoardPostUiState
 import com.example.haengsha.model.uiState.board.PostLikeFavoriteUiState
@@ -50,9 +51,9 @@ class BoardApiViewModelTest {
         )
         boardApiViewModel.getFavoriteBoardList(FakeBoardDataSource.token)
         assertEquals(
-            BoardListUiState.BoardListResult(
+            BoardFavoriteUiState.BoardListResult(
                 FakeBoardDataSource.listOfBoardListResponse
-            ), boardApiViewModel.boardListUiState
+            ), boardApiViewModel.boardFavoriteUiState
         )
     }
 
@@ -78,10 +79,8 @@ class BoardApiViewModelTest {
             PostLikeFavoriteUiState.Success(
                 FakeBoardDataSource.postLikeFavoriteResponse.likeCount,
                 FakeBoardDataSource.postLikeFavoriteResponse.favoriteCount,
-                isLiked = false,
-                isFavorite = false
-                //FakeBoardDataSource.postLikeFavoriteResponse.isLiked,
-                //FakeBoardDataSource.postLikeFavoriteResponse.isFavorite
+                FakeBoardDataSource.postLikeFavoriteResponse.isLiked,
+                FakeBoardDataSource.postLikeFavoriteResponse.isFavorite
             ),
             boardApiViewModel.postLikeFavoriteUiState
         )
@@ -97,12 +96,24 @@ class BoardApiViewModelTest {
             PostLikeFavoriteUiState.Success(
                 FakeBoardDataSource.postLikeFavoriteResponse.likeCount,
                 FakeBoardDataSource.postLikeFavoriteResponse.favoriteCount,
-                isLiked = false,
-                isFavorite = false
-                //FakeBoardDataSource.postLikeFavoriteResponse.isLiked,
-                //FakeBoardDataSource.postLikeFavoriteResponse.isFavorite
+                FakeBoardDataSource.postLikeFavoriteResponse.isLiked,
+                FakeBoardDataSource.postLikeFavoriteResponse.isFavorite
             ),
             boardApiViewModel.postLikeFavoriteUiState
+        )
+    }
+
+    @Test
+    fun boardViewModel_searchEvent_verifyBoardUiStateSuccess() = runTest {
+        val boardApiViewModel = BoardApiViewModel(
+            boardDataRepository = FakeNetworkBoardDataRepository()
+        )
+        boardApiViewModel.searchEvent(FakeBoardDataSource.searchRequest)
+        assertEquals(
+            BoardListUiState.BoardListResult(
+                FakeBoardDataSource.listOfBoardListResponse
+            ),
+            boardApiViewModel.boardListUiState
         )
     }
 }
