@@ -271,6 +271,7 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
                     innerPadding = innerPadding,
                     userUiState = userUiState,
                     boardApiViewModel = boardApiViewModel,
+                    boardViewModel = boardViewModel,
                     navigationViewModel = navigationViewModel
                 )
             }

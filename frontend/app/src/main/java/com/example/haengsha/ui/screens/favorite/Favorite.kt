@@ -16,6 +16,7 @@ import com.example.haengsha.model.route.FavoriteRoute
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.viewModel.NavigationViewModel
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
+import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.screens.dashBoard.BoardDetailScreen
 
 @Composable
@@ -23,6 +24,7 @@ fun Favorite(
     innerPadding: PaddingValues,
     userUiState: UserUiState,
     boardApiViewModel: BoardApiViewModel,
+    boardViewModel: BoardViewModel,
     navigationViewModel: NavigationViewModel,
     favoriteNavController: NavHostController = rememberNavController(),
     isTest: Boolean = false
@@ -74,6 +76,7 @@ fun Favorite(
             BoardDetailScreen(
                 innerPadding = innerPadding,
                 boardApiViewModel = boardApiViewModel,
+                boardViewModel = boardViewModel,
                 userUiState = userUiState,
                 eventId = eventId
             )

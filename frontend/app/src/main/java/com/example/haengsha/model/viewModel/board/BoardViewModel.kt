@@ -10,6 +10,16 @@ class BoardViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(BoardUiState())
     val uiState = _uiState.asStateFlow()
 
+    var isError = false
+
+    fun isError() {
+        isError = true
+    }
+
+    fun resetError() {
+        isError = false
+    }
+
     fun saveToken(token: String) {
         val authToken = "Token $token"
         _uiState.update { currentState ->

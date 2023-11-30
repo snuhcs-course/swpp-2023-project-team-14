@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -234,13 +235,25 @@ fun boardScreen(
                                 }
                             }
                         } else {
-                            Box(
+                            Column(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(innerPadding),
-                                contentAlignment = Alignment.Center
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
                             ) {
-                                CircularProgressIndicator()
+                                CircularProgressIndicator(
+                                    color = HaengshaBlue,
+                                    strokeWidth = 3.dp
+                                )
+                                Spacer(modifier = Modifier.height(20.dp))
+                                Text(
+                                    text = "행사 찾아보는 중...",
+                                    fontFamily = poppins,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = HaengshaBlue
+                                )
                             }
                         }
                     }
@@ -335,6 +348,5 @@ fun boardScreen(
         }
     }
 
-    return if (eventId != 0) eventId
-    else 0
+    return eventId
 }

@@ -76,6 +76,7 @@ fun Board(
             BoardDetailScreen(
                 innerPadding = innerPadding,
                 boardApiViewModel = boardApiViewModel,
+                boardViewModel = boardViewModel,
                 userUiState = userUiState,
                 eventId = eventId
             )
