@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -88,6 +89,10 @@ fun boardScreen(
 
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    val configuration = LocalConfiguration.current
+    val deviceWidth = configuration.screenWidthDp.dp
+    val deviceHeight = configuration.screenHeightDp.dp
 
     Box(
         modifier = Modifier
@@ -298,7 +303,7 @@ fun boardScreen(
         }
 
         if (userUiState.role == "Group" || isTest) {
-            Box(modifier = Modifier.offset(330.dp, 600.dp)) {
+            Box(modifier = Modifier.offset(deviceWidth - 80.dp, deviceHeight - 190.dp)) {
                 Box(
                     modifier = Modifier
                         .size(60.dp)

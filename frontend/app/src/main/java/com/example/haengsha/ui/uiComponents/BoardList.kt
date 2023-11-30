@@ -2,7 +2,6 @@ package com.example.haengsha.ui.uiComponents
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,6 +39,9 @@ fun boardList(
     isFavorite: Boolean,
     event: BoardListResponse
 ): Int {
+    val configuration = LocalConfiguration.current
+    val deviceWidth = configuration.screenWidthDp.dp
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -59,7 +63,7 @@ fun boardList(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                modifier = Modifier.widthIn(max = 300.dp),
+                modifier = Modifier.widthIn(max = deviceWidth - 80.dp),
                 text = event.title,
                 fontFamily = poppins,
                 fontSize = 14.sp,
@@ -82,8 +86,7 @@ fun boardList(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(20.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
                 verticalAlignment = Alignment.Bottom
@@ -106,7 +109,7 @@ fun boardList(
                 )
                 Spacer(Modifier.width(10.dp))
                 Text(
-                    modifier = Modifier.width(160.dp),
+                    modifier = Modifier.widthIn(max = 120.dp),
                     text = if (event.eventDurations.size > 1) {
                         event.eventDurations[0].eventDay + " ~ " + event.eventDurations.last().eventDay
                     } else {
@@ -119,7 +122,9 @@ fun boardList(
                     overflow = TextOverflow.Ellipsis
                 )
             }
+            Spacer(modifier = Modifier.weight(1f))
             Row(
+                modifier = Modifier.wrapContentWidth(),
                 verticalAlignment = Alignment.Bottom
             ) {
                 Image(

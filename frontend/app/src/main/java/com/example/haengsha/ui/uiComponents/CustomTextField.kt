@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -371,7 +372,9 @@ fun SearchBar(
 
     OutlinedTextField(
         modifier = Modifier
-            .size(width = 340.dp, height = 60.dp)
+            .fillMaxWidth()
+            .height(60.dp)
+            .padding(start = 30.dp, end = 30.dp)
             .testTag(stringResource(R.string.searchBar)),
         value = input,
         onValueChange = { input = it },
