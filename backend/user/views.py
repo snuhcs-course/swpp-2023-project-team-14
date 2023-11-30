@@ -275,20 +275,24 @@ def signup(request):        # for users
         )
     
     valid_interest_choices = [choice[0] for choice in PersonalUser.INTEREST_CHOICES]
-    if not interest in valid_interest_choices:
-        return Response(
-            {"message": "Invalid interest."}, status=status.HTTP_400_BAD_REQUEST
-        )
 
+    interest_list = interest.split(", ")
+    for elem in interest_list:
+        if not elem in valid_interest_choices:
+            return Response(
+                {"message": "Invalid interest."}, status=status.HTTP_400_BAD_REQUEST
+            )
+        
     PersonalUser.objects.create_user(
         nickname=nickname,
         email=email,
         password=password,
         role=role,
         major=major,
-        grade=grade,
         interest=interest,
+        grade=grade
     )
+        
     try:
         return Response({"message": "created user account"}, status=status.HTTP_200_OK)
     except Exception as e:
