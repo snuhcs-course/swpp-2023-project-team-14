@@ -18,7 +18,7 @@ interface AppContainer {
 
 class HaengshaAppContainer : AppContainer {
     private val baseUrl = "http://ec2-13-209-8-183.ap-northeast-2.compute.amazonaws.com:8080/"
-    // private val baseUrl = "http://10.150.196.98:8000/"
+    // private val baseUrl = "http://10.150.196.98:8000"
     private val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }

@@ -25,7 +25,7 @@ class PostListView(APIView):
         posts = Post.objects.all()
 
         if keyword != "":
-            posts = posts.filter(Q(title__icontains=keyword) | Q(content__icontains=keyword))
+            posts = posts.filter(Q(title__icontains=keyword) | Q(content__icontains=keyword) | Q(author__nickname__icontains=keyword))
         if int(is_festival) != 2:
             is_festival = bool(int(is_festival))
             posts = posts.filter(is_festival=is_festival)
