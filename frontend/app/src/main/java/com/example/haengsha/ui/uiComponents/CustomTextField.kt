@@ -32,8 +32,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -255,7 +253,6 @@ fun passwordSetField(
     context: Context
 ): String {
     var input by remember { mutableStateOf("") }
-    val focusRequester = FocusRequester()
     val pattern = "^(?=.*[a-zA-Z])(?=.*\\d)[a-zA-Z\\d]{4,10}$".toRegex()
     var isError by remember { mutableStateOf(false) }
     var isRegexError by remember { mutableStateOf(false) }
@@ -268,18 +265,11 @@ fun passwordSetField(
     OutlinedTextField(
         modifier = Modifier
             .size(width = 270.dp, height = 60.dp)
-            .focusRequester(focusRequester)
             .testTag(stringResource(R.string.passwordSetField)),
         value = input,
         onValueChange = {
             input = it
-            if (pattern.matches(input)) {
-                isRegexError = false
-                focusRequester.freeFocus()
-            } else {
-                isRegexError = true
-                focusRequester.captureFocus()
-            }
+            isRegexError = !pattern.matches(input)
         },
         placeholder = {
             Text(

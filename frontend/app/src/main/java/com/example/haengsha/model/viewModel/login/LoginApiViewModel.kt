@@ -91,6 +91,22 @@ class LoginApiViewModel(private val loginDataRepository: LoginDataRepository) : 
         }
     }
 
+    fun checkNickname(nickname: String) {
+        viewModelScope.launch {
+            loginApiUiState = LoginApiUiState.Loading
+            loginApiUiState = try {
+                val checkNicknameResult = loginDataRepository.checkNickname(
+                    CheckNicknameRequest(nickname)
+                )
+                LoginApiUiState.Success(checkNicknameResult.message)
+            } catch (e: HttpException) {
+                LoginApiUiState.HttpError("입력한 정보를 확인해주세요")
+            } catch (e: IOException) {
+                LoginApiUiState.NetworkError
+            }
+        }
+    }
+
     fun signupRegister(
         email: String,
         password: String,
@@ -115,22 +131,6 @@ class LoginApiViewModel(private val loginDataRepository: LoginDataRepository) : 
                     )
                 )
                 LoginApiUiState.Success(signupRegisterResult.message)
-            } catch (e: HttpException) {
-                LoginApiUiState.HttpError("입력한 정보를 확인해주세요")
-            } catch (e: IOException) {
-                LoginApiUiState.NetworkError
-            }
-        }
-    }
-
-    fun checkNickname(nickname: String) {
-        viewModelScope.launch {
-            loginApiUiState = LoginApiUiState.Loading
-            loginApiUiState = try {
-                val checkNicknameResult = loginDataRepository.checkNickname(
-                    CheckNicknameRequest(nickname)
-                )
-                LoginApiUiState.Success(checkNicknameResult.message)
             } catch (e: HttpException) {
                 LoginApiUiState.HttpError("입력한 정보를 확인해주세요")
             } catch (e: IOException) {

@@ -218,11 +218,11 @@ fun SignupUserInfoScreen(
                                     .show()
                             } else {
                                 isNicknameChecked = true
-                                signupViewModel.updateMajor(college)
-                                signupViewModel.updateGrade(studentId)
+                                signupViewModel.updateMajor(convertToEnglish(college))
+                                signupViewModel.updateGrade(convertToEnglish(studentId))
                                 signupViewModel.updateInterest(
                                     if (interest.size == 1) {
-                                        interest[0]
+                                        convertToEnglish(interest[0])
                                     } else {
                                         interest.joinToString(", ").drop(2)
                                     }
@@ -285,6 +285,112 @@ fun SignupUserInfoScreen(
             /* Other Success State, do nothing */
         }
     }
+}
+
+fun convertToEnglish(input: String): String {
+    val output: String =
+        when (input) {
+            "경영대학" -> {
+                "Business"
+            }
+
+            "공과대학" -> {
+                "Engineering"
+            }
+
+            "미술대학" -> {
+                "Art"
+            }
+
+            "사범대학" -> {
+                "Education"
+            }
+
+            "사회과학대학" -> {
+                "SocialSciences"
+            }
+
+            "음악대학" -> {
+                "Music"
+            }
+
+            "인문대학" -> {
+                "Humanities"
+            }
+
+            "자연과학대학" -> {
+                "NaturalSciences"
+            }
+
+            "16학번 이상" -> {
+                "16"
+            }
+
+            "17학번" -> {
+                "17"
+            }
+
+            "18학번" -> {
+                "18"
+            }
+
+            "19학번" -> {
+                "19"
+            }
+
+            "20학번" -> {
+                "20"
+            }
+
+            "21학번" -> {
+                "21"
+            }
+
+            "22학번" -> {
+                "22"
+            }
+
+            "23학번" -> {
+                "23"
+            }
+
+            "댄스" -> {
+                "dance"
+            }
+
+            "사교" -> {
+                "meetup"
+            }
+
+            "사회" -> {
+                "social"
+            }
+
+            "연극" -> {
+                "theater"
+            }
+
+            "음악" -> {
+                "music"
+            }
+
+            "운동" -> {
+                "sports"
+            }
+
+            "예술" -> {
+                "art"
+            }
+
+            "종교" -> {
+                "religion"
+            }
+
+            else -> {
+                "none"
+            }
+        }
+    return output
 }
 
 //@Preview(showBackground = true)
