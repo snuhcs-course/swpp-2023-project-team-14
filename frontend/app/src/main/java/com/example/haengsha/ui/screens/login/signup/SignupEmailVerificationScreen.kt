@@ -114,7 +114,12 @@ fun SignupEmailVerificationScreen(
                         if (emailInput.trimStart() == "") {
                             isEmailError = true
                             Toasty
-                                .error(loginContext, "이메일을 입력해주세요", Toast.LENGTH_SHORT, true)
+                                .warning(loginContext, "이메일을 입력해주세요", Toast.LENGTH_SHORT, true)
+                                .show()
+                        } else if (emailInput.trimEnd().endsWith("@snu.ac.kr").not()) {
+                            isEmailError = true
+                            Toasty
+                                .warning(loginContext, "SNU 이메일을 입력해주세요", Toast.LENGTH_SHORT, true)
                                 .show()
                         } else {
                             isEmailError = false
@@ -220,6 +225,7 @@ fun SignupEmailVerificationScreen(
     }
 
     if (emailVerifyTrigger) {
+        codeVerifyTrigger = false
         LaunchedEffect(Unit) { loginApiViewModel.signupEmailVerify(emailInput) }
         when (loginApiUiState) {
             is LoginApiUiState.Success -> {
@@ -278,7 +284,23 @@ fun SignupEmailVerificationScreen(
     }
 
     if (codeVerifyTrigger) {
-        LaunchedEffect(Unit) { loginApiViewModel.loginCodeVerify(emailInput, codeInput) }
+        if (codeExpireTime == 0) {
+            Toasty
+                .warning(
+                    loginContext,
+                    "인증번호가 만료되었습니다.\n재발송해주세요",
+                    Toast.LENGTH_SHORT,
+                    true
+                )
+                .show()
+            isCodeError = true
+            codeVerifyTrigger = false
+            loginApiViewModel.resetLoginApiUiState()
+        } else {
+            LaunchedEffect(Unit) {
+                loginApiViewModel.loginCodeVerify(emailInput, codeInput)
+            }
+        }
         when (loginApiUiState) {
             is LoginApiUiState.Success -> {
                 signupEmailUpdate(emailInput)

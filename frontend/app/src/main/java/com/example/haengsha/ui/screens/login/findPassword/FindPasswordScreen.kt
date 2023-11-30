@@ -115,6 +115,11 @@ fun FindPasswordScreen(
                             Toasty
                                 .error(loginContext, "이메일을 입력해주세요", Toast.LENGTH_SHORT, true)
                                 .show()
+                        } else if (emailInput.trimEnd().endsWith("@snu.ac.kr").not()) {
+                            isEmailError = true
+                            Toasty
+                                .warning(loginContext, "SNU 이메일을 입력해주세요", Toast.LENGTH_SHORT, true)
+                                .show()
                         } else {
                             isEmailError = false
                             emailVerifyTrigger = true
@@ -156,7 +161,7 @@ fun FindPasswordScreen(
                     text = if (codeSent == 0) "" else "남은 시간 $codeExpireMinute:$codeExpireSecond",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 11.sp,
+                    fontSize = 14.sp,
                     textAlign = TextAlign.End,
                     color = FieldStrokeBlue
                 )
@@ -230,6 +235,7 @@ fun FindPasswordScreen(
     }
 
     if (emailVerifyTrigger) {
+        codeVerifyTrigger = false
         when (loginApiUiState) {
             is LoginApiUiState.Success -> {
                 Toasty
@@ -283,7 +289,23 @@ fun FindPasswordScreen(
     }
 
     if (codeVerifyTrigger) {
-        LaunchedEffect(Unit) { loginApiViewModel.loginCodeVerify(emailInput, codeInput) }
+        if (codeExpireTime == 0) {
+            Toasty
+                .warning(
+                    loginContext,
+                    "인증번호가 만료되었습니다.\n재발송해주세요",
+                    Toast.LENGTH_SHORT,
+                    true
+                )
+                .show()
+            isCodeError = true
+            codeVerifyTrigger = false
+            loginApiViewModel.resetLoginApiUiState()
+        } else {
+            LaunchedEffect(Unit) {
+                loginApiViewModel.loginCodeVerify(emailInput, codeInput)
+            }
+        }
         when (loginApiUiState) {
             is LoginApiUiState.Success -> {
                 findPasswordEmailUpdate(emailInput)
