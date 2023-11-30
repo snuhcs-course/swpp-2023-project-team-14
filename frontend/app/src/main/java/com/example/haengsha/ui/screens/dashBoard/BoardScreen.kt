@@ -73,7 +73,7 @@ fun boardScreen(
     userUiState: UserUiState,
     isTest: Boolean
 ): Int {
-    val boardUiState = boardViewModel.uiState.collectAsState()
+    val boardUiState = boardViewModel.boardUiState.collectAsState()
     val boardListUiState = boardApiViewModel.boardListUiState
     val boardContext = LocalContext.current
     val scrollState = rememberScrollState()
@@ -112,7 +112,8 @@ fun boardScreen(
             SearchBar(
                 boardViewModel = boardViewModel,
                 keyword = boardUiState.value.keyword,
-                keyboardActions = { focusManager.clearFocus() }
+                keyboardActions = { focusManager.clearFocus() },
+                context = boardContext
             ) { boardApiViewModel.searchEvent(it) }
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier = Modifier.fillMaxWidth()) {

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -84,11 +85,14 @@ fun SignupUserInfoScreen(
     ) {
         items(1) {
             Text(
-                modifier = Modifier.width(305.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp),
                 text = "나의 정보와 관심사는?",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Medium,
-                fontSize = 30.sp
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(60.dp))
             Text(
@@ -149,7 +153,7 @@ fun SignupUserInfoScreen(
                     color = FieldStrokeBlue
                 )
             }
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(30.dp))
             Text(
                 modifier = Modifier.width(270.dp),
                 text = buildAnnotatedString {
@@ -162,7 +166,7 @@ fun SignupUserInfoScreen(
             )
             Spacer(modifier = Modifier.height(15.dp))
             college = dropDown("학과")
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(50.dp))
             Text(
                 modifier = Modifier.width(270.dp),
                 text = buildAnnotatedString {
@@ -175,7 +179,7 @@ fun SignupUserInfoScreen(
             )
             Spacer(modifier = Modifier.height(15.dp))
             studentId = dropDown("학번")
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(50.dp))
             Text(
                 modifier = Modifier.width(270.dp),
                 text = buildAnnotatedString {

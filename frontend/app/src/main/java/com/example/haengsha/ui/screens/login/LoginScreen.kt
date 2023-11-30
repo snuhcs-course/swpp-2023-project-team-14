@@ -103,7 +103,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(45.dp))
         Text(
             modifier = Modifier.width(270.dp),
-            text = "SNU Email을 입력하세요.",
+            text = "행샤 계정을 입력하세요.",
             fontFamily = poppins,
             fontWeight = FontWeight.Normal,
             fontSize = 18.sp
@@ -147,6 +147,8 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(50.dp))
         CommonBlueButton(text = "로그인하기",
             onClick = {
+                emailInput = "groupuser55@snu.ac.kr"
+                passwordInput = "groupuser55"
                 if (emailInput.trimStart() == "") {
                     isEmailError = true
                     Toasty.error(

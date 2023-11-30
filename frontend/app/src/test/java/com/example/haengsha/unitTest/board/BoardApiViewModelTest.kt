@@ -5,7 +5,7 @@ import com.example.haengsha.fakeData.board.FakeNetworkBoardDataRepository
 import com.example.haengsha.model.uiState.board.BoardDetailUiState
 import com.example.haengsha.model.uiState.board.BoardFavoriteUiState
 import com.example.haengsha.model.uiState.board.BoardListUiState
-import com.example.haengsha.model.uiState.board.BoardPostUiState
+import com.example.haengsha.model.uiState.board.BoardPostApiUiState
 import com.example.haengsha.model.uiState.board.PostLikeFavoriteUiState
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.testRules.TestDispatcherRule
@@ -64,8 +64,8 @@ class BoardApiViewModelTest {
         )
         boardApiViewModel.postEvent(FakeBoardDataSource.boardPostRequest)
         assertEquals(
-            BoardPostUiState.Success,
-            boardApiViewModel.boardPostUiState
+            BoardPostApiUiState.Success,
+            boardApiViewModel.boardPostApiUiState
         )
     }
 

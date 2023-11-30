@@ -356,6 +356,7 @@ fun SearchBar(
     boardViewModel: BoardViewModel,
     keyword: String,
     keyboardActions: () -> Unit,
+    context: Context,
     onSubmit: (SearchRequest) -> Unit
 ) {
     var input by remember { mutableStateOf(keyword) }
@@ -389,16 +390,22 @@ fun SearchBar(
         ),
         keyboardActions = KeyboardActions(
             onSearch = {
-                boardViewModel.updateKeyword(input)
-                onSubmit(
-                    SearchRequest(
-                        boardViewModel.uiState.value.token,
-                        input,
-                        boardViewModel.uiState.value.isFestival,
-                        boardViewModel.uiState.value.startDate,
-                        boardViewModel.uiState.value.endDate
+                input = input.trimStart().trimEnd()
+                if (input.length in 2..50) {
+                    boardViewModel.updateKeyword(input)
+                    onSubmit(
+                        SearchRequest(
+                            boardViewModel.boardUiState.value.token,
+                            input,
+                            boardViewModel.boardUiState.value.isFestival,
+                            boardViewModel.boardUiState.value.startDate,
+                            boardViewModel.boardUiState.value.endDate
+                        )
                     )
-                )
+                } else {
+                    Toasty.warning(context, "2자에서 50자 사이로 검색해주세요", Toast.LENGTH_SHORT, true)
+                        .show()
+                }
                 keyboardActions()
             }
         ),

@@ -1,14 +1,18 @@
 package com.example.haengsha.model.viewModel.board
 
 import androidx.lifecycle.ViewModel
+import com.example.haengsha.model.uiState.board.BoardPostUiState
 import com.example.haengsha.model.uiState.board.BoardUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class BoardViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow(BoardUiState())
-    val uiState = _uiState.asStateFlow()
+    private val _boardUiState = MutableStateFlow(BoardUiState())
+    val boardUiState = _boardUiState.asStateFlow()
+
+    private val _boardPostUiState = MutableStateFlow(BoardPostUiState())
+    val boardPostUiState = _boardPostUiState.asStateFlow()
 
     var isError = false
 
@@ -22,7 +26,7 @@ class BoardViewModel : ViewModel() {
 
     fun saveToken(token: String) {
         val authToken = "Token $token"
-        _uiState.update { currentState ->
+        _boardUiState.update { currentState ->
             currentState.copy(
                 token = authToken,
                 keyword = currentState.keyword,
@@ -55,11 +59,11 @@ class BoardViewModel : ViewModel() {
     }
 
     fun resetBoardUiState() {
-        _uiState.value = BoardUiState()
+        _boardUiState.value = BoardUiState()
     }
 
     private fun updateSearchParameter(newParameter: String, type: String) {
-        _uiState.update { currentState ->
+        _boardUiState.update { currentState ->
             currentState.copy(
                 keyword = if (type == "keyword") newParameter else currentState.keyword,
                 isFestival = if (type == "isFestival") newParameter.toInt() else currentState.isFestival,
@@ -69,4 +73,6 @@ class BoardViewModel : ViewModel() {
             )
         }
     }
+
+
 }
