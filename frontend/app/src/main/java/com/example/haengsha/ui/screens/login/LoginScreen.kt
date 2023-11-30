@@ -216,6 +216,7 @@ fun LoginScreen(
 
         is LoginApiUiState.HttpError -> {
             isLoginFailedDialogVisible = true
+            isLoginLoading = false
             loginApiViewModel.resetLoginApiUiState()
         }
 
@@ -228,6 +229,7 @@ fun LoginScreen(
                     true
                 )
                 .show()
+            isLoginLoading = false
             loginApiViewModel.resetLoginApiUiState()
         }
 
