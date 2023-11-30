@@ -157,7 +157,9 @@ fun TabView(
             Button(
                 onClick = {
                     showDialog = true
-                    homeApiViewModel.getRecommendationList(token = userUiState.token)
+                    if (userUiState.role != "Group") {
+                        homeApiViewModel.getRecommendationList(token = userUiState.token)
+                    }
                 },
                 colors = androidx.compose.material3.ButtonDefaults.buttonColors(HaengshaBlue),
                 modifier = Modifier
@@ -261,7 +263,7 @@ fun TabView(
             containerColor = Color(0xFFFFFFFF),
             title = {
                 Text(
-                    text = "당신을 위한 오늘의 맞춤 추천입니다!",
+                    text = if (userUiState.role != "Group") "당신을 위한 오늘의 맞춤 추천입니다!" else "",
                     style = TextStyle(
                         fontSize = 16.sp,
                         fontFamily = poppins,
@@ -271,83 +273,97 @@ fun TabView(
                     )
                 )
             }, text = {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(recommendScrollState),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    when (recommendationApiUiState) {
-                        is RecommendationApiUiState.RecommendationListResult -> {
-                            for (i in recommendationApiUiState.recommendationList.indices) {
-                                val recommendationItem =
-                                    recommendationApiUiState.recommendationList[i]
-                                val startDate =
-                                    stringToDate(recommendationItem.eventDurations[0].eventDay)
-                                var endDate = startDate
-                                if (recommendationItem.eventDurations.size > 1) {
-                                    endDate =
-                                        stringToDate(recommendationItem.eventDurations[recommendationItem.eventDurations.size - 1].eventDay)
-                                }
+                if (userUiState.role == "Group") {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "단체 계정은 추천 기능을\n\n이용할 수 없어요",
+                            fontSize = 18.sp,
+                            fontFamily = poppins,
+                            fontWeight = FontWeight.Medium,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                } else {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(recommendScrollState),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        when (recommendationApiUiState) {
+                            is RecommendationApiUiState.RecommendationListResult -> {
+                                for (i in recommendationApiUiState.recommendationList.indices) {
+                                    val recommendationItem =
+                                        recommendationApiUiState.recommendationList[i]
+                                    val startDate =
+                                        stringToDate(recommendationItem.eventDurations[0].eventDay)
+                                    var endDate = startDate
+                                    if (recommendationItem.eventDurations.size > 1) {
+                                        endDate =
+                                            stringToDate(recommendationItem.eventDurations[recommendationItem.eventDurations.size - 1].eventDay)
+                                    }
 
-                                EventCard(
-                                    organizer = recommendationItem.author.nickname,
-                                    eventTitle = recommendationItem.title,
-                                    startDate = startDate,
-                                    endDate = endDate,
-                                    likes = recommendationItem.likeCount,
+                                    EventCard(
+                                        organizer = recommendationItem.author.nickname,
+                                        eventTitle = recommendationItem.title,
+                                        startDate = startDate,
+                                        endDate = endDate,
+                                        likes = recommendationItem.likeCount,
+                                    )
+                                }
+                            }
+
+                            is RecommendationApiUiState.Loading -> {
+                                CircularProgressIndicator(
+                                    color = HaengshaBlue,
+                                    strokeWidth = 3.dp
+                                )
+                                Spacer(modifier = Modifier.height(20.dp))
+                                Text(
+                                    text = "추천 행사 불러오는 중...",
+                                    fontFamily = poppins,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = HaengshaBlue
+                                )
+                            }
+
+                            is RecommendationApiUiState.HttpError -> {
+                                Text(
+                                    text = "이벤트를 불러오는 중 문제가 발생했어요!\n\n다시 시도해주세요.",
+                                    fontFamily = poppins,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = HaengshaBlue
+                                )
+                            }
+
+                            is RecommendationApiUiState.NetworkError -> {
+                                Text(
+                                    text = "인터넷 연결을 확인해주세요.",
+                                    fontFamily = poppins,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = HaengshaBlue
+                                )
+                            }
+
+                            is RecommendationApiUiState.Error -> {
+                                Text(
+                                    text = "알 수 없는 문제가 발생했어요!\n\n메일로 문의해주세요.",
+                                    fontFamily = poppins,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = HaengshaBlue
                                 )
                             }
                         }
-
-                        is RecommendationApiUiState.Loading -> {
-                            CircularProgressIndicator(
-                                color = HaengshaBlue,
-                                strokeWidth = 3.dp
-                            )
-                            Spacer(modifier = Modifier.height(20.dp))
-                            Text(
-                                text = "추천 행사 불러오는 중...",
-                                fontFamily = poppins,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = HaengshaBlue
-                            )
-                        }
-
-                        is RecommendationApiUiState.HttpError -> {
-                            Text(
-                                text = "이벤트를 불러오는 중 문제가 발생했어요!\n\n다시 시도해주세요.",
-                                fontFamily = poppins,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = HaengshaBlue
-                            )
-                        }
-
-                        is RecommendationApiUiState.NetworkError -> {
-                            Text(
-                                text = "인터넷 연결을 확인해주세요.",
-                                fontFamily = poppins,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = HaengshaBlue
-                            )
-                        }
-
-                        is RecommendationApiUiState.Error -> {
-                            Text(
-                                text = "알 수 없는 문제가 발생했어요!\n\n메일로 문의해주세요.",
-                                fontFamily = poppins,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = HaengshaBlue
-                            )
-                        }
                     }
                 }
-
             },
             confirmButton = {
                 Box(
