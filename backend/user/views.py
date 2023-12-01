@@ -158,6 +158,7 @@ def change_password(request):
         return any(character.isdigit() for character in s)
 
     email = request.data.get("email")
+    
     user = PersonalUser.objects.filter(email=email)
     if not user:
         return Response(
@@ -166,6 +167,10 @@ def change_password(request):
 
     user = PersonalUser.objects.get(email=email)
     password = request.data.get("password")
+
+    print(f'email: {email}')
+    print(f'password: {password}')
+
     if len(password) < 4 or len(password) > 20:
         return Response(
             {

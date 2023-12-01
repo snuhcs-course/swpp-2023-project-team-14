@@ -33,7 +33,8 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'ec2-13-209-8-183.ap-northeast-2.compute.amazonaws.com',
     "localhost",
-    "10.150.196.98",
+    "127.0.0.1",
+    "10.150.196.98"
 ]
 
 # APPEND_SLASH = False
