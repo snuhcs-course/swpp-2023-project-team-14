@@ -112,6 +112,7 @@ fun Board(
             BoardPostScreen(
                 innerPadding = innerPadding,
                 boardApiViewModel = boardApiViewModel,
+                boardViewModel = boardViewModel,
                 boardNavController = boardNavController,
                 userUiState = userUiState
             )

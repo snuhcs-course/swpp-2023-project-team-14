@@ -11,7 +11,5 @@ data class BoardUiState(
 
 data class BoardPostUiState(
     val startDate: String = "",
-    val endDate: String = "",
-    val startTime: String = "",
-    val endTime: String = ""
+    val endDate: String = ""
 )

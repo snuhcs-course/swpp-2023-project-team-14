@@ -360,6 +360,7 @@ fun SearchBar(
     onSubmit: (SearchRequest) -> Unit
 ) {
     var input by remember { mutableStateOf(keyword) }
+    val noSpecialCharacterRegex = "^[a-zA-Z가-힣\\d]+$".toRegex()
 
     OutlinedTextField(
         modifier = Modifier
@@ -391,7 +392,13 @@ fun SearchBar(
         keyboardActions = KeyboardActions(
             onSearch = {
                 input = input.trimStart().trimEnd()
-                if (input.length in 2..50) {
+                if (input.length !in 2..50) {
+                    Toasty.warning(context, "2자에서 50자 사이로 검색해주세요", Toast.LENGTH_SHORT, true)
+                        .show()
+                } else if (!noSpecialCharacterRegex.matches(input)) {
+                    Toasty.warning(context, "한글과 영어로만 검색해주세요", Toast.LENGTH_SHORT, true)
+                        .show()
+                } else {
                     boardViewModel.updateKeyword(input)
                     onSubmit(
                         SearchRequest(
@@ -402,9 +409,6 @@ fun SearchBar(
                             boardViewModel.boardUiState.value.endDate
                         )
                     )
-                } else {
-                    Toasty.warning(context, "2자에서 50자 사이로 검색해주세요", Toast.LENGTH_SHORT, true)
-                        .show()
                 }
                 keyboardActions()
             }

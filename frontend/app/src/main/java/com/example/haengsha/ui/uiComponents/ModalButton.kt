@@ -27,7 +27,10 @@ import com.example.haengsha.ui.theme.ModalButtonRed
 import com.example.haengsha.ui.theme.poppins
 
 @Composable
-fun ModalConfirmButton(onClick: () -> Unit) {
+fun ModalConfirmButton(
+    type: String = "확인",
+    onClick: () -> Unit
+) {
     Box(
         modifier = Modifier
             .size(width = 120.dp, height = 30.dp)
@@ -38,7 +41,7 @@ fun ModalConfirmButton(onClick: () -> Unit) {
     ) {
         Text(
             modifier = Modifier.padding(top = 2.dp),
-            text = "확인",
+            text = type,
             color = Color.White,
             fontFamily = poppins,
             fontSize = 16.sp,

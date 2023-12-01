@@ -377,6 +377,7 @@ fun FilterDialog(
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     ModalConfirmButton(
+                        type = "적용",
                         onClick = {
                             onSubmit(
                                 SearchRequest(
@@ -402,7 +403,8 @@ fun FilterDialog(
 fun CustomDatePickerDialog(
     onDismissRequest: () -> Unit,
     boardViewModel: BoardViewModel,
-    type: String
+    type: String,
+    usage: String
 ) {
     val currentDate = LocalDate.now()
     val initialDate = Calendar.getInstance()
@@ -417,15 +419,48 @@ fun CustomDatePickerDialog(
     DatePickerDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
-            Button(onClick = {
-                selectedDate = datePickerState.selectedDateMillis ?: initialDate.timeInMillis
-                if (type == "startDate") {
-                    boardViewModel.updateStartDate(dateFormatter.format(Date(selectedDate)))
-                } else {
-                    boardViewModel.updateEndDate(dateFormatter.format(Date(selectedDate)))
-                }
-                onDismissRequest()
-            }) {
+            Button(
+                onClick = {
+                    selectedDate = datePickerState.selectedDateMillis ?: initialDate.timeInMillis
+                    if (type == "startDate") {
+                        if (usage == "post") {
+                            boardViewModel.updatePostStartDate(
+                                dateFormatter.format(
+                                    Date(
+                                        selectedDate
+                                    )
+                                )
+                            )
+                        } else { // usage == "filter"
+                            boardViewModel.updateFilterStartDate(
+                                dateFormatter.format(
+                                    Date(
+                                        selectedDate
+                                    )
+                                )
+                            )
+                        }
+                    } else {
+                        if (usage == "post") {
+                            boardViewModel.updatePostEndDate(
+                                dateFormatter.format(
+                                    Date(
+                                        selectedDate
+                                    )
+                                )
+                            )
+                        } else { // usage == "filter"
+                            boardViewModel.updateFilterEndDate(
+                                dateFormatter.format(
+                                    Date(
+                                        selectedDate
+                                    )
+                                )
+                            )
+                        }
+                    }
+                    onDismissRequest()
+                }) {
                 Text(text = "확인")
             }
         },

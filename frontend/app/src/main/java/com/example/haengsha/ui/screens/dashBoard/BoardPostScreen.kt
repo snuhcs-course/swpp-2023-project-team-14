@@ -8,6 +8,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -36,10 +37,12 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,11 +71,14 @@ import com.example.haengsha.model.network.dataModel.BoardPostRequest
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.board.BoardPostApiUiState
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
+import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
+import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CheckBox
 import com.example.haengsha.ui.uiComponents.ConfirmDialog
+import com.example.haengsha.ui.uiComponents.CustomDatePickerDialog
 import com.example.haengsha.ui.uiComponents.customTextField
 import es.dmoral.toasty.Toasty
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -84,6 +90,7 @@ import java.io.ByteArrayOutputStream
 fun BoardPostScreen(
     innerPadding: PaddingValues,
     boardApiViewModel: BoardApiViewModel,
+    boardViewModel: BoardViewModel,
     boardNavController: NavController,
     userUiState: UserUiState
 ) {
@@ -94,25 +101,29 @@ fun BoardPostScreen(
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val boardPostUiState = boardApiViewModel.boardPostApiUiState
+
+    val boardPostUiState = boardViewModel.boardPostUiState.collectAsState()
+    val boardPostApiUiState = boardApiViewModel.boardPostApiUiState
     var postTrigger by remember { mutableIntStateOf(0) }
+    var startDatePick by rememberSaveable { mutableStateOf(false) }
+    var endDatePick by remember { mutableStateOf(false) }
+
     val authToken = "Token ${userUiState.token}"
     var eventTitle by remember { mutableStateOf("") }
-    var eventDuration by remember { mutableStateOf("") }
     var eventPlace by remember { mutableStateOf("") }
     var eventTime by remember { mutableStateOf("") }
     var eventContent by remember { mutableStateOf("") }
     var eventCategory by remember { mutableIntStateOf(1) } // 행사면 1
     var postConfirmDialog by remember { mutableStateOf(false) }
-    var durationStart = ""
-    var durationEnd = ""
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val getImage =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { result ->
             result?.let { uri -> imageUri = uri }
         }
-
     var boardPostRequest: BoardPostRequest
+    val errorMessage: String
+
+    LaunchedEffect(Unit) { boardViewModel.resetBoardPostUiState() }
 
     // TODO SDK 버전 28 이상만 가능
     Box(
@@ -176,12 +187,15 @@ fun BoardPostScreen(
                             )
                             Row(
                                 modifier = Modifier.clickable {
-                                    getImage.launch("image/*")
+                                    if (imageUri !== null) imageUri = null
+                                    else {
+                                        getImage.launch("image/*")
+                                    }
                                 },
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "사진 첨부 (선택)",
+                                    text = if (imageUri == null) "사진 첨부" else "사진 지우기",
                                     fontFamily = poppins,
                                     fontWeight = FontWeight.Normal,
                                     fontSize = 12.sp
@@ -236,11 +250,53 @@ fun BoardPostScreen(
                                 modifier = Modifier.height(16.dp),
                                 thickness = 1.dp
                             )
-                            eventDuration = customTextField(
-                                placeholder = "2023-11-11 ~ 2023-11-13",
-                                enabled = true,
-                                keyboardActions = { focusManager.moveFocus(FocusDirection.Down) }
-                            )
+                            Spacer(modifier = Modifier.width(15.dp))
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(40.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = boardPostUiState.value.startDate.ifEmpty { "시작일 (필수)" },
+                                    modifier = Modifier
+                                        .border(
+                                            width = 1.dp,
+                                            color = HaengshaBlue,
+                                            shape = RoundedCornerShape(6.dp)
+                                        )
+                                        .clickable { startDatePick = true }
+                                        .padding(horizontal = 10.dp),
+                                    fontFamily = poppins,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = HaengshaBlue
+                                )
+                                Spacer(modifier = Modifier.width(5.dp))
+                                Text(
+                                    text = "~",
+                                    fontFamily = poppins,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = HaengshaBlue
+                                )
+                                Spacer(modifier = Modifier.width(5.dp))
+                                Text(
+                                    text = boardPostUiState.value.endDate.ifEmpty { "종료일 (선택)" },
+                                    modifier = Modifier
+                                        .border(
+                                            width = 1.dp,
+                                            color = HaengshaBlue,
+                                            shape = RoundedCornerShape(6.dp)
+                                        )
+                                        .clickable { endDatePick = true }
+                                        .padding(horizontal = 10.dp),
+                                    fontFamily = poppins,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = HaengshaBlue
+                                )
+                            }
                         }
                         Row(
                             modifier = Modifier
@@ -367,7 +423,7 @@ fun BoardPostScreen(
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                             Text(
-                                text = "1:1 비율이 아니면 사진이 잘릴 수 있으며 1장만 첨부할 수 있습니다.",
+                                text = "사진은 1:1 비율로 변경되며 1장만 첨부할 수 있습니다.",
                                 fontFamily = poppins,
                                 fontWeight = FontWeight.Normal,
                                 fontSize = 11.sp,
@@ -402,7 +458,6 @@ fun BoardPostScreen(
                             focusedContainerColor = Color(0x00F8F8F8)
                         )
                     )
-
                 }
             }
         }
@@ -426,20 +481,13 @@ fun BoardPostScreen(
             ConfirmDialog(
                 onDismissRequest = { postConfirmDialog = false },
                 onClick = {
-                    if (eventDuration.contains("~")) {
-                        val duration = eventDuration.split("~")
-                        if (duration.size > 1) {
-                            durationStart = duration[0].trim()
-                            durationEnd = duration[1].trim()
-                        }
-                    }
                     boardPostRequest = buildRequestBody(
                         token = authToken,
                         image = imageUri,
                         title = eventTitle,
                         isFestival = eventCategory,
-                        durationStart = durationStart,
-                        durationEnd = durationEnd,
+                        durationStart = boardPostUiState.value.startDate,
+                        durationEnd = boardPostUiState.value.endDate,
                         place = eventPlace,
                         time = eventTime,
                         content = eventContent,
@@ -453,8 +501,8 @@ fun BoardPostScreen(
         }
     }
     if (postTrigger > 0) {
-        LaunchedEffect(key1 = boardPostUiState) {
-            when (boardPostUiState) {
+        LaunchedEffect(key1 = boardPostApiUiState) {
+            when (boardPostApiUiState) {
                 is BoardPostApiUiState.Success -> {
                     postConfirmDialog = false
                     Toasty.success(
@@ -492,9 +540,27 @@ fun BoardPostScreen(
             }
         }
     }
+
+    if (startDatePick) {
+        CustomDatePickerDialog(
+            onDismissRequest = { startDatePick = false },
+            boardViewModel = boardViewModel,
+            type = "startDate",
+            usage = "post"
+        )
+    }
+
+    if (endDatePick) {
+        CustomDatePickerDialog(
+            onDismissRequest = { endDatePick = false },
+            boardViewModel = boardViewModel,
+            type = "endDate",
+            usage = "post"
+        )
+    }
 }
 
-fun buildRequestBody(
+private fun buildRequestBody(
     token: String,
     image: Uri?,
     title: String,
@@ -544,4 +610,21 @@ fun buildRequestBody(
         time = timeRequestBody,
         content = contentRequestBody
     )
+}
+
+private fun checkPostFormat(
+    eventTitle: String,
+    eventStartDay: String,
+    eventEndDay: String,// TODO 날짜 범위 거꾸로 된 거 캐치
+    eventPlace: String, // 글자수 제한 & 특수문자 제한
+    eventTime: String, // 글자수 제한 & 특수문자 제한
+    eventContent: String // 글자수 제한 1000자
+): String {
+    if (eventTitle.startsWith(" ") || eventTitle.endsWith(" ")) {
+        return "제목의 앞뒤 공백을 제거해주세요."
+    } else if (eventTitle.length in 2..20) {
+        return "제목은 2자 이상 20자 이하로 입력해주세요."
+    }
+
+    return ""
 }

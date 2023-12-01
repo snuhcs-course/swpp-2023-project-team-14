@@ -329,7 +329,7 @@ fun boardScreen(
                 context = boardContext,
                 onSubmit = {
                     boardApiViewModel.searchEvent(it)
-                    boardViewModel.updateInitialState()
+                    boardViewModel.updateFilterInitialState()
                 },
                 onDismissRequest = { filterModal = false },
                 onStartDatePick = { startDatePick = true },
@@ -341,7 +341,8 @@ fun boardScreen(
             CustomDatePickerDialog(
                 onDismissRequest = { startDatePick = false },
                 boardViewModel = boardViewModel,
-                type = "startDate"
+                type = "startDate",
+                usage = "filter"
             )
         }
 
@@ -349,7 +350,8 @@ fun boardScreen(
             CustomDatePickerDialog(
                 onDismissRequest = { endDatePick = false },
                 boardViewModel = boardViewModel,
-                type = "endDate"
+                type = "endDate",
+                usage = "filter"
             )
         }
     }
