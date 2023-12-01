@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
@@ -65,11 +66,13 @@ fun FindPasswordScreen(
     var isCodeError by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val configuration = LocalConfiguration.current
+    val deviceHeight = configuration.screenHeightDp.dp
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 60.dp)
+            .padding(vertical = deviceHeight / 15)
             .pointerInput(Unit) {
                 detectTapGestures(onTap = {
                     keyboardController?.hide()
@@ -166,7 +169,7 @@ fun FindPasswordScreen(
                     color = FieldStrokeBlue
                 )
             }
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(deviceHeight / 15))
             CommonBlueButton(text = "다음",
                 onClick = {
                     if (isTest) {
@@ -193,7 +196,7 @@ fun FindPasswordScreen(
                         codeVerifyTrigger = true
                     }
                 })
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(deviceHeight / 15))
             Box(
                 modifier = Modifier
                     .width(270.dp)

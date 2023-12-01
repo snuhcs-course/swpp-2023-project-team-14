@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
@@ -74,13 +75,15 @@ fun LoginScreen(
     var isLoginFailedDialogVisible by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val configuration = LocalConfiguration.current
+    val deviceHeight = configuration.screenHeightDp.dp
 
     BackHandler(enabled = isLoginLoading) { isLoginLoading = false }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 60.dp)
+            .padding(top = deviceHeight / 15)
             .pointerInput(Unit) {
                 detectTapGestures(onTap = {
                     keyboardController?.hide()
@@ -147,8 +150,6 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(50.dp))
         CommonBlueButton(text = "로그인하기",
             onClick = {
-                emailInput = "groupuser55@snu.ac.kr"
-                passwordInput = "groupuser55"
                 if (emailInput.trimStart() == "") {
                     isEmailError = true
                     Toasty.error(
@@ -177,7 +178,7 @@ fun LoginScreen(
                 text = "로그인 정보를 확인해주세요."
             )
         }
-        Spacer(modifier = Modifier.height(45.dp))
+        Spacer(modifier = Modifier.height(deviceHeight / 20))
         Text(
             text = "No Account?",
             fontFamily = poppins,
@@ -185,7 +186,7 @@ fun LoginScreen(
             fontSize = 15.sp,
             color = md_theme_light_outline
         )
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(deviceHeight / 100))
         Text(
             modifier = Modifier
                 .wrapContentSize()

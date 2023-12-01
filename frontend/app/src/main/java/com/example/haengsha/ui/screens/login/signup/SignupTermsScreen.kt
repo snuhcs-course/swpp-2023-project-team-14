@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -29,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -71,6 +73,9 @@ fun SignupTermsScreen(
     var isPolicyChecked by rememberSaveable { mutableStateOf(false) }
     var isTermsModal by remember { mutableStateOf(false) }
     var isPolicyModal by remember { mutableStateOf(false) }
+    val configuration = LocalConfiguration.current
+    val deviceWidth = configuration.screenWidthDp.dp
+    val deviceHeight = configuration.screenHeightDp.dp
 
     Box(
         modifier = Modifier
@@ -81,20 +86,24 @@ fun SignupTermsScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 60.dp),
+                .padding(vertical = deviceHeight / 12),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(1) {
                 Text(
-                    modifier = Modifier.width(330.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = deviceWidth / 12),
                     text = "개인정보 동의",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Medium,
                     fontSize = 30.sp
                 )
-                Spacer(modifier = Modifier.height(80.dp))
+                Spacer(modifier = Modifier.height(deviceHeight / 12))
                 Row(
-                    modifier = Modifier.width(335.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = deviceWidth / 12),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
@@ -110,8 +119,8 @@ fun SignupTermsScreen(
                                 }
                             }
                             .testTag("전체 동의")
-                    ) { CheckBox(color = if (isAllChecked) ButtonBlue else ButtonGrey, size = 28) }
-                    Spacer(modifier = Modifier.width(20.dp))
+                    ) { CheckBox(color = if (isAllChecked) ButtonBlue else ButtonGrey, size = 26) }
+                    Spacer(modifier = Modifier.width(15.dp))
                     Text(
                         modifier = Modifier.width(220.dp),
                         text = "전체 동의",
@@ -121,10 +130,16 @@ fun SignupTermsScreen(
                     )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
-                HorizontalDivider(modifier = Modifier.width(335.dp), color = HaengshaGrey)
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = deviceWidth / 12), color = HaengshaGrey
+                )
                 Spacer(modifier = Modifier.height(60.dp))
                 Row(
-                    modifier = Modifier.width(335.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = deviceWidth / 12),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -139,7 +154,7 @@ fun SignupTermsScreen(
                         ) {
                             CheckBox(
                                 color = if (isTermsChecked) ButtonBlue else ButtonGrey,
-                                size = 25
+                                size = 22
                             )
                         }
                         Spacer(modifier = Modifier.width(15.dp))
@@ -148,11 +163,25 @@ fun SignupTermsScreen(
                             text = buildAnnotatedString {
                                 withStyle(SpanStyle(textDecoration = TextDecoration.Underline)) {
                                     append(
-                                        "서비스 이용약관 (필수)"
+                                        "서비스 이용약관"
+                                    )
+                                }
+                                withStyle(
+                                    SpanStyle(
+                                        fontSize = 13.sp
+                                    )
+                                ) {
+                                    append(
+                                        " (필수)"
                                     )
                                 }
                                 append(" ")
-                                withStyle(SpanStyle(color = Color.Red)) { append("*") }
+                                withStyle(
+                                    SpanStyle(
+                                        color = Color.Red,
+                                        fontSize = 13.sp
+                                    )
+                                ) { append("*") }
                             },
                             fontFamily = poppins,
                             fontWeight = FontWeight.Normal,
@@ -162,7 +191,9 @@ fun SignupTermsScreen(
                 }
                 Spacer(modifier = Modifier.height(60.dp))
                 Row(
-                    modifier = Modifier.width(335.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = deviceWidth / 12),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -177,7 +208,7 @@ fun SignupTermsScreen(
                         ) {
                             CheckBox(
                                 color = if (isPolicyChecked) ButtonBlue else ButtonGrey,
-                                size = 25
+                                size = 22
                             )
                         }
                         Spacer(modifier = Modifier.width(15.dp))
@@ -186,11 +217,25 @@ fun SignupTermsScreen(
                             text = buildAnnotatedString {
                                 withStyle(SpanStyle(textDecoration = TextDecoration.Underline)) {
                                     append(
-                                        "개인정보 수집 및 처리 방침 (필수)"
+                                        "개인정보 수집 및 처리 방침"
+                                    )
+                                }
+                                withStyle(
+                                    SpanStyle(
+                                        fontSize = 13.sp
+                                    )
+                                ) {
+                                    append(
+                                        " (필수)"
                                     )
                                 }
                                 append(" ")
-                                withStyle(SpanStyle(color = Color.Red)) { append("*") }
+                                withStyle(
+                                    SpanStyle(
+                                        color = Color.Red,
+                                        fontSize = 13.sp
+                                    )
+                                ) { append("*") }
                             },
                             fontFamily = poppins,
                             fontWeight = FontWeight.Normal,
@@ -201,7 +246,7 @@ fun SignupTermsScreen(
 
                 if (isTermsChecked && isPolicyChecked) isAllChecked = true
 
-                Spacer(modifier = Modifier.height(130.dp))
+                Spacer(modifier = Modifier.height(deviceHeight / 8))
                 if (isTermsChecked && isPolicyChecked) {
                     CommonBlueButton(
                         text = "동의 후 회원가입",

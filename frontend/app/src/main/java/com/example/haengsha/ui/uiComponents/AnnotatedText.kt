@@ -1,9 +1,11 @@
 package com.example.haengsha.ui.uiComponents
 
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -14,10 +16,15 @@ import com.example.haengsha.ui.theme.poppins
 
 @Composable
 fun OrganizerSignupInstructionText() {
+    val configuration = LocalConfiguration.current
+    val deviceWidth = configuration.screenWidthDp.dp
+
     Text(
-        modifier = Modifier.width(300.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = deviceWidth / 10),
         text = buildAnnotatedString {
-            append("단체 유저 가입을 원하신다면 \n")
+            append("단체 유저 가입을 원하신다면 ")
             withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("haengsha@gmail.com") }
             append("으로 아래 사항을 준수하여 이메일로 보내주세요. \n\n")
 
@@ -32,17 +39,22 @@ fun OrganizerSignupInstructionText() {
 
         },
         fontFamily = poppins,
-        fontSize = 15.sp,
+        fontSize = 18.sp,
         fontWeight = FontWeight.Normal
     )
 }
 
 @Composable
 fun OrganizerFindPasswordInstructionText() {
+    val configuration = LocalConfiguration.current
+    val deviceWidth = configuration.screenWidthDp.dp
+
     Text(
-        modifier = Modifier.width(300.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = deviceWidth / 10),
         text = buildAnnotatedString {
-            append("단체 계정의 로그인 정보를 찾고 싶으시다면 \n")
+            append("단체 계정의 로그인 정보를 찾고 싶으시다면 ")
             withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("haengsha@gmail.com") }
             append("으로 아래 사항을 준수하여 이메일로 보내주세요. \n\n")
 
@@ -57,7 +69,7 @@ fun OrganizerFindPasswordInstructionText() {
 
         },
         fontFamily = poppins,
-        fontSize = 15.sp,
+        fontSize = 18.sp,
         fontWeight = FontWeight.Normal
     )
 }

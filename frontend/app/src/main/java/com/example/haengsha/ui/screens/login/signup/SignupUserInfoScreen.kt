@@ -145,7 +145,7 @@ fun SignupUserInfoScreen(
                                 checkNickname(nickname)
                             }
                         },
-                    text = "중복 확인",
+                    text = "닉네임 중복 확인",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp,
