@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,6 +23,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
@@ -53,6 +55,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.haengsha.R
+import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.home.RecommendationApiUiState
 import com.example.haengsha.model.viewModel.home.HomeApiViewModel
 import com.example.haengsha.model.viewModel.home.HomeViewModel
@@ -84,11 +87,12 @@ data class EventCardData(
 @Composable
 fun TabView(
     homeViewModel: HomeViewModel,
-    homeApiViewModel: HomeApiViewModel
+    homeApiViewModel: HomeApiViewModel,
+    userUiState: UserUiState
 ) {
     val academicItems by homeViewModel.academicItems.observeAsState()
     val festivalItems by homeViewModel.festivalItems.observeAsState()
-    val recommendationApiUiState = homeApiViewModel.recommendationUiState
+    val recommendationApiUiState = homeApiViewModel.recommendationApiUiState
     var showDialog by remember { mutableStateOf(false) }
     var selectedEvent: EventCardData? by remember { mutableStateOf(null) }
     var showEventCardPopup by remember { mutableStateOf(false) }
@@ -153,6 +157,9 @@ fun TabView(
             Button(
                 onClick = {
                     showDialog = true
+                    if (userUiState.role != "Group") {
+                        homeApiViewModel.getRecommendationList(token = userUiState.token)
+                    }
                 },
                 colors = androidx.compose.material3.ButtonDefaults.buttonColors(HaengshaBlue),
                 modifier = Modifier
@@ -244,9 +251,19 @@ fun TabView(
                 // Close the dialog when clicked outside
                 showDialog = false
             },
+            modifier = Modifier
+                .shadow(
+                    elevation = 10.dp,
+                    spotColor = Color(0x40000000),
+                    ambientColor = Color(0x40000000)
+                )
+                .width(500.dp)
+                .height(550.dp)
+                .background(color = Color(0xFFFFFFFF)),
+            containerColor = Color(0xFFFFFFFF),
             title = {
                 Text(
-                    text = "당신을 위한 오늘의 맞춤 추천입니다!",
+                    text = if (userUiState.role != "Group") "당신을 위한 오늘의 맞춤 추천입니다!" else "",
                     style = TextStyle(
                         fontSize = 16.sp,
                         fontFamily = poppins,
@@ -256,48 +273,97 @@ fun TabView(
                     )
                 )
             }, text = {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(recommendScrollState),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+                if (userUiState.role == "Group") {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "단체 계정은 추천 기능을\n\n이용할 수 없어요",
+                            fontSize = 18.sp,
+                            fontFamily = poppins,
+                            fontWeight = FontWeight.Medium,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                } else {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(recommendScrollState),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        when (recommendationApiUiState) {
+                            is RecommendationApiUiState.RecommendationListResult -> {
+                                for (i in recommendationApiUiState.recommendationList.indices) {
+                                    val recommendationItem =
+                                        recommendationApiUiState.recommendationList[i]
+                                    val startDate =
+                                        stringToDate(recommendationItem.eventDurations[0].eventDay)
+                                    var endDate = startDate
+                                    if (recommendationItem.eventDurations.size > 1) {
+                                        endDate =
+                                            stringToDate(recommendationItem.eventDurations[recommendationItem.eventDurations.size - 1].eventDay)
+                                    }
 
-                    when (recommendationApiUiState) {
-                        is RecommendationApiUiState.RecommendationListResult -> {
-                            for (i in recommendationApiUiState.recommendationList.indices) {
-                                val recommendationItem =
-                                    recommendationApiUiState.recommendationList[i]
-                                val startDate =
-                                    stringToDate(recommendationItem.eventDurations[0].eventDay)
-                                var endDate = startDate
-                                if (recommendationItem.eventDurations.size > 1) {
-                                    endDate =
-                                        stringToDate(recommendationItem.eventDurations[recommendationItem.eventDurations.size - 1].eventDay)
+                                    EventCard(
+                                        organizer = recommendationItem.author.nickname,
+                                        eventTitle = recommendationItem.title,
+                                        startDate = startDate,
+                                        endDate = endDate,
+                                        likes = recommendationItem.likeCount,
+                                    )
                                 }
+                            }
 
-                                EventCard(
-                                    organizer = recommendationItem.author.nickname,
-                                    eventTitle = recommendationItem.title,
-                                    startDate = startDate,
-                                    endDate = endDate,
-                                    likes = recommendationItem.likeCount,
+                            is RecommendationApiUiState.Loading -> {
+                                CircularProgressIndicator(
+                                    color = HaengshaBlue,
+                                    strokeWidth = 3.dp
+                                )
+                                Spacer(modifier = Modifier.height(20.dp))
+                                Text(
+                                    text = "추천 행사 불러오는 중...",
+                                    fontFamily = poppins,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = HaengshaBlue
+                                )
+                            }
+
+                            is RecommendationApiUiState.HttpError -> {
+                                Text(
+                                    text = "이벤트를 불러오는 중 문제가 발생했어요!\n\n다시 시도해주세요.",
+                                    fontFamily = poppins,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = HaengshaBlue
+                                )
+                            }
+
+                            is RecommendationApiUiState.NetworkError -> {
+                                Text(
+                                    text = "인터넷 연결을 확인해주세요.",
+                                    fontFamily = poppins,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = HaengshaBlue
+                                )
+                            }
+
+                            is RecommendationApiUiState.Error -> {
+                                Text(
+                                    text = "알 수 없는 문제가 발생했어요!\n\n메일로 문의해주세요.",
+                                    fontFamily = poppins,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = HaengshaBlue
                                 )
                             }
                         }
-
-                        else -> {
-//                            EventCard( // Demo 용으로 필요하면 추가
-//                                organizer = "수리과학부",
-//                                eventTitle = "수리과학부 강연",
-//                                startDate = LocalDate.now().plusDays(5),
-//                                endDate = LocalDate.now().plusDays(5),
-//                                likes = 28
-//                            )
-                        }
                     }
                 }
-
             },
             confirmButton = {
                 Box(
@@ -321,7 +387,7 @@ fun TabView(
                         Text(
                             text = "닫기",
                             style = TextStyle(
-                                fontSize = 13.sp,
+                                fontSize = 16.sp,
                                 fontFamily = poppins,
                                 fontWeight = FontWeight(500),
                                 color = Color(0xFF000000),
@@ -331,17 +397,7 @@ fun TabView(
                         )
                     }
                 }
-            },
-            modifier = Modifier
-                .shadow(
-                    elevation = 10.dp,
-                    spotColor = Color(0x40000000),
-                    ambientColor = Color(0x40000000)
-                )
-                .width(500.dp)
-                .height(550.dp)
-                .background(color = Color(0xFFFFFFFF)),
-            containerColor = Color(0xFFFFFFFF)
+            }
         )
     }
 

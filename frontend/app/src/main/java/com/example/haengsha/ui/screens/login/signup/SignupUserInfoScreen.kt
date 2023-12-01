@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -56,7 +57,8 @@ fun SignupUserInfoScreen(
     signupNickname: String,
     loginNavController: NavController,
     loginNavBack: () -> Unit,
-    loginContext: Context
+    loginContext: Context,
+    isTest: Boolean
 ) {
     var nickname by rememberSaveable { mutableStateOf("") }
     var college by rememberSaveable { mutableStateOf("") }
@@ -83,11 +85,14 @@ fun SignupUserInfoScreen(
     ) {
         items(1) {
             Text(
-                modifier = Modifier.width(305.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp),
                 text = "나의 정보와 관심사는?",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Medium,
-                fontSize = 30.sp
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(60.dp))
             Text(
@@ -148,7 +153,7 @@ fun SignupUserInfoScreen(
                     color = FieldStrokeBlue
                 )
             }
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(30.dp))
             Text(
                 modifier = Modifier.width(270.dp),
                 text = buildAnnotatedString {
@@ -161,7 +166,7 @@ fun SignupUserInfoScreen(
             )
             Spacer(modifier = Modifier.height(15.dp))
             college = dropDown("학과")
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(50.dp))
             Text(
                 modifier = Modifier.width(270.dp),
                 text = buildAnnotatedString {
@@ -174,7 +179,7 @@ fun SignupUserInfoScreen(
             )
             Spacer(modifier = Modifier.height(15.dp))
             studentId = dropDown("학번")
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(50.dp))
             Text(
                 modifier = Modifier.width(270.dp),
                 text = buildAnnotatedString {
@@ -192,6 +197,9 @@ fun SignupUserInfoScreen(
             CommonBlueButton(
                 text = "다음",
                 onClick = {
+                    if (isTest) {
+                        loginNavController.navigate(LoginRoute.SignupTerms.route)
+                    }
                     if (nickname == "" || college == "" || studentId == "" || interest == listOf("")) {
                         Toasty
                             .error(loginContext, "정보 입력을 완료해주세요!", Toast.LENGTH_SHORT, true)
@@ -214,11 +222,11 @@ fun SignupUserInfoScreen(
                                     .show()
                             } else {
                                 isNicknameChecked = true
-                                signupViewModel.updateMajor(college)
-                                signupViewModel.updateGrade(studentId)
+                                signupViewModel.updateMajor(convertToEnglish(college))
+                                signupViewModel.updateGrade(convertToEnglish(studentId))
                                 signupViewModel.updateInterest(
                                     if (interest.size == 1) {
-                                        interest[0]
+                                        convertToEnglish(interest[0])
                                     } else {
                                         interest.joinToString(", ").drop(2)
                                     }
@@ -281,6 +289,112 @@ fun SignupUserInfoScreen(
             /* Other Success State, do nothing */
         }
     }
+}
+
+fun convertToEnglish(input: String): String {
+    val output: String =
+        when (input) {
+            "경영대학" -> {
+                "Business"
+            }
+
+            "공과대학" -> {
+                "Engineering"
+            }
+
+            "미술대학" -> {
+                "Art"
+            }
+
+            "사범대학" -> {
+                "Education"
+            }
+
+            "사회과학대학" -> {
+                "SocialSciences"
+            }
+
+            "음악대학" -> {
+                "Music"
+            }
+
+            "인문대학" -> {
+                "Humanities"
+            }
+
+            "자연과학대학" -> {
+                "NaturalSciences"
+            }
+
+            "16학번 이상" -> {
+                "16"
+            }
+
+            "17학번" -> {
+                "17"
+            }
+
+            "18학번" -> {
+                "18"
+            }
+
+            "19학번" -> {
+                "19"
+            }
+
+            "20학번" -> {
+                "20"
+            }
+
+            "21학번" -> {
+                "21"
+            }
+
+            "22학번" -> {
+                "22"
+            }
+
+            "23학번" -> {
+                "23"
+            }
+
+            "댄스" -> {
+                "dance"
+            }
+
+            "사교" -> {
+                "meetup"
+            }
+
+            "사회" -> {
+                "social"
+            }
+
+            "연극" -> {
+                "theater"
+            }
+
+            "음악" -> {
+                "music"
+            }
+
+            "운동" -> {
+                "sports"
+            }
+
+            "예술" -> {
+                "art"
+            }
+
+            "종교" -> {
+                "religion"
+            }
+
+            else -> {
+                "none"
+            }
+        }
+    return output
 }
 
 //@Preview(showBackground = true)

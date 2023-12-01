@@ -36,12 +36,12 @@ sealed interface BoardDetailUiState {
     object Loading : BoardDetailUiState
 }
 
-sealed interface BoardPostUiState {
-    object Success : BoardPostUiState
-    object HttpError : BoardPostUiState
-    object NetworkError : BoardPostUiState
-    object Error : BoardPostUiState
-    object Loading : BoardPostUiState
+sealed interface BoardPostApiUiState {
+    object Success : BoardPostApiUiState
+    object HttpError : BoardPostApiUiState
+    object NetworkError : BoardPostApiUiState
+    object Error : BoardPostApiUiState
+    object Loading : BoardPostApiUiState
 }
 
 sealed interface PostLikeFavoriteUiState {

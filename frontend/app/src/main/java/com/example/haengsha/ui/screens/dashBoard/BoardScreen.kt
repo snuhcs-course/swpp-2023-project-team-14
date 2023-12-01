@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -68,9 +70,10 @@ fun boardScreen(
     boardViewModel: BoardViewModel,
     boardApiViewModel: BoardApiViewModel,
     boardNavController: NavController,
-    userUiState: UserUiState
+    userUiState: UserUiState,
+    isTest: Boolean
 ): Int {
-    val boardUiState = boardViewModel.uiState.collectAsState()
+    val boardUiState = boardViewModel.boardUiState.collectAsState()
     val boardListUiState = boardApiViewModel.boardListUiState
     val boardContext = LocalContext.current
     val scrollState = rememberScrollState()
@@ -86,6 +89,10 @@ fun boardScreen(
 
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    val configuration = LocalConfiguration.current
+    val deviceWidth = configuration.screenWidthDp.dp
+    val deviceHeight = configuration.screenHeightDp.dp
 
     Box(
         modifier = Modifier
@@ -105,7 +112,8 @@ fun boardScreen(
             SearchBar(
                 boardViewModel = boardViewModel,
                 keyword = boardUiState.value.keyword,
-                keyboardActions = { focusManager.clearFocus() }
+                keyboardActions = { focusManager.clearFocus() },
+                context = boardContext
             ) { boardApiViewModel.searchEvent(it) }
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier = Modifier.fillMaxWidth()) {
@@ -225,15 +233,33 @@ fun boardScreen(
                                     fontWeight = FontWeight.SemiBold,
                                     textAlign = TextAlign.Center
                                 )
+                                if (isTest) {
+                                    Column(modifier = Modifier.clickable {
+                                        eventId = 0
+                                        boardNavController.navigate(BoardRoute.BoardDetail.route)
+                                    }) { Text("test") }
+                                }
                             }
                         } else {
-                            Box(
+                            Column(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(innerPadding),
-                                contentAlignment = Alignment.Center
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
                             ) {
-                                CircularProgressIndicator()
+                                CircularProgressIndicator(
+                                    color = HaengshaBlue,
+                                    strokeWidth = 3.dp
+                                )
+                                Spacer(modifier = Modifier.height(20.dp))
+                                Text(
+                                    text = "행사 찾아보는 중...",
+                                    fontFamily = poppins,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = HaengshaBlue
+                                )
                             }
                         }
                     }
@@ -277,8 +303,8 @@ fun boardScreen(
             }
         }
 
-        if (userUiState.role == "Group") {
-            Box(modifier = Modifier.offset(330.dp, 600.dp)) {
+        if (userUiState.role == "Group" || isTest) {
+            Box(modifier = Modifier.offset(deviceWidth - 80.dp, deviceHeight - 190.dp)) {
                 Box(
                     modifier = Modifier
                         .size(60.dp)
@@ -328,6 +354,5 @@ fun boardScreen(
         }
     }
 
-    return if (eventId != 0) eventId
-    else 0
+    return eventId
 }

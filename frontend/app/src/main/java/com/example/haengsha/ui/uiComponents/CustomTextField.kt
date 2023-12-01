@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -31,9 +32,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -43,6 +44,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.haengsha.R
 import com.example.haengsha.model.network.dataModel.SearchRequest
 import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.FieldStrokeBlue
@@ -61,7 +63,9 @@ fun commonTextField(
     var input by rememberSaveable { mutableStateOf("") }
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        modifier = Modifier
+            .size(width = 270.dp, height = 60.dp)
+            .testTag(stringResource(R.string.commonTextField)),
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -101,7 +105,9 @@ fun codeVerifyField(
     var input by remember { mutableStateOf("") }
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        modifier = Modifier
+            .size(width = 270.dp, height = 60.dp)
+            .testTag(stringResource(R.string.codeVerifyField)),
         value = input,
         onValueChange = { if (it.length <= 6) input = it },
         placeholder = {
@@ -147,7 +153,9 @@ fun suffixTextField(
     } else false
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        modifier = Modifier
+            .size(width = 270.dp, height = 60.dp)
+            .testTag(stringResource(R.string.suffixTextField)),
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -203,7 +211,9 @@ fun passwordTextField(
     } else false
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        modifier = Modifier
+            .size(width = 270.dp, height = 60.dp)
+            .testTag(stringResource(R.string.passwordTextField)),
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -243,7 +253,6 @@ fun passwordSetField(
     context: Context
 ): String {
     var input by remember { mutableStateOf("") }
-    val focusRequester = FocusRequester()
     val pattern = "^(?=.*[a-zA-Z])(?=.*\\d)[a-zA-Z\\d]{4,10}$".toRegex()
     var isError by remember { mutableStateOf(false) }
     var isRegexError by remember { mutableStateOf(false) }
@@ -256,17 +265,11 @@ fun passwordSetField(
     OutlinedTextField(
         modifier = Modifier
             .size(width = 270.dp, height = 60.dp)
-            .focusRequester(focusRequester),
+            .testTag(stringResource(R.string.passwordSetField)),
         value = input,
         onValueChange = {
             input = it
-            if (pattern.matches(input)) {
-                isRegexError = false
-                focusRequester.freeFocus()
-            } else {
-                isRegexError = true
-                focusRequester.captureFocus()
-            }
+            isRegexError = !pattern.matches(input)
         },
         placeholder = {
             Text(
@@ -314,7 +317,9 @@ fun passwordCheckTextField(
     var input by remember { mutableStateOf("") }
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 270.dp, height = 60.dp),
+        modifier = Modifier
+            .size(width = 270.dp, height = 60.dp)
+            .testTag(stringResource(R.string.passwordCheckTextField)),
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -351,12 +356,17 @@ fun SearchBar(
     boardViewModel: BoardViewModel,
     keyword: String,
     keyboardActions: () -> Unit,
+    context: Context,
     onSubmit: (SearchRequest) -> Unit
 ) {
     var input by remember { mutableStateOf(keyword) }
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 340.dp, height = 60.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp)
+            .padding(start = 30.dp, end = 30.dp)
+            .testTag(stringResource(R.string.searchBar)),
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -380,16 +390,22 @@ fun SearchBar(
         ),
         keyboardActions = KeyboardActions(
             onSearch = {
-                boardViewModel.updateKeyword(input)
-                onSubmit(
-                    SearchRequest(
-                        boardViewModel.uiState.value.token,
-                        input,
-                        boardViewModel.uiState.value.isFestival,
-                        boardViewModel.uiState.value.startDate,
-                        boardViewModel.uiState.value.endDate
+                input = input.trimStart().trimEnd()
+                if (input.length in 2..50) {
+                    boardViewModel.updateKeyword(input)
+                    onSubmit(
+                        SearchRequest(
+                            boardViewModel.boardUiState.value.token,
+                            input,
+                            boardViewModel.boardUiState.value.isFestival,
+                            boardViewModel.boardUiState.value.startDate,
+                            boardViewModel.boardUiState.value.endDate
+                        )
                     )
-                )
+                } else {
+                    Toasty.warning(context, "2자에서 50자 사이로 검색해주세요", Toast.LENGTH_SHORT, true)
+                        .show()
+                }
                 keyboardActions()
             }
         ),
@@ -409,7 +425,9 @@ fun commentTextField(
     var input by rememberSaveable { mutableStateOf("") }
 
     OutlinedTextField(
-        modifier = Modifier.size(width = 280.dp, height = 60.dp),
+        modifier = Modifier
+            .size(width = 280.dp, height = 60.dp)
+            .testTag(stringResource(R.string.commentTextField)),
         value = input,
         onValueChange = { input = it },
         placeholder = {
@@ -452,6 +470,7 @@ fun customTextField(
         value = input,
         onValueChange = { input = it },
         modifier = Modifier
+            .testTag(stringResource(R.string.customTextField))
             .indicatorLine(
                 enabled = false,
                 isError = false,

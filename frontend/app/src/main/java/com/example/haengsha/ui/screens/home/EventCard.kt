@@ -1,7 +1,5 @@
 package com.example.haengsha.ui.screens.home
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,24 +17,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.haengsha.ui.theme.LikePink
 import com.example.haengsha.ui.theme.md_theme_light_onSurfaceVariant
 import com.example.haengsha.ui.theme.poppins
-import java.io.Serializable
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun formatDateToMMDD(date: LocalDate): String {
     val formatter = DateTimeFormatter.ofPattern("MM-dd")
     return date.format(formatter)
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun EventCard(
     organizer: String,

@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -35,7 +36,7 @@ import com.example.haengsha.ui.uiComponents.HaengshaTopAppBar
 import es.dmoral.toasty.Toasty
 
 @Composable
-fun HaengshaApp() {
+fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) {
     val userViewModel: UserViewModel = viewModel()
     val userUiState by userViewModel.uiState.collectAsState()
     val loginApiViewModel: LoginApiViewModel = viewModel(factory = LoginApiViewModel.Factory)
@@ -48,7 +49,6 @@ fun HaengshaApp() {
     val homeApiViewModel: HomeApiViewModel =
         viewModel(factory = HomeApiViewModel.Factory(homeViewModel))
 
-    val mainNavController = rememberNavController()
     val backStackEntry = mainNavController.currentBackStackEntryAsState()
     val currentScreenName = navigationUiState.screen
     val currentScreenType = navigationUiState.type
@@ -271,6 +271,7 @@ fun HaengshaApp() {
                     innerPadding = innerPadding,
                     userUiState = userUiState,
                     boardApiViewModel = boardApiViewModel,
+                    boardViewModel = boardViewModel,
                     navigationViewModel = navigationViewModel
                 )
             }

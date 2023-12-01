@@ -64,7 +64,7 @@ class PersonalUser(AbstractUser, PermissionsMixin):
   role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='User')
   major = models.CharField(max_length=20, choices=MAJOR_CHOICES, default='Undefined')
   grade = models.CharField(max_length=10, choices=GRADE_CHOICES, default='Undefined')
-  interest = models.CharField(max_length=10, choices=INTEREST_CHOICES, default='Undefined')
+  interest = models.CharField(max_length=200, choices=INTEREST_CHOICES, default='Undefined')
   
 
   USERNAME_FIELD = 'email'

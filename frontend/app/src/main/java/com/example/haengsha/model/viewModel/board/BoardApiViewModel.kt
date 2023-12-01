@@ -16,7 +16,7 @@ import com.example.haengsha.model.network.dataModel.SearchRequest
 import com.example.haengsha.model.uiState.board.BoardDetailUiState
 import com.example.haengsha.model.uiState.board.BoardFavoriteUiState
 import com.example.haengsha.model.uiState.board.BoardListUiState
-import com.example.haengsha.model.uiState.board.BoardPostUiState
+import com.example.haengsha.model.uiState.board.BoardPostApiUiState
 import com.example.haengsha.model.uiState.board.PostLikeFavoriteUiState
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -32,7 +32,7 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
     var boardDetailUiState: BoardDetailUiState by mutableStateOf(BoardDetailUiState.Loading)
         private set
 
-    var boardPostUiState: BoardPostUiState by mutableStateOf(BoardPostUiState.Loading)
+    var boardPostApiUiState: BoardPostApiUiState by mutableStateOf(BoardPostApiUiState.Loading)
         private set
 
     var postLikeFavoriteUiState: PostLikeFavoriteUiState by mutableStateOf(PostLikeFavoriteUiState.Loading)
@@ -100,16 +100,16 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
 
     fun postEvent(boardPostRequest: BoardPostRequest) {
         viewModelScope.launch {
-            boardPostUiState = BoardPostUiState.Loading
-            boardPostUiState = try {
+            boardPostApiUiState = BoardPostApiUiState.Loading
+            boardPostApiUiState = try {
                 boardDataRepository.postEvent(boardPostRequest)
-                BoardPostUiState.Success
+                BoardPostApiUiState.Success
             } catch (e: HttpException) {
-                BoardPostUiState.HttpError
+                BoardPostApiUiState.HttpError
             } catch (e: IOException) {
-                BoardPostUiState.NetworkError
+                BoardPostApiUiState.NetworkError
             } catch (e: Exception) {
-                BoardPostUiState.Error
+                BoardPostApiUiState.Error
             }
         }
     }

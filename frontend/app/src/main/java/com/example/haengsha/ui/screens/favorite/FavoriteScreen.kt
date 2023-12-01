@@ -3,6 +3,7 @@ package com.example.haengsha.ui.screens.favorite
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,6 +38,7 @@ import com.example.haengsha.model.route.FavoriteRoute
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.board.BoardFavoriteUiState
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
+import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.boardList
@@ -47,13 +49,24 @@ fun favoriteScreen(
     innerPadding: PaddingValues,
     boardApiViewModel: BoardApiViewModel,
     favoriteNavController: NavController,
-    userUiState: UserUiState
+    userUiState: UserUiState,
+    isTest: Boolean
 ): Int {
     val boardContext = LocalContext.current
     val boardFavoriteUiState = boardApiViewModel.boardFavoriteUiState
     var eventId by rememberSaveable { mutableIntStateOf(0) }
 
-    if (userUiState.role == "Group") {
+    if (isTest) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .clickable {
+                    eventId = 0
+                    favoriteNavController.navigate(FavoriteRoute.FavoriteDetail.route)
+                }
+        ) { Text("test") }
+    } else if (userUiState.role == "Group") {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -133,13 +146,25 @@ fun favoriteScreen(
             }
 
             is BoardFavoriteUiState.Loading -> {
-                Box(
+                Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding),
-                    contentAlignment = Alignment.Center
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(
+                        color = HaengshaBlue,
+                        strokeWidth = 3.dp
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(
+                        text = "즐겨찾기 목록 불러오는 중...",
+                        fontFamily = poppins,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = HaengshaBlue
+                    )
                 }
             }
 
@@ -183,6 +208,5 @@ fun favoriteScreen(
             }
         }
     }
-    return if (eventId != 0) eventId
-    else 0
+    return eventId
 }

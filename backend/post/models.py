@@ -6,10 +6,10 @@ class Duration(models.Model):
   event_day = models.DateField(null=False,primary_key=True,default=date.today)
   
 class Post(models.Model):
-  title = models.CharField(max_length=30)
+  title = models.CharField(max_length=300)
   author = models.ForeignKey(PersonalUser, on_delete=models.CASCADE,null=True)
-  content = models.CharField(null=True,max_length=1000)
-  place = models.CharField(null=True,max_length=30)
+  content = models.CharField(null=True,max_length=10000)
+  place = models.CharField(null=True,max_length=300)
   image = models.URLField(null=True)
   is_festival = models.BooleanField(null=True)
   like_users = models.ManyToManyField(PersonalUser, blank=True, related_name='like_posts', through='Like')

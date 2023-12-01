@@ -49,7 +49,8 @@ fun PasswordResetScreen(
     findPasswordUiState: FindPasswordUiState,
     loginNavController: NavController,
     loginNavBack: () -> Unit,
-    loginContext: Context
+    loginContext: Context,
+    isTest: Boolean
 ) {
     var passwordInput: String by remember { mutableStateOf("") }
     var passwordCheckInput: String by remember { mutableStateOf("") }
@@ -114,6 +115,12 @@ fun PasswordResetScreen(
             CommonBlueButton(
                 text = "변경 완료하기",
                 onClick = {
+                    if (isTest) {
+                        loginNavController.navigate(LoginRoute.FindPasswordComplete.route) {
+                            popUpTo(LoginRoute.Login.route) { inclusive = false }
+                        }
+                        loginApiViewModel.resetLoginApiUiState()
+                    }
                     if (passwordInput.trimStart() == "") {
                         isPasswordError = true
                         Toasty.error(

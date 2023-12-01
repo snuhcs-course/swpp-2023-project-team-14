@@ -1,4 +1,4 @@
-package com.example.haengsha.model.network.dataModel
+package com.example.haengsha.model.dataSource
 
 object SignupInfo {
     val college = listOf(
@@ -13,7 +13,8 @@ object SignupInfo {
     )
 
     val studentId = listOf(
-        "17학번 이상",
+        "16학번 이상",
+        "17학번",
         "18학번",
         "19학번",
         "20학번",

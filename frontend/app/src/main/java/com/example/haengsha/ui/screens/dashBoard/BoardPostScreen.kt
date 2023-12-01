@@ -50,6 +50,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -65,7 +66,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.haengsha.R
 import com.example.haengsha.model.network.dataModel.BoardPostRequest
 import com.example.haengsha.model.uiState.UserUiState
-import com.example.haengsha.model.uiState.board.BoardPostUiState
+import com.example.haengsha.model.uiState.board.BoardPostApiUiState
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
@@ -86,11 +87,14 @@ fun BoardPostScreen(
     boardNavController: NavController,
     userUiState: UserUiState
 ) {
+    val configuration = LocalConfiguration.current
+    val deviceWidth = configuration.screenWidthDp.dp
+    val deviceHeight = configuration.screenHeightDp.dp
     val postContext = LocalContext.current
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val boardPostUiState = boardApiViewModel.boardPostUiState
+    val boardPostUiState = boardApiViewModel.boardPostApiUiState
     var postTrigger by remember { mutableIntStateOf(0) }
     val authToken = "Token ${userUiState.token}"
     var eventTitle by remember { mutableStateOf("") }
@@ -171,7 +175,9 @@ fun BoardPostScreen(
                                 fontSize = 16.sp
                             )
                             Row(
-                                modifier = Modifier.clickable { getImage.launch("image/*") },
+                                modifier = Modifier.clickable {
+                                    getImage.launch("image/*")
+                                },
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
@@ -400,7 +406,7 @@ fun BoardPostScreen(
                 }
             }
         }
-        Box(modifier = Modifier.offset(330.dp, 600.dp)) {
+        Box(modifier = Modifier.offset(deviceWidth - 80.dp, deviceHeight - 190.dp)) {
             Box(
                 modifier = Modifier
                     .size(60.dp)
@@ -449,7 +455,7 @@ fun BoardPostScreen(
     if (postTrigger > 0) {
         LaunchedEffect(key1 = boardPostUiState) {
             when (boardPostUiState) {
-                is BoardPostUiState.Success -> {
+                is BoardPostApiUiState.Success -> {
                     postConfirmDialog = false
                     Toasty.success(
                         postContext,
@@ -459,7 +465,7 @@ fun BoardPostScreen(
                     boardNavController.popBackStack()
                 }
 
-                is BoardPostUiState.HttpError -> {
+                is BoardPostApiUiState.HttpError -> {
                     Toasty.warning(
                         postContext,
                         "글 업로드에 실패했습니다.\n다시 시도해주세요.",
@@ -467,7 +473,7 @@ fun BoardPostScreen(
                     ).show()
                 }
 
-                is BoardPostUiState.NetworkError -> {
+                is BoardPostApiUiState.NetworkError -> {
                     Toasty.error(
                         postContext,
                         "인터넷 연결을 확인해주세요",
@@ -476,7 +482,7 @@ fun BoardPostScreen(
                     ).show()
                 }
 
-                is BoardPostUiState.Loading -> {
+                is BoardPostApiUiState.Loading -> {
                     // 로딩중
                 }
 

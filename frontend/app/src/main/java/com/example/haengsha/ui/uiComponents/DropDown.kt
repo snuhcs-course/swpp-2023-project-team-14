@@ -30,7 +30,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.haengsha.model.network.dataModel.SignupInfo
+import com.example.haengsha.model.dataSource.SignupInfo
+import com.example.haengsha.ui.screens.login.signup.convertToEnglish
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.HaengshaGrey
 import com.example.haengsha.ui.theme.HaengshaTheme
@@ -140,6 +141,7 @@ fun multiSelectDropDown(category: String): List<String> {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var selectedOptionText by rememberSaveable { mutableStateOf(listOf("")) }
     var textFieldText by rememberSaveable { mutableStateOf("") }
+    var convertedList by rememberSaveable { mutableStateOf(listOf("")) }
 
     selectedOptionText = selectedOptionText.sorted()
     textFieldText =
@@ -240,9 +242,12 @@ fun multiSelectDropDown(category: String): List<String> {
                                 isSelected = false
                                 selectedOptionText =
                                     selectedOptionText.filter { it != selectionOption }
+                                convertedList =
+                                    convertedList.filter { it != convertToEnglish(selectionOption) }
                             } else {
                                 isSelected = true
                                 selectedOptionText += selectionOption
+                                convertedList += convertToEnglish(selectionOption)
                             }
                         }
                     )
@@ -256,7 +261,7 @@ fun multiSelectDropDown(category: String): List<String> {
             }
         }
     }
-    return selectedOptionText
+    return convertedList
 }
 
 @Preview(showBackground = true)

@@ -83,8 +83,8 @@ data class FindChangePasswordResponse(
 @Serializable
 data class FindChangePasswordRequest(
     val email: String,
-    @SerialName("new password")
+    @SerialName("password")
     val newPassword: String,
-    @SerialName("new password again")
+    @SerialName("password_confirm")
     val newPasswordAgain: String
 )

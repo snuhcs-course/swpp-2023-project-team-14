@@ -158,6 +158,7 @@ def change_password(request):
         return any(character.isdigit() for character in s)
 
     email = request.data.get("email")
+    
     user = PersonalUser.objects.filter(email=email)
     if not user:
         return Response(
@@ -166,6 +167,10 @@ def change_password(request):
 
     user = PersonalUser.objects.get(email=email)
     password = request.data.get("password")
+
+    print(f'email: {email}')
+    print(f'password: {password}')
+
     if len(password) < 4 or len(password) > 20:
         return Response(
             {
@@ -275,20 +280,24 @@ def signup(request):        # for users
         )
     
     valid_interest_choices = [choice[0] for choice in PersonalUser.INTEREST_CHOICES]
-    if not interest in valid_interest_choices:
-        return Response(
-            {"message": "Invalid interest."}, status=status.HTTP_400_BAD_REQUEST
-        )
 
+    interest_list = interest.split(", ")
+    for elem in interest_list:
+        if not elem in valid_interest_choices:
+            return Response(
+                {"message": "Invalid interest."}, status=status.HTTP_400_BAD_REQUEST
+            )
+        
     PersonalUser.objects.create_user(
         nickname=nickname,
         email=email,
         password=password,
         role=role,
         major=major,
-        grade=grade,
         interest=interest,
+        grade=grade
     )
+        
     try:
         return Response({"message": "created user account"}, status=status.HTTP_200_OK)
     except Exception as e:

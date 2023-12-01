@@ -45,7 +45,9 @@ import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.board.BoardDetailUiState
 import com.example.haengsha.model.uiState.board.PostLikeFavoriteUiState
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
+import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.FavoriteYellow
+import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.LikePink
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
@@ -55,6 +57,7 @@ import es.dmoral.toasty.Toasty
 fun BoardDetailScreen(
     innerPadding: PaddingValues,
     boardApiViewModel: BoardApiViewModel,
+    boardViewModel: BoardViewModel,
     userUiState: UserUiState,
     eventId: Int
 ) {
@@ -63,6 +66,7 @@ fun BoardDetailScreen(
 
     LaunchedEffect(Unit) {
         boardApiViewModel.resetLikePostUiState()
+        boardViewModel.resetError()
         boardApiViewModel.getBoardDetail(userUiState.token, eventId)
     }
 
@@ -73,7 +77,17 @@ fun BoardDetailScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                Toasty.warning(boardContext, "행사 정보에 문제가 있어요", Toasty.LENGTH_SHORT).show()
+                if (!boardViewModel.isError) {
+                    LaunchedEffect(Unit) {
+                        Toasty.warning(
+                            boardContext,
+                            "일시적인 오류가 발생했어요\n다시 시도해주세요.",
+                            Toasty.LENGTH_SHORT
+                        )
+                            .show()
+                        boardViewModel.isError()
+                    }
+                }
             }
         }
 
@@ -83,7 +97,12 @@ fun BoardDetailScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                Toasty.error(boardContext, "네트워크 연결을 확인해주세요.", Toasty.LENGTH_SHORT).show()
+                if (!boardViewModel.isError) {
+                    LaunchedEffect(Unit) {
+                        Toasty.error(boardContext, "네트워크 연결을 확인해주세요.", Toasty.LENGTH_SHORT).show()
+                        boardViewModel.isError()
+                    }
+                }
             }
         }
 
@@ -93,19 +112,39 @@ fun BoardDetailScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                Toasty.error(boardContext, "알 수 없는 에러가 발생했어요 :( 메일로 제보해주세요!", Toasty.LENGTH_SHORT)
-                    .show()
+                if (!boardViewModel.isError) {
+                    LaunchedEffect(Unit) {
+                        Toasty.error(
+                            boardContext,
+                            "알 수 없는 에러가 발생했어요 :( 메일로 제보해주세요!",
+                            Toasty.LENGTH_SHORT
+                        ).show()
+                        boardViewModel.isError()
+                    }
+                }
             }
         }
 
         is BoardDetailUiState.Loading -> {
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
-                contentAlignment = Alignment.Center
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(
+                    color = HaengshaBlue,
+                    strokeWidth = 3.dp
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "행사 정보 가져오는 중...",
+                    fontFamily = poppins,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = HaengshaBlue
+                )
             }
         }
 
@@ -128,16 +167,26 @@ fun BoardDetailScreen(
                 }
 
                 is PostLikeFavoriteUiState.HttpError -> {
-                    Toasty.warning(boardContext, "오류가 발생했습니다.\n다시 시도해주세요.", Toasty.LENGTH_SHORT)
-                        .show()
+                    LaunchedEffect(Unit) {
+                        Toasty.warning(boardContext, "오류가 발생했습니다.\n다시 시도해주세요.", Toasty.LENGTH_SHORT)
+                            .show()
+                    }
                 }
 
                 is PostLikeFavoriteUiState.NetworkError -> {
-                    Toasty.error(boardContext, "네트워크 연결을 확인해주세요.", Toasty.LENGTH_SHORT).show()
+                    LaunchedEffect(Unit) {
+                        Toasty.error(boardContext, "네트워크 연결을 확인해주세요.", Toasty.LENGTH_SHORT).show()
+                    }
                 }
 
                 is PostLikeFavoriteUiState.Error -> {
-                    // 앱 오류
+                    LaunchedEffect(Unit) {
+                        Toasty.error(
+                            boardContext,
+                            "알 수 없는 문제가 발생했습니다.\n메일로 문의해주세요.",
+                            Toasty.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
 
@@ -283,7 +332,24 @@ fun BoardDetailScreen(
                                         contentScale = ContentScale.Crop
                                     )
                                     if (painter.state is AsyncImagePainter.State.Loading) {
-                                        CircularProgressIndicator()
+                                        Column(
+                                            modifier = Modifier.fillMaxSize(),
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            CircularProgressIndicator(
+                                                color = HaengshaBlue,
+                                                strokeWidth = 3.dp
+                                            )
+                                            Spacer(modifier = Modifier.height(20.dp))
+                                            Text(
+                                                text = "이미지 불러오는 중...",
+                                                fontFamily = poppins,
+                                                fontSize = 18.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = HaengshaBlue
+                                            )
+                                        }
                                     }
                                 }
                                 Spacer(modifier = Modifier.height(20.dp))

@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -24,8 +25,9 @@ fun Board(
     boardViewModel: BoardViewModel,
     boardApiViewModel: BoardApiViewModel,
     navigationViewModel: NavigationViewModel,
+    boardNavController: NavHostController = rememberNavController(),
+    isTest: Boolean = false
 ) {
-    val boardNavController = rememberNavController()
     var eventId by rememberSaveable { mutableIntStateOf(0) }
 
     NavHost(
@@ -39,7 +41,8 @@ fun Board(
                 boardViewModel = boardViewModel,
                 boardApiViewModel = boardApiViewModel,
                 boardNavController = boardNavController,
-                userUiState = userUiState
+                userUiState = userUiState,
+                isTest = isTest
             )
         }
         composable(
@@ -73,6 +76,7 @@ fun Board(
             BoardDetailScreen(
                 innerPadding = innerPadding,
                 boardApiViewModel = boardApiViewModel,
+                boardViewModel = boardViewModel,
                 userUiState = userUiState,
                 eventId = eventId
             )

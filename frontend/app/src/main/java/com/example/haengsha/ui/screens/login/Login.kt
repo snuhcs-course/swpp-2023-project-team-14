@@ -34,13 +34,14 @@ fun Login(
     loginApiViewModel: LoginApiViewModel,
     loginApiUiState: LoginApiUiState,
     boardViewModel: BoardViewModel,
-    mainNavController: NavHostController
+    mainNavController: NavHostController,
+    loginNavController: NavHostController = rememberNavController(),
+    isTest: Boolean = false
 ) {
     val signupViewModel: SignupViewModel = viewModel()
     val signupUiState by signupViewModel.uiState.collectAsState()
     val findPasswordViewModel: FindPasswordViewModel = viewModel()
     val findPasswordUiState by findPasswordViewModel.uiState.collectAsState()
-    val loginNavController = rememberNavController()
     val loginContext = LocalContext.current
 
     NavHost(
@@ -66,7 +67,8 @@ fun Login(
                 findPasswordEmailUpdate = { findPasswordViewModel.updateEmail(it) },
                 loginNavController = loginNavController,
                 loginNavBack = { loginNavController.popBackStack() },
-                loginContext = loginContext
+                loginContext = loginContext,
+                isTest = isTest
             )
         }
         composable(LoginRoute.FindPasswordOrganizer.route) {
@@ -82,7 +84,8 @@ fun Login(
                 findPasswordUiState = findPasswordUiState,
                 loginNavController = loginNavController,
                 loginNavBack = { loginNavController.popBackStack() },
-                loginContext = loginContext
+                loginContext = loginContext,
+                isTest = isTest
             )
         }
         composable(LoginRoute.FindPasswordComplete.route) {
@@ -109,7 +112,8 @@ fun Login(
                 signupEmailUpdate = { signupViewModel.updateEmail(it) },
                 loginNavController = loginNavController,
                 loginNavBack = { loginNavController.popBackStack() },
-                loginContext = loginContext
+                loginContext = loginContext,
+                isTest = isTest
             )
         }
         composable(LoginRoute.SignupPassword.route) {
@@ -129,7 +133,8 @@ fun Login(
                 signupNickname = signupUiState.nickname,
                 loginNavController = loginNavController,
                 loginNavBack = { loginNavController.popBackStack() },
-                loginContext = loginContext
+                loginContext = loginContext,
+                isTest = isTest
             )
         }
         composable(LoginRoute.SignupTerms.route) {
@@ -140,7 +145,8 @@ fun Login(
                 signupUiState = signupUiState,
                 loginNavController = loginNavController,
                 loginNavBack = { loginNavController.popBackStack() },
-                loginContext = loginContext
+                loginContext = loginContext,
+                isTest = isTest
             )
         }
         composable(LoginRoute.SignupComplete.route) {

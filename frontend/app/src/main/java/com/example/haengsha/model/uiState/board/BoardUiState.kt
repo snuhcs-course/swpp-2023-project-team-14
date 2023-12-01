@@ -8,3 +8,10 @@ data class BoardUiState(
     val endDate: String = "",
     val initialState: Boolean = true
 )
+
+data class BoardPostUiState(
+    val startDate: String = "",
+    val endDate: String = "",
+    val startTime: String = "",
+    val endTime: String = ""
+)
