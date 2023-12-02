@@ -565,7 +565,7 @@ fun BoardPostScreen(
                 exitConfirmDialog = false
                 boardNavController.popBackStack()
             },
-            text = "뒤로 가시겠어요?\n변경사항이 저장되지 않을 수 있습니다."
+            text = "현재 화면을 나가시겠어요?\n변경사항이 저장되지 않을 수 있습니다."
         )
     }
 

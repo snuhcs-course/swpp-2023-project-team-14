@@ -53,6 +53,8 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
     val currentScreenType = navigationUiState.type
     val canNavigateBack = currentScreenName == "Details" || currentScreenName == "Write"
 
+    var exitConfirmDialog by remember { mutableStateOf(false) }
+    var exitType by remember { mutableStateOf(ExitType.Back) }
     var isLogoutModal by remember { mutableStateOf(false) }
     var isLogoutClicked by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -65,9 +67,14 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
                     canNavigateBack = canNavigateBack,
                     navigateBack = {
                         if (currentScreenType == "Board") {
-                            mainNavController.navigate(MainRoute.Board.route) {
-                                if (backStackEntry.value?.destination?.route == "Dashboard") {
-                                    mainNavController.popBackStack()
+                            if (currentScreenName == "Write") {
+                                exitConfirmDialog = true
+                                exitType = ExitType.Back
+                            } else {
+                                mainNavController.navigate(MainRoute.Board.route) {
+                                    if (backStackEntry.value?.destination?.route == "Dashboard") {
+                                        mainNavController.popBackStack()
+                                    }
                                 }
                             }
                         } else {
@@ -88,23 +95,38 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
             if (currentScreenName != "Login") {
                 HaengshaBottomAppBar(
                     navigateFavorite = {
-                        mainNavController.navigate(MainRoute.Favorite.route) {
-                            if (backStackEntry.value?.destination?.route == "Favorite") {
-                                mainNavController.popBackStack()
+                        if (currentScreenName == "Write") {
+                            exitConfirmDialog = true
+                            exitType = ExitType.Favorite
+                        } else {
+                            mainNavController.navigate(MainRoute.Favorite.route) {
+                                if (backStackEntry.value?.destination?.route == "Favorite") {
+                                    mainNavController.popBackStack()
+                                }
                             }
                         }
                     },
                     navigateHome = {
-                        mainNavController.navigate(MainRoute.Home.route) {
-                            if (backStackEntry.value?.destination?.route == "Home") {
-                                mainNavController.popBackStack()
+                        if (currentScreenName == "Write") {
+                            exitConfirmDialog = true
+                            exitType = ExitType.Home
+                        } else {
+                            mainNavController.navigate(MainRoute.Home.route) {
+                                if (backStackEntry.value?.destination?.route == "Home") {
+                                    mainNavController.popBackStack()
+                                }
                             }
                         }
                     },
                     navigateBoard = {
-                        mainNavController.navigate(MainRoute.Board.route) {
-                            if (backStackEntry.value?.destination?.route == "Board") {
-                                mainNavController.popBackStack()
+                        if (currentScreenName == "Write") {
+                            exitConfirmDialog = true
+                            exitType = ExitType.Board
+                        } else {
+                            mainNavController.navigate(MainRoute.Board.route) {
+                                if (backStackEntry.value?.destination?.route == "Board") {
+                                    mainNavController.popBackStack()
+                                }
                             }
                         }
                     }
@@ -283,6 +305,49 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
 //            )
 //        }
         }
+        if (exitConfirmDialog) {
+            ConfirmDialog(
+                onDismissRequest = { exitConfirmDialog = false },
+                onClick = {
+                    exitConfirmDialog = false
+                    when (exitType) {
+                        ExitType.Back -> {
+                            mainNavController.navigate(MainRoute.Board.route) {
+                                if (backStackEntry.value?.destination?.route == "Dashboard") {
+                                    mainNavController.popBackStack()
+                                }
+                            }
+                        }
+
+                        ExitType.Favorite -> {
+                            mainNavController.navigate(MainRoute.Favorite.route) {
+                                if (backStackEntry.value?.destination?.route == "Favorite") {
+                                    mainNavController.popBackStack()
+                                }
+                            }
+                        }
+
+                        ExitType.Home -> {
+                            mainNavController.navigate(MainRoute.Home.route) {
+                                if (backStackEntry.value?.destination?.route == "Home") {
+                                    mainNavController.popBackStack()
+                                }
+                            }
+                        }
+
+                        ExitType.Board -> {
+                            mainNavController.navigate(MainRoute.Board.route) {
+                                if (backStackEntry.value?.destination?.route == "Board") {
+                                    mainNavController.popBackStack()
+                                }
+                            }
+                        }
+                    }
+                },
+                text = "현재 화면을 나가시겠어요?\n변경사항이 저장되지 않을 수 있습니다."
+            )
+        }
+
         if (isLogoutModal) {
             ConfirmDialog(
                 onDismissRequest = { isLogoutModal = false },
@@ -327,4 +392,11 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
             }
         }
     }
+}
+
+enum class ExitType {
+    Home,
+    Board,
+    Favorite,
+    Back
 }

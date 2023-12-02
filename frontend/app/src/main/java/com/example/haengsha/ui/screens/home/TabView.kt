@@ -217,7 +217,8 @@ fun TabView(
         // Pager
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            userScrollEnabled = false
         ) { index ->
             selectedTabIndex = if (index == 1) 1 else 0
             val itemsToDisplay = if (index == 0) festivalItems else academicItems
