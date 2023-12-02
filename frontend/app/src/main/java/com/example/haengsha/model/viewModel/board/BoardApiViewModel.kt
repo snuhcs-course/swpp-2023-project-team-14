@@ -162,6 +162,14 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
         postLikeFavoriteUiState = PostLikeFavoriteUiState.Loading
     }
 
+    fun resetBoardListUiState() {
+        boardListUiState = BoardListUiState.Loading
+    }
+
+    fun resetBoardPostApiUiState() {
+        boardPostApiUiState = BoardPostApiUiState.Loading
+    }
+
     fun searchEvent(searchRequest: SearchRequest) {
         viewModelScope.launch {
             boardListUiState = BoardListUiState.Loading
@@ -176,9 +184,5 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
                 BoardListUiState.Error
             }
         }
-    }
-
-    fun resetBoardListUiState() {
-        boardListUiState = BoardListUiState.Loading
     }
 }

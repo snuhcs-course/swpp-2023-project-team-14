@@ -117,7 +117,7 @@ fun BoardDetailScreen(
                     LaunchedEffect(Unit) {
                         Toasty.error(
                             boardContext,
-                            "알 수 없는 에러가 발생했어요 :( 메일로 제보해주세요!",
+                            "알 수 없는 문제가 발생했습니다\n메일로 문의해주세요.",
                             Toasty.LENGTH_SHORT
                         ).show()
                         boardViewModel.isError()

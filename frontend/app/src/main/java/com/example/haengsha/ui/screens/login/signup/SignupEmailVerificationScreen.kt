@@ -62,9 +62,11 @@ fun SignupEmailVerificationScreen(
     val codeExpireSecond = String.format("%02d", codeExpireTime % 60)
     var emailInput: String by rememberSaveable { mutableStateOf("") }
     var codeInput: String by remember { mutableStateOf("") }
+    var isCodeSending by remember { mutableStateOf(false) }
     var isEmailError by remember { mutableStateOf(false) }
     var isCodeError by remember { mutableStateOf(false) }
     var isEmailAlreadyExistDialogVisible by remember { mutableStateOf(false) }
+    var isNextClicked by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -109,32 +111,51 @@ fun SignupEmailVerificationScreen(
                 modifier = Modifier.width(270.dp),
                 contentAlignment = Alignment.CenterEnd
             ) {
-                Text(
-                    modifier = Modifier.clickable {
-                        if (emailInput.trimStart() == "") {
-                            isEmailError = true
-                            Toasty
-                                .warning(loginContext, "이메일을 입력해주세요", Toast.LENGTH_SHORT, true)
-                                .show()
-                        } else if (emailInput.trimEnd().endsWith("@snu.ac.kr").not()) {
-                            isEmailError = true
-                            Toasty
-                                .warning(loginContext, "SNU 이메일을 입력해주세요", Toast.LENGTH_SHORT, true)
-                                .show()
-                        } else {
-                            isEmailError = false
-                            emailVerifyTrigger = true
-                        }
-                    },
-                    text = "인증번호 " + if (codeSent == 0) "" else {
-                        "재"
-                    } + "발송",
-                    fontFamily = poppins,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.End,
-                    color = FieldStrokeBlue
-                )
+                if (isCodeSending) {
+                    Text(
+                        text = "인증번호 발송 중...",
+                        fontFamily = poppins,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.End,
+                        color = FieldStrokeBlue
+                    )
+                } else {
+                    Text(
+                        modifier = Modifier.clickable {
+                            if (emailInput.trimStart() == "") {
+                                isEmailError = true
+                                Toasty
+                                    .warning(loginContext, "이메일을 입력해주세요", Toast.LENGTH_SHORT, true)
+                                    .show()
+                            } else if (emailInput.trimEnd().endsWith("@snu.ac.kr").not()) {
+                                isEmailError = true
+                                Toasty
+                                    .warning(
+                                        loginContext,
+                                        "SNU 이메일을 입력해주세요",
+                                        Toast.LENGTH_SHORT,
+                                        true
+                                    )
+                                    .show()
+                            } else {
+                                isEmailError = false
+                                emailVerifyTrigger = true
+                                isCodeSending = true
+                                codeVerifyTrigger = false
+                                loginApiViewModel.signupEmailVerify(emailInput)
+                            }
+                        },
+                        text = "인증번호 " + if (codeSent == 0) "" else {
+                            "재"
+                        } + "발송",
+                        fontFamily = poppins,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.End,
+                        color = FieldStrokeBlue
+                    )
+                }
             }
             if (isEmailAlreadyExistDialogVisible) {
                 ConfirmOnlyDialog(
@@ -197,8 +218,24 @@ fun SignupEmailVerificationScreen(
                             Toast.LENGTH_SHORT,
                             true
                         ).show()
+                    } else if (codeExpireTime == 0) {
+                        Toasty
+                            .warning(
+                                loginContext,
+                                "인증번호가 만료되었습니다.\n재발송해주세요",
+                                Toast.LENGTH_SHORT,
+                                true
+                            )
+                            .show()
+                        isCodeError = true
+                        codeVerifyTrigger = false
+                        loginApiViewModel.resetLoginApiUiState()
                     } else {
-                        codeVerifyTrigger = true
+                        if (!isNextClicked) {
+                            isNextClicked = true
+                            codeVerifyTrigger = true
+                            loginApiViewModel.loginCodeVerify(emailInput, codeInput)
+                        }
                     }
                 })
             Spacer(modifier = Modifier.height(60.dp))
@@ -225,8 +262,6 @@ fun SignupEmailVerificationScreen(
     }
 
     if (emailVerifyTrigger) {
-        codeVerifyTrigger = false
-        LaunchedEffect(Unit) { loginApiViewModel.signupEmailVerify(emailInput) }
         when (loginApiUiState) {
             is LoginApiUiState.Success -> {
                 Toasty
@@ -237,6 +272,7 @@ fun SignupEmailVerificationScreen(
                         true
                     )
                     .show()
+                isCodeSending = false
                 codeSent++
                 emailVerifyTrigger = false
                 loginApiViewModel.resetLoginApiUiState()
@@ -255,6 +291,7 @@ fun SignupEmailVerificationScreen(
                         )
                         .show()
                 }
+                isCodeSending = false
                 isEmailError = true
                 emailVerifyTrigger = false
                 loginApiViewModel.resetLoginApiUiState()
@@ -269,12 +306,13 @@ fun SignupEmailVerificationScreen(
                         true
                     )
                     .show()
+                isCodeSending = false
                 emailVerifyTrigger = false
                 loginApiViewModel.resetLoginApiUiState()
             }
 
             is LoginApiUiState.Loading -> {
-                /* Loading State, may add some loading UI  */
+                /* Loading State, handled in upper codes  */
             }
 
             else -> {
@@ -284,23 +322,6 @@ fun SignupEmailVerificationScreen(
     }
 
     if (codeVerifyTrigger) {
-        if (codeExpireTime == 0) {
-            Toasty
-                .warning(
-                    loginContext,
-                    "인증번호가 만료되었습니다.\n재발송해주세요",
-                    Toast.LENGTH_SHORT,
-                    true
-                )
-                .show()
-            isCodeError = true
-            codeVerifyTrigger = false
-            loginApiViewModel.resetLoginApiUiState()
-        } else {
-            LaunchedEffect(Unit) {
-                loginApiViewModel.loginCodeVerify(emailInput, codeInput)
-            }
-        }
         when (loginApiUiState) {
             is LoginApiUiState.Success -> {
                 signupEmailUpdate(emailInput)
@@ -318,6 +339,7 @@ fun SignupEmailVerificationScreen(
                     )
                     .show()
                 isCodeError = true
+                isNextClicked = false
                 codeVerifyTrigger = false
                 loginApiViewModel.resetLoginApiUiState()
             }
@@ -332,11 +354,12 @@ fun SignupEmailVerificationScreen(
                     )
                     .show()
                 codeVerifyTrigger = false
+                isNextClicked = false
                 loginApiViewModel.resetLoginApiUiState()
             }
 
             is LoginApiUiState.Loading -> {
-                /* Loading State, may add some loading UI */
+                /* Loading State, handled in upper codes */
             }
 
             else -> {

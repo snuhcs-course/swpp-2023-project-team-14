@@ -52,6 +52,7 @@ import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CheckBox
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
 import com.example.haengsha.ui.uiComponents.CommonGreyButton
+import com.example.haengsha.ui.uiComponents.LoadingScreen
 import com.example.haengsha.ui.uiComponents.PrivacyPolicyModalText
 import com.example.haengsha.ui.uiComponents.TermsOfUseModalText
 import es.dmoral.toasty.Toasty
@@ -72,6 +73,7 @@ fun SignupTermsScreen(
     var isPolicyChecked by rememberSaveable { mutableStateOf(false) }
     var isTermsModal by remember { mutableStateOf(false) }
     var isPolicyModal by remember { mutableStateOf(false) }
+    var isSignup by remember { mutableStateOf(false) }
     val configuration = LocalConfiguration.current
     val deviceWidth = configuration.screenWidthDp.dp
     val deviceHeight = configuration.screenHeightDp.dp
@@ -257,7 +259,8 @@ fun SignupTermsScreen(
                                     popUpTo(LoginRoute.Login.route) { inclusive = false }
                                 }
                                 loginApiViewModel.resetLoginApiUiState()
-                            } else {
+                            } else if (!isSignup) {
+                                isSignup = true
                                 loginApiViewModel.signupRegister(
                                     email = signupUiState.email,
                                     password = signupUiState.password,
@@ -328,6 +331,9 @@ fun SignupTermsScreen(
 
     when (loginApiUiState) {
         is LoginApiUiState.Success -> {
+            if (isSignup) {
+                LoadingScreen("회원가입 중...")
+            }
             signupStateReset()
             loginNavController.navigate(LoginRoute.SignupComplete.route) {
                 popUpTo(LoginRoute.Login.route) { inclusive = false }
@@ -344,6 +350,7 @@ fun SignupTermsScreen(
                     true
                 )
                 .show()
+            isSignup = false
             loginApiViewModel.resetLoginApiUiState()
         }
 
@@ -356,11 +363,14 @@ fun SignupTermsScreen(
                     true
                 )
                 .show()
+            isSignup = false
             loginApiViewModel.resetLoginApiUiState()
         }
 
         is LoginApiUiState.Loading -> {
-            /* Loading State, may add some loading UI */
+            if (isSignup) {
+                LoadingScreen("회원가입 중...")
+            }
         }
 
         else -> {
