@@ -14,11 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,6 +48,9 @@ import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.LikePink
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.CustomCircularProgressIndicator
+import com.example.haengsha.ui.uiComponents.CustomHorizontalDivider
+import com.example.haengsha.ui.uiComponents.CustomVerticalDivider
 import es.dmoral.toasty.Toasty
 
 @Composable
@@ -133,10 +133,7 @@ fun BoardDetailScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                CircularProgressIndicator(
-                    color = HaengshaBlue,
-                    strokeWidth = 3.dp
-                )
+                CustomCircularProgressIndicator()
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
                     text = "행사 정보 가져오는 중...",
@@ -223,10 +220,8 @@ fun BoardDetailScreen(
                                     fontWeight = FontWeight.Normal
                                 )
                                 Spacer(modifier = Modifier.width(5.dp))
-                                VerticalDivider(
-                                    modifier = Modifier.height(14.dp),
-                                    thickness = 1.dp
-                                )
+                                CustomVerticalDivider(height = 14, color = PlaceholderGrey)
+                                CustomVerticalDivider(height = 14, color = PlaceholderGrey)
                                 Spacer(modifier = Modifier.width(5.dp))
                                 Text(
                                     text = boardDetail.author?.nickname ?: "닉네임이 없어요",
@@ -247,10 +242,7 @@ fun BoardDetailScreen(
                                     fontWeight = FontWeight.Normal
                                 )
                                 Spacer(modifier = Modifier.width(5.dp))
-                                VerticalDivider(
-                                    modifier = Modifier.height(14.dp),
-                                    thickness = 1.dp
-                                )
+                                CustomVerticalDivider(height = 14, color = PlaceholderGrey)
                                 Spacer(modifier = Modifier.width(5.dp))
                                 Text(
                                     text = if (boardDetail.eventDurations.size > 1) {
@@ -275,10 +267,7 @@ fun BoardDetailScreen(
                                     fontWeight = FontWeight.Normal
                                 )
                                 Spacer(modifier = Modifier.width(5.dp))
-                                VerticalDivider(
-                                    modifier = Modifier.height(14.dp),
-                                    thickness = 1.dp
-                                )
+                                CustomVerticalDivider(height = 14, color = PlaceholderGrey)
                                 Spacer(modifier = Modifier.width(5.dp))
                                 Text(
                                     text = boardDetail.place ?: "장소가 등록되지 않았어요",
@@ -299,10 +288,7 @@ fun BoardDetailScreen(
                                     fontWeight = FontWeight.Normal
                                 )
                                 Spacer(modifier = Modifier.width(5.dp))
-                                VerticalDivider(
-                                    modifier = Modifier.height(14.dp),
-                                    thickness = 1.dp
-                                )
+                                CustomVerticalDivider(height = 14, color = PlaceholderGrey)
                                 Spacer(modifier = Modifier.width(5.dp))
                                 Text(
                                     text = boardDetail.time ?: "시간이 등록되지 않았어요",
@@ -312,11 +298,7 @@ fun BoardDetailScreen(
                                 )
                             }
                             Spacer(modifier = Modifier.height(15.dp))
-                            HorizontalDivider(
-                                modifier = Modifier.fillMaxWidth(),
-                                thickness = 1.dp,
-                                color = PlaceholderGrey
-                            )
+                            CustomHorizontalDivider(color = PlaceholderGrey)
                             Spacer(modifier = Modifier.height(20.dp))
                             if ((boardDetail.image?.isNotEmpty() == true && boardDetail.image != "image.jpg")) {
                                 val imageModel = ImageRequest.Builder(context = boardContext)
@@ -337,10 +319,7 @@ fun BoardDetailScreen(
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             verticalArrangement = Arrangement.Center
                                         ) {
-                                            CircularProgressIndicator(
-                                                color = HaengshaBlue,
-                                                strokeWidth = 3.dp
-                                            )
+                                            CustomCircularProgressIndicator()
                                             Spacer(modifier = Modifier.height(20.dp))
                                             Text(
                                                 text = "이미지 불러오는 중...",

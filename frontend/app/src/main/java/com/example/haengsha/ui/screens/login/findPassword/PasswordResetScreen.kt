@@ -84,7 +84,7 @@ fun PasswordResetScreen(
                 Spacer(modifier = Modifier.width(50.dp))
                 Text(
                     modifier = Modifier.width(320.dp),
-                    text = "새 비밀번호를 입력하세요.\n(영문+숫자 4~10자)",
+                    text = "새 비밀번호를 입력하세요.\n(영문+숫자 혼합 4~10자)",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Normal,
                     fontSize = 18.sp
@@ -120,30 +120,31 @@ fun PasswordResetScreen(
                             popUpTo(LoginRoute.Login.route) { inclusive = false }
                         }
                         loginApiViewModel.resetLoginApiUiState()
-                    }
-                    if (passwordInput.trimStart() == "") {
-                        isPasswordError = true
-                        Toasty.error(
-                            loginContext,
-                            "비밀번호를 입력해주세요",
-                            Toast.LENGTH_SHORT,
-                            true
-                        ).show()
                     } else {
-                        if (passwordCheckInput != passwordInput) {
-                            isPasswordCheckError = true
+                        if (passwordInput.trimStart() == "") {
+                            isPasswordError = true
                             Toasty.error(
                                 loginContext,
-                                "비밀번호를 확인해주세요",
+                                "비밀번호를 입력해주세요",
                                 Toast.LENGTH_SHORT,
                                 true
                             ).show()
                         } else {
-                            loginApiViewModel.findChangePassword(
-                                email = findPasswordUiState.email,
-                                passwordInput,
-                                passwordCheckInput
-                            )
+                            if (passwordCheckInput != passwordInput) {
+                                isPasswordCheckError = true
+                                Toasty.error(
+                                    loginContext,
+                                    "비밀번호를 확인해주세요",
+                                    Toast.LENGTH_SHORT,
+                                    true
+                                ).show()
+                            } else {
+                                loginApiViewModel.findChangePassword(
+                                    email = findPasswordUiState.email,
+                                    passwordInput,
+                                    passwordCheckInput
+                                )
+                            }
                         }
                     }
                 })

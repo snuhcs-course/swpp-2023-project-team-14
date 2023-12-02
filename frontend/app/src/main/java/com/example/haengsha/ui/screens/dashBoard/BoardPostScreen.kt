@@ -29,12 +29,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -79,6 +77,8 @@ import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CheckBox
 import com.example.haengsha.ui.uiComponents.ConfirmDialog
 import com.example.haengsha.ui.uiComponents.CustomDatePickerDialog
+import com.example.haengsha.ui.uiComponents.CustomHorizontalDivider
+import com.example.haengsha.ui.uiComponents.CustomVerticalDivider
 import com.example.haengsha.ui.uiComponents.customTextField
 import es.dmoral.toasty.Toasty
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -223,10 +223,7 @@ fun BoardPostScreen(
                                 fontSize = 16.sp
                             )
                             Spacer(modifier = Modifier.width(10.dp))
-                            VerticalDivider(
-                                modifier = Modifier.height(16.dp),
-                                thickness = 1.dp
-                            )
+                            CustomVerticalDivider(height = 16, color = PlaceholderGrey)
                             customTextField(
                                 placeholder = userUiState.nickname,
                                 enabled = false,
@@ -246,10 +243,7 @@ fun BoardPostScreen(
                                 fontSize = 16.sp
                             )
                             Spacer(modifier = Modifier.width(10.dp))
-                            VerticalDivider(
-                                modifier = Modifier.height(16.dp),
-                                thickness = 1.dp
-                            )
+                            CustomVerticalDivider(height = 16, color = PlaceholderGrey)
                             Spacer(modifier = Modifier.width(15.dp))
                             Row(
                                 modifier = Modifier
@@ -311,10 +305,7 @@ fun BoardPostScreen(
                                 fontSize = 16.sp
                             )
                             Spacer(modifier = Modifier.width(10.dp))
-                            VerticalDivider(
-                                modifier = Modifier.height(16.dp),
-                                thickness = 1.dp
-                            )
+                            CustomVerticalDivider(height = 16, color = PlaceholderGrey)
                             eventPlace = customTextField(
                                 placeholder = "자하연 앞",
                                 enabled = true,
@@ -334,10 +325,7 @@ fun BoardPostScreen(
                                 fontSize = 16.sp
                             )
                             Spacer(modifier = Modifier.width(10.dp))
-                            VerticalDivider(
-                                modifier = Modifier.height(16.dp),
-                                thickness = 1.dp
-                            )
+                            CustomVerticalDivider(height = 16, color = PlaceholderGrey)
                             eventTime = customTextField(
                                 placeholder = "오후 1시 ~ 오후 6시",
                                 enabled = true,
@@ -357,10 +345,7 @@ fun BoardPostScreen(
                                 fontSize = 16.sp
                             )
                             Spacer(modifier = Modifier.width(10.dp))
-                            VerticalDivider(
-                                modifier = Modifier.height(16.dp),
-                                thickness = 1.dp
-                            )
+                            CustomVerticalDivider(height = 16, color = PlaceholderGrey)
                             Spacer(modifier = Modifier.width(15.dp))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -404,11 +389,7 @@ fun BoardPostScreen(
                         }
                     }
                     Spacer(modifier = Modifier.height(10.dp))
-                    HorizontalDivider(
-                        modifier = Modifier.fillMaxWidth(),
-                        thickness = 1.dp,
-                        color = PlaceholderGrey
-                    )
+                    CustomHorizontalDivider(color = PlaceholderGrey)
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
