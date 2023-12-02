@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,6 +51,7 @@ import com.example.haengsha.ui.theme.md_theme_light_outline
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
 import com.example.haengsha.ui.uiComponents.ConfirmOnlyDialog
+import com.example.haengsha.ui.uiComponents.CustomCircularProgressIndicator
 import com.example.haengsha.ui.uiComponents.passwordTextField
 import com.example.haengsha.ui.uiComponents.suffixTextField
 import es.dmoral.toasty.Toasty
@@ -96,7 +96,6 @@ fun LoginScreen(
             fontSize = 28.sp,
             fontFamily = poppins
         )
-        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = "행샤",
             fontSize = 36.sp,
@@ -104,7 +103,7 @@ fun LoginScreen(
             fontWeight = FontWeight.Bold,
             color = ButtonBlue
         )
-        Spacer(modifier = Modifier.height(45.dp))
+        Spacer(modifier = Modifier.height(deviceHeight / 20))
         Text(
             modifier = Modifier.width(270.dp),
             text = "행샤 계정을 입력하세요.",
@@ -151,6 +150,8 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(50.dp))
         CommonBlueButton(text = "로그인하기",
             onClick = {
+                emailInput = "groupuser52@snu.ac.kr"
+                passwordInput = "groupuser52"
                 if (emailInput.trimStart() == "") {
                     isEmailError = true
                     Toasty.error(
@@ -261,10 +262,7 @@ private fun LoadingScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            CircularProgressIndicator(
-                color = HaengshaBlue,
-                strokeWidth = 3.dp
-            )
+            CustomCircularProgressIndicator()
             Spacer(modifier = Modifier.height(20.dp))
             Text(
                 text = "행샤에 로그인하는 중...",

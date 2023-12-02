@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,8 +39,9 @@ import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.CustomCircularProgressIndicator
 import com.example.haengsha.ui.uiComponents.CustomHorizontalDivider
-import com.example.haengsha.ui.uiComponents.boardList
+import com.example.haengsha.ui.uiComponents.listItem
 import es.dmoral.toasty.Toasty
 
 @Composable
@@ -153,10 +153,7 @@ fun favoriteScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    CircularProgressIndicator(
-                        color = HaengshaBlue,
-                        strokeWidth = 3.dp
-                    )
+                    CustomCircularProgressIndicator()
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(
                         text = "즐겨찾기 목록 불러오는 중...",
@@ -191,7 +188,7 @@ fun favoriteScreen(
                                     eventId = event.id
                                     favoriteNavController.navigate(FavoriteRoute.FavoriteDetail.route)
                                 }) {
-                                    boardList(
+                                    listItem(
                                         isFavorite = true,
                                         event = event
                                     )

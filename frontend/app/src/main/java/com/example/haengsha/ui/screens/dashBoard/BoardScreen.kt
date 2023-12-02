@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,11 +56,12 @@ import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.CustomCircularProgressIndicator
 import com.example.haengsha.ui.uiComponents.CustomDatePickerDialog
 import com.example.haengsha.ui.uiComponents.CustomHorizontalDivider
 import com.example.haengsha.ui.uiComponents.FilterDialog
 import com.example.haengsha.ui.uiComponents.SearchBar
-import com.example.haengsha.ui.uiComponents.boardList
+import com.example.haengsha.ui.uiComponents.listItem
 import es.dmoral.toasty.Toasty
 
 @Composable
@@ -245,10 +245,7 @@ fun boardScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center
                             ) {
-                                CircularProgressIndicator(
-                                    color = HaengshaBlue,
-                                    strokeWidth = 3.dp
-                                )
+                                CustomCircularProgressIndicator()
                                 Spacer(modifier = Modifier.height(20.dp))
                                 Text(
                                     text = "행사 찾아보는 중...",
@@ -284,7 +281,7 @@ fun boardScreen(
                                         eventId = event.id
                                         boardNavController.navigate(BoardRoute.BoardDetail.route)
                                     }) {
-                                        boardList(
+                                        listItem(
                                             isFavorite = false,
                                             event = event
                                         )

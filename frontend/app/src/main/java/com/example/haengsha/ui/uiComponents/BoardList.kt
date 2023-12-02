@@ -35,7 +35,7 @@ import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
 
 @Composable
-fun boardList(
+fun listItem(
     isFavorite: Boolean,
     event: BoardListResponse
 ): Int {

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,6 +48,7 @@ import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.LikePink
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.CustomCircularProgressIndicator
 import com.example.haengsha.ui.uiComponents.CustomHorizontalDivider
 import com.example.haengsha.ui.uiComponents.CustomVerticalDivider
 import es.dmoral.toasty.Toasty
@@ -133,10 +133,7 @@ fun BoardDetailScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                CircularProgressIndicator(
-                    color = HaengshaBlue,
-                    strokeWidth = 3.dp
-                )
+                CustomCircularProgressIndicator()
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
                     text = "행사 정보 가져오는 중...",
@@ -322,10 +319,7 @@ fun BoardDetailScreen(
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             verticalArrangement = Arrangement.Center
                                         ) {
-                                            CircularProgressIndicator(
-                                                color = HaengshaBlue,
-                                                strokeWidth = 3.dp
-                                            )
+                                            CustomCircularProgressIndicator()
                                             Spacer(modifier = Modifier.height(20.dp))
                                             Text(
                                                 text = "이미지 불러오는 중...",

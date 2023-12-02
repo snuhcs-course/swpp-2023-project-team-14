@@ -24,7 +24,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -59,6 +58,7 @@ import com.example.haengsha.model.viewModel.home.HomeViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.LikePink
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.CustomCircularProgressIndicator
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -355,10 +355,7 @@ fun TabView(
 
                             is RecommendationApiUiState.Loading -> {
                                 items(1) {
-                                    CircularProgressIndicator(
-                                        color = HaengshaBlue,
-                                        strokeWidth = 3.dp
-                                    )
+                                    CustomCircularProgressIndicator()
                                     Spacer(modifier = Modifier.height(20.dp))
                                     Text(
                                         text = "추천 행사 불러오는 중...",
