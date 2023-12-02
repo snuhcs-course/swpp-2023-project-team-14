@@ -17,10 +17,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -214,26 +214,21 @@ fun TabView(
                     )
                 }
             } else {
-                val listScrollState = rememberScrollState()
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(listScrollState),
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    for (i in itemsToDisplay.indices) {
-                        val eventCardData = itemsToDisplay[i]
+                    items(itemsToDisplay) { item ->
                         Box(modifier = Modifier.clickable {
                             showEventCardPopup = true
-                            selectedEvent = eventCardData
+                            selectedEvent = item
                         }) {
                             EventCard(
-                                organizer = eventCardData.organizer,
-                                eventTitle = eventCardData.eventTitle,
-                                startDate = eventCardData.startDate,
-                                endDate = eventCardData.endDate,
-                                likes = eventCardData.likes,
+                                organizer = item.organizer,
+                                eventTitle = item.eventTitle,
+                                startDate = item.startDate,
+                                endDate = item.endDate,
+                                likes = item.likes,
                             )
                         }
                     }
@@ -243,7 +238,6 @@ fun TabView(
     }
 
     if (showDialog) {
-        val recommendScrollState = rememberScrollState()
         var recommendationTitle by remember { mutableStateOf("") }
 
         // Display the AlertDialog with "Here is popup"
@@ -293,93 +287,99 @@ fun TabView(
                         )
                     }
                 } else {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(recommendScrollState),
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
                         when (recommendationApiUiState) {
                             is RecommendationApiUiState.RecommendationListResult -> {
                                 if (recommendationApiUiState.recommendationList.isEmpty()) {
-                                    Text(
-                                        text = "오늘은 행사를 추천해드릴 수 없어요!\n\n\"${userUiState.nickname}\"님의\n관심사를 바탕으로 추천 행사가\n 매일 새벽에 업데이트됩니다.\n\n내일 다시 와주세요!",
-                                        fontSize = 18.sp,
-                                        fontFamily = poppins,
-                                        fontWeight = FontWeight.Medium,
-                                        textAlign = TextAlign.Center,
-                                        lineHeight = 30.sp
-                                    )
+                                    items(1) {
+                                        Text(
+                                            text = "오늘은 행사를 추천해드릴 수 없어요!\n\n\"${userUiState.nickname}\"님의\n관심사를 바탕으로 추천 행사가\n 매일 새벽에 업데이트됩니다.\n\n내일 다시 와주세요!",
+                                            fontSize = 18.sp,
+                                            fontFamily = poppins,
+                                            fontWeight = FontWeight.Medium,
+                                            textAlign = TextAlign.Center,
+                                            lineHeight = 30.sp
+                                        )
+                                    }
                                 } else {
                                     recommendationTitle =
                                         "\"${userUiState.nickname}\"님을 위한\n오늘의 맞춤 추천입니다!"
 
-                                    for (i in recommendationApiUiState.recommendationList.indices) {
-                                        val recommendationItem =
-                                            recommendationApiUiState.recommendationList[i]
+                                    items(recommendationApiUiState.recommendationList) { event ->
                                         val startDate =
-                                            stringToDate(recommendationItem.eventDurations[0].eventDay)
+                                            stringToDate(event.eventDurations[0].eventDay)
                                         var endDate = startDate
-                                        if (recommendationItem.eventDurations.size > 1) {
+                                        if (event.eventDurations.size > 1) {
                                             endDate =
-                                                stringToDate(recommendationItem.eventDurations[recommendationItem.eventDurations.size - 1].eventDay)
+                                                stringToDate(event.eventDurations[event.eventDurations.size - 1].eventDay)
                                         }
 
                                         EventCard(
-                                            organizer = recommendationItem.author.nickname,
-                                            eventTitle = recommendationItem.title,
+                                            organizer = event.author.nickname,
+                                            eventTitle = event.title,
                                             startDate = startDate,
                                             endDate = endDate,
-                                            likes = recommendationItem.likeCount,
+                                            likes = event.likeCount,
                                         )
                                     }
                                 }
                             }
 
                             is RecommendationApiUiState.Loading -> {
-                                CircularProgressIndicator(
-                                    color = HaengshaBlue,
-                                    strokeWidth = 3.dp
-                                )
-                                Spacer(modifier = Modifier.height(20.dp))
-                                Text(
-                                    text = "추천 행사 불러오는 중...",
-                                    fontFamily = poppins,
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = HaengshaBlue
-                                )
+                                items(1) {
+                                    CircularProgressIndicator(
+                                        color = HaengshaBlue,
+                                        strokeWidth = 3.dp
+                                    )
+                                    Spacer(modifier = Modifier.height(20.dp))
+                                    Text(
+                                        text = "추천 행사 불러오는 중...",
+                                        fontFamily = poppins,
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = HaengshaBlue
+                                    )
+                                }
                             }
 
                             is RecommendationApiUiState.HttpError -> {
-                                Text(
-                                    text = "추천 행사를 불러오는 중 문제가 발생했어요!\n\n다시 시도해주세요.",
-                                    fontFamily = poppins,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = HaengshaBlue
-                                )
+                                items(1) {
+                                    Text(
+                                        text = "추천 행사를 불러오는 중 문제가 발생했어요!\n\n다시 시도해주세요.",
+                                        fontFamily = poppins,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = HaengshaBlue
+                                    )
+                                }
                             }
 
                             is RecommendationApiUiState.NetworkError -> {
-                                Text(
-                                    text = "인터넷 연결을 확인해주세요.",
-                                    fontFamily = poppins,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = HaengshaBlue
-                                )
+                                items(1) {
+                                    Text(
+                                        text = "인터넷 연결을 확인해주세요.",
+                                        fontFamily = poppins,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = HaengshaBlue
+                                    )
+                                }
                             }
 
                             is RecommendationApiUiState.Error -> {
-                                Text(
-                                    text = "알 수 없는 문제가 발생했어요!\n\n메일로 문의해주세요.",
-                                    fontFamily = poppins,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = HaengshaBlue
-                                )
+                                items(1) {
+                                    Text(
+                                        text = "알 수 없는 문제가 발생했어요!\n\n메일로 문의해주세요.",
+                                        fontFamily = poppins,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = HaengshaBlue
+                                    )
+                                }
                             }
                         }
                     }
