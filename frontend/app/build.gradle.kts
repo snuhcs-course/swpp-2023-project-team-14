@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20"
 }
 
 android {
@@ -41,7 +41,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.5"
     }
     packaging {
         resources {
@@ -61,9 +61,8 @@ dependencies {
     implementation("androidx.compose.ui:ui:1.5.4")
     implementation("androidx.compose.ui:ui-graphics:1.5.4")
     implementation("androidx.compose.ui:ui-tooling-preview:1.5.4")
-
     implementation("com.google.android.material:material:1.12.0-alpha01")
-    implementation("androidx.compose.material3:material3-android:1.2.0-alpha12")
+    implementation("androidx.compose.material3:material3:1.1.2")
 
     implementation("androidx.navigation:navigation-compose:2.7.5")
     implementation("androidx.navigation:navigation-runtime-ktx:2.7.5")
@@ -71,12 +70,12 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.7.5")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.33.2-alpha")
 
-    implementation("androidx.room:room-ktx:2.6.1")
-    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    //implementation("androidx.room:room-ktx:2.6.1")
+    //implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
-    implementation("androidx.collection:collection-ktx:1.4.0-beta02")
+    //implementation("androidx.collection:collection-ktx:1.4.0-beta02")
 
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
@@ -92,7 +91,6 @@ dependencies {
     // The compose calendar library
     implementation("com.kizitonwose.calendar:compose:2.5.0-alpha01")
     implementation("com.google.accompanist:accompanist-pager:0.32.0")
-    implementation("androidx.tv:tv-material:1.0.0-alpha10")
     implementation("androidx.compose.runtime:runtime-livedata:1.6.0-beta02")
 
     testImplementation("junit:junit:4.13.2")
@@ -105,9 +103,7 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation("androidx.navigation:navigation-testing:2.7.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
 
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.0-beta02")
+    //debugImplementation("androidx.compose.ui:ui-tooling")
+    //debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.0-beta02")
 }

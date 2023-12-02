@@ -32,7 +32,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -92,16 +91,18 @@ fun LoginScreen(
             },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Welcome to", style = TextStyle(fontSize = 28.sp, fontFamily = poppins))
+        Text(
+            text = "Welcome to",
+            fontSize = 28.sp,
+            fontFamily = poppins
+        )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = "행샤",
-            style = TextStyle(
-                fontSize = 36.sp,
-                fontFamily = poppins,
-                fontWeight = FontWeight.Bold,
-                color = ButtonBlue
-            )
+            fontSize = 36.sp,
+            fontFamily = poppins,
+            fontWeight = FontWeight.Bold,
+            color = ButtonBlue
         )
         Spacer(modifier = Modifier.height(45.dp))
         Text(
@@ -150,8 +151,6 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(50.dp))
         CommonBlueButton(text = "로그인하기",
             onClick = {
-                emailInput = "groupuser52@snu.ac.kr"
-                passwordInput = "groupuser52"
                 if (emailInput.trimStart() == "") {
                     isEmailError = true
                     Toasty.error(

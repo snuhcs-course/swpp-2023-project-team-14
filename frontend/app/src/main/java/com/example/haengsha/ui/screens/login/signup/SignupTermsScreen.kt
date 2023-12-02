@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -130,10 +129,11 @@ fun SignupTermsScreen(
                     )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
-                HorizontalDivider(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = deviceWidth / 12), color = HaengshaGrey
+                        .padding(horizontal = deviceWidth / 12)
+                        .background(color = HaengshaGrey)
                 )
                 Spacer(modifier = Modifier.height(60.dp))
                 Row(

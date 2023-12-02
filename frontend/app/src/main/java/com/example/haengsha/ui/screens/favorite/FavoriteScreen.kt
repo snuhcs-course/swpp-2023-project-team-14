@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,6 +40,7 @@ import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.CustomHorizontalDivider
 import com.example.haengsha.ui.uiComponents.boardList
 import es.dmoral.toasty.Toasty
 
@@ -196,11 +196,7 @@ fun favoriteScreen(
                                         event = event
                                     )
                                 }
-                                HorizontalDivider(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    thickness = 1.dp,
-                                    color = PlaceholderGrey
-                                )
+                                CustomHorizontalDivider(color = PlaceholderGrey)
                             }
                         }
                     }

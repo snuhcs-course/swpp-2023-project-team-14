@@ -21,7 +21,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
@@ -191,11 +190,7 @@ fun FilterDialog(
                     fontWeight = FontWeight.SemiBold
                 )
                 Spacer(modifier = Modifier.height(20.dp))
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    thickness = 1.dp,
-                    color = HaengshaGrey
-                )
+                CustomHorizontalDivider(color = HaengshaGrey)
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
                     modifier = Modifier.padding(horizontal = 15.dp),
@@ -360,11 +355,7 @@ fun FilterDialog(
                     Spacer(modifier = Modifier.weight(1f))
                 }
                 Spacer(modifier = Modifier.height(20.dp))
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    thickness = 1.dp,
-                    color = HaengshaGrey
-                )
+                CustomHorizontalDivider(color = HaengshaGrey)
                 Spacer(modifier = Modifier.height(20.dp))
                 Row(
                     modifier = Modifier
