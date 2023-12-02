@@ -397,7 +397,7 @@ fun SearchBar(
                     Toasty.warning(context, "2자에서 50자 사이로 검색해주세요", Toast.LENGTH_SHORT, true)
                         .show()
                 } else if (!noSpecialCharacterRegex.matches(input)) {
-                    Toasty.warning(context, "한글과 영어로만 검색해주세요", Toast.LENGTH_SHORT, true)
+                    Toasty.warning(context, "한글, 영어, 숫자로만 검색해주세요", Toast.LENGTH_SHORT, true)
                         .show()
                 } else {
                     boardViewModel.updateKeyword(input)
@@ -487,8 +487,7 @@ fun customSingleLineTextField(
             )
             .fillMaxWidth()
             .height(40.dp)
-            .background(color = Color(0x00F8F8F8))
-            .padding(top = 3.dp),
+            .background(color = Color(0x00F8F8F8)),
         enabled = enabled,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
@@ -519,6 +518,7 @@ fun customSingleLineTextField(
                 placeholder = {
                     Text(
                         text = placeholder,
+                        modifier = Modifier.padding(top = 3.dp),
                         color = if (enabled) HaengshaGrey else Color.Black,
                         fontSize = 16.sp,
                         fontFamily = poppins,
