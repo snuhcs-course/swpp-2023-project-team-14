@@ -244,6 +244,7 @@ fun TabView(
 
     if (showDialog) {
         val recommendScrollState = rememberScrollState()
+        var recommendationTitle by remember { mutableStateOf("") }
 
         // Display the AlertDialog with "Here is popup"
         AlertDialog(
@@ -257,21 +258,26 @@ fun TabView(
                     spotColor = Color(0x40000000),
                     ambientColor = Color(0x40000000)
                 )
-                .width(500.dp)
-                .height(550.dp)
-                .background(color = Color(0xFFFFFFFF)),
-            containerColor = Color(0xFFFFFFFF),
+                .width(if (userUiState.role == "Group") 300.dp else 500.dp)
+                .height(if (userUiState.role == "Group") 300.dp else 500.dp)
+                .background(color = Color.White),
+            containerColor = Color.White,
             title = {
-                Text(
-                    text = if (userUiState.role != "Group") "당신을 위한 오늘의 맞춤 추천입니다!" else "",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        fontFamily = poppins,
-                        fontWeight = FontWeight(500),
-                        color = Color(0xFF000000),
-                        textAlign = TextAlign.Center,
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = recommendationTitle,
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            fontFamily = poppins,
+                            fontWeight = FontWeight(500),
+                            color = Color(0xFF000000),
+                            textAlign = TextAlign.Center,
+                        )
                     )
-                )
+                }
             }, text = {
                 if (userUiState.role == "Group") {
                     Box(
@@ -296,24 +302,38 @@ fun TabView(
                     ) {
                         when (recommendationApiUiState) {
                             is RecommendationApiUiState.RecommendationListResult -> {
-                                for (i in recommendationApiUiState.recommendationList.indices) {
-                                    val recommendationItem =
-                                        recommendationApiUiState.recommendationList[i]
-                                    val startDate =
-                                        stringToDate(recommendationItem.eventDurations[0].eventDay)
-                                    var endDate = startDate
-                                    if (recommendationItem.eventDurations.size > 1) {
-                                        endDate =
-                                            stringToDate(recommendationItem.eventDurations[recommendationItem.eventDurations.size - 1].eventDay)
-                                    }
-
-                                    EventCard(
-                                        organizer = recommendationItem.author.nickname,
-                                        eventTitle = recommendationItem.title,
-                                        startDate = startDate,
-                                        endDate = endDate,
-                                        likes = recommendationItem.likeCount,
+                                if (recommendationApiUiState.recommendationList.isEmpty()) {
+                                    Text(
+                                        text = "오늘은 행사를 추천해드릴 수 없어요!\n\n\"${userUiState.nickname}\"님의\n관심사를 바탕으로 추천 행사가\n 매일 새벽에 업데이트됩니다.\n\n내일 다시 와주세요!",
+                                        fontSize = 18.sp,
+                                        fontFamily = poppins,
+                                        fontWeight = FontWeight.Medium,
+                                        textAlign = TextAlign.Center,
+                                        lineHeight = 30.sp
                                     )
+                                } else {
+                                    recommendationTitle =
+                                        "\"${userUiState.nickname}\"님을 위한\n오늘의 맞춤 추천입니다!"
+
+                                    for (i in recommendationApiUiState.recommendationList.indices) {
+                                        val recommendationItem =
+                                            recommendationApiUiState.recommendationList[i]
+                                        val startDate =
+                                            stringToDate(recommendationItem.eventDurations[0].eventDay)
+                                        var endDate = startDate
+                                        if (recommendationItem.eventDurations.size > 1) {
+                                            endDate =
+                                                stringToDate(recommendationItem.eventDurations[recommendationItem.eventDurations.size - 1].eventDay)
+                                        }
+
+                                        EventCard(
+                                            organizer = recommendationItem.author.nickname,
+                                            eventTitle = recommendationItem.title,
+                                            startDate = startDate,
+                                            endDate = endDate,
+                                            likes = recommendationItem.likeCount,
+                                        )
+                                    }
                                 }
                             }
 
@@ -334,7 +354,7 @@ fun TabView(
 
                             is RecommendationApiUiState.HttpError -> {
                                 Text(
-                                    text = "이벤트를 불러오는 중 문제가 발생했어요!\n\n다시 시도해주세요.",
+                                    text = "추천 행사를 불러오는 중 문제가 발생했어요!\n\n다시 시도해주세요.",
                                     fontFamily = poppins,
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.SemiBold,

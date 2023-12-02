@@ -84,7 +84,7 @@ fun PasswordResetScreen(
                 Spacer(modifier = Modifier.width(50.dp))
                 Text(
                     modifier = Modifier.width(320.dp),
-                    text = "새 비밀번호를 입력하세요.\n(영문+숫자 4~10자)",
+                    text = "새 비밀번호를 입력하세요.\n(영문+숫자 혼합 4~10자)",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Normal,
                     fontSize = 18.sp
