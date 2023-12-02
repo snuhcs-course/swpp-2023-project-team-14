@@ -19,7 +19,7 @@ import com.example.haengsha.model.viewModel.UserViewModel
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.testConfig.assertCurrentRouteName
-import com.example.haengsha.ui.screens.dashBoard.Board
+import com.example.haengsha.ui.screens.board.Board
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -60,7 +60,7 @@ class BoardScreenNavigationTest {
 
     @Test
     fun boardNavController_verifyStartDestination() {
-        boardNavController.assertCurrentRouteName(BoardRoute.Dashboard.route)
+        boardNavController.assertCurrentRouteName(BoardRoute.Board.route)
     }
 
     @Test

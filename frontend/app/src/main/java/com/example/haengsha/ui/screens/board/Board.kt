@@ -1,4 +1,4 @@
-package com.example.haengsha.ui.screens.dashBoard
+package com.example.haengsha.ui.screens.board
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
@@ -26,10 +26,10 @@ fun Board(
 ) {
     NavHost(
         navController = boardNavController,
-        startDestination = BoardRoute.Dashboard.route
+        startDestination = BoardRoute.Board.route
     ) {
-        composable(BoardRoute.Dashboard.route) {
-            navigationViewModel.updateRouteUiState("Board", BoardRoute.Dashboard.route)
+        composable(BoardRoute.Board.route) {
+            navigationViewModel.updateRouteUiState("Board", BoardRoute.Board.route)
             BoardScreen(
                 innerPadding = innerPadding,
                 boardViewModel = boardViewModel,

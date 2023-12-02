@@ -26,7 +26,7 @@ import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.model.viewModel.home.HomeApiViewModel
 import com.example.haengsha.model.viewModel.home.HomeViewModel
 import com.example.haengsha.model.viewModel.login.LoginApiViewModel
-import com.example.haengsha.ui.screens.dashBoard.Board
+import com.example.haengsha.ui.screens.board.Board
 import com.example.haengsha.ui.screens.favorite.Favorite
 import com.example.haengsha.ui.screens.home.Home
 import com.example.haengsha.ui.screens.login.Login
@@ -65,7 +65,7 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
                     canNavigateBack = canNavigateBack,
                     navigateBack = {
                         if (currentScreenType == "Board") {
-                            mainNavController.navigate(MainRoute.Dashboard.route) {
+                            mainNavController.navigate(MainRoute.Board.route) {
                                 if (backStackEntry.value?.destination?.route == "Dashboard") {
                                     mainNavController.popBackStack()
                                 }
@@ -102,7 +102,7 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
                         }
                     },
                     navigateBoard = {
-                        mainNavController.navigate(MainRoute.Dashboard.route) {
+                        mainNavController.navigate(MainRoute.Board.route) {
                             if (backStackEntry.value?.destination?.route == "Board") {
                                 mainNavController.popBackStack()
                             }
@@ -176,7 +176,7 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
                 )
             }
             composable(
-                MainRoute.Dashboard.route,
+                MainRoute.Board.route,
                 enterTransition = {
                     when (initialState.destination.route) {
                         "Home" -> {
@@ -216,7 +216,7 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
                     }
                 }
             ) {
-                navigationViewModel.updateRouteUiState("Main", MainRoute.Dashboard.route)
+                navigationViewModel.updateRouteUiState("Main", MainRoute.Board.route)
                 Board(
                     innerPadding = innerPadding,
                     userUiState = userUiState,

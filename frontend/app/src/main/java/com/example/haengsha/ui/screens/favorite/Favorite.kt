@@ -13,7 +13,7 @@ import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.viewModel.NavigationViewModel
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.model.viewModel.board.BoardViewModel
-import com.example.haengsha.ui.screens.dashBoard.BoardDetailScreen
+import com.example.haengsha.ui.screens.board.BoardDetailScreen
 
 @Composable
 fun Favorite(
@@ -27,10 +27,10 @@ fun Favorite(
 ) {
     NavHost(
         navController = favoriteNavController,
-        startDestination = FavoriteRoute.FavoriteBoard.route
+        startDestination = FavoriteRoute.Favorite.route
     ) {
-        composable(FavoriteRoute.FavoriteBoard.route) {
-            navigationViewModel.updateRouteUiState("Favorite", FavoriteRoute.FavoriteBoard.route)
+        composable(FavoriteRoute.Favorite.route) {
+            navigationViewModel.updateRouteUiState("Favorite", FavoriteRoute.Favorite.route)
             FavoriteScreen(
                 innerPadding = innerPadding,
                 boardApiViewModel = boardApiViewModel,

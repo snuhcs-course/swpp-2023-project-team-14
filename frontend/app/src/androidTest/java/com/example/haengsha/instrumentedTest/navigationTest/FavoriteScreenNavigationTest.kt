@@ -59,7 +59,7 @@ class FavoriteScreenNavigationTest {
 
     @Test
     fun favoriteNavController_verifyStartDestination() {
-        favoriteNavController.assertCurrentRouteName(FavoriteRoute.FavoriteBoard.route)
+        favoriteNavController.assertCurrentRouteName(FavoriteRoute.Favorite.route)
     }
 
     @Test

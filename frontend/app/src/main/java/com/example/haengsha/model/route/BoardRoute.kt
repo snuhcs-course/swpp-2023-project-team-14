@@ -1,7 +1,7 @@
 package com.example.haengsha.model.route
 
 sealed class BoardRoute(val route: String) {
-    object Dashboard : BoardRoute("Board")
-    object BoardDetail : BoardRoute("Details")
-    object BoardPost : BoardRoute("Write")
+    data object Board : BoardRoute("Board")
+    data object BoardDetail : BoardRoute("Details")
+    data object BoardPost : BoardRoute("Write")
 }

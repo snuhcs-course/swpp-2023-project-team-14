@@ -1,4 +1,4 @@
-package com.example.haengsha.ui.screens.dashBoard
+package com.example.haengsha.ui.screens.board
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

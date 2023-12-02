@@ -150,8 +150,6 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(50.dp))
         CommonBlueButton(text = "로그인하기",
             onClick = {
-                emailInput = "user3@snu.ac.kr"
-                passwordInput = "user3"
                 if (emailInput.trimStart() == "") {
                     isEmailError = true
                     Toasty.error(

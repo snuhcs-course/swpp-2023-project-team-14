@@ -1,4 +1,4 @@
-package com.example.haengsha.ui.screens.dashBoard
+package com.example.haengsha.ui.screens.board
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

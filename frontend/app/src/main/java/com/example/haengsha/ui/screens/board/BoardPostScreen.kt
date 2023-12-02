@@ -1,4 +1,4 @@
-package com.example.haengsha.ui.screens.dashBoard
+package com.example.haengsha.ui.screens.board
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -45,8 +44,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
@@ -56,6 +53,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -79,7 +77,8 @@ import com.example.haengsha.ui.uiComponents.ConfirmDialog
 import com.example.haengsha.ui.uiComponents.CustomDatePickerDialog
 import com.example.haengsha.ui.uiComponents.CustomHorizontalDivider
 import com.example.haengsha.ui.uiComponents.CustomVerticalDivider
-import com.example.haengsha.ui.uiComponents.customTextField
+import com.example.haengsha.ui.uiComponents.customLargeTextField
+import com.example.haengsha.ui.uiComponents.customSingleLineTextField
 import es.dmoral.toasty.Toasty
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -99,7 +98,6 @@ fun BoardPostScreen(
     val deviceHeight = configuration.screenHeightDp.dp
     val postContext = LocalContext.current
     val focusManager = LocalFocusManager.current
-    val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val boardPostUiState = boardViewModel.boardPostUiState.collectAsState()
@@ -145,12 +143,13 @@ fun BoardPostScreen(
                     .background(color = Color(0x00F8F8F8)),
                 value = eventTitle,
                 onValueChange = { eventTitle = it },
+                textStyle = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.SemiBold),
                 placeholder = {
                     Text(
                         text = "행사명을 입력해주세요.",
                         fontFamily = poppins,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Normal,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Medium,
                         color = PlaceholderGrey,
                     )
                 },
@@ -182,8 +181,8 @@ fun BoardPostScreen(
                             Text(
                                 text = "필수 정보를 입력해주세요",
                                 fontFamily = poppins,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 16.sp
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp
                             )
                             Row(
                                 modifier = Modifier.clickable {
@@ -196,20 +195,21 @@ fun BoardPostScreen(
                             ) {
                                 Text(
                                     text = if (imageUri == null) "사진 첨부" else "사진 지우기",
+                                    modifier = Modifier.padding(top = 4.dp),
                                     fontFamily = poppins,
                                     fontWeight = FontWeight.Normal,
-                                    fontSize = 12.sp
+                                    fontSize = 14.sp
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
                                 Icon(
-                                    modifier = Modifier.size(14.dp),
+                                    modifier = Modifier.size(16.dp),
                                     imageVector = ImageVector.vectorResource(id = R.drawable.attach_icon),
                                     contentDescription = "attach icon",
                                     tint = Color.Black
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(5.dp))
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -218,13 +218,14 @@ fun BoardPostScreen(
                         ) {
                             Text(
                                 text = "주최",
+                                modifier = Modifier.padding(top = 3.dp),
                                 fontFamily = poppins,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 16.sp
                             )
                             Spacer(modifier = Modifier.width(10.dp))
-                            CustomVerticalDivider(height = 16, color = PlaceholderGrey)
-                            customTextField(
+                            CustomVerticalDivider(height = 20, color = PlaceholderGrey)
+                            customSingleLineTextField(
                                 placeholder = userUiState.nickname,
                                 enabled = false,
                                 keyboardActions = {}
@@ -238,12 +239,13 @@ fun BoardPostScreen(
                         ) {
                             Text(
                                 text = "일자",
+                                modifier = Modifier.padding(top = 3.dp),
                                 fontFamily = poppins,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 16.sp
                             )
                             Spacer(modifier = Modifier.width(10.dp))
-                            CustomVerticalDivider(height = 16, color = PlaceholderGrey)
+                            CustomVerticalDivider(height = 20, color = PlaceholderGrey)
                             Spacer(modifier = Modifier.width(15.dp))
                             Row(
                                 modifier = Modifier
@@ -260,7 +262,7 @@ fun BoardPostScreen(
                                             shape = RoundedCornerShape(6.dp)
                                         )
                                         .clickable { startDatePick = true }
-                                        .padding(horizontal = 10.dp),
+                                        .padding(start = 10.dp, end = 10.dp, top = 3.dp),
                                     fontFamily = poppins,
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Medium,
@@ -284,7 +286,7 @@ fun BoardPostScreen(
                                             shape = RoundedCornerShape(6.dp)
                                         )
                                         .clickable { endDatePick = true }
-                                        .padding(horizontal = 10.dp),
+                                        .padding(start = 10.dp, end = 10.dp, top = 3.dp),
                                     fontFamily = poppins,
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Medium,
@@ -300,13 +302,14 @@ fun BoardPostScreen(
                         ) {
                             Text(
                                 text = "장소",
+                                modifier = Modifier.padding(top = 3.dp),
                                 fontFamily = poppins,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 16.sp
                             )
                             Spacer(modifier = Modifier.width(10.dp))
-                            CustomVerticalDivider(height = 16, color = PlaceholderGrey)
-                            eventPlace = customTextField(
+                            CustomVerticalDivider(height = 20, color = PlaceholderGrey)
+                            eventPlace = customSingleLineTextField(
                                 placeholder = "자하연 앞",
                                 enabled = true,
                                 keyboardActions = { focusManager.moveFocus(FocusDirection.Down) }
@@ -320,13 +323,14 @@ fun BoardPostScreen(
                         ) {
                             Text(
                                 text = "시간",
+                                modifier = Modifier.padding(top = 3.dp),
                                 fontFamily = poppins,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 16.sp
                             )
                             Spacer(modifier = Modifier.width(10.dp))
-                            CustomVerticalDivider(height = 16, color = PlaceholderGrey)
-                            eventTime = customTextField(
+                            CustomVerticalDivider(height = 20, color = PlaceholderGrey)
+                            eventTime = customSingleLineTextField(
                                 placeholder = "오후 1시 ~ 오후 6시",
                                 enabled = true,
                                 keyboardActions = { focusManager.clearFocus() }
@@ -340,12 +344,13 @@ fun BoardPostScreen(
                         ) {
                             Text(
                                 text = "분류",
+                                modifier = Modifier.padding(top = 3.dp),
                                 fontFamily = poppins,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 16.sp
                             )
                             Spacer(modifier = Modifier.width(10.dp))
-                            CustomVerticalDivider(height = 16, color = PlaceholderGrey)
+                            CustomVerticalDivider(height = 20, color = PlaceholderGrey)
                             Spacer(modifier = Modifier.width(15.dp))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -363,6 +368,7 @@ fun BoardPostScreen(
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Text(
                                         text = "공연",
+                                        modifier = Modifier.padding(top = 3.dp),
                                         fontFamily = poppins,
                                         fontWeight = FontWeight.Normal,
                                         fontSize = 16.sp
@@ -379,6 +385,7 @@ fun BoardPostScreen(
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Text(
                                         text = "학술",
+                                        modifier = Modifier.padding(top = 3.dp),
                                         fontFamily = poppins,
                                         fontWeight = FontWeight.Normal,
                                         fontSize = 16.sp
@@ -404,40 +411,18 @@ fun BoardPostScreen(
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                             Text(
-                                text = "사진은 1:1 비율로 변경되며 1장만 첨부할 수 있습니다.",
+                                text = "(사진은 1:1 비율로 변경되며 1장만 첨부할 수 있습니다)",
                                 fontFamily = poppins,
                                 fontWeight = FontWeight.Normal,
-                                fontSize = 11.sp,
+                                fontSize = 12.sp,
                                 fontStyle = FontStyle.Italic,
                                 color = PlaceholderGrey
                             )
-                            Spacer(modifier = Modifier.height(20.dp))
                         }
                     }
-                    TextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(min = 600.dp)
-                            .focusRequester(focusRequester),
-                        value = eventContent,
-                        onValueChange = { eventContent = it },
-                        placeholder = {
-                            Text(
-                                text = "행사 정보를 입력해주세요",
-                                fontFamily = poppins,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = PlaceholderGrey
-                            )
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Default
-                        ),
-                        colors = TextFieldDefaults.colors(
-                            unfocusedContainerColor = Color(0x00F8F8F8),
-                            focusedContainerColor = Color(0x00F8F8F8)
-                        )
+                    eventContent = customLargeTextField(
+                        placeholder = "행사 정보를 입력해주세요",
+                        height = deviceHeight / 1.5f
                     )
                 }
             }
