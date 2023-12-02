@@ -52,13 +52,14 @@ fun listItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(20.dp),
-            verticalAlignment = Alignment.Bottom
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
+                modifier = Modifier.padding(top = 2.2.dp),
                 text = if (event.isFestival == true) "공연" else "학술",
                 fontFamily = poppins,
                 fontSize = 11.sp,
-                fontWeight = FontWeight.ExtraLight,
+                fontWeight = FontWeight.Medium,
                 color = HaengshaGrey
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -67,7 +68,7 @@ fun listItem(
                 text = event.title,
                 fontFamily = poppins,
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.SemiBold,
                 overflow = TextOverflow.Ellipsis
             )
             if (isFavorite) {
@@ -77,16 +78,17 @@ fun listItem(
                         .size(15.dp),
                     imageVector = ImageVector.vectorResource(id = R.drawable.favorite_fill_icon),
                     contentDescription = "favorite icon",
-                    alignment = Alignment.Center,
+                    alignment = Alignment.TopCenter,
                     contentScale = ContentScale.Inside
                 )
             }
         }
+        Spacer(modifier = Modifier.height(5.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(20.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Bottom
         ) {
             Row(
                 verticalAlignment = Alignment.Bottom
@@ -96,7 +98,7 @@ fun listItem(
                     text = event.place ?: "장소가 등록되지 않았어요",
                     fontFamily = poppins,
                     fontSize = 11.sp,
-                    fontWeight = FontWeight.ExtraLight,
+                    fontWeight = FontWeight.Normal,
                     color = HaengshaGrey,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -117,7 +119,7 @@ fun listItem(
                     },
                     fontFamily = poppins,
                     fontSize = 11.sp,
-                    fontWeight = FontWeight.ExtraLight,
+                    fontWeight = FontWeight.Normal,
                     color = HaengshaGrey,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -128,19 +130,17 @@ fun listItem(
                 verticalAlignment = Alignment.Bottom
             ) {
                 Image(
-                    modifier = Modifier
-                        .size(15.dp)
-                        .padding(top = 3.dp),
+                    modifier = Modifier.size(12.dp),
                     imageVector = ImageVector.vectorResource(id = R.drawable.like_fill_icon),
                     contentDescription = "like icon",
+                    alignment = Alignment.Center,
                     contentScale = ContentScale.Inside
                 )
-                Spacer(Modifier.width(3.dp))
+                Spacer(Modifier.width(5.dp))
                 Text(
-                    modifier = Modifier.padding(top = 1.dp),
                     text = event.likeCount.toString(),
                     fontFamily = poppins,
-                    fontSize = 10.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Normal,
                     color = LikePink
                 )

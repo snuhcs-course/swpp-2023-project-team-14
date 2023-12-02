@@ -26,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -65,19 +64,18 @@ import com.example.haengsha.ui.uiComponents.listItem
 import es.dmoral.toasty.Toasty
 
 @Composable
-fun boardScreen(
+fun BoardScreen(
     innerPadding: PaddingValues,
     boardViewModel: BoardViewModel,
     boardApiViewModel: BoardApiViewModel,
     boardNavController: NavController,
     userUiState: UserUiState,
     isTest: Boolean
-): Int {
+) {
     val boardUiState = boardViewModel.boardUiState.collectAsState()
     val boardListUiState = boardApiViewModel.boardListUiState
     val boardContext = LocalContext.current
 
-    var eventId by remember { mutableIntStateOf(0) }
     val isFestival = boardUiState.value.isFestival
     val startDate = boardUiState.value.startDate
     val endDate = boardUiState.value.endDate
@@ -232,7 +230,6 @@ fun boardScreen(
                                 )
                                 if (isTest) {
                                     Column(modifier = Modifier.clickable {
-                                        eventId = 0
                                         boardNavController.navigate(BoardRoute.BoardDetail.route)
                                     }) { Text("test") }
                                 }
@@ -278,7 +275,7 @@ fun boardScreen(
                             LazyColumn(modifier = Modifier.fillMaxSize()) {
                                 items(boardListUiState.boardList) { event ->
                                     Column(modifier = Modifier.clickable {
-                                        eventId = event.id
+                                        boardViewModel.updateEventId(event.id)
                                         boardNavController.navigate(BoardRoute.BoardDetail.route)
                                     }) {
                                         listItem(
@@ -347,6 +344,4 @@ fun boardScreen(
             )
         }
     }
-
-    return eventId
 }

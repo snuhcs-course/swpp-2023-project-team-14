@@ -14,6 +14,13 @@ class BoardViewModel : ViewModel() {
     private val _boardPostUiState = MutableStateFlow(BoardPostUiState())
     val boardPostUiState = _boardPostUiState.asStateFlow()
 
+    private val _eventId = MutableStateFlow(0)
+    val eventId = _eventId.asStateFlow()
+
+    fun updateEventId(newEventId: Int) {
+        _eventId.value = newEventId
+    }
+
     var isError = false
 
     fun isError() {

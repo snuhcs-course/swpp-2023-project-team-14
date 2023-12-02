@@ -18,10 +18,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -36,6 +32,7 @@ import com.example.haengsha.model.route.FavoriteRoute
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.board.BoardFavoriteUiState
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
+import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
@@ -45,16 +42,16 @@ import com.example.haengsha.ui.uiComponents.listItem
 import es.dmoral.toasty.Toasty
 
 @Composable
-fun favoriteScreen(
+fun FavoriteScreen(
     innerPadding: PaddingValues,
     boardApiViewModel: BoardApiViewModel,
+    boardViewModel: BoardViewModel,
     favoriteNavController: NavController,
     userUiState: UserUiState,
     isTest: Boolean
-): Int {
+) {
     val boardContext = LocalContext.current
     val boardFavoriteUiState = boardApiViewModel.boardFavoriteUiState
-    var eventId by rememberSaveable { mutableIntStateOf(0) }
 
     if (isTest) {
         Box(
@@ -62,7 +59,6 @@ fun favoriteScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .clickable {
-                    eventId = 0
                     favoriteNavController.navigate(FavoriteRoute.FavoriteDetail.route)
                 }
         ) { Text("test") }
@@ -185,7 +181,7 @@ fun favoriteScreen(
                         ) {
                             items(boardFavoriteUiState.boardList) { event ->
                                 Box(modifier = Modifier.clickable {
-                                    eventId = event.id
+                                    boardViewModel.updateEventId(event.id)
                                     favoriteNavController.navigate(FavoriteRoute.FavoriteDetail.route)
                                 }) {
                                     listItem(
@@ -201,5 +197,4 @@ fun favoriteScreen(
             }
         }
     }
-    return eventId
 }
