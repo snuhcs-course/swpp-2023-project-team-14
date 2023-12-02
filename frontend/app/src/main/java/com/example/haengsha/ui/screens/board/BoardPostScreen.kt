@@ -125,6 +125,7 @@ fun BoardPostScreen(
     var boardPostRequest: BoardPostRequest
 
     BackHandler(enabled = !exitConfirmDialog, onBack = { exitConfirmDialog = true })
+    BackHandler(enabled = isPost, onBack = { /*prevent close loading bar and duplicated upload*/ })
 
     LaunchedEffect(Unit) { boardViewModel.resetBoardPostUiState() }
 

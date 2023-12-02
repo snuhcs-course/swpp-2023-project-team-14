@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,7 +53,8 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
     val currentScreenType = navigationUiState.type
     val canNavigateBack = currentScreenName == "Details" || currentScreenName == "Write"
 
-    var isLogoutClick by remember { mutableStateOf(false) }
+    var isLogoutModal by remember { mutableStateOf(false) }
+    var isLogoutClicked by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Scaffold(
@@ -79,7 +79,7 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
                         }
                     },
                     logout = {
-                        isLogoutClick = true
+                        isLogoutModal = true
                     }
                 )
             }
@@ -283,36 +283,43 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
 //            )
 //        }
         }
-        if (isLogoutClick) {
+        if (isLogoutModal) {
             ConfirmDialog(
-                onDismissRequest = { isLogoutClick = false },
+                onDismissRequest = { isLogoutModal = false },
                 onClick = {
-                    loginApiViewModel.logout(userUiState.token)
+                    if (!isLogoutClicked) {
+                        isLogoutClicked = true
+                        loginApiViewModel.logout(userUiState.token)
+                    }
                 },
                 text = "로그아웃 하시겠어요?"
             )
         }
-        if (isLogoutClick) {
+        if (isLogoutClicked) {
             when (loginApiUiState) {
                 is LoginApiUiState.Success -> {
                     userViewModel.resetUserData()
+                    loginApiViewModel.resetLoginApiUiState()
                     boardViewModel.resetBoardUiState()
                     boardApiViewModel.resetBoardListUiState()
                     mainNavController.navigate(MainRoute.Login.route) {
                         popUpTo(mainNavController.graph.id) { inclusive = true }
                     }
-                    LaunchedEffect(Unit) {
-                        Toasty.success(context, "로그아웃 되었습니다.", Toasty.LENGTH_SHORT).show()
-                    }
-                    isLogoutClick = false
+                    isLogoutModal = false
+                    Toasty.success(context, "로그아웃 되었습니다.", Toasty.LENGTH_SHORT).show()
+                    isLogoutClicked = false
                 }
 
                 is LoginApiUiState.HttpError -> {
                     Toasty.warning(context, loginApiUiState.message, Toasty.LENGTH_SHORT).show()
+                    isLogoutClicked = false
+                    loginApiViewModel.resetLoginApiUiState()
                 }
 
                 is LoginApiUiState.NetworkError -> {
                     Toasty.error(context, "인터넷 연결을 확인해주세요.", Toasty.LENGTH_SHORT).show()
+                    isLogoutClicked = false
+                    loginApiViewModel.resetLoginApiUiState()
                 }
 
                 else -> { /*do nothing*/

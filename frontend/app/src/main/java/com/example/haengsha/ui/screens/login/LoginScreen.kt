@@ -3,11 +3,9 @@ package com.example.haengsha.ui.screens.login
 import android.content.Context
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -45,13 +43,11 @@ import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.FieldStrokeBlue
-import com.example.haengsha.ui.theme.HaengshaBlue
-import com.example.haengsha.ui.theme.md_theme_light_background
 import com.example.haengsha.ui.theme.md_theme_light_outline
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
 import com.example.haengsha.ui.uiComponents.ConfirmOnlyDialog
-import com.example.haengsha.ui.uiComponents.CustomCircularProgressIndicator
+import com.example.haengsha.ui.uiComponents.LoadingScreen
 import com.example.haengsha.ui.uiComponents.passwordTextField
 import com.example.haengsha.ui.uiComponents.suffixTextField
 import es.dmoral.toasty.Toasty
@@ -206,7 +202,7 @@ fun LoginScreen(
     when (loginApiUiState) {
         is LoginApiUiState.LoginSuccess -> {
             if (isLoginLoading) {
-                LoadingScreen()
+                LoadingScreen("행샤에 로그인하는 중...")
             }
             userViewModel.updateToken(loginApiUiState.token)
             userViewModel.updateRole(loginApiUiState.role)
@@ -240,37 +236,12 @@ fun LoginScreen(
 
         is LoginApiUiState.Loading -> {
             if (isLoginLoading) {
-                LoadingScreen()
+                LoadingScreen("행샤에 로그인하는 중...")
             }
         }
 
         else -> {
             /* Other Success State, do nothing */
-        }
-    }
-}
-
-@Composable
-private fun LoadingScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(md_theme_light_background)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            CustomCircularProgressIndicator()
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = "행샤에 로그인하는 중...",
-                fontFamily = poppins,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = HaengshaBlue
-            )
         }
     }
 }
