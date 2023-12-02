@@ -104,6 +104,7 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation("androidx.navigation:navigation-testing:2.7.5")
 
-    //debugImplementation("androidx.compose.ui:ui-tooling")
-    //debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.0-beta02")
+//    TODO UI test할 때 주석 제거 -> 현재 해당 라이브러리가 TextField & Keyboard에서 문제를 일으킴
+//    debugImplementation("androidx.compose.ui:ui-tooling:1.6.0-beta02")
+//    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.0-beta02")
 }

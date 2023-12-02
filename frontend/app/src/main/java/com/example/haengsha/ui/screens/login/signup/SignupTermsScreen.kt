@@ -257,16 +257,17 @@ fun SignupTermsScreen(
                                     popUpTo(LoginRoute.Login.route) { inclusive = false }
                                 }
                                 loginApiViewModel.resetLoginApiUiState()
+                            } else {
+                                loginApiViewModel.signupRegister(
+                                    email = signupUiState.email,
+                                    password = signupUiState.password,
+                                    nickname = signupUiState.nickname,
+                                    role = "User",
+                                    major = signupUiState.major,
+                                    grade = signupUiState.grade,
+                                    interest = signupUiState.interest
+                                )
                             }
-                            loginApiViewModel.signupRegister(
-                                email = signupUiState.email,
-                                password = signupUiState.password,
-                                nickname = signupUiState.nickname,
-                                role = "User",
-                                major = signupUiState.major,
-                                grade = signupUiState.grade,
-                                interest = signupUiState.interest
-                            )
                         }
                     )
                 } else CommonGreyButton(text = "동의 후 회원가입")
