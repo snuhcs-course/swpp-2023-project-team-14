@@ -412,12 +412,12 @@ fun BoardPostScreen(
                             Image(
                                 painter = rememberAsyncImagePainter(uri),
                                 contentDescription = "image",
-                                contentScale = ContentScale.FillBounds,
+                                contentScale = ContentScale.Crop,
                                 modifier = Modifier.size(300.dp)
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                             Text(
-                                text = "(사진은 1:1 비율로 변경되며 1장만 첨부할 수 있습니다)",
+                                text = "(사진은 1:1 비율로 잘리게 되며, 1장만 첨부할 수 있습니다)",
                                 fontFamily = poppins,
                                 fontWeight = FontWeight.Normal,
                                 fontSize = 12.sp,

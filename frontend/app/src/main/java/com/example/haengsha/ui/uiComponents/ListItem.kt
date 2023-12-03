@@ -112,7 +112,9 @@ fun listItem(
                 Spacer(Modifier.width(10.dp))
                 Text(
                     modifier = Modifier.widthIn(max = 120.dp),
-                    text = if (event.eventDurations.size > 1) {
+                    text = if (event.eventDurations.isEmpty()) {
+                        "날짜 등록 안 됨"
+                    } else if (event.eventDurations.size > 1) {
                         event.eventDurations[0].eventDay + " ~ " + event.eventDurations.last().eventDay
                     } else {
                         event.eventDurations[0].eventDay
