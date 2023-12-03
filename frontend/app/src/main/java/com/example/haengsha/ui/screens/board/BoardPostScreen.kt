@@ -648,10 +648,16 @@ private fun checkPostFormat(
     eventTime: String,
     eventContent: String
 ): String {
+    val noSpecialCharacterRegex = "^[0-9a-zA-Zㄱ-ㅎ가-힣\\d]+$".toRegex()
+    val possibleRegexPattern =
+        "^[0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣+×÷=/_<>\\[\\]!@#\$%^&*()\\-'\":;?`~\\\\|{}€£¥₩♤♡◇♧☆▪︎¤《》¡¿°•○●□■,‽±』」〕】『「〔【№₽٪‰‐—–♠♥◆♣★]+$".toRegex()
+
     if (eventTitle.startsWith(" ") || eventTitle.endsWith(" ")) {
         return "제목의 앞뒤 공백을 제거해주세요."
     } else if (eventTitle.length !in 2..20) {
         return "제목은 2자 이상 20자 이하로 입력해주세요."
+    } else if (!possibleRegexPattern.matches(eventTitle)) {
+        return "제목은 한글, 영어, 숫자, 특수문자로만 입력해주세요.\n아직 이모지는 사용할 수 없습니다."
     }
 
     val startDate = if (eventStartDate.isEmpty()) {
@@ -670,7 +676,6 @@ private fun checkPostFormat(
         }
     }
 
-    val noSpecialCharacterRegex = "^[a-zA-Z가-힣\\d]+$".toRegex()
     if (eventPlace.startsWith(" ") || eventPlace.endsWith(" ")) {
         return "장소의 앞뒤 공백을 제거해주세요."
     } else if (eventPlace.length !in 2..20) {
@@ -691,6 +696,8 @@ private fun checkPostFormat(
         return "내용을 입력해주세요."
     } else if (eventContent.length !in 2..1000) {
         return "내용은 2자 이상 1000자 이하로 입력해주세요."
+    } else if (!possibleRegexPattern.matches(eventContent)) {
+        return "내용은 한글, 영어, 숫자, 특수문자로만 입력해주세요.\n아직 이모지는 사용할 수 없습니다."
     }
 
     return if (endDate == startDate) "날짜 같음" else ""

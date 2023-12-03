@@ -361,7 +361,7 @@ fun SearchBar(
     onSubmit: (SearchRequest) -> Unit
 ) {
     var input by remember { mutableStateOf(keyword) }
-    val noSpecialCharacterRegex = "^[a-zA-Z가-힣\\d]+$".toRegex()
+    val noSpecialCharacterRegex = "^[0-9a-zA-Zㄱ-ㅎ가-힣\\d]+$".toRegex()
 
     OutlinedTextField(
         modifier = Modifier
