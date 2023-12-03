@@ -229,7 +229,7 @@ fun BoardPostScreen(
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 16.sp
                             )
-                            Spacer(modifier = Modifier.width(10.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
                             CustomVerticalDivider(height = 20, color = PlaceholderGrey)
                             customSingleLineTextField(
                                 placeholder = userUiState.nickname,
@@ -250,7 +250,7 @@ fun BoardPostScreen(
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 16.sp
                             )
-                            Spacer(modifier = Modifier.width(10.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
                             CustomVerticalDivider(height = 20, color = PlaceholderGrey)
                             Spacer(modifier = Modifier.width(15.dp))
                             Row(
@@ -268,13 +268,13 @@ fun BoardPostScreen(
                                             shape = RoundedCornerShape(6.dp)
                                         )
                                         .clickable { startDatePick = true }
-                                        .padding(start = 10.dp, end = 10.dp, top = 3.dp),
+                                        .padding(start = 8.dp, end = 8.dp, top = 3.dp),
                                     fontFamily = poppins,
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Medium,
                                     color = HaengshaBlue
                                 )
-                                Spacer(modifier = Modifier.width(5.dp))
+                                Spacer(modifier = Modifier.width(3.dp))
                                 Text(
                                     text = "~",
                                     fontFamily = poppins,
@@ -282,7 +282,7 @@ fun BoardPostScreen(
                                     fontWeight = FontWeight.Medium,
                                     color = HaengshaBlue
                                 )
-                                Spacer(modifier = Modifier.width(5.dp))
+                                Spacer(modifier = Modifier.width(3.dp))
                                 Text(
                                     text = boardPostUiState.value.endDate.ifEmpty { "종료일 (선택)" },
                                     modifier = Modifier
@@ -292,7 +292,7 @@ fun BoardPostScreen(
                                             shape = RoundedCornerShape(6.dp)
                                         )
                                         .clickable { endDatePick = true }
-                                        .padding(start = 10.dp, end = 10.dp, top = 3.dp),
+                                        .padding(start = 8.dp, end = 8.dp, top = 3.dp),
                                     fontFamily = poppins,
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Medium,
@@ -313,7 +313,7 @@ fun BoardPostScreen(
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 16.sp
                             )
-                            Spacer(modifier = Modifier.width(10.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
                             CustomVerticalDivider(height = 20, color = PlaceholderGrey)
                             eventPlace = customSingleLineTextField(
                                 placeholder = "행사 장소",
@@ -334,7 +334,7 @@ fun BoardPostScreen(
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 16.sp
                             )
-                            Spacer(modifier = Modifier.width(10.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
                             CustomVerticalDivider(height = 20, color = PlaceholderGrey)
                             eventTime = customSingleLineTextField(
                                 placeholder = "시작 시간 (~ 종료 시간)",
@@ -355,7 +355,7 @@ fun BoardPostScreen(
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 16.sp
                             )
-                            Spacer(modifier = Modifier.width(10.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
                             CustomVerticalDivider(height = 20, color = PlaceholderGrey)
                             Spacer(modifier = Modifier.width(15.dp))
                             Row(

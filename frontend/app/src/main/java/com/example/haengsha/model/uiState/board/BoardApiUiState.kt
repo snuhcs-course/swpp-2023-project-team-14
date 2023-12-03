@@ -44,16 +44,16 @@ sealed interface BoardPostApiUiState {
     object Loading : BoardPostApiUiState
 }
 
-sealed interface PostLikeFavoriteUiState {
+sealed interface PatchLikeFavoriteUiState {
     data class Success(
         val likeCount: Int,
         val favoriteCount: Int,
         val isLiked: Boolean,
         val isFavorite: Boolean
-    ) : PostLikeFavoriteUiState
+    ) : PatchLikeFavoriteUiState
 
-    object HttpError : PostLikeFavoriteUiState
-    object NetworkError : PostLikeFavoriteUiState
-    object Error : PostLikeFavoriteUiState
-    object Loading : PostLikeFavoriteUiState
+    object HttpError : PatchLikeFavoriteUiState
+    object NetworkError : PatchLikeFavoriteUiState
+    object Error : PatchLikeFavoriteUiState
+    object Loading : PatchLikeFavoriteUiState
 }

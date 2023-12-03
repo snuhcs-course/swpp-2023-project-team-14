@@ -41,7 +41,7 @@ import coil.size.Size
 import com.example.haengsha.R
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.board.BoardDetailUiState
-import com.example.haengsha.model.uiState.board.PostLikeFavoriteUiState
+import com.example.haengsha.model.uiState.board.PatchLikeFavoriteUiState
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.FavoriteYellow
@@ -66,7 +66,7 @@ fun BoardDetailScreen(
     val boardDetailUiState = boardApiViewModel.boardDetailUiState
 
     LaunchedEffect(Unit) {
-        boardApiViewModel.resetLikePostUiState()
+        boardApiViewModel.resetPatchLikeFavoriteUiState()
         boardViewModel.resetError()
         boardApiViewModel.getBoardDetail(userUiState.token, eventId)
     }
@@ -152,32 +152,32 @@ fun BoardDetailScreen(
             var favoriteCount by remember { mutableIntStateOf(boardDetail.favoriteCount) }
             var isLiked by remember { mutableStateOf(boardDetail.isLiked) }
             var isFavorite by remember { mutableStateOf(boardDetail.isFavorite) }
-            when (val postLikeFavoriteUiState = boardApiViewModel.postLikeFavoriteUiState) {
-                is PostLikeFavoriteUiState.Success -> {
+            when (val postLikeFavoriteUiState = boardApiViewModel.patchLikeFavoriteUiState) {
+                is PatchLikeFavoriteUiState.Success -> {
                     likeCount = postLikeFavoriteUiState.likeCount
                     favoriteCount = postLikeFavoriteUiState.favoriteCount
                     isLiked = postLikeFavoriteUiState.isLiked
                     isFavorite = postLikeFavoriteUiState.isFavorite
                 }
 
-                is PostLikeFavoriteUiState.Loading -> {
+                is PatchLikeFavoriteUiState.Loading -> {
                     // 로딩
                 }
 
-                is PostLikeFavoriteUiState.HttpError -> {
+                is PatchLikeFavoriteUiState.HttpError -> {
                     LaunchedEffect(Unit) {
                         Toasty.warning(boardContext, "오류가 발생했습니다.\n다시 시도해주세요.", Toasty.LENGTH_SHORT)
                             .show()
                     }
                 }
 
-                is PostLikeFavoriteUiState.NetworkError -> {
+                is PatchLikeFavoriteUiState.NetworkError -> {
                     LaunchedEffect(Unit) {
                         Toasty.error(boardContext, "네트워크 연결을 확인해주세요.", Toasty.LENGTH_SHORT).show()
                     }
                 }
 
-                is PostLikeFavoriteUiState.Error -> {
+                is PatchLikeFavoriteUiState.Error -> {
                     LaunchedEffect(Unit) {
                         Toasty.error(
                             boardContext,
@@ -358,7 +358,7 @@ fun BoardDetailScreen(
                                 Row(
                                     modifier = Modifier.clickable {
                                         if (userUiState.role == "User") {
-                                            boardApiViewModel.postLike(userUiState.token, eventId)
+                                            boardApiViewModel.patchLike(userUiState.token, eventId)
                                         } else {
                                             Toasty.warning(
                                                 boardContext,
@@ -414,7 +414,7 @@ fun BoardDetailScreen(
                                 Row(
                                     modifier = Modifier.clickable {
                                         if (userUiState.role == "User") {
-                                            boardApiViewModel.postFavorite(
+                                            boardApiViewModel.patchFavorite(
                                                 userUiState.token,
                                                 eventId
                                             )

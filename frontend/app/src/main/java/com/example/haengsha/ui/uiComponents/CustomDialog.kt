@@ -225,6 +225,7 @@ fun FilterDialog(
                     ) {
                         Text(
                             text = boardUiState.startDate.ifEmpty { "시작일을 선택해주세요" },
+                            modifier = Modifier.padding(top = 3.dp),
                             fontFamily = poppins,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
@@ -271,6 +272,7 @@ fun FilterDialog(
                     ) {
                         Text(
                             text = boardUiState.endDate.ifEmpty { "종료일을 선택해주세요" },
+                            modifier = Modifier.padding(top = 3.dp),
                             fontFamily = poppins,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,

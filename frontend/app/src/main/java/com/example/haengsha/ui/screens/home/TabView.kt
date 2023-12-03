@@ -233,7 +233,7 @@ fun TabView(
                 ) {
                     Text(
                         text = if (index == 0) "오늘은 예정된 축제가 없어요!" else "오늘은 예정된 학술제가 없어요!",
-                        fontSize = 16.sp,
+                        fontSize = 20.sp,
                         fontFamily = poppins,
                         fontWeight = FontWeight(500),
                         color = Color(0xFF000000),

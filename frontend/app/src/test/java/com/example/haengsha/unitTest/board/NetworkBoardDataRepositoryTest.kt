@@ -53,21 +53,21 @@ class NetworkBoardDataRepositoryTest {
     }
 
     @Test
-    fun networkBoardDataRepository_postLike_verifyResponse() {
+    fun networkBoardDataRepository_patchLike_verifyResponse() {
         runTest {
             assertEquals(
-                FakeBoardDataSource.postLikeFavoriteResponse,
-                repository.postLike(FakeBoardDataSource.token, FakeBoardDataSource.id)
+                FakeBoardDataSource.patchLikeFavoriteResponse,
+                repository.patchLike(FakeBoardDataSource.token, FakeBoardDataSource.id)
             )
         }
     }
 
     @Test
-    fun networkBoardDataRepository_postFavorite_verifyResponse() {
+    fun networkBoardDataRepository_patchFavorite_verifyResponse() {
         runTest {
             assertEquals(
-                FakeBoardDataSource.postLikeFavoriteResponse,
-                repository.postFavorite(FakeBoardDataSource.token, FakeBoardDataSource.id)
+                FakeBoardDataSource.patchLikeFavoriteResponse,
+                repository.patchFavorite(FakeBoardDataSource.token, FakeBoardDataSource.id)
             )
         }
     }

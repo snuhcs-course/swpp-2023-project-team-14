@@ -6,7 +6,7 @@ import com.example.haengsha.model.uiState.board.BoardDetailUiState
 import com.example.haengsha.model.uiState.board.BoardFavoriteUiState
 import com.example.haengsha.model.uiState.board.BoardListUiState
 import com.example.haengsha.model.uiState.board.BoardPostApiUiState
-import com.example.haengsha.model.uiState.board.PostLikeFavoriteUiState
+import com.example.haengsha.model.uiState.board.PatchLikeFavoriteUiState
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.testRules.TestDispatcherRule
 import junit.framework.TestCase.assertEquals
@@ -70,36 +70,36 @@ class BoardApiViewModelTest {
     }
 
     @Test
-    fun boardViewModel_postLike_verifyBoardUiStateSuccess() = runTest {
+    fun boardViewModel_patchLike_verifyBoardUiStateSuccess() = runTest {
         val boardApiViewModel = BoardApiViewModel(
             boardDataRepository = FakeNetworkBoardDataRepository()
         )
-        boardApiViewModel.postLike(FakeBoardDataSource.token, FakeBoardDataSource.id)
+        boardApiViewModel.patchLike(FakeBoardDataSource.token, FakeBoardDataSource.id)
         assertEquals(
-            PostLikeFavoriteUiState.Success(
-                FakeBoardDataSource.postLikeFavoriteResponse.likeCount,
-                FakeBoardDataSource.postLikeFavoriteResponse.favoriteCount,
-                FakeBoardDataSource.postLikeFavoriteResponse.isLiked,
-                FakeBoardDataSource.postLikeFavoriteResponse.isFavorite
+            PatchLikeFavoriteUiState.Success(
+                FakeBoardDataSource.patchLikeFavoriteResponse.likeCount,
+                FakeBoardDataSource.patchLikeFavoriteResponse.favoriteCount,
+                FakeBoardDataSource.patchLikeFavoriteResponse.isLiked,
+                FakeBoardDataSource.patchLikeFavoriteResponse.isFavorite
             ),
-            boardApiViewModel.postLikeFavoriteUiState
+            boardApiViewModel.patchLikeFavoriteUiState
         )
     }
 
     @Test
-    fun boardViewModel_postFavorite_verifyBoardUiStateSuccess() = runTest {
+    fun boardViewModel_patchFavorite_verifyBoardUiStateSuccess() = runTest {
         val boardApiViewModel = BoardApiViewModel(
             boardDataRepository = FakeNetworkBoardDataRepository()
         )
-        boardApiViewModel.postFavorite(FakeBoardDataSource.token, FakeBoardDataSource.id)
+        boardApiViewModel.patchFavorite(FakeBoardDataSource.token, FakeBoardDataSource.id)
         assertEquals(
-            PostLikeFavoriteUiState.Success(
-                FakeBoardDataSource.postLikeFavoriteResponse.likeCount,
-                FakeBoardDataSource.postLikeFavoriteResponse.favoriteCount,
-                FakeBoardDataSource.postLikeFavoriteResponse.isLiked,
-                FakeBoardDataSource.postLikeFavoriteResponse.isFavorite
+            PatchLikeFavoriteUiState.Success(
+                FakeBoardDataSource.patchLikeFavoriteResponse.likeCount,
+                FakeBoardDataSource.patchLikeFavoriteResponse.favoriteCount,
+                FakeBoardDataSource.patchLikeFavoriteResponse.isLiked,
+                FakeBoardDataSource.patchLikeFavoriteResponse.isFavorite
             ),
-            boardApiViewModel.postLikeFavoriteUiState
+            boardApiViewModel.patchLikeFavoriteUiState
         )
     }
 
