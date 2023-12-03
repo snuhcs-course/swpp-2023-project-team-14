@@ -361,7 +361,8 @@ fun SearchBar(
     onSubmit: (SearchRequest) -> Unit
 ) {
     var input by remember { mutableStateOf(keyword) }
-    val noSpecialCharacterRegex = "^[0-9a-zA-Zㄱ-ㅎ가-힣\\d]+$".toRegex()
+    val possibleRegexPattern =
+        "^[0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣+×÷=/_<>\\[\\]!@#\$%^&*()\\-'\":;?`~\\\\|{}€£¥₩♤♡◇♧☆▪︎¤《》¡¿°•○●□■.,‽±』」〕】『「〔【№₽٪‰‐—–♠♥◆♣★\\s\\n]+$".toRegex()
 
     OutlinedTextField(
         modifier = Modifier
@@ -396,7 +397,7 @@ fun SearchBar(
                 if (input.length !in 2..50) {
                     Toasty.warning(context, "2자에서 50자 사이로 검색해주세요", Toast.LENGTH_SHORT, true)
                         .show()
-                } else if (!noSpecialCharacterRegex.matches(input)) {
+                } else if (!possibleRegexPattern.matches(input)) {
                     Toasty.warning(context, "한글, 영어, 숫자로만 검색해주세요", Toast.LENGTH_SHORT, true)
                         .show()
                 } else {

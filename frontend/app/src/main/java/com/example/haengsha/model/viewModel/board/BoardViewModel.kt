@@ -65,6 +65,12 @@ class BoardViewModel : ViewModel() {
         updateSearchParameter("foo", "bar", "filter")
     }
 
+    fun resetFilterInitialState() {
+        _boardUiState.update { currentState ->
+            currentState.copy(initialState = true)
+        }
+    }
+
     fun resetBoardUiState() {
         _boardUiState.value = BoardUiState()
     }
