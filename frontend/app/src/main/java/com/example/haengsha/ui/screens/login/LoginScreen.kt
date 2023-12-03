@@ -135,7 +135,7 @@ fun LoginScreen(
         ) {
             Text(
                 modifier = Modifier.clickable { loginNavController.navigate(LoginRoute.FindPassword.route) },
-                text = "아이디/비밀번호 찾기",
+                text = "비밀번호 찾기",
                 fontFamily = poppins,
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp,

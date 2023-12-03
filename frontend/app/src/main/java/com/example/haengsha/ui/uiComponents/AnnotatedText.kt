@@ -54,12 +54,12 @@ fun OrganizerFindPasswordInstructionText() {
             .fillMaxWidth()
             .padding(horizontal = deviceWidth / 10),
         text = buildAnnotatedString {
-            append("단체 계정의 로그인 정보를 찾고 싶으시다면 ")
+            append("단체 계정의 비밀번호를 찾고 싶으시다면 ")
             withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("haengsha@gmail.com") }
             append("으로 아래 사항을 준수하여 이메일로 보내주세요. \n\n")
 
             withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("형식") }
-            append("\n제목 앞에 [행샤 단체 계정 찾기]을 기재해주세요. \n\n")
+            append("\n제목 앞에 [행샤 단체 계정 비밀번호 찾기]을 기재해주세요. \n\n")
 
             withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("내용") }
             append("\n1. 단체명 \n2. 단체장 이름 \n3. 단체를 증명할 수 있는 서류, 사진(pdf, jpg, png) \n\n")

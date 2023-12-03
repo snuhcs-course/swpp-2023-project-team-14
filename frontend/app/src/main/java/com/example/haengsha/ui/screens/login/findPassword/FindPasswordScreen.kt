@@ -240,7 +240,7 @@ fun FindPasswordScreen(
             ) {
                 Text(
                     modifier = Modifier.fillMaxSize(),
-                    text = "단체 계정 아이디/비밀번호 찾기",
+                    text = "단체 계정 비밀번호 찾기",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Medium,
                     fontSize = 18.sp,
