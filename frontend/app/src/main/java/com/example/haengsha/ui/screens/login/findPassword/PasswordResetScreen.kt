@@ -37,6 +37,7 @@ import com.example.haengsha.model.viewModel.login.FindPasswordViewModel
 import com.example.haengsha.model.viewModel.login.LoginApiViewModel
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CommonBlueButton
+import com.example.haengsha.ui.uiComponents.LoadingScreen
 import com.example.haengsha.ui.uiComponents.passwordCheckTextField
 import com.example.haengsha.ui.uiComponents.passwordSetField
 import es.dmoral.toasty.Toasty
@@ -56,6 +57,7 @@ fun PasswordResetScreen(
     var passwordCheckInput: String by remember { mutableStateOf("") }
     var isPasswordError by remember { mutableStateOf(false) }
     var isPasswordCheckError by remember { mutableStateOf(false) }
+    var isPasswordReset by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -84,7 +86,7 @@ fun PasswordResetScreen(
                 Spacer(modifier = Modifier.width(50.dp))
                 Text(
                     modifier = Modifier.width(320.dp),
-                    text = "새 비밀번호를 입력하세요.\n(영문+숫자 4~10자)",
+                    text = "새 비밀번호를 입력하세요.\n(영문+숫자 혼합 4~10자)",
                     fontFamily = poppins,
                     fontWeight = FontWeight.Normal,
                     fontSize = 18.sp
@@ -120,8 +122,7 @@ fun PasswordResetScreen(
                             popUpTo(LoginRoute.Login.route) { inclusive = false }
                         }
                         loginApiViewModel.resetLoginApiUiState()
-                    }
-                    if (passwordInput.trimStart() == "") {
+                    } else if (passwordInput.trimStart() == "") {
                         isPasswordError = true
                         Toasty.error(
                             loginContext,
@@ -129,22 +130,21 @@ fun PasswordResetScreen(
                             Toast.LENGTH_SHORT,
                             true
                         ).show()
-                    } else {
-                        if (passwordCheckInput != passwordInput) {
-                            isPasswordCheckError = true
-                            Toasty.error(
-                                loginContext,
-                                "비밀번호를 확인해주세요",
-                                Toast.LENGTH_SHORT,
-                                true
-                            ).show()
-                        } else {
-                            loginApiViewModel.findChangePassword(
-                                email = findPasswordUiState.email,
-                                passwordInput,
-                                passwordCheckInput
-                            )
-                        }
+                    } else if (passwordCheckInput != passwordInput) {
+                        isPasswordCheckError = true
+                        Toasty.error(
+                            loginContext,
+                            "비밀번호를 확인해주세요",
+                            Toast.LENGTH_SHORT,
+                            true
+                        ).show()
+                    } else if (!isPasswordReset) {
+                        isPasswordReset = true
+                        loginApiViewModel.findChangePassword(
+                            email = findPasswordUiState.email,
+                            passwordInput,
+                            passwordCheckInput
+                        )
                     }
                 })
             Spacer(modifier = Modifier.height(50.dp))
@@ -164,6 +164,9 @@ fun PasswordResetScreen(
 
     when (loginApiUiState) {
         is LoginApiUiState.Success -> {
+            if (isPasswordReset) {
+                LoadingScreen("비밀번호 변경 중...")
+            }
             findPasswordViewModel.resetFindPasswordData()
             loginNavController.navigate(LoginRoute.FindPasswordComplete.route) {
                 popUpTo(LoginRoute.Login.route) { inclusive = false }
@@ -180,6 +183,7 @@ fun PasswordResetScreen(
                     true
                 )
                 .show()
+            isPasswordReset = false
             loginApiViewModel.resetLoginApiUiState()
         }
 
@@ -192,11 +196,14 @@ fun PasswordResetScreen(
                     true
                 )
                 .show()
+            isPasswordReset = false
             loginApiViewModel.resetLoginApiUiState()
         }
 
         is LoginApiUiState.Loading -> {
-            /* Loading State, may add some loading UI */
+            if (isPasswordReset) {
+                LoadingScreen("비밀번호 변경 중...")
+            }
         }
 
         else -> {

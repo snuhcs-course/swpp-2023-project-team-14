@@ -16,6 +16,7 @@ import com.example.haengsha.model.route.FavoriteRoute
 import com.example.haengsha.model.viewModel.NavigationViewModel
 import com.example.haengsha.model.viewModel.UserViewModel
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
+import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.testConfig.assertCurrentRouteName
 import com.example.haengsha.ui.screens.favorite.Favorite
 import org.junit.Before
@@ -29,6 +30,7 @@ class FavoriteScreenNavigationTest {
     private lateinit var favoriteNavController: TestNavHostController
     private lateinit var userViewModel: UserViewModel
     private lateinit var boardApiViewModel: BoardApiViewModel
+    private lateinit var boardViewModel: BoardViewModel
     private lateinit var navigationViewModel: NavigationViewModel
 
     @Before
@@ -40,12 +42,14 @@ class FavoriteScreenNavigationTest {
             userViewModel = UserViewModel()
             val userUiState by userViewModel.uiState.collectAsState()
             boardApiViewModel = viewModel(factory = BoardApiViewModel.Factory)
+            boardViewModel = viewModel()
             navigationViewModel = viewModel()
 
             Favorite(
                 innerPadding = PaddingValues(0.dp),
                 userUiState = userUiState,
                 boardApiViewModel = boardApiViewModel,
+                boardViewModel = boardViewModel,
                 navigationViewModel = navigationViewModel,
                 favoriteNavController = favoriteNavController,
                 isTest = true
@@ -55,7 +59,7 @@ class FavoriteScreenNavigationTest {
 
     @Test
     fun favoriteNavController_verifyStartDestination() {
-        favoriteNavController.assertCurrentRouteName(FavoriteRoute.FavoriteBoard.route)
+        favoriteNavController.assertCurrentRouteName(FavoriteRoute.Favorite.route)
     }
 
     @Test

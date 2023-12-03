@@ -4,10 +4,6 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,7 +13,7 @@ import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.viewModel.NavigationViewModel
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.model.viewModel.board.BoardViewModel
-import com.example.haengsha.ui.screens.dashBoard.BoardDetailScreen
+import com.example.haengsha.ui.screens.board.BoardDetailScreen
 
 @Composable
 fun Favorite(
@@ -29,17 +25,16 @@ fun Favorite(
     favoriteNavController: NavHostController = rememberNavController(),
     isTest: Boolean = false
 ) {
-    var eventId by rememberSaveable { mutableIntStateOf(0) }
-
     NavHost(
         navController = favoriteNavController,
-        startDestination = FavoriteRoute.FavoriteBoard.route
+        startDestination = FavoriteRoute.Favorite.route
     ) {
-        composable(FavoriteRoute.FavoriteBoard.route) {
-            navigationViewModel.updateRouteUiState("Favorite", FavoriteRoute.FavoriteBoard.route)
-            eventId = favoriteScreen(
+        composable(FavoriteRoute.Favorite.route) {
+            navigationViewModel.updateRouteUiState("Favorite", FavoriteRoute.Favorite.route)
+            FavoriteScreen(
                 innerPadding = innerPadding,
                 boardApiViewModel = boardApiViewModel,
+                boardViewModel = boardViewModel,
                 favoriteNavController = favoriteNavController,
                 userUiState = userUiState,
                 isTest = isTest
@@ -78,7 +73,7 @@ fun Favorite(
                 boardApiViewModel = boardApiViewModel,
                 boardViewModel = boardViewModel,
                 userUiState = userUiState,
-                eventId = eventId
+                eventId = boardViewModel.eventId.value
             )
         }
     }

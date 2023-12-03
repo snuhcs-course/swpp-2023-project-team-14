@@ -5,7 +5,7 @@ import com.example.haengsha.model.network.dataModel.BoardDetailResponse
 import com.example.haengsha.model.network.dataModel.BoardListResponse
 import com.example.haengsha.model.network.dataModel.BoardPostRequest
 import com.example.haengsha.model.network.dataModel.BoardPostResponse
-import com.example.haengsha.model.network.dataModel.PostLikeFavoriteResponse
+import com.example.haengsha.model.network.dataModel.PatchLikeFavoriteResponse
 import com.example.haengsha.model.network.dataModel.SearchRequest
 
 class FakeNetworkBoardDataRepository : BoardDataRepository {
@@ -25,12 +25,12 @@ class FakeNetworkBoardDataRepository : BoardDataRepository {
         return FakeBoardDataSource.boardPostResponse
     }
 
-    override suspend fun postLike(token: String, postId: Int): PostLikeFavoriteResponse {
-        return FakeBoardDataSource.postLikeFavoriteResponse
+    override suspend fun patchLike(token: String, postId: Int): PatchLikeFavoriteResponse {
+        return FakeBoardDataSource.patchLikeFavoriteResponse
     }
 
-    override suspend fun postFavorite(token: String, postId: Int): PostLikeFavoriteResponse {
-        return FakeBoardDataSource.postLikeFavoriteResponse
+    override suspend fun patchFavorite(token: String, postId: Int): PatchLikeFavoriteResponse {
+        return FakeBoardDataSource.patchLikeFavoriteResponse
     }
 
     override suspend fun searchEvent(searchRequest: SearchRequest): List<BoardListResponse> {

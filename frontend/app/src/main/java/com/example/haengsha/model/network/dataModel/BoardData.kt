@@ -48,7 +48,7 @@ data class BoardDetailResponse(
 )
 
 @Serializable
-data class PostLikeFavoriteResponse(
+data class PatchLikeFavoriteResponse(
     val id: Int,
     val title: String,
     @SerialName("is_festival")

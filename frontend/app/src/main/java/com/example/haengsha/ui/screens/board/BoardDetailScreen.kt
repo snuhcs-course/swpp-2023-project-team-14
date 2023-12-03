@@ -1,4 +1,4 @@
-package com.example.haengsha.ui.screens.dashBoard
+package com.example.haengsha.ui.screens.board
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,11 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,6 +30,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -43,7 +41,7 @@ import coil.size.Size
 import com.example.haengsha.R
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.board.BoardDetailUiState
-import com.example.haengsha.model.uiState.board.PostLikeFavoriteUiState
+import com.example.haengsha.model.uiState.board.PatchLikeFavoriteUiState
 import com.example.haengsha.model.viewModel.board.BoardApiViewModel
 import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.FavoriteYellow
@@ -51,6 +49,9 @@ import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.LikePink
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.CustomCircularProgressIndicator
+import com.example.haengsha.ui.uiComponents.CustomHorizontalDivider
+import com.example.haengsha.ui.uiComponents.CustomVerticalDivider
 import es.dmoral.toasty.Toasty
 
 @Composable
@@ -65,7 +66,7 @@ fun BoardDetailScreen(
     val boardDetailUiState = boardApiViewModel.boardDetailUiState
 
     LaunchedEffect(Unit) {
-        boardApiViewModel.resetLikePostUiState()
+        boardApiViewModel.resetPatchLikeFavoriteUiState()
         boardViewModel.resetError()
         boardApiViewModel.getBoardDetail(userUiState.token, eventId)
     }
@@ -116,7 +117,7 @@ fun BoardDetailScreen(
                     LaunchedEffect(Unit) {
                         Toasty.error(
                             boardContext,
-                            "알 수 없는 에러가 발생했어요 :( 메일로 제보해주세요!",
+                            "알 수 없는 문제가 발생했습니다\n메일로 문의해주세요.",
                             Toasty.LENGTH_SHORT
                         ).show()
                         boardViewModel.isError()
@@ -133,10 +134,7 @@ fun BoardDetailScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                CircularProgressIndicator(
-                    color = HaengshaBlue,
-                    strokeWidth = 3.dp
-                )
+                CustomCircularProgressIndicator()
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
                     text = "행사 정보 가져오는 중...",
@@ -154,32 +152,32 @@ fun BoardDetailScreen(
             var favoriteCount by remember { mutableIntStateOf(boardDetail.favoriteCount) }
             var isLiked by remember { mutableStateOf(boardDetail.isLiked) }
             var isFavorite by remember { mutableStateOf(boardDetail.isFavorite) }
-            when (val postLikeFavoriteUiState = boardApiViewModel.postLikeFavoriteUiState) {
-                is PostLikeFavoriteUiState.Success -> {
+            when (val postLikeFavoriteUiState = boardApiViewModel.patchLikeFavoriteUiState) {
+                is PatchLikeFavoriteUiState.Success -> {
                     likeCount = postLikeFavoriteUiState.likeCount
                     favoriteCount = postLikeFavoriteUiState.favoriteCount
                     isLiked = postLikeFavoriteUiState.isLiked
                     isFavorite = postLikeFavoriteUiState.isFavorite
                 }
 
-                is PostLikeFavoriteUiState.Loading -> {
+                is PatchLikeFavoriteUiState.Loading -> {
                     // 로딩
                 }
 
-                is PostLikeFavoriteUiState.HttpError -> {
+                is PatchLikeFavoriteUiState.HttpError -> {
                     LaunchedEffect(Unit) {
                         Toasty.warning(boardContext, "오류가 발생했습니다.\n다시 시도해주세요.", Toasty.LENGTH_SHORT)
                             .show()
                     }
                 }
 
-                is PostLikeFavoriteUiState.NetworkError -> {
+                is PatchLikeFavoriteUiState.NetworkError -> {
                     LaunchedEffect(Unit) {
                         Toasty.error(boardContext, "네트워크 연결을 확인해주세요.", Toasty.LENGTH_SHORT).show()
                     }
                 }
 
-                is PostLikeFavoriteUiState.Error -> {
+                is PatchLikeFavoriteUiState.Error -> {
                     LaunchedEffect(Unit) {
                         Toasty.error(
                             boardContext,
@@ -195,9 +193,7 @@ fun BoardDetailScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                LazyColumn(
-                    modifier = Modifier.weight(1f, false)
-                ) {
+                LazyColumn {
                     items(1) {
                         Column(
                             modifier = Modifier
@@ -209,27 +205,26 @@ fun BoardDetailScreen(
                                 text = boardDetail.title,
                                 fontFamily = poppins,
                                 fontSize = 20.sp,
-                                fontWeight = FontWeight.SemiBold
+                                fontWeight = FontWeight.Bold
                             )
-                            Spacer(modifier = Modifier.height(20.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
+                                    modifier = Modifier.padding(top = 2.dp),
                                     text = "주최",
                                     fontFamily = poppins,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Normal
                                 )
-                                Spacer(modifier = Modifier.width(5.dp))
-                                VerticalDivider(
-                                    modifier = Modifier.height(14.dp),
-                                    thickness = 1.dp
-                                )
-                                Spacer(modifier = Modifier.width(5.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                CustomVerticalDivider(height = 16, color = PlaceholderGrey)
+                                Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = boardDetail.author?.nickname ?: "닉네임이 없어요",
+                                    modifier = Modifier.padding(top = 1.dp),
+                                    text = boardDetail.author?.nickname ?: "이름이 등록되지 않았어요",
                                     fontFamily = poppins,
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Normal
@@ -241,23 +236,22 @@ fun BoardDetailScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
+                                    modifier = Modifier.padding(top = 2.dp),
                                     text = "일자",
                                     fontFamily = poppins,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Normal
                                 )
-                                Spacer(modifier = Modifier.width(5.dp))
-                                VerticalDivider(
-                                    modifier = Modifier.height(14.dp),
-                                    thickness = 1.dp
-                                )
-                                Spacer(modifier = Modifier.width(5.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                CustomVerticalDivider(height = 16, color = PlaceholderGrey)
+                                Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = if (boardDetail.eventDurations.size > 1) {
-                                        boardDetail.eventDurations[0].eventDay + "~" + boardDetail.eventDurations.last().eventDay
+                                        boardDetail.eventDurations[0].eventDay + " ~ " + boardDetail.eventDurations.last().eventDay
                                     } else {
                                         boardDetail.eventDurations[0].eventDay
                                     },
+                                    modifier = Modifier.padding(top = 1.dp),
                                     fontFamily = poppins,
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Normal
@@ -269,22 +263,23 @@ fun BoardDetailScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
+                                    modifier = Modifier.padding(top = 2.dp),
                                     text = "장소",
                                     fontFamily = poppins,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Normal
                                 )
-                                Spacer(modifier = Modifier.width(5.dp))
-                                VerticalDivider(
-                                    modifier = Modifier.height(14.dp),
-                                    thickness = 1.dp
-                                )
-                                Spacer(modifier = Modifier.width(5.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                CustomVerticalDivider(height = 16, color = PlaceholderGrey)
+                                Spacer(modifier = Modifier.width(8.dp))
                                 Text(
+                                    modifier = Modifier.padding(top = 1.dp),
                                     text = boardDetail.place ?: "장소가 등록되지 않았어요",
                                     fontFamily = poppins,
                                     fontSize = 13.sp,
-                                    fontWeight = FontWeight.Normal
+                                    fontWeight = FontWeight.Normal,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
                             Spacer(modifier = Modifier.height(5.dp))
@@ -293,30 +288,27 @@ fun BoardDetailScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
+                                    modifier = Modifier.padding(top = 2.dp),
                                     text = "시간",
                                     fontFamily = poppins,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Normal
                                 )
-                                Spacer(modifier = Modifier.width(5.dp))
-                                VerticalDivider(
-                                    modifier = Modifier.height(14.dp),
-                                    thickness = 1.dp
-                                )
-                                Spacer(modifier = Modifier.width(5.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                CustomVerticalDivider(height = 16, color = PlaceholderGrey)
+                                Spacer(modifier = Modifier.width(8.dp))
                                 Text(
+                                    modifier = Modifier.padding(top = 1.dp),
                                     text = boardDetail.time ?: "시간이 등록되지 않았어요",
                                     fontFamily = poppins,
                                     fontSize = 13.sp,
-                                    fontWeight = FontWeight.Normal
+                                    fontWeight = FontWeight.Normal,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
                             Spacer(modifier = Modifier.height(15.dp))
-                            HorizontalDivider(
-                                modifier = Modifier.fillMaxWidth(),
-                                thickness = 1.dp,
-                                color = PlaceholderGrey
-                            )
+                            CustomHorizontalDivider(color = PlaceholderGrey)
                             Spacer(modifier = Modifier.height(20.dp))
                             if ((boardDetail.image?.isNotEmpty() == true && boardDetail.image != "image.jpg")) {
                                 val imageModel = ImageRequest.Builder(context = boardContext)
@@ -337,10 +329,7 @@ fun BoardDetailScreen(
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             verticalArrangement = Arrangement.Center
                                         ) {
-                                            CircularProgressIndicator(
-                                                color = HaengshaBlue,
-                                                strokeWidth = 3.dp
-                                            )
+                                            CustomCircularProgressIndicator()
                                             Spacer(modifier = Modifier.height(20.dp))
                                             Text(
                                                 text = "이미지 불러오는 중...",
@@ -369,7 +358,7 @@ fun BoardDetailScreen(
                                 Row(
                                     modifier = Modifier.clickable {
                                         if (userUiState.role == "User") {
-                                            boardApiViewModel.postLike(userUiState.token, eventId)
+                                            boardApiViewModel.patchLike(userUiState.token, eventId)
                                         } else {
                                             Toasty.warning(
                                                 boardContext,
@@ -390,9 +379,10 @@ fun BoardDetailScreen(
                                         contentDescription = "like icon",
                                         tint = LikePink
                                     )
-                                    Spacer(modifier = Modifier.width(3.dp))
+                                    Spacer(modifier = Modifier.width(8.dp))
                                     Text(
                                         text = likeCount.toString(),
+                                        modifier = Modifier.padding(top = 4.dp),
                                         fontFamily = poppins,
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Normal,
@@ -424,7 +414,7 @@ fun BoardDetailScreen(
                                 Row(
                                     modifier = Modifier.clickable {
                                         if (userUiState.role == "User") {
-                                            boardApiViewModel.postFavorite(
+                                            boardApiViewModel.patchFavorite(
                                                 userUiState.token,
                                                 eventId
                                             )
@@ -439,7 +429,7 @@ fun BoardDetailScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
-                                        modifier = Modifier.size(20.dp),
+                                        modifier = Modifier.size(22.dp),
                                         imageVector = if (isFavorite) {
                                             ImageVector.vectorResource(id = R.drawable.favorite_fill_icon)
                                         } else {
@@ -448,9 +438,10 @@ fun BoardDetailScreen(
                                         contentDescription = "favorite count icon",
                                         tint = FavoriteYellow
                                     )
-                                    Spacer(modifier = Modifier.width(3.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
                                     Text(
                                         text = favoriteCount.toString(),
+                                        modifier = Modifier.padding(top = 4.dp),
                                         fontFamily = poppins,
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Normal,

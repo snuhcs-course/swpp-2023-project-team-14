@@ -12,6 +12,6 @@ sealed interface LoginApiUiState {
 
     data class Success(val message: String) : LoginApiUiState
     data class HttpError(val message: String) : LoginApiUiState
-    object NetworkError : LoginApiUiState
-    object Loading : LoginApiUiState
+    data object NetworkError : LoginApiUiState
+    data object Loading : LoginApiUiState
 }

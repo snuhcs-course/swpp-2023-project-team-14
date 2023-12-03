@@ -1,16 +1,16 @@
 package com.example.haengsha.model.route
 
 sealed class LoginRoute(val route: String) {
-    object Login : LoginRoute("Login")
-    object FindPassword : LoginRoute("FindPassword")
-    object FindPasswordOrganizer : LoginRoute("FindPasswordOrganizer")
-    object FindPasswordReset : LoginRoute("FindPasswordReset")
-    object FindPasswordComplete : LoginRoute("FindPasswordComplete")
-    object SignupType : LoginRoute("SignupType")
-    object SignupEmail : LoginRoute("SignupEmail")
-    object SignupOrganizer : LoginRoute("SignupOrganizer")
-    object SignupPassword : LoginRoute("SignupPassword")
-    object SignupUserInfo : LoginRoute("SignupUserInfo")
-    object SignupTerms : LoginRoute("SignupTerms")
-    object SignupComplete : LoginRoute("SignupComplete")
+    data object Login : LoginRoute("Login")
+    data object FindPassword : LoginRoute("FindPassword")
+    data object FindPasswordOrganizer : LoginRoute("FindPasswordOrganizer")
+    data object FindPasswordReset : LoginRoute("FindPasswordReset")
+    data object FindPasswordComplete : LoginRoute("FindPasswordComplete")
+    data object SignupType : LoginRoute("SignupType")
+    data object SignupEmail : LoginRoute("SignupEmail")
+    data object SignupOrganizer : LoginRoute("SignupOrganizer")
+    data object SignupPassword : LoginRoute("SignupPassword")
+    data object SignupUserInfo : LoginRoute("SignupUserInfo")
+    data object SignupTerms : LoginRoute("SignupTerms")
+    data object SignupComplete : LoginRoute("SignupComplete")
 }

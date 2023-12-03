@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,7 +25,7 @@ import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.model.viewModel.home.HomeApiViewModel
 import com.example.haengsha.model.viewModel.home.HomeViewModel
 import com.example.haengsha.model.viewModel.login.LoginApiViewModel
-import com.example.haengsha.ui.screens.dashBoard.Board
+import com.example.haengsha.ui.screens.board.Board
 import com.example.haengsha.ui.screens.favorite.Favorite
 import com.example.haengsha.ui.screens.home.Home
 import com.example.haengsha.ui.screens.login.Login
@@ -54,7 +53,10 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
     val currentScreenType = navigationUiState.type
     val canNavigateBack = currentScreenName == "Details" || currentScreenName == "Write"
 
-    var isLogoutClick by remember { mutableStateOf(false) }
+    var exitConfirmDialog by remember { mutableStateOf(false) }
+    var exitType by remember { mutableStateOf(ExitType.Back) }
+    var isLogoutModal by remember { mutableStateOf(false) }
+    var isLogoutClicked by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Scaffold(
@@ -65,9 +67,14 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
                     canNavigateBack = canNavigateBack,
                     navigateBack = {
                         if (currentScreenType == "Board") {
-                            mainNavController.navigate(MainRoute.Dashboard.route) {
-                                if (backStackEntry.value?.destination?.route == "Dashboard") {
-                                    mainNavController.popBackStack()
+                            if (currentScreenName == "Write") {
+                                exitConfirmDialog = true
+                                exitType = ExitType.Back
+                            } else {
+                                mainNavController.navigate(MainRoute.Board.route) {
+                                    if (backStackEntry.value?.destination?.route == "Dashboard") {
+                                        mainNavController.popBackStack()
+                                    }
                                 }
                             }
                         } else {
@@ -79,7 +86,7 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
                         }
                     },
                     logout = {
-                        isLogoutClick = true
+                        isLogoutModal = true
                     }
                 )
             }
@@ -88,23 +95,38 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
             if (currentScreenName != "Login") {
                 HaengshaBottomAppBar(
                     navigateFavorite = {
-                        mainNavController.navigate(MainRoute.Favorite.route) {
-                            if (backStackEntry.value?.destination?.route == "Favorite") {
-                                mainNavController.popBackStack()
+                        if (currentScreenName == "Write") {
+                            exitConfirmDialog = true
+                            exitType = ExitType.Favorite
+                        } else {
+                            mainNavController.navigate(MainRoute.Favorite.route) {
+                                if (backStackEntry.value?.destination?.route == "Favorite") {
+                                    mainNavController.popBackStack()
+                                }
                             }
                         }
                     },
                     navigateHome = {
-                        mainNavController.navigate(MainRoute.Home.route) {
-                            if (backStackEntry.value?.destination?.route == "Home") {
-                                mainNavController.popBackStack()
+                        if (currentScreenName == "Write") {
+                            exitConfirmDialog = true
+                            exitType = ExitType.Home
+                        } else {
+                            mainNavController.navigate(MainRoute.Home.route) {
+                                if (backStackEntry.value?.destination?.route == "Home") {
+                                    mainNavController.popBackStack()
+                                }
                             }
                         }
                     },
                     navigateBoard = {
-                        mainNavController.navigate(MainRoute.Dashboard.route) {
-                            if (backStackEntry.value?.destination?.route == "Board") {
-                                mainNavController.popBackStack()
+                        if (currentScreenName == "Write") {
+                            exitConfirmDialog = true
+                            exitType = ExitType.Board
+                        } else {
+                            mainNavController.navigate(MainRoute.Board.route) {
+                                if (backStackEntry.value?.destination?.route == "Board") {
+                                    mainNavController.popBackStack()
+                                }
                             }
                         }
                     }
@@ -176,7 +198,7 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
                 )
             }
             composable(
-                MainRoute.Dashboard.route,
+                MainRoute.Board.route,
                 enterTransition = {
                     when (initialState.destination.route) {
                         "Home" -> {
@@ -216,7 +238,7 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
                     }
                 }
             ) {
-                navigationViewModel.updateRouteUiState("Main", MainRoute.Dashboard.route)
+                navigationViewModel.updateRouteUiState("Main", MainRoute.Board.route)
                 Board(
                     innerPadding = innerPadding,
                     userUiState = userUiState,
@@ -283,36 +305,86 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
 //            )
 //        }
         }
-        if (isLogoutClick) {
+        if (exitConfirmDialog) {
             ConfirmDialog(
-                onDismissRequest = { isLogoutClick = false },
+                onDismissRequest = { exitConfirmDialog = false },
                 onClick = {
-                    loginApiViewModel.logout(userUiState.token)
+                    exitConfirmDialog = false
+                    when (exitType) {
+                        ExitType.Back -> {
+                            mainNavController.navigate(MainRoute.Board.route) {
+                                if (backStackEntry.value?.destination?.route == "Dashboard") {
+                                    mainNavController.popBackStack()
+                                }
+                            }
+                        }
+
+                        ExitType.Favorite -> {
+                            mainNavController.navigate(MainRoute.Favorite.route) {
+                                if (backStackEntry.value?.destination?.route == "Favorite") {
+                                    mainNavController.popBackStack()
+                                }
+                            }
+                        }
+
+                        ExitType.Home -> {
+                            mainNavController.navigate(MainRoute.Home.route) {
+                                if (backStackEntry.value?.destination?.route == "Home") {
+                                    mainNavController.popBackStack()
+                                }
+                            }
+                        }
+
+                        ExitType.Board -> {
+                            mainNavController.navigate(MainRoute.Board.route) {
+                                if (backStackEntry.value?.destination?.route == "Board") {
+                                    mainNavController.popBackStack()
+                                }
+                            }
+                        }
+                    }
+                },
+                text = "현재 화면을 나가시겠어요?\n변경사항이 저장되지 않을 수 있습니다."
+            )
+        }
+
+        if (isLogoutModal) {
+            ConfirmDialog(
+                onDismissRequest = { isLogoutModal = false },
+                onClick = {
+                    if (!isLogoutClicked) {
+                        isLogoutClicked = true
+                        loginApiViewModel.logout(userUiState.token)
+                    }
                 },
                 text = "로그아웃 하시겠어요?"
             )
         }
-        if (isLogoutClick) {
+        if (isLogoutClicked) {
             when (loginApiUiState) {
                 is LoginApiUiState.Success -> {
                     userViewModel.resetUserData()
+                    loginApiViewModel.resetLoginApiUiState()
                     boardViewModel.resetBoardUiState()
                     boardApiViewModel.resetBoardListUiState()
                     mainNavController.navigate(MainRoute.Login.route) {
                         popUpTo(mainNavController.graph.id) { inclusive = true }
                     }
-                    LaunchedEffect(Unit) {
-                        Toasty.success(context, "로그아웃 되었습니다.", Toasty.LENGTH_SHORT).show()
-                    }
-                    isLogoutClick = false
+                    isLogoutModal = false
+                    Toasty.success(context, "로그아웃 되었습니다.", Toasty.LENGTH_SHORT).show()
+                    isLogoutClicked = false
                 }
 
                 is LoginApiUiState.HttpError -> {
                     Toasty.warning(context, loginApiUiState.message, Toasty.LENGTH_SHORT).show()
+                    isLogoutClicked = false
+                    loginApiViewModel.resetLoginApiUiState()
                 }
 
                 is LoginApiUiState.NetworkError -> {
                     Toasty.error(context, "인터넷 연결을 확인해주세요.", Toasty.LENGTH_SHORT).show()
+                    isLogoutClicked = false
+                    loginApiViewModel.resetLoginApiUiState()
                 }
 
                 else -> { /*do nothing*/
@@ -320,4 +392,11 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
             }
         }
     }
+}
+
+enum class ExitType {
+    Home,
+    Board,
+    Favorite,
+    Back
 }

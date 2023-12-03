@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,18 +18,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.PrimaryTabRow
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,11 +35,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -61,8 +57,8 @@ import com.example.haengsha.model.viewModel.home.HomeApiViewModel
 import com.example.haengsha.model.viewModel.home.HomeViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.LikePink
-import com.example.haengsha.ui.theme.md_theme_light_onSurfaceVariant
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.CustomCircularProgressIndicator
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -83,7 +79,7 @@ data class EventCardData(
     val image: String = ""
 )
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TabView(
     homeViewModel: HomeViewModel,
@@ -105,54 +101,85 @@ fun TabView(
             title = "Festival", eventCards = it
         )
     })
-
     // Remember the selected tab
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-
+    val coroutineScope = rememberCoroutineScope()
     // Pager state
     val pagerState = rememberPagerState(pageCount = { tabItems.size })
-
-    // Coroutine scope
-    val coroutineScope = rememberCoroutineScope()
-
     val eventContext = LocalContext.current
 
-
     Column(modifier = Modifier.fillMaxSize()) {
-        // Tab row
-        PrimaryTabRow(
-            selectedTabIndex = selectedTabIndex,
-            contentColor = md_theme_light_onSurfaceVariant,
-            indicator = { tabPositions ->
-                TabRowDefaults.PrimaryIndicator(
-                    modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                    color = HaengshaBlue
-                )
-            }) {
-            // Tab items
-            tabItems.forEachIndexed { index, _ ->
-                Tab(
-                    selected = (index == selectedTabIndex),
-                    onClick = {
-                        selectedTabIndex = index
-                        // Change the page when the tab is changed
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .clickable {
+                        selectedTabIndex = 0
                         coroutineScope.launch {
-                            pagerState.animateScrollToPage(index)
+                            pagerState.animateScrollToPage(selectedTabIndex)
                         }
                     },
-                    text = {
-                        if (index == 0) Text(text = "Academic")
-                        else Text(text = "Festival")
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Festival",
+                    modifier = Modifier.drawBehind {
+                        val strokeWidthPx = 2.dp.toPx()
+                        val verticalOffset = size.height + 2.sp.toPx()
+                        drawLine(
+                            color = if (selectedTabIndex == 0) HaengshaBlue else Color.Transparent,
+                            strokeWidth = strokeWidthPx,
+                            start = Offset(0f, verticalOffset),
+                            end = Offset(size.width, verticalOffset)
+                        )
                     },
+                    fontSize = 18.sp,
+                    fontFamily = poppins,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .clickable {
+                        selectedTabIndex = 1
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(selectedTabIndex)
+                        }
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Academic",
+                    modifier = Modifier.drawBehind {
+                        val strokeWidthPx = 2.dp.toPx()
+                        val verticalOffset = size.height + 2.sp.toPx()
+                        drawLine(
+                            color = if (selectedTabIndex == 1) HaengshaBlue else Color.Transparent,
+                            strokeWidth = strokeWidthPx,
+                            start = Offset(0f, verticalOffset),
+                            end = Offset(size.width, verticalOffset)
+                        )
+                    },
+                    fontSize = 18.sp,
+                    fontFamily = poppins,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
                 )
             }
         }
-// Button at the top of the HorizontalPager
+
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(0.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
             Button(
                 onClick = {
@@ -178,62 +205,57 @@ fun TabView(
                     .height(50.dp)
 
             ) {
-                Text(text = "맞춤 추천 받기")
+                Text(
+                    text = "행사 추천 받기",
+                    fontSize = 18.sp,
+                    fontFamily = poppins,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
+                )
             }
         }
         // Pager
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxWidth(),
-
-            ) { index ->
-            selectedTabIndex = if (index == 1) {
-                1
-            } else {
-                0
-            }
-            val itemsToDisplay = if (index == 1) festivalItems else academicItems
+            userScrollEnabled = false
+        ) { index ->
+            selectedTabIndex = if (index == 1) 1 else 0
+            val itemsToDisplay = if (index == 0) festivalItems else academicItems
             // App content
 
             if (itemsToDisplay.isNullOrEmpty()) {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxSize()
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "오늘은 예정된 이벤트가 없어요!",
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            fontFamily = poppins,
-                            fontWeight = FontWeight(500),
-                            color = Color(0xFF000000),
-                            textAlign = TextAlign.Center,
-                        )
+                        text = if (index == 0) "오늘은 예정된 축제가 없어요!" else "오늘은 예정된 학술제가 없어요!",
+                        fontSize = 20.sp,
+                        fontFamily = poppins,
+                        fontWeight = FontWeight(500),
+                        color = Color(0xFF000000),
+                        textAlign = TextAlign.Center,
                     )
                 }
             } else {
-                val listScrollState = rememberScrollState()
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(listScrollState),
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    for (i in itemsToDisplay.indices) {
-                        val eventCardData = itemsToDisplay[i]
+                    items(itemsToDisplay) { item ->
                         Box(modifier = Modifier.clickable {
                             showEventCardPopup = true
-                            selectedEvent = eventCardData
+                            selectedEvent = item
                         }) {
                             EventCard(
-                                organizer = eventCardData.organizer,
-                                eventTitle = eventCardData.eventTitle,
-                                startDate = eventCardData.startDate,
-                                endDate = eventCardData.endDate,
-                                likes = eventCardData.likes,
+                                organizer = item.organizer,
+                                eventTitle = item.eventTitle,
+                                startDate = item.startDate,
+                                endDate = item.endDate,
+                                likes = item.likes,
                             )
                         }
                     }
@@ -243,7 +265,7 @@ fun TabView(
     }
 
     if (showDialog) {
-        val recommendScrollState = rememberScrollState()
+        var recommendationTitle by remember { mutableStateOf("") }
 
         // Display the AlertDialog with "Here is popup"
         AlertDialog(
@@ -257,21 +279,24 @@ fun TabView(
                     spotColor = Color(0x40000000),
                     ambientColor = Color(0x40000000)
                 )
-                .width(500.dp)
-                .height(550.dp)
-                .background(color = Color(0xFFFFFFFF)),
-            containerColor = Color(0xFFFFFFFF),
+                .width(if (userUiState.role == "Group") 300.dp else 500.dp)
+                .height(if (userUiState.role == "Group") 300.dp else 500.dp)
+                .background(color = Color.White),
+            containerColor = Color.White,
             title = {
-                Text(
-                    text = if (userUiState.role != "Group") "당신을 위한 오늘의 맞춤 추천입니다!" else "",
-                    style = TextStyle(
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = recommendationTitle,
                         fontSize = 16.sp,
                         fontFamily = poppins,
                         fontWeight = FontWeight(500),
                         color = Color(0xFF000000),
                         textAlign = TextAlign.Center,
                     )
-                )
+                }
             }, text = {
                 if (userUiState.role == "Group") {
                     Box(
@@ -287,79 +312,96 @@ fun TabView(
                         )
                     }
                 } else {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(recommendScrollState),
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
                         when (recommendationApiUiState) {
                             is RecommendationApiUiState.RecommendationListResult -> {
-                                for (i in recommendationApiUiState.recommendationList.indices) {
-                                    val recommendationItem =
-                                        recommendationApiUiState.recommendationList[i]
-                                    val startDate =
-                                        stringToDate(recommendationItem.eventDurations[0].eventDay)
-                                    var endDate = startDate
-                                    if (recommendationItem.eventDurations.size > 1) {
-                                        endDate =
-                                            stringToDate(recommendationItem.eventDurations[recommendationItem.eventDurations.size - 1].eventDay)
+                                if (recommendationApiUiState.recommendationList.isEmpty()) {
+                                    items(1) {
+                                        Text(
+                                            text = "오늘은 행사를 추천해드릴 수 없어요!\n\n\"${userUiState.nickname}\"님의\n관심사를 바탕으로 추천 행사가\n 매일 새벽에 업데이트됩니다.\n\n내일 다시 와주세요!",
+                                            fontSize = 18.sp,
+                                            fontFamily = poppins,
+                                            fontWeight = FontWeight.Medium,
+                                            textAlign = TextAlign.Center,
+                                            lineHeight = 30.sp
+                                        )
                                     }
+                                } else {
+                                    recommendationTitle =
+                                        "\"${userUiState.nickname}\"님을 위한\n오늘의 맞춤 추천입니다!"
 
-                                    EventCard(
-                                        organizer = recommendationItem.author.nickname,
-                                        eventTitle = recommendationItem.title,
-                                        startDate = startDate,
-                                        endDate = endDate,
-                                        likes = recommendationItem.likeCount,
-                                    )
+                                    items(recommendationApiUiState.recommendationList) { event ->
+                                        val startDate =
+                                            stringToDate(event.eventDurations[0].eventDay)
+                                        var endDate = startDate
+                                        if (event.eventDurations.size > 1) {
+                                            endDate =
+                                                stringToDate(event.eventDurations[event.eventDurations.size - 1].eventDay)
+                                        }
+
+                                        EventCard(
+                                            organizer = event.author.nickname,
+                                            eventTitle = event.title,
+                                            startDate = startDate,
+                                            endDate = endDate,
+                                            likes = event.likeCount,
+                                        )
+                                    }
                                 }
                             }
 
                             is RecommendationApiUiState.Loading -> {
-                                CircularProgressIndicator(
-                                    color = HaengshaBlue,
-                                    strokeWidth = 3.dp
-                                )
-                                Spacer(modifier = Modifier.height(20.dp))
-                                Text(
-                                    text = "추천 행사 불러오는 중...",
-                                    fontFamily = poppins,
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = HaengshaBlue
-                                )
+                                items(1) {
+                                    CustomCircularProgressIndicator()
+                                    Spacer(modifier = Modifier.height(20.dp))
+                                    Text(
+                                        text = "추천 행사 불러오는 중...",
+                                        fontFamily = poppins,
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = HaengshaBlue
+                                    )
+                                }
                             }
 
                             is RecommendationApiUiState.HttpError -> {
-                                Text(
-                                    text = "이벤트를 불러오는 중 문제가 발생했어요!\n\n다시 시도해주세요.",
-                                    fontFamily = poppins,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = HaengshaBlue
-                                )
+                                items(1) {
+                                    Text(
+                                        text = "추천 행사를 불러오는 중 문제가 발생했어요!\n\n다시 시도해주세요.",
+                                        fontFamily = poppins,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = HaengshaBlue
+                                    )
+                                }
                             }
 
                             is RecommendationApiUiState.NetworkError -> {
-                                Text(
-                                    text = "인터넷 연결을 확인해주세요.",
-                                    fontFamily = poppins,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = HaengshaBlue
-                                )
+                                items(1) {
+                                    Text(
+                                        text = "인터넷 연결을 확인해주세요.",
+                                        fontFamily = poppins,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = HaengshaBlue
+                                    )
+                                }
                             }
 
                             is RecommendationApiUiState.Error -> {
-                                Text(
-                                    text = "알 수 없는 문제가 발생했어요!\n\n메일로 문의해주세요.",
-                                    fontFamily = poppins,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = HaengshaBlue
-                                )
+                                items(1) {
+                                    Text(
+                                        text = "알 수 없는 문제가 발생했어요!\n\n메일로 문의해주세요.",
+                                        fontFamily = poppins,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = HaengshaBlue
+                                    )
+                                }
                             }
                         }
                     }
@@ -386,14 +428,13 @@ fun TabView(
                         ) {
                         Text(
                             text = "닫기",
-                            style = TextStyle(
-                                fontSize = 16.sp,
-                                fontFamily = poppins,
-                                fontWeight = FontWeight(500),
-                                color = Color(0xFF000000),
-                                textAlign = TextAlign.Center,
-                                textDecoration = TextDecoration.Underline,
-                            ), modifier = Modifier.padding(0.dp) // 텍스트 주위의 패딩 제거
+                            fontSize = 16.sp,
+                            fontFamily = poppins,
+                            fontWeight = FontWeight(500),
+                            color = Color(0xFF000000),
+                            textAlign = TextAlign.Center,
+                            textDecoration = TextDecoration.Underline,
+                            modifier = Modifier.padding(0.dp) // 텍스트 주위의 패딩 제거
                         )
                     }
                 }
@@ -416,44 +457,40 @@ fun TabView(
                 ) {
 
                     Text(
-                        text = selectedEvent?.eventTitle ?: "N/A", style = TextStyle(
-                            fontSize = 18.sp,
-                            lineHeight = 20.sp,
-                            fontFamily = FontFamily(Font(R.font.poppins_bold)),
-                            fontWeight = FontWeight(400),
-                            color = Color(0xFF343A40),
-                        )
+                        text = selectedEvent?.eventTitle ?: "N/A",
+                        fontSize = 18.sp,
+                        lineHeight = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins_bold)),
+                        fontWeight = FontWeight(400),
+                        color = Color(0xFF343A40),
                     )
 
                     Row {
 
                         Text(
-                            text = selectedEvent?.eventType ?: "N/A", style = TextStyle(
-                                fontSize = 11.sp,
-                                lineHeight = 17.sp,
-                                fontFamily = poppins,
-                                fontWeight = FontWeight(400),
-                                color = Color(0xFF868E96),
-                            )
+                            text = selectedEvent?.eventType ?: "N/A",
+                            fontSize = 11.sp,
+                            lineHeight = 17.sp,
+                            fontFamily = poppins,
+                            fontWeight = FontWeight(400),
+                            color = Color(0xFF868E96),
                         )
                         Text(
-                            text = " | ", style = TextStyle(
-                                fontSize = 11.sp,
-                                lineHeight = 17.sp,
-                                fontFamily = poppins,
-                                fontWeight = FontWeight(400),
-                                color = Color(0xFF868E96),
-                            )
+                            text = " | ",
+                            fontSize = 11.sp,
+                            lineHeight = 17.sp,
+                            fontFamily = poppins,
+                            fontWeight = FontWeight(400),
+                            color = Color(0xFF868E96),
                         )
 
                         Text(
-                            text = selectedEvent?.organizer ?: "N/A", style = TextStyle(
-                                fontSize = 11.sp,
-                                lineHeight = 17.sp,
-                                fontFamily = poppins,
-                                fontWeight = FontWeight(400),
-                                color = Color(0xFF868E96),
-                            )
+                            text = selectedEvent?.organizer ?: "N/A",
+                            fontSize = 11.sp,
+                            lineHeight = 17.sp,
+                            fontFamily = poppins,
+                            fontWeight = FontWeight(400),
+                            color = Color(0xFF868E96),
                         )
                     }
 
@@ -494,47 +531,43 @@ fun TabView(
 
 
                         Text(
-                            text = "주최 | " + selectedEvent?.organizer, style = TextStyle(
-                                fontSize = 12.sp,
-                                lineHeight = 19.56.sp,
-                                fontFamily = poppins,
-                                fontWeight = FontWeight(500),
-                                color = Color(0xFF000000),
-                                textAlign = TextAlign.Center,
-                            )
+                            text = "주최 | " + selectedEvent?.organizer,
+                            fontSize = 12.sp,
+                            lineHeight = 19.56.sp,
+                            fontFamily = poppins,
+                            fontWeight = FontWeight(500),
+                            color = Color(0xFF000000),
+                            textAlign = TextAlign.Center,
                         )
 
                         Text(
-                            text = "일자 | $startDateText - $endDateText", style = TextStyle(
-                                fontSize = 12.sp,
-                                lineHeight = 19.56.sp,
-                                fontFamily = poppins,
-                                fontWeight = FontWeight(500),
-                                color = Color(0xFF000000),
-                                textAlign = TextAlign.Center,
-                            )
+                            text = "일자 | $startDateText - $endDateText",
+                            fontSize = 12.sp,
+                            lineHeight = 19.56.sp,
+                            fontFamily = poppins,
+                            fontWeight = FontWeight(500),
+                            color = Color(0xFF000000),
+                            textAlign = TextAlign.Center,
                         )
 
                         Text(
-                            text = "장소 | " + selectedEvent?.place, style = TextStyle(
-                                fontSize = 12.sp,
-                                lineHeight = 19.56.sp,
-                                fontFamily = poppins,
-                                fontWeight = FontWeight(500),
-                                color = Color(0xFF000000),
-                                textAlign = TextAlign.Center,
-                            )
+                            text = "장소 | " + selectedEvent?.place,
+                            fontSize = 12.sp,
+                            lineHeight = 19.56.sp,
+                            fontFamily = poppins,
+                            fontWeight = FontWeight(500),
+                            color = Color(0xFF000000),
+                            textAlign = TextAlign.Center,
                         )
 
                         Text(
-                            text = "시간 | " + selectedEvent?.time, style = TextStyle(
-                                fontSize = 12.sp,
-                                lineHeight = 19.56.sp,
-                                fontFamily = poppins,
-                                fontWeight = FontWeight(500),
-                                color = Color(0xFF000000),
-                                textAlign = TextAlign.Center,
-                            )
+                            text = "시간 | " + selectedEvent?.time,
+                            fontSize = 12.sp,
+                            lineHeight = 19.56.sp,
+                            fontFamily = poppins,
+                            fontWeight = FontWeight(500),
+                            color = Color(0xFF000000),
+                            textAlign = TextAlign.Center,
                         )
 
                         Row(modifier = Modifier.padding(top = 10.dp)) {
@@ -544,13 +577,12 @@ fun TabView(
                             )
 
                             Text(
-                                text = selectedEvent?.likes.toString(), style = TextStyle(
-                                    fontSize = 10.sp,
-                                    fontFamily = poppins,
-                                    fontWeight = FontWeight(500),
-                                    color = LikePink,
-                                    textAlign = TextAlign.Center,
-                                )
+                                text = selectedEvent?.likes.toString(),
+                                fontSize = 10.sp,
+                                fontFamily = poppins,
+                                fontWeight = FontWeight(500),
+                                color = LikePink,
+                                textAlign = TextAlign.Center,
                             )
                         }
                     }
@@ -576,14 +608,14 @@ fun TabView(
 
                         ) {
                         Text(
-                            text = "닫기", style = TextStyle(
-                                fontSize = 13.sp,
-                                fontFamily = poppins,
-                                fontWeight = FontWeight(500),
-                                color = Color(0xFF000000),
-                                textAlign = TextAlign.Center,
-                                textDecoration = TextDecoration.Underline,
-                            ), modifier = Modifier.padding(0.dp) // 텍스트 주위의 패딩 제거
+                            text = "닫기",
+                            fontSize = 13.sp,
+                            fontFamily = poppins,
+                            fontWeight = FontWeight(500),
+                            color = Color(0xFF000000),
+                            textAlign = TextAlign.Center,
+                            textDecoration = TextDecoration.Underline,
+                            modifier = Modifier.padding(0.dp) // 텍스트 주위의 패딩 제거
                         )
                     }
                 }

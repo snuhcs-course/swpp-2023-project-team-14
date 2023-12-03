@@ -42,6 +42,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.haengsha.R
@@ -360,6 +361,7 @@ fun SearchBar(
     onSubmit: (SearchRequest) -> Unit
 ) {
     var input by remember { mutableStateOf(keyword) }
+    val noSpecialCharacterRegex = "^[0-9a-zA-Zㄱ-ㅎ가-힣\\d]+$".toRegex()
 
     OutlinedTextField(
         modifier = Modifier
@@ -391,7 +393,13 @@ fun SearchBar(
         keyboardActions = KeyboardActions(
             onSearch = {
                 input = input.trimStart().trimEnd()
-                if (input.length in 2..50) {
+                if (input.length !in 2..50) {
+                    Toasty.warning(context, "2자에서 50자 사이로 검색해주세요", Toast.LENGTH_SHORT, true)
+                        .show()
+                } else if (!noSpecialCharacterRegex.matches(input)) {
+                    Toasty.warning(context, "한글, 영어, 숫자로만 검색해주세요", Toast.LENGTH_SHORT, true)
+                        .show()
+                } else {
                     boardViewModel.updateKeyword(input)
                     onSubmit(
                         SearchRequest(
@@ -402,9 +410,6 @@ fun SearchBar(
                             boardViewModel.boardUiState.value.endDate
                         )
                     )
-                } else {
-                    Toasty.warning(context, "2자에서 50자 사이로 검색해주세요", Toast.LENGTH_SHORT, true)
-                        .show()
                 }
                 keyboardActions()
             }
@@ -458,7 +463,7 @@ fun commentTextField(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun customTextField(
+fun customSingleLineTextField(
     placeholder: String,
     enabled: Boolean,
     keyboardActions: () -> Unit
@@ -470,7 +475,6 @@ fun customTextField(
         value = input,
         onValueChange = { input = it },
         modifier = Modifier
-            .testTag(stringResource(R.string.customTextField))
             .indicatorLine(
                 enabled = false,
                 isError = false,
@@ -514,6 +518,7 @@ fun customTextField(
                 placeholder = {
                     Text(
                         text = placeholder,
+                        modifier = Modifier.padding(top = 3.dp),
                         color = if (enabled) HaengshaGrey else Color.Black,
                         fontSize = 16.sp,
                         fontFamily = poppins,
@@ -534,6 +539,75 @@ fun customTextField(
     return input
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun customLargeTextField(
+    placeholder: String,
+    height: Dp
+): String {
+    var input by remember { mutableStateOf("") }
+    val interactionSource = remember { MutableInteractionSource() }
+
+    BasicTextField(
+        value = input,
+        onValueChange = { input = it },
+        modifier = Modifier
+            .indicatorLine(
+                enabled = false,
+                isError = false,
+                interactionSource = interactionSource,
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                )
+            )
+            .fillMaxWidth()
+            .height(height)
+            .background(color = Color(0x00F8F8F8)),
+        enabled = true,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Default
+        ),
+        textStyle = TextStyle(
+            color = Color.Black,
+            fontSize = 18.sp,
+            fontFamily = poppins,
+            fontWeight = FontWeight.Normal,
+        ),
+        decorationBox = { innerTextField ->
+            TextFieldDefaults.DecorationBox(
+                value = input,
+                innerTextField = innerTextField,
+                enabled = true,
+                singleLine = false,
+                visualTransformation = VisualTransformation.None,
+                interactionSource = interactionSource,
+                contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(20.dp),
+                placeholder = {
+                    Text(
+                        text = placeholder,
+                        color = PlaceholderGrey,
+                        fontSize = 18.sp,
+                        fontFamily = poppins,
+                        fontWeight = FontWeight.Normal,
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    focusedContainerColor = Color(0x00F8F8F8),
+                    unfocusedContainerColor = Color(0x00F8F8F8),
+                    disabledContainerColor = Color(0x00F8F8F8)
+                ),
+            )
+        }
+    )
+    return input
+}
+
 @Preview(showBackground = true)
 @Composable
 fun TextFieldPreview() {
@@ -542,6 +616,6 @@ fun TextFieldPreview() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        customTextField("자하연 앞", true) {}
+        customSingleLineTextField("자하연 앞", true) {}
     }
 }

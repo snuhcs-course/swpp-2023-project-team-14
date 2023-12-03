@@ -55,7 +55,7 @@ class MainScreenNavigationTest {
     @Test
     fun mainNavController_clickBottomAppBarBoardButton_navigatesToBoardScreen() {
         navigateToBoardScreen()
-        mainNavController.assertCurrentRouteName(MainRoute.Dashboard.route)
+        mainNavController.assertCurrentRouteName(MainRoute.Board.route)
     }
 
     @Test

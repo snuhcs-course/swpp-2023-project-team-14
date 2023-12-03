@@ -1,9 +1,9 @@
 package com.example.haengsha.model.route
 
 sealed class MainRoute(val route: String) {
-    object Login : MainRoute("Login")
-    object Home : MainRoute("Home")
-    object Favorite : MainRoute("Favorite")
-    object Dashboard : MainRoute("Board")
-    object Setting : MainRoute("Setting")
+    data object Login : MainRoute("Login")
+    data object Home : MainRoute("Home")
+    data object Favorite : MainRoute("Favorite")
+    data object Board : MainRoute("Board")
+    data object Setting : MainRoute("Setting")
 }

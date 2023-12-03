@@ -6,7 +6,7 @@ import com.example.haengsha.model.network.dataModel.BoardListResponse
 import com.example.haengsha.model.network.dataModel.BoardPostRequest
 import com.example.haengsha.model.network.dataModel.BoardPostResponse
 import com.example.haengsha.model.network.dataModel.EventDurationResponse
-import com.example.haengsha.model.network.dataModel.PostLikeFavoriteResponse
+import com.example.haengsha.model.network.dataModel.PatchLikeFavoriteResponse
 import com.example.haengsha.model.network.dataModel.SearchRequest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -72,7 +72,7 @@ object FakeBoardDataSource {
         isFavorite
     )
 
-    val postLikeFavoriteResponse = PostLikeFavoriteResponse(
+    val patchLikeFavoriteResponse = PatchLikeFavoriteResponse(
         id,
         title,
         isFestival,

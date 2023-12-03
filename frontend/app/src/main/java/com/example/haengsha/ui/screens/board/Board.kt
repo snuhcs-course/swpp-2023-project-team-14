@@ -1,13 +1,9 @@
-package com.example.haengsha.ui.screens.dashBoard
+package com.example.haengsha.ui.screens.board
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,15 +24,13 @@ fun Board(
     boardNavController: NavHostController = rememberNavController(),
     isTest: Boolean = false
 ) {
-    var eventId by rememberSaveable { mutableIntStateOf(0) }
-
     NavHost(
         navController = boardNavController,
-        startDestination = BoardRoute.Dashboard.route
+        startDestination = BoardRoute.Board.route
     ) {
-        composable(BoardRoute.Dashboard.route) {
-            navigationViewModel.updateRouteUiState("Board", BoardRoute.Dashboard.route)
-            eventId = boardScreen(
+        composable(BoardRoute.Board.route) {
+            navigationViewModel.updateRouteUiState("Board", BoardRoute.Board.route)
+            BoardScreen(
                 innerPadding = innerPadding,
                 boardViewModel = boardViewModel,
                 boardApiViewModel = boardApiViewModel,
@@ -78,7 +72,7 @@ fun Board(
                 boardApiViewModel = boardApiViewModel,
                 boardViewModel = boardViewModel,
                 userUiState = userUiState,
-                eventId = eventId
+                eventId = boardViewModel.eventId.value
             )
         }
         composable(
@@ -112,6 +106,7 @@ fun Board(
             BoardPostScreen(
                 innerPadding = innerPadding,
                 boardApiViewModel = boardApiViewModel,
+                boardViewModel = boardViewModel,
                 boardNavController = boardNavController,
                 userUiState = userUiState
             )

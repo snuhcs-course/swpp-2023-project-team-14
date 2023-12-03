@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -15,7 +16,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -122,9 +122,11 @@ fun dropDown(category: String): String {
                         }
                     )
                     if (options.indexOf(selectionOption) != options.size - 1) {
-                        HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 15.dp),
-                            color = Color(0xFFE0E0E0)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 15.dp)
+                                .background(Color(0xFFE0E0E0))
                         )
                     }
                 }
@@ -252,9 +254,11 @@ fun multiSelectDropDown(category: String): List<String> {
                         }
                     )
                     if (options.indexOf(selectionOption) != options.size - 1) {
-                        HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 20.dp),
-                            color = Color(0xFFE0E0E0)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp)
+                                .background(Color(0xFFE0E0E0))
                         )
                     }
                 }

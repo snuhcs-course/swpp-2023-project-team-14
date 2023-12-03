@@ -17,7 +17,7 @@ import com.example.haengsha.model.uiState.board.BoardDetailUiState
 import com.example.haengsha.model.uiState.board.BoardFavoriteUiState
 import com.example.haengsha.model.uiState.board.BoardListUiState
 import com.example.haengsha.model.uiState.board.BoardPostApiUiState
-import com.example.haengsha.model.uiState.board.PostLikeFavoriteUiState
+import com.example.haengsha.model.uiState.board.PatchLikeFavoriteUiState
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -35,7 +35,9 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
     var boardPostApiUiState: BoardPostApiUiState by mutableStateOf(BoardPostApiUiState.Loading)
         private set
 
-    var postLikeFavoriteUiState: PostLikeFavoriteUiState by mutableStateOf(PostLikeFavoriteUiState.Loading)
+    var patchLikeFavoriteUiState: PatchLikeFavoriteUiState by mutableStateOf(
+        PatchLikeFavoriteUiState.Loading
+    )
         private set
 
     companion object {
@@ -114,52 +116,60 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
         }
     }
 
-    fun postLike(token: String, postId: Int) {
+    fun patchLike(token: String, postId: Int) {
         viewModelScope.launch {
-            postLikeFavoriteUiState = PostLikeFavoriteUiState.Loading
-            postLikeFavoriteUiState = try {
+            patchLikeFavoriteUiState = PatchLikeFavoriteUiState.Loading
+            patchLikeFavoriteUiState = try {
                 val authToken = "Token $token"
-                val boardDetailResult = boardDataRepository.postLike(authToken, postId)
-                PostLikeFavoriteUiState.Success(
+                val boardDetailResult = boardDataRepository.patchLike(authToken, postId)
+                PatchLikeFavoriteUiState.Success(
                     boardDetailResult.likeCount,
                     boardDetailResult.favoriteCount,
                     boardDetailResult.isLiked,
                     boardDetailResult.isFavorite
                 )
             } catch (e: HttpException) {
-                PostLikeFavoriteUiState.HttpError
+                PatchLikeFavoriteUiState.HttpError
             } catch (e: IOException) {
-                PostLikeFavoriteUiState.NetworkError
+                PatchLikeFavoriteUiState.NetworkError
             } catch (e: Exception) {
-                PostLikeFavoriteUiState.Error
+                PatchLikeFavoriteUiState.Error
             }
         }
     }
 
-    fun postFavorite(token: String, postId: Int) {
+    fun patchFavorite(token: String, postId: Int) {
         viewModelScope.launch {
-            postLikeFavoriteUiState = PostLikeFavoriteUiState.Loading
-            postLikeFavoriteUiState = try {
+            patchLikeFavoriteUiState = PatchLikeFavoriteUiState.Loading
+            patchLikeFavoriteUiState = try {
                 val authToken = "Token $token"
-                val boardDetailResult = boardDataRepository.postFavorite(authToken, postId)
-                PostLikeFavoriteUiState.Success(
+                val boardDetailResult = boardDataRepository.patchFavorite(authToken, postId)
+                PatchLikeFavoriteUiState.Success(
                     boardDetailResult.likeCount,
                     boardDetailResult.favoriteCount,
                     boardDetailResult.isLiked,
                     boardDetailResult.isFavorite
                 )
             } catch (e: HttpException) {
-                PostLikeFavoriteUiState.HttpError
+                PatchLikeFavoriteUiState.HttpError
             } catch (e: IOException) {
-                PostLikeFavoriteUiState.NetworkError
+                PatchLikeFavoriteUiState.NetworkError
             } catch (e: Exception) {
-                PostLikeFavoriteUiState.Error
+                PatchLikeFavoriteUiState.Error
             }
         }
     }
 
-    fun resetLikePostUiState() {
-        postLikeFavoriteUiState = PostLikeFavoriteUiState.Loading
+    fun resetPatchLikeFavoriteUiState() {
+        patchLikeFavoriteUiState = PatchLikeFavoriteUiState.Loading
+    }
+
+    fun resetBoardListUiState() {
+        boardListUiState = BoardListUiState.Loading
+    }
+
+    fun resetBoardPostApiUiState() {
+        boardPostApiUiState = BoardPostApiUiState.Loading
     }
 
     fun searchEvent(searchRequest: SearchRequest) {
@@ -176,9 +186,5 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
                 BoardListUiState.Error
             }
         }
-    }
-
-    fun resetBoardListUiState() {
-        boardListUiState = BoardListUiState.Loading
     }
 }

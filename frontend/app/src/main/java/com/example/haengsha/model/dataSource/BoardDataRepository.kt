@@ -5,7 +5,7 @@ import com.example.haengsha.model.network.dataModel.BoardDetailResponse
 import com.example.haengsha.model.network.dataModel.BoardListResponse
 import com.example.haengsha.model.network.dataModel.BoardPostRequest
 import com.example.haengsha.model.network.dataModel.BoardPostResponse
-import com.example.haengsha.model.network.dataModel.PostLikeFavoriteResponse
+import com.example.haengsha.model.network.dataModel.PatchLikeFavoriteResponse
 import com.example.haengsha.model.network.dataModel.SearchRequest
 
 interface BoardDataRepository {
@@ -13,8 +13,8 @@ interface BoardDataRepository {
     suspend fun getBoardDetail(token: String, postId: Int): BoardDetailResponse
     suspend fun getFavoriteList(token: String): List<BoardListResponse>
     suspend fun postEvent(boardPostRequest: BoardPostRequest): BoardPostResponse
-    suspend fun postLike(token: String, postId: Int): PostLikeFavoriteResponse
-    suspend fun postFavorite(token: String, postId: Int): PostLikeFavoriteResponse
+    suspend fun patchLike(token: String, postId: Int): PatchLikeFavoriteResponse
+    suspend fun patchFavorite(token: String, postId: Int): PatchLikeFavoriteResponse
     suspend fun searchEvent(searchRequest: SearchRequest): List<BoardListResponse>
 }
 
@@ -46,12 +46,12 @@ class NetworkBoardDataRepository(
         )
     }
 
-    override suspend fun postLike(token: String, postId: Int): PostLikeFavoriteResponse {
-        return boardApiService.postLike(token, postId)
+    override suspend fun patchLike(token: String, postId: Int): PatchLikeFavoriteResponse {
+        return boardApiService.patchLike(token, postId)
     }
 
-    override suspend fun postFavorite(token: String, postId: Int): PostLikeFavoriteResponse {
-        return boardApiService.postFavorite(token, postId)
+    override suspend fun patchFavorite(token: String, postId: Int): PatchLikeFavoriteResponse {
+        return boardApiService.patchFavorite(token, postId)
     }
 
     override suspend fun searchEvent(searchRequest: SearchRequest): List<BoardListResponse> {

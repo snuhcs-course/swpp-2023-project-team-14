@@ -14,6 +14,13 @@ class BoardViewModel : ViewModel() {
     private val _boardPostUiState = MutableStateFlow(BoardPostUiState())
     val boardPostUiState = _boardPostUiState.asStateFlow()
 
+    private val _eventId = MutableStateFlow(0)
+    val eventId = _eventId.asStateFlow()
+
+    fun updateEventId(newEventId: Int) {
+        _eventId.value = newEventId
+    }
+
     var isError = false
 
     fun isError() {
@@ -39,40 +46,59 @@ class BoardViewModel : ViewModel() {
     }
 
     fun updateKeyword(newKeyword: String) {
-        updateSearchParameter(newKeyword, "keyword")
+        updateSearchParameter(newKeyword, "keyword", "filter")
     }
 
     fun updateIsFestival(newIsFestival: Int) {
-        updateSearchParameter(newIsFestival.toString(), "isFestival")
+        updateSearchParameter(newIsFestival.toString(), "isFestival", "filter")
     }
 
-    fun updateStartDate(newStartDate: String) {
-        updateSearchParameter(newStartDate, "startDate")
+    fun updateFilterStartDate(newStartDate: String) {
+        updateSearchParameter(newStartDate, "startDate", "filter")
     }
 
-    fun updateEndDate(newEndDate: String) {
-        updateSearchParameter(newEndDate, "endDate")
+    fun updateFilterEndDate(newEndDate: String) {
+        updateSearchParameter(newEndDate, "endDate", "filter")
     }
 
-    fun updateInitialState() {
-        updateSearchParameter("foo", "bar")
+    fun updateFilterInitialState() {
+        updateSearchParameter("foo", "bar", "filter")
     }
 
     fun resetBoardUiState() {
         _boardUiState.value = BoardUiState()
     }
 
-    private fun updateSearchParameter(newParameter: String, type: String) {
-        _boardUiState.update { currentState ->
-            currentState.copy(
-                keyword = if (type == "keyword") newParameter else currentState.keyword,
-                isFestival = if (type == "isFestival") newParameter.toInt() else currentState.isFestival,
-                startDate = if (type == "startDate") newParameter else currentState.startDate,
-                endDate = if (type == "endDate") newParameter else currentState.endDate,
-                initialState = false
-            )
-        }
+    fun updatePostStartDate(newStartDate: String) {
+        updateSearchParameter(newStartDate, "startDate", "post")
     }
 
+    fun updatePostEndDate(newEndDate: String) {
+        updateSearchParameter(newEndDate, "endDate", "post")
+    }
 
+    fun resetBoardPostUiState() {
+        _boardPostUiState.value = BoardPostUiState()
+    }
+
+    private fun updateSearchParameter(newParameter: String, type: String, usage: String) {
+        if (usage == "post") {
+            _boardPostUiState.update { currentState ->
+                currentState.copy(
+                    startDate = if (type == "startDate") newParameter else currentState.startDate,
+                    endDate = if (type == "endDate") newParameter else currentState.endDate
+                )
+            }
+        } else { //usage == "filter"
+            _boardUiState.update { currentState ->
+                currentState.copy(
+                    keyword = if (type == "keyword") newParameter else currentState.keyword,
+                    isFestival = if (type == "isFestival") newParameter.toInt() else currentState.isFestival,
+                    startDate = if (type == "startDate") newParameter else currentState.startDate,
+                    endDate = if (type == "endDate") newParameter else currentState.endDate,
+                    initialState = false
+                )
+            }
+        }
+    }
 }

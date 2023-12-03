@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
@@ -61,15 +62,19 @@ fun FindPasswordScreen(
     val codeExpireSecond = String.format("%02d", codeExpireTime % 60)
     var emailInput: String by rememberSaveable { mutableStateOf("") }
     var codeInput: String by remember { mutableStateOf("") }
+    var isCodeSending by remember { mutableStateOf(false) }
     var isEmailError by remember { mutableStateOf(false) }
     var isCodeError by remember { mutableStateOf(false) }
+    var isNextClicked by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val configuration = LocalConfiguration.current
+    val deviceHeight = configuration.screenHeightDp.dp
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 60.dp)
+            .padding(vertical = deviceHeight / 15)
             .pointerInput(Unit) {
                 detectTapGestures(onTap = {
                     keyboardController?.hide()
@@ -108,33 +113,51 @@ fun FindPasswordScreen(
                     .height(20.dp),
                 contentAlignment = Alignment.CenterEnd
             ) {
-                Text(
-                    modifier = Modifier.clickable {
-                        if (emailInput.trimStart() == "") {
-                            isEmailError = true
-                            Toasty
-                                .error(loginContext, "이메일을 입력해주세요", Toast.LENGTH_SHORT, true)
-                                .show()
-                        } else if (emailInput.trimEnd().endsWith("@snu.ac.kr").not()) {
-                            isEmailError = true
-                            Toasty
-                                .warning(loginContext, "SNU 이메일을 입력해주세요", Toast.LENGTH_SHORT, true)
-                                .show()
-                        } else {
-                            isEmailError = false
-                            emailVerifyTrigger = true
-                            loginApiViewModel.findEmailVerify(emailInput)
-                        }
-                    },
-                    text = "인증번호 " + if (codeSent == 0) "" else {
-                        "재"
-                    } + "발송",
-                    fontFamily = poppins,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.End,
-                    color = FieldStrokeBlue
-                )
+                if (isCodeSending) {
+                    Text(
+                        text = "인증번호 발송 중...",
+                        fontFamily = poppins,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.End,
+                        color = FieldStrokeBlue
+                    )
+                } else {
+                    Text(
+                        modifier = Modifier.clickable {
+                            if (emailInput.trimStart() == "") {
+                                isEmailError = true
+                                Toasty
+                                    .error(loginContext, "이메일을 입력해주세요", Toast.LENGTH_SHORT, true)
+                                    .show()
+                            } else if (emailInput.trimEnd().endsWith("@snu.ac.kr").not()) {
+                                isEmailError = true
+                                Toasty
+                                    .warning(
+                                        loginContext,
+                                        "SNU 이메일을 입력해주세요",
+                                        Toast.LENGTH_SHORT,
+                                        true
+                                    )
+                                    .show()
+                            } else {
+                                isCodeSending = true
+                                isEmailError = false
+                                emailVerifyTrigger = true
+                                codeVerifyTrigger = false
+                                loginApiViewModel.findEmailVerify(emailInput)
+                            }
+                        },
+                        text = "인증번호 " + if (codeSent == 0) "" else {
+                            "재"
+                        } + "발송",
+                        fontFamily = poppins,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.End,
+                        color = FieldStrokeBlue
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(40.dp))
             Text(
@@ -166,7 +189,7 @@ fun FindPasswordScreen(
                     color = FieldStrokeBlue
                 )
             }
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(deviceHeight / 15))
             CommonBlueButton(text = "다음",
                 onClick = {
                     if (isTest) {
@@ -189,11 +212,27 @@ fun FindPasswordScreen(
                             Toast.LENGTH_SHORT,
                             true
                         ).show()
+                    } else if (codeExpireTime == 0) {
+                        Toasty
+                            .warning(
+                                loginContext,
+                                "인증번호가 만료되었습니다.\n재발송해주세요",
+                                Toast.LENGTH_SHORT,
+                                true
+                            )
+                            .show()
+                        isCodeError = true
+                        codeVerifyTrigger = false
+                        loginApiViewModel.resetLoginApiUiState()
                     } else {
-                        codeVerifyTrigger = true
+                        if (!isNextClicked) {
+                            isNextClicked = true
+                            codeVerifyTrigger = true
+                            loginApiViewModel.loginCodeVerify(emailInput, codeInput)
+                        }
                     }
                 })
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(deviceHeight / 15))
             Box(
                 modifier = Modifier
                     .width(270.dp)
@@ -235,7 +274,6 @@ fun FindPasswordScreen(
     }
 
     if (emailVerifyTrigger) {
-        codeVerifyTrigger = false
         when (loginApiUiState) {
             is LoginApiUiState.Success -> {
                 Toasty
@@ -246,6 +284,7 @@ fun FindPasswordScreen(
                         true
                     )
                     .show()
+                isCodeSending = false
                 codeSent++
                 emailVerifyTrigger = false
                 loginApiViewModel.resetLoginApiUiState()
@@ -255,11 +294,12 @@ fun FindPasswordScreen(
                 Toasty
                     .error(
                         loginContext,
-                        loginApiUiState.message,
+                        "가입되지 않은 계정입니다.",
                         Toast.LENGTH_SHORT,
                         true
                     )
                     .show()
+                isCodeSending = false
                 isEmailError = true
                 emailVerifyTrigger = false
                 loginApiViewModel.resetLoginApiUiState()
@@ -274,12 +314,13 @@ fun FindPasswordScreen(
                         true
                     )
                     .show()
+                isCodeSending = false
                 emailVerifyTrigger = false
                 loginApiViewModel.resetLoginApiUiState()
             }
 
             is LoginApiUiState.Loading -> {
-                /* Loading State, may add some loading UI or throw error after long time */
+                /* Loading State, handled in upper codes */
             }
 
             else -> {
@@ -289,23 +330,6 @@ fun FindPasswordScreen(
     }
 
     if (codeVerifyTrigger) {
-        if (codeExpireTime == 0) {
-            Toasty
-                .warning(
-                    loginContext,
-                    "인증번호가 만료되었습니다.\n재발송해주세요",
-                    Toast.LENGTH_SHORT,
-                    true
-                )
-                .show()
-            isCodeError = true
-            codeVerifyTrigger = false
-            loginApiViewModel.resetLoginApiUiState()
-        } else {
-            LaunchedEffect(Unit) {
-                loginApiViewModel.loginCodeVerify(emailInput, codeInput)
-            }
-        }
         when (loginApiUiState) {
             is LoginApiUiState.Success -> {
                 findPasswordEmailUpdate(emailInput)
@@ -324,6 +348,7 @@ fun FindPasswordScreen(
                     )
                     .show()
                 isCodeError = true
+                isNextClicked = false
                 codeVerifyTrigger = false
                 loginApiViewModel.resetLoginApiUiState()
             }
@@ -338,11 +363,12 @@ fun FindPasswordScreen(
                     )
                     .show()
                 codeVerifyTrigger = false
+                isNextClicked = false
                 loginApiViewModel.resetLoginApiUiState()
             }
 
             is LoginApiUiState.Loading -> {
-                /* Loading State, may add some loading UI or throw error after long time */
+                /* Loading Stat, handled in upper codes */
             }
 
             else -> {

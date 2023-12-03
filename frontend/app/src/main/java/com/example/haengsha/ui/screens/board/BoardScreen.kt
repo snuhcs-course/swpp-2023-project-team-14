@@ -1,4 +1,4 @@
-package com.example.haengsha.ui.screens.dashBoard
+package com.example.haengsha.ui.screens.board
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,17 +18,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -58,27 +55,27 @@ import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.CustomCircularProgressIndicator
 import com.example.haengsha.ui.uiComponents.CustomDatePickerDialog
+import com.example.haengsha.ui.uiComponents.CustomHorizontalDivider
 import com.example.haengsha.ui.uiComponents.FilterDialog
 import com.example.haengsha.ui.uiComponents.SearchBar
-import com.example.haengsha.ui.uiComponents.boardList
+import com.example.haengsha.ui.uiComponents.listItem
 import es.dmoral.toasty.Toasty
 
 @Composable
-fun boardScreen(
+fun BoardScreen(
     innerPadding: PaddingValues,
     boardViewModel: BoardViewModel,
     boardApiViewModel: BoardApiViewModel,
     boardNavController: NavController,
     userUiState: UserUiState,
     isTest: Boolean
-): Int {
+) {
     val boardUiState = boardViewModel.boardUiState.collectAsState()
     val boardListUiState = boardApiViewModel.boardListUiState
     val boardContext = LocalContext.current
-    val scrollState = rememberScrollState()
 
-    var eventId by remember { mutableIntStateOf(0) }
     val isFestival = boardUiState.value.isFestival
     val startDate = boardUiState.value.startDate
     val endDate = boardUiState.value.endDate
@@ -160,11 +157,9 @@ fun boardScreen(
                     .height(2.dp)
                     .background(PlaceholderGrey)
             )
-            // TODO material3 1.2.0-alpha08 부터 lazycolumn에 IndexOutOfBoundsException 발생 -> downgrade하려면 TapView.kt 수정해야 함
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(scrollState)
             ) {
                 when (boardListUiState) {
                     is BoardListUiState.HttpError -> {
@@ -235,7 +230,6 @@ fun boardScreen(
                                 )
                                 if (isTest) {
                                     Column(modifier = Modifier.clickable {
-                                        eventId = 0
                                         boardNavController.navigate(BoardRoute.BoardDetail.route)
                                     }) { Text("test") }
                                 }
@@ -248,10 +242,7 @@ fun boardScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center
                             ) {
-                                CircularProgressIndicator(
-                                    color = HaengshaBlue,
-                                    strokeWidth = 3.dp
-                                )
+                                CustomCircularProgressIndicator()
                                 Spacer(modifier = Modifier.height(20.dp))
                                 Text(
                                     text = "행사 찾아보는 중...",
@@ -281,21 +272,19 @@ fun boardScreen(
                                 )
                             }
                         } else {
-                            for (i in boardListUiState.boardList.indices) {
-                                Column(modifier = Modifier.clickable {
-                                    eventId = boardListUiState.boardList[i].id
-                                    boardNavController.navigate(BoardRoute.BoardDetail.route)
-                                }) {
-                                    boardList(
-                                        isFavorite = false,
-                                        event = boardListUiState.boardList[i]
-                                    )
+                            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                items(boardListUiState.boardList) { event ->
+                                    Column(modifier = Modifier.clickable {
+                                        boardViewModel.updateEventId(event.id)
+                                        boardNavController.navigate(BoardRoute.BoardDetail.route)
+                                    }) {
+                                        listItem(
+                                            isFavorite = false,
+                                            event = event
+                                        )
+                                    }
+                                    CustomHorizontalDivider(color = PlaceholderGrey)
                                 }
-                                HorizontalDivider(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    thickness = 1.dp,
-                                    color = PlaceholderGrey
-                                )
                             }
                         }
                     }
@@ -329,7 +318,7 @@ fun boardScreen(
                 context = boardContext,
                 onSubmit = {
                     boardApiViewModel.searchEvent(it)
-                    boardViewModel.updateInitialState()
+                    boardViewModel.updateFilterInitialState()
                 },
                 onDismissRequest = { filterModal = false },
                 onStartDatePick = { startDatePick = true },
@@ -341,7 +330,8 @@ fun boardScreen(
             CustomDatePickerDialog(
                 onDismissRequest = { startDatePick = false },
                 boardViewModel = boardViewModel,
-                type = "startDate"
+                type = "startDate",
+                usage = "filter"
             )
         }
 
@@ -349,10 +339,9 @@ fun boardScreen(
             CustomDatePickerDialog(
                 onDismissRequest = { endDatePick = false },
                 boardViewModel = boardViewModel,
-                type = "endDate"
+                type = "endDate",
+                usage = "filter"
             )
         }
     }
-
-    return eventId
 }

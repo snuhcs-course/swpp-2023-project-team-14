@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,7 +22,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
@@ -118,7 +118,8 @@ fun ConfirmDialog(
         ) {
             Column(
                 modifier = Modifier
-                    .size(width = 320.dp, height = 160.dp)
+                    .width(320.dp)
+                    .heightIn(min = 160.dp)
                     .shadow(elevation = 5.dp, shape = RoundedCornerShape(15.dp))
                     .background(color = md_theme_light_onPrimary),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -142,7 +143,7 @@ fun ConfirmDialog(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp),
+                        .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     ModalCancelButton(
@@ -191,11 +192,7 @@ fun FilterDialog(
                     fontWeight = FontWeight.SemiBold
                 )
                 Spacer(modifier = Modifier.height(20.dp))
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    thickness = 1.dp,
-                    color = HaengshaGrey
-                )
+                CustomHorizontalDivider(color = HaengshaGrey)
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
                     modifier = Modifier.padding(horizontal = 15.dp),
@@ -228,6 +225,7 @@ fun FilterDialog(
                     ) {
                         Text(
                             text = boardUiState.startDate.ifEmpty { "시작일을 선택해주세요" },
+                            modifier = Modifier.padding(top = 3.dp),
                             fontFamily = poppins,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
@@ -274,6 +272,7 @@ fun FilterDialog(
                     ) {
                         Text(
                             text = boardUiState.endDate.ifEmpty { "종료일을 선택해주세요" },
+                            modifier = Modifier.padding(top = 3.dp),
                             fontFamily = poppins,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
@@ -360,11 +359,7 @@ fun FilterDialog(
                     Spacer(modifier = Modifier.weight(1f))
                 }
                 Spacer(modifier = Modifier.height(20.dp))
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    thickness = 1.dp,
-                    color = HaengshaGrey
-                )
+                CustomHorizontalDivider(color = HaengshaGrey)
                 Spacer(modifier = Modifier.height(20.dp))
                 Row(
                     modifier = Modifier
@@ -377,6 +372,7 @@ fun FilterDialog(
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     ModalConfirmButton(
+                        type = "적용",
                         onClick = {
                             onSubmit(
                                 SearchRequest(
@@ -402,7 +398,8 @@ fun FilterDialog(
 fun CustomDatePickerDialog(
     onDismissRequest: () -> Unit,
     boardViewModel: BoardViewModel,
-    type: String
+    type: String,
+    usage: String
 ) {
     val currentDate = LocalDate.now()
     val initialDate = Calendar.getInstance()
@@ -417,15 +414,48 @@ fun CustomDatePickerDialog(
     DatePickerDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
-            Button(onClick = {
-                selectedDate = datePickerState.selectedDateMillis ?: initialDate.timeInMillis
-                if (type == "startDate") {
-                    boardViewModel.updateStartDate(dateFormatter.format(Date(selectedDate)))
-                } else {
-                    boardViewModel.updateEndDate(dateFormatter.format(Date(selectedDate)))
-                }
-                onDismissRequest()
-            }) {
+            Button(
+                onClick = {
+                    selectedDate = datePickerState.selectedDateMillis ?: initialDate.timeInMillis
+                    if (type == "startDate") {
+                        if (usage == "post") {
+                            boardViewModel.updatePostStartDate(
+                                dateFormatter.format(
+                                    Date(
+                                        selectedDate
+                                    )
+                                )
+                            )
+                        } else { // usage == "filter"
+                            boardViewModel.updateFilterStartDate(
+                                dateFormatter.format(
+                                    Date(
+                                        selectedDate
+                                    )
+                                )
+                            )
+                        }
+                    } else {
+                        if (usage == "post") {
+                            boardViewModel.updatePostEndDate(
+                                dateFormatter.format(
+                                    Date(
+                                        selectedDate
+                                    )
+                                )
+                            )
+                        } else { // usage == "filter"
+                            boardViewModel.updateFilterEndDate(
+                                dateFormatter.format(
+                                    Date(
+                                        selectedDate
+                                    )
+                                )
+                            )
+                        }
+                    }
+                    onDismissRequest()
+                }) {
                 Text(text = "확인")
             }
         },

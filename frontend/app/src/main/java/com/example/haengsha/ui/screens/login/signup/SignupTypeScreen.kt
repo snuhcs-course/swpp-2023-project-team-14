@@ -4,15 +4,16 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -32,15 +33,21 @@ fun SignupTypeScreen(
     loginNavController: NavHostController,
     loginNavBack: () -> Unit
 ) {
+    val configuration = LocalConfiguration.current
+    val deviceWidth = configuration.screenWidthDp.dp
+    val deviceHeight = configuration.screenHeightDp.dp
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 60.dp, bottom = 60.dp),
+            .padding(vertical = deviceHeight / 15),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(1) {
             Text(
-                modifier = Modifier.width(320.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = deviceWidth / 15),
                 text = "개인 유저 가입하기",
                 fontFamily = poppins,
                 fontSize = 30.sp,
@@ -48,7 +55,9 @@ fun SignupTypeScreen(
             )
             Spacer(modifier = Modifier.height(30.dp))
             Text(
-                modifier = Modifier.width(320.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = deviceWidth / 15),
                 text = stringResource(id = R.string.personal_signup_guide),
                 fontFamily = poppins,
                 fontSize = 18.sp,
@@ -60,7 +69,9 @@ fun SignupTypeScreen(
             }
             Spacer(modifier = Modifier.height(75.dp))
             Text(
-                modifier = Modifier.width(320.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = deviceWidth / 15),
                 text = "단체 유저 가입하기",
                 fontFamily = poppins,
                 fontSize = 30.sp,
@@ -68,7 +79,9 @@ fun SignupTypeScreen(
             )
             Spacer(modifier = Modifier.height(30.dp))
             Text(
-                modifier = Modifier.width(320.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = deviceWidth / 15),
                 text = stringResource(id = R.string.organizer_signup_guide),
                 fontFamily = poppins,
                 fontSize = 18.sp,
