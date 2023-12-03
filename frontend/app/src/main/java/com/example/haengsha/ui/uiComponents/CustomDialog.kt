@@ -1,6 +1,7 @@
 package com.example.haengsha.ui.uiComponents
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -374,15 +375,22 @@ fun FilterDialog(
                     ModalConfirmButton(
                         type = "적용",
                         onClick = {
-                            onSubmit(
-                                SearchRequest(
-                                    boardUiState.token,
-                                    boardUiState.keyword,
-                                    boardUiState.isFestival,
-                                    boardUiState.startDate,
-                                    boardUiState.endDate
+                            if (boardUiState.keyword.isEmpty()) {
+                                Toasty.warning(context, "검색 후 필터를 적용해주세요", Toast.LENGTH_SHORT, true)
+                                    .show()
+                                boardViewModel.resetFilterInitialState()
+                            } else {
+                                onSubmit(
+                                    SearchRequest(
+                                        boardUiState.token,
+                                        boardUiState.keyword,
+                                        boardUiState.isFestival,
+                                        boardUiState.startDate,
+                                        boardUiState.endDate
+                                    )
                                 )
-                            )
+                                boardViewModel.updateFilterInitialState()
+                            }
                             onDismissRequest()
                         }
                     )

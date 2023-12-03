@@ -157,7 +157,7 @@ fun SignupUserInfoScreen(
             Text(
                 modifier = Modifier.width(270.dp),
                 text = buildAnnotatedString {
-                    append("학과를 선택하세요. ")
+                    append("단과대학을 선택하세요. ")
                     withStyle(SpanStyle(color = Color.Red)) { append("*") }
                 },
                 fontFamily = poppins,

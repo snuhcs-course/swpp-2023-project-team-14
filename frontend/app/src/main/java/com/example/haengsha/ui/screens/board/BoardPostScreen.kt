@@ -412,12 +412,12 @@ fun BoardPostScreen(
                             Image(
                                 painter = rememberAsyncImagePainter(uri),
                                 contentDescription = "image",
-                                contentScale = ContentScale.FillBounds,
+                                contentScale = ContentScale.Crop,
                                 modifier = Modifier.size(300.dp)
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                             Text(
-                                text = "(사진은 1:1 비율로 변경되며 1장만 첨부할 수 있습니다)",
+                                text = "(사진은 1:1 비율로 잘리게 되며, 1장만 첨부할 수 있습니다)",
                                 fontFamily = poppins,
                                 fontWeight = FontWeight.Normal,
                                 fontSize = 12.sp,
@@ -648,9 +648,9 @@ private fun checkPostFormat(
     eventTime: String,
     eventContent: String
 ): String {
-    val noSpecialCharacterRegex = "^[0-9a-zA-Zㄱ-ㅎ가-힣\\d]+$".toRegex()
+    val noSpecialCharacterRegex = "^[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\\d]+$".toRegex()
     val possibleRegexPattern =
-        "^[0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣+×÷=/_<>\\[\\]!@#\$%^&*()\\-'\":;?`~\\\\|{}€£¥₩♤♡◇♧☆▪︎¤《》¡¿°•○●□■,‽±』」〕】『「〔【№₽٪‰‐—–♠♥◆♣★]+$".toRegex()
+        "^[0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣+×÷=/_<>\\[\\]!@#\$%^&*()\\-'\":;?`~\\\\|{}€£¥₩♤♡◇♧☆▪︎¤《》¡¿°•○●□■.,‽±』」〕】『「〔【№₽٪‰‐—–♠♥◆♣★\\s\\n]+$".toRegex()
 
     if (eventTitle.startsWith(" ") || eventTitle.endsWith(" ")) {
         return "제목의 앞뒤 공백을 제거해주세요."

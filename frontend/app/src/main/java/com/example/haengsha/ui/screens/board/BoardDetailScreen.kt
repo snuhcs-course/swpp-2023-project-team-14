@@ -246,7 +246,9 @@ fun BoardDetailScreen(
                                 CustomVerticalDivider(height = 16, color = PlaceholderGrey)
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = if (boardDetail.eventDurations.size > 1) {
+                                    text = if (boardDetail.eventDurations.isEmpty()) {
+                                        "날짜 등록 안 됨"
+                                    } else if (boardDetail.eventDurations.size > 1) {
                                         boardDetail.eventDurations[0].eventDay + " ~ " + boardDetail.eventDurations.last().eventDay
                                     } else {
                                         boardDetail.eventDurations[0].eventDay
