@@ -274,7 +274,7 @@ fun BoardScreen(
                         } else {
                             LazyColumn(modifier = Modifier.fillMaxSize()) {
                                 items(boardListUiState.boardList) { event ->
-                                    Column(modifier = Modifier.clickable {
+                                    Row(modifier = Modifier.clickable {
                                         boardViewModel.updateEventId(event.id)
                                         boardNavController.navigate(BoardRoute.BoardDetail.route)
                                     }) {
@@ -316,10 +316,7 @@ fun BoardScreen(
                 boardViewModel = boardViewModel,
                 boardUiState = boardUiState.value,
                 context = boardContext,
-                onSubmit = {
-                    boardApiViewModel.searchEvent(it)
-                    boardViewModel.updateFilterInitialState()
-                },
+                onSubmit = { boardApiViewModel.searchEvent(it) },
                 onDismissRequest = { filterModal = false },
                 onStartDatePick = { startDatePick = true },
                 onEndDatePick = { endDatePick = true }

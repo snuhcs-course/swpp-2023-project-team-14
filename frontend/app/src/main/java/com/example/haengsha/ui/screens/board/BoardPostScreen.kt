@@ -648,9 +648,9 @@ private fun checkPostFormat(
     eventTime: String,
     eventContent: String
 ): String {
-    val noSpecialCharacterRegex = "^[0-9a-zA-Zㄱ-ㅎ가-힣\\d]+$".toRegex()
+    val noSpecialCharacterRegex = "^[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\\d]+$".toRegex()
     val possibleRegexPattern =
-        "^[0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣+×÷=/_<>\\[\\]!@#\$%^&*()\\-'\":;?`~\\\\|{}€£¥₩♤♡◇♧☆▪︎¤《》¡¿°•○●□■,‽±』」〕】『「〔【№₽٪‰‐—–♠♥◆♣★]+$".toRegex()
+        "^[0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣+×÷=/_<>\\[\\]!@#\$%^&*()\\-'\":;?`~\\\\|{}€£¥₩♤♡◇♧☆▪︎¤《》¡¿°•○●□■.,‽±』」〕】『「〔【№₽٪‰‐—–♠♥◆♣★\\s\\n]+$".toRegex()
 
     if (eventTitle.startsWith(" ") || eventTitle.endsWith(" ")) {
         return "제목의 앞뒤 공백을 제거해주세요."
