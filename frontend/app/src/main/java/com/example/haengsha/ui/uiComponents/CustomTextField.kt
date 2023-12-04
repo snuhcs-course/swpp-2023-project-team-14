@@ -401,7 +401,7 @@ fun SearchBar(
                     Toasty.warning(context, "2자에서 50자 사이로 검색해주세요", Toast.LENGTH_SHORT, true)
                         .show()
                 } else if (!possibleRegexPattern.matches(input)) {
-                    Toasty.warning(context, "한글, 영어, 숫자로만 검색해주세요", Toast.LENGTH_SHORT, true)
+                    Toasty.warning(context, "한글, 영어, 숫자, 특수문자로만 검색해주세요", Toast.LENGTH_SHORT, true)
                         .show()
                 } else {
                     boardViewModel.updateKeyword(input)
