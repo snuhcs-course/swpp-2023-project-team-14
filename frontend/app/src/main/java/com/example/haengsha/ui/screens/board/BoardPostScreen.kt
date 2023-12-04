@@ -648,14 +648,14 @@ private fun checkPostFormat(
     eventTime: String,
     eventContent: String
 ): String {
-    val noSpecialCharacterRegex = "^[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\\d]+$".toRegex()
+    val noSpecialCharacterRegex = "^[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\\d\\s]+$".toRegex()
     val possibleRegexPattern =
         "^[0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣+×÷=/_<>\\[\\]!@#\$%^&*()\\-'\":;?`~\\\\|{}€£¥₩♤♡◇♧☆▪︎¤《》¡¿°•○●□■.,‽±』」〕】『「〔【№₽٪‰‐—–♠♥◆♣★\\s\\n]+$".toRegex()
 
     if (eventTitle.startsWith(" ") || eventTitle.endsWith(" ")) {
         return "제목의 앞뒤 공백을 제거해주세요."
     } else if (eventTitle.length !in 2..20) {
-        return "제목은 2자 이상 20자 이하로 입력해주세요."
+        return "제목은 2자 이상 40자 이하로 입력해주세요."
     } else if (!possibleRegexPattern.matches(eventTitle)) {
         return "제목은 한글, 영어, 숫자, 특수문자로만 입력해주세요.\n아직 이모지는 사용할 수 없습니다."
     }
@@ -694,8 +694,8 @@ private fun checkPostFormat(
 
     if (eventContent.trim().isEmpty()) {
         return "내용을 입력해주세요."
-    } else if (eventContent.length !in 2..1000) {
-        return "내용은 2자 이상 1000자 이하로 입력해주세요."
+    } else if (eventContent.length !in 2..2000) {
+        return "내용은 2자 이상 2000자 이하로 입력해주세요."
     } else if (!possibleRegexPattern.matches(eventContent)) {
         return "내용은 한글, 영어, 숫자, 특수문자로만 입력해주세요.\n아직 이모지는 사용할 수 없습니다."
     }
