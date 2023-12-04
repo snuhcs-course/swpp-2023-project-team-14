@@ -17,8 +17,26 @@ class BoardViewModel : ViewModel() {
     private val _eventId = MutableStateFlow(0)
     val eventId = _eventId.asStateFlow()
 
+    private val _input = MutableStateFlow("")
+    val input = _input.asStateFlow()
+
+    private val _isSearched = MutableStateFlow(false)
+    val isSearched = _isSearched.asStateFlow()
+
     fun updateEventId(newEventId: Int) {
         _eventId.value = newEventId
+    }
+
+    fun updateInput(newInput: String) {
+        _input.value = newInput
+    }
+
+    fun setIsSearchedTrue() {
+        _isSearched.value = true
+    }
+
+    fun setIsSearchedFalse() {
+        _isSearched.value = false
     }
 
     var isError = false

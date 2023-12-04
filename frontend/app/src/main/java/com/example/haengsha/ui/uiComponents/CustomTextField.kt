@@ -371,7 +371,10 @@ fun SearchBar(
             .padding(start = 30.dp, end = 30.dp)
             .testTag(stringResource(R.string.searchBar)),
         value = input,
-        onValueChange = { input = it },
+        onValueChange = {
+            input = it
+            boardViewModel.updateInput(input)
+        },
         placeholder = {
             Text(
                 text = "Search",
@@ -402,6 +405,7 @@ fun SearchBar(
                         .show()
                 } else {
                     boardViewModel.updateKeyword(input)
+                    boardViewModel.setIsSearchedTrue()
                     onSubmit(
                         SearchRequest(
                             boardViewModel.boardUiState.value.token,

@@ -172,6 +172,10 @@ fun FilterDialog(
 ) {
     val isFestival = boardUiState.isFestival
 
+    if (boardViewModel.input.value != boardUiState.keyword) {
+        boardViewModel.setIsSearchedFalse()
+    }
+
     Dialog(onDismissRequest = onDismissRequest) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -379,6 +383,14 @@ fun FilterDialog(
                                 Toasty.warning(context, "검색 후 필터를 적용해주세요", Toast.LENGTH_SHORT, true)
                                     .show()
                                 boardViewModel.resetFilterInitialState()
+                            } else if (!boardViewModel.isSearched.value) {
+                                Toasty.warning(
+                                    context,
+                                    "검색 완료 후 필터를 적용해주세요",
+                                    Toast.LENGTH_SHORT,
+                                    true
+                                )
+                                    .show()
                             } else {
                                 onSubmit(
                                     SearchRequest(
