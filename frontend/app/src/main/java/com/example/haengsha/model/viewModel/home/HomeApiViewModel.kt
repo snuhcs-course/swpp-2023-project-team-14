@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -13,17 +14,12 @@ import com.example.haengsha.model.dataSource.HomeDataRepository
 import com.example.haengsha.model.network.dataModel.EventResponse
 import com.example.haengsha.model.uiState.home.HomeApiUiState
 import com.example.haengsha.model.uiState.home.RecommendationApiUiState
-import com.example.haengsha.ui.screens.home.EventCardData
-import com.example.haengsha.ui.screens.home.toEventCardData
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 import java.time.LocalDate
 
-class HomeApiViewModel(
-    private val homeDataRepository: HomeDataRepository,
-    private val homeViewModel: HomeViewModel
-) : ViewModel() {
+class HomeApiViewModel(private val homeDataRepository: HomeDataRepository) : ViewModel() {
     var homeApiUiState: HomeApiUiState by mutableStateOf(HomeApiUiState.Loading)
         private set
 
@@ -33,17 +29,11 @@ class HomeApiViewModel(
         private set
 
     companion object {
-        private lateinit var homeViewModelInstance: HomeViewModel
-
-        fun Factory(homeViewModel: HomeViewModel): ViewModelProvider.Factory {
-            homeViewModelInstance = homeViewModel
-            return viewModelFactory {
-                initializer {
-                    val application =
-                        this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as HaengshaApplication
-                    val homeDataRepository = application.container.homeDataRepository
-                    HomeApiViewModel(homeDataRepository, homeViewModel)
-                }
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = this[APPLICATION_KEY] as HaengshaApplication
+                val homeDataRepository = application.container.homeDataRepository
+                HomeApiViewModel(homeDataRepository)
             }
         }
     }
@@ -55,23 +45,10 @@ class HomeApiViewModel(
             homeApiUiState = try {
                 val festivalResponse: List<EventResponse>? =
                     homeDataRepository.getEventByDate(1, date.toString())
-
                 val academicResponse: List<EventResponse>? =
                     homeDataRepository.getEventByDate(0, date.toString())
-
-                val academicCardDataList: List<EventCardData>? =
-                    academicResponse?.map { it.toEventCardData() }
-
-                val festivalCardDataList: List<EventCardData>? =
-                    festivalResponse?.map { it.toEventCardData() }
-
-                homeViewModel.updateEventItems(festivalCardDataList, academicCardDataList)
-                homeViewModel.updateSelectedDate(date)
-
-                HomeApiUiState.Success
+                HomeApiUiState.Success(festivalResponse, academicResponse)
             } catch (e: HttpException) {
-                homeViewModel.updateEventItems(listOf(), listOf())
-                homeViewModel.updateSelectedDate(date)
                 HomeApiUiState.HttpError
             } catch (e: IOException) {
                 HomeApiUiState.NetworkError

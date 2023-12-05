@@ -173,6 +173,14 @@ fun HomeScreen(
 
         when (homeApiUiState) {
             is HomeApiUiState.Success -> {
+                val academicCardDataList: List<EventCardData>? =
+                    homeApiUiState.academicResponse?.map { it.toEventCardData() }
+
+                val festivalCardDataList: List<EventCardData>? =
+                    homeApiUiState.festivalResponse?.map { it.toEventCardData() }
+
+                homeViewModel.updateEventItems(festivalCardDataList, academicCardDataList)
+                homeViewModel.updateSelectedDate(selection)
                 TabView(homeViewModel, homeApiViewModel, userUiState)
             }
 
@@ -201,7 +209,7 @@ fun HomeScreen(
                     verticalArrangement = Arrangement.Center,
                 ) {
                     Text(
-                        text = "이벤트를 불러오는 중 문제가 발생했어요!\n\n다시 시도해주세요.",
+                        text = "이벤트를 불러오는 중 문제가 발생했어요.\n\n다시 시도해주세요.",
                         fontFamily = poppins,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -233,7 +241,7 @@ fun HomeScreen(
                     verticalArrangement = Arrangement.Center,
                 ) {
                     Text(
-                        text = "알 수 없는 문제가 발생했어요!\n\n메일로 문의해주세요.",
+                        text = "알 수 없는 문제가 발생했어요.\n\n메일로 문의해주세요.",
                         fontFamily = poppins,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -389,7 +397,7 @@ fun stringToDate(dateString: String): LocalDate {
 fun HomeScreenPreview() {
     val homeViewModel = viewModel<HomeViewModel>()
     val homeApiViewModel: HomeApiViewModel =
-        viewModel(factory = HomeApiViewModel.Factory(homeViewModel))
+        viewModel(factory = HomeApiViewModel.Factory)
 
     Home(
         homeViewModel = homeViewModel,
