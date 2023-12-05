@@ -6,18 +6,19 @@ import com.example.haengsha.ui.screens.home.EventCardData
 import java.time.LocalDate
 
 class HomeViewModel : ViewModel() {
-    private val _selectedDate = MutableLiveData(LocalDate.now())
-    private val _festivalItems = MutableLiveData<List<EventCardData>?>()
-    private val _academicItems = MutableLiveData<List<EventCardData>?>()
-    val festivalItems: MutableLiveData<List<EventCardData>?> = _festivalItems
-    val academicItems: MutableLiveData<List<EventCardData>?> = _academicItems
+    private val selectedDate = MutableLiveData(LocalDate.now())
+    val festivalItems = MutableLiveData<List<EventCardData>?>()
+    val academicItems = MutableLiveData<List<EventCardData>?>()
 
     fun updateSelectedDate(newDate: LocalDate) {
-        _selectedDate.value = newDate     // Update functions to set LiveData properties
+        selectedDate.value = newDate     // Update functions to set LiveData properties
     }
 
-    fun updateEventItems(festivalItems: List<EventCardData>?, academicItems: List<EventCardData>?) {
-        _festivalItems.value = festivalItems
-        _academicItems.value = academicItems
+    fun updateEventItems(
+        newFestivalItems: List<EventCardData>?,
+        newAcademicItems: List<EventCardData>?
+    ) {
+        festivalItems.value = newFestivalItems
+        academicItems.value = newAcademicItems
     }
 }
