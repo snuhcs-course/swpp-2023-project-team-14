@@ -8,10 +8,10 @@ sealed interface BoardListUiState {
         val boardList: List<BoardListResponse>
     ) : BoardListUiState
 
-    object HttpError : BoardListUiState
-    object NetworkError : BoardListUiState
-    object Error : BoardListUiState
-    object Loading : BoardListUiState
+    data object HttpError : BoardListUiState
+    data object NetworkError : BoardListUiState
+    data object Error : BoardListUiState
+    data object Loading : BoardListUiState
 }
 
 sealed interface BoardFavoriteUiState {
@@ -19,10 +19,10 @@ sealed interface BoardFavoriteUiState {
         val boardList: List<BoardListResponse>
     ) : BoardFavoriteUiState
 
-    object HttpError : BoardFavoriteUiState
-    object NetworkError : BoardFavoriteUiState
-    object Error : BoardFavoriteUiState
-    object Loading : BoardFavoriteUiState
+    data object HttpError : BoardFavoriteUiState
+    data object NetworkError : BoardFavoriteUiState
+    data object Error : BoardFavoriteUiState
+    data object Loading : BoardFavoriteUiState
 }
 
 sealed interface BoardDetailUiState {
@@ -30,18 +30,18 @@ sealed interface BoardDetailUiState {
         val boardDetail: BoardDetailResponse
     ) : BoardDetailUiState
 
-    object HttpError : BoardDetailUiState
-    object NetworkError : BoardDetailUiState
-    object Error : BoardDetailUiState
-    object Loading : BoardDetailUiState
+    data object HttpError : BoardDetailUiState
+    data object NetworkError : BoardDetailUiState
+    data object Error : BoardDetailUiState
+    data object Loading : BoardDetailUiState
 }
 
 sealed interface BoardPostApiUiState {
-    object Success : BoardPostApiUiState
-    object HttpError : BoardPostApiUiState
-    object NetworkError : BoardPostApiUiState
-    object Error : BoardPostApiUiState
-    object Loading : BoardPostApiUiState
+    data object Success : BoardPostApiUiState
+    data object HttpError : BoardPostApiUiState
+    data object NetworkError : BoardPostApiUiState
+    data object Error : BoardPostApiUiState
+    data object Loading : BoardPostApiUiState
 }
 
 sealed interface PatchLikeFavoriteUiState {
@@ -52,8 +52,8 @@ sealed interface PatchLikeFavoriteUiState {
         val isFavorite: Boolean
     ) : PatchLikeFavoriteUiState
 
-    object HttpError : PatchLikeFavoriteUiState
-    object NetworkError : PatchLikeFavoriteUiState
-    object Error : PatchLikeFavoriteUiState
-    object Loading : PatchLikeFavoriteUiState
+    data object HttpError : PatchLikeFavoriteUiState
+    data object NetworkError : PatchLikeFavoriteUiState
+    data object Error : PatchLikeFavoriteUiState
+    data object Loading : PatchLikeFavoriteUiState
 }
