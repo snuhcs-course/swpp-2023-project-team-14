@@ -164,8 +164,12 @@ class BoardApiViewModel(private val boardDataRepository: BoardDataRepository) : 
         patchLikeFavoriteUiState = PatchLikeFavoriteUiState.Loading
     }
 
-    fun resetBoardListUiState() {
+    fun resetBoardListUiStateToLoading() {
         boardListUiState = BoardListUiState.Loading
+    }
+
+    fun resetBoardListUiStateToDefault() {
+        boardListUiState = BoardListUiState.Default
     }
 
     fun resetBoardPostApiUiState() {

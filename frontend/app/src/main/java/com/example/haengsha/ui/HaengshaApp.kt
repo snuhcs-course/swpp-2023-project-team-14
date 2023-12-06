@@ -365,7 +365,7 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
                     userViewModel.resetUserData()
                     loginApiViewModel.resetLoginApiUiState()
                     boardViewModel.resetBoardUiState()
-                    boardApiViewModel.resetBoardListUiState()
+                    boardApiViewModel.resetBoardListUiStateToLoading()
                     mainNavController.navigate(MainRoute.Login.route) {
                         popUpTo(mainNavController.graph.id) { inclusive = true }
                     }
