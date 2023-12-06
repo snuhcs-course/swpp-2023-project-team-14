@@ -4,8 +4,11 @@ import com.example.haengsha.model.network.dataModel.Author
 import com.example.haengsha.model.network.dataModel.EventDurationResponse
 import com.example.haengsha.model.network.dataModel.EventResponse
 import com.example.haengsha.model.network.dataModel.RecommendResponse
+import java.time.LocalDate
 
 object FakeHomeDataSource {
+    const val token = "fakeToken"
+    val date: LocalDate = LocalDate.now()
     private const val id = 123
     private const val title = "fakeTitle"
     private const val isFestival = true
