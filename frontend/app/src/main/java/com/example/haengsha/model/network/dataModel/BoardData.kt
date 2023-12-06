@@ -102,8 +102,12 @@ data class BoardPostResponse(
 
 data class SearchRequest(
     val token: String,
-    val keyword: String,
+    var keyword: Any,
     val isFestival: Int,
     val startDate: String,
     val endDate: String
-)
+) {
+    // Custom getter for keyword that always returns a String
+    val keywordAsString: String
+        get() = keyword.toString()
+}
