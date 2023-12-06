@@ -43,6 +43,7 @@ class BoardViewModelTest {
 
     @Test
     fun boardViewBoard_resetError_errorIsFalse() {
+        viewModel.isError()
         viewModel.resetError()
         assertFalse(viewModel.isError)
     }
@@ -85,12 +86,14 @@ class BoardViewModelTest {
 
     @Test
     fun boardViewBoard_resetFilterInitialState_initialStateIsTrue() {
+        viewModel.updateFilterInitialState()
         viewModel.resetFilterInitialState()
         assertTrue(viewModel.boardUiState.value.initialState)
     }
 
     @Test
     fun boardViewBoard_resetBoardUiState_resetIsCorrect() {
+        viewModel.updateKeyword("keyword")
         viewModel.resetBoardUiState()
         assertEquals(viewModel.boardUiState.value, BoardUiState())
     }
@@ -109,6 +112,7 @@ class BoardViewModelTest {
 
     @Test
     fun boardViewBoard_resetBoardPostUiState_updateIsCorrect() {
+        viewModel.updatePostStartDate("2023-12-25")
         viewModel.resetBoardPostUiState()
         assertEquals(viewModel.boardPostUiState.value, BoardPostUiState())
     }
