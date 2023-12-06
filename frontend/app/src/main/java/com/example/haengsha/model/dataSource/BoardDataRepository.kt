@@ -57,7 +57,7 @@ class NetworkBoardDataRepository(
     override suspend fun searchEvent(searchRequest: SearchRequest): List<BoardListResponse> {
         return boardApiService.searchEvent(
             searchRequest.token,
-            searchRequest.keywordAsString,
+            searchRequest.keyword,
             searchRequest.isFestival,
             searchRequest.startDate,
             searchRequest.endDate
