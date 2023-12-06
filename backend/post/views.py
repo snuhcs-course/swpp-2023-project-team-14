@@ -207,7 +207,7 @@ class PostRecommendView(APIView):
     def get(self, request):
         user = request.user
         today = date.today()
-        posts = Post.objects.filter(recommend_users=user,event_durations__event_day__gte=today).order_by("-recommend__score")
+        posts = Post.objects.filter(recommend_users=user,event_durations__event_day__gte=today).order_by("-recommend__score").distinct()
         # scores = Recommend.objects.filter(user=request.user).values('score')
         serializer = PostRecommendSerializer(posts, many=True, context={'request': request})
         return Response(serializer.data, status=200)
