@@ -48,6 +48,7 @@ fun SignupPasswordSetScreen(
     var passwordCheckInput: String by remember { mutableStateOf("") }
     var isPasswordError by remember { mutableStateOf(false) }
     var isPasswordCheckError by remember { mutableStateOf(false) }
+    val pattern = "^(?=.*[a-zA-Z])(?=.*\\d)[a-zA-Z\\d]{4,10}$".toRegex()
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -115,12 +116,20 @@ fun SignupPasswordSetScreen(
                             Toast.LENGTH_SHORT,
                             true
                         ).show()
+                    } else if (!pattern.matches(passwordInput)) {
+                        isPasswordError = true
+                        Toasty.error(
+                            loginContext,
+                            "비밀번호 형식을 지켜주세요",
+                            Toast.LENGTH_SHORT,
+                            true
+                        ).show()
                     } else {
                         if (passwordCheckInput != passwordInput) {
                             isPasswordCheckError = true
                             Toasty.error(
                                 loginContext,
-                                "비밀번호를 확인해주세요",
+                                "비밀번호가 서로 달라요",
                                 Toast.LENGTH_SHORT,
                                 true
                             ).show()

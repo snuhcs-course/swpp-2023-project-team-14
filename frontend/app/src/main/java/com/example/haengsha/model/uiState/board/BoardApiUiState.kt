@@ -12,6 +12,7 @@ sealed interface BoardListUiState {
     data object NetworkError : BoardListUiState
     data object Error : BoardListUiState
     data object Loading : BoardListUiState
+    data object Default : BoardListUiState
 }
 
 sealed interface BoardFavoriteUiState {
