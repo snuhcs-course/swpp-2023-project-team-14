@@ -86,7 +86,7 @@ fun HomeScreen(
     val endDate = remember { currentMonth.plusMonths(100).atEndOfMonth() } // Adjust as needed
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(selection) {
         homeApiViewModel.getEventByDate(selection)
     }
 
@@ -165,7 +165,6 @@ fun HomeScreen(
                 Day(day.date, isSelected = selection == day.date) { clicked ->
                     if (selection != clicked) {
                         selection = clicked
-                        homeApiViewModel.getEventByDate(selection)
                     }
                 }
             },

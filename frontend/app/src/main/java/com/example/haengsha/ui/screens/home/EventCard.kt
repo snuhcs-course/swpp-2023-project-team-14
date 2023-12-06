@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,9 +51,9 @@ fun EventCard(
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
-            .padding(all = 16.dp),
-
-        ) {
+            .padding(all = 16.dp)
+            .testTag("EventCard"),
+    ) {
         Row(
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.SpaceBetween,
