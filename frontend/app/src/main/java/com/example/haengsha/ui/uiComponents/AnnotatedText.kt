@@ -6,6 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -143,6 +144,7 @@ fun TermsOfUseModalText() {
             withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("9.분쟁해결") }
             append("\n본 약관에 관한 분쟁은 대한민국의 법률을 준거법으로 하며, 분쟁의 해결은 민사소송법상의 관할법원에서 진행됩니다.")
         },
+        modifier = Modifier.testTag("TermsOfUseModal"),
         fontFamily = poppins,
         fontSize = 16.sp,
         fontWeight = FontWeight.Normal
@@ -191,6 +193,7 @@ fun PrivacyPolicyModalText() {
             withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("4. 개인정보의 파기 절차 및 방법") }
             append("\n\n조직은 원칙적으로 개인정보 수집 및 이용목적이 달성된 후에는 해당 정보를 지체 없이 파기합니다. 파기 절차 및 방법은 다음과 같습니다. \n\n파기 절차: 이용자가 회원가입 등을 위해 입력한 정보는 목적이 달성된 후 별도의 DB에 옮겨져 내부 방침 및 기타 관련 법령에 따라 일정 기간 저장된 후 혹은 즉시 파기됩니다. \n파기 방법: 전자적 파일 형태의 정보는 기록을 재생할 수 없는 기술적 방법을 사용하여 삭제합니다.")
         },
+        modifier = Modifier.testTag("PrivacyPolicyModal"),
         fontFamily = poppins,
         fontSize = 16.sp,
         fontWeight = FontWeight.Normal
