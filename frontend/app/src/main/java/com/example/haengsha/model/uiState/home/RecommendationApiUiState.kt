@@ -7,8 +7,8 @@ sealed interface RecommendationApiUiState {
         val recommendationList: List<RecommendResponse>
     ) : RecommendationApiUiState
 
-    object HttpError : RecommendationApiUiState
-    object NetworkError : RecommendationApiUiState
-    object Error : RecommendationApiUiState
-    object Loading : RecommendationApiUiState
+    data object HttpError : RecommendationApiUiState
+    data object NetworkError : RecommendationApiUiState
+    data object Error : RecommendationApiUiState
+    data object Loading : RecommendationApiUiState
 }

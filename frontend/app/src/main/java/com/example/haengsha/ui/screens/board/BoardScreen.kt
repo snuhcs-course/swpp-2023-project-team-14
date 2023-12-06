@@ -163,46 +163,36 @@ fun BoardScreen(
             ) {
                 when (boardListUiState) {
                     is BoardListUiState.HttpError -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "찾는 행사가 없어요 :(",
-                                fontFamily = poppins,
-                                fontSize = 30.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                textAlign = TextAlign.Center
-                            )
-                        }
+                        Toasty.error(
+                            boardContext,
+                            "행사 검색에 문제가 발생했어요!\n다시 시도해주세요",
+                            Toasty.LENGTH_SHORT
+                        )
+                            .show()
+                        boardApiViewModel.resetBoardListUiStateToDefault()
                     }
 
                     is BoardListUiState.NetworkError -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding)
-                        ) {
-                            Toasty.error(boardContext, "네트워크 연결을 확인해주세요", Toasty.LENGTH_SHORT)
-                                .show()
-                        }
+                        Toasty.error(boardContext, "네트워크 연결을 확인해주세요", Toasty.LENGTH_SHORT)
+                            .show()
+                        boardApiViewModel.resetBoardListUiStateToDefault()
                     }
 
                     is BoardListUiState.Error -> {
+                        Toasty.error(
+                            boardContext,
+                            "알 수 없는 에러가 발생했어요 :( 메일로 제보해주세요!",
+                            Toasty.LENGTH_SHORT
+                        ).show()
+                        boardApiViewModel.resetBoardListUiStateToDefault()
+                    }
+
+                    is BoardListUiState.Default -> {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(innerPadding)
-                        ) {
-                            Toasty.error(
-                                boardContext,
-                                "알 수 없는 에러가 발생했어요 :( 메일로 제보해주세요!",
-                                Toasty.LENGTH_SHORT
-                            ).show()
-                        }
-
+                        )
                     }
 
                     is BoardListUiState.Loading -> {

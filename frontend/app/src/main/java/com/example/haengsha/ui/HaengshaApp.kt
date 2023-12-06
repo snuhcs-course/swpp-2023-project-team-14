@@ -45,8 +45,7 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
     val navigationViewModel: NavigationViewModel = viewModel()
     val navigationUiState by navigationViewModel.uiState.collectAsState()
     val homeViewModel: HomeViewModel = viewModel()
-    val homeApiViewModel: HomeApiViewModel =
-        viewModel(factory = HomeApiViewModel.Factory(homeViewModel))
+    val homeApiViewModel: HomeApiViewModel = viewModel(factory = HomeApiViewModel.Factory)
 
     val backStackEntry = mainNavController.currentBackStackEntryAsState()
     val currentScreenName = navigationUiState.screen
@@ -366,7 +365,7 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
                     userViewModel.resetUserData()
                     loginApiViewModel.resetLoginApiUiState()
                     boardViewModel.resetBoardUiState()
-                    boardApiViewModel.resetBoardListUiState()
+                    boardApiViewModel.resetBoardListUiStateToLoading()
                     mainNavController.navigate(MainRoute.Login.route) {
                         popUpTo(mainNavController.graph.id) { inclusive = true }
                     }
