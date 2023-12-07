@@ -53,6 +53,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -191,12 +192,11 @@ fun BoardPostScreen(
                                 fontSize = 18.sp
                             )
                             Row(
-                                modifier = Modifier.clickable {
-                                    if (imageUri !== null) imageUri = null
-                                    else {
-                                        getImage.launch("image/*")
-                                    }
-                                },
+                                modifier = Modifier
+                                    .clickable {
+                                        if (imageUri !== null) imageUri = null
+                                        else getImage.launch("image/*")
+                                    },
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
@@ -364,7 +364,9 @@ fun BoardPostScreen(
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Box(
-                                        modifier = Modifier.clickable { eventCategory = 1 }
+                                        modifier = Modifier
+                                            .clickable { eventCategory = 1 }
+                                            .testTag("festivalCheckBox")
                                     ) {
                                         CheckBox(
                                             color = if (eventCategory == 1) ButtonBlue else Color.Transparent,
@@ -382,7 +384,10 @@ fun BoardPostScreen(
                                 }
                                 Spacer(modifier = Modifier.weight(1f))
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Box(modifier = Modifier.clickable { eventCategory = 0 }) {
+                                    Box(modifier = Modifier
+                                        .clickable { eventCategory = 0 }
+                                        .testTag("academicCheckBox")
+                                    ) {
                                         CheckBox(
                                             color = if (eventCategory == 1) Color.Transparent else ButtonBlue,
                                             size = 18

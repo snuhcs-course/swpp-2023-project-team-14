@@ -252,12 +252,12 @@ class LoginScreenNavigationTest {
     }
 
     private fun navigateToFindPasswordScreen() {
-        composeTestRule.onNodeWithText("아이디/비밀번호 찾기").performClick()
+        composeTestRule.onNodeWithText("비밀번호 찾기").performClick()
     }
 
     private fun navigateToFindPasswordOrganizerScreen() {
         navigateToFindPasswordScreen()
-        composeTestRule.onNodeWithText("단체 계정 아이디/비밀번호 찾기").performClick()
+        composeTestRule.onNodeWithText("단체 계정 비밀번호 찾기").performClick()
     }
 
     private fun navigateToFindPasswordResetScreen() {
