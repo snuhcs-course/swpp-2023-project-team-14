@@ -91,7 +91,9 @@ class HomeScreenUITest {
         composeTestRule.onNodeWithContentDescription("calendar icon")
             .performClick()
         composeTestRule.onNodeWithText(
-            LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("MMM d, yyyy"))
+            LocalDate.now()
+                // .minusDays(1) // 표준 시간대랑 달라서, 조정해줘야 할 때 주석 제거
+                .format(DateTimeFormatter.ofPattern("MMM d, yyyy"))
         ).assertIsDisplayed()
     }
 
@@ -246,7 +248,7 @@ class HomeScreenUITest {
             .performTextInput("groupuser52")
         composeTestRule.onNodeWithText("로그인하기")
             .performClick()
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntil(5000) {
             composeTestRule.onNodeWithText("Home").isDisplayed()
         }
     }

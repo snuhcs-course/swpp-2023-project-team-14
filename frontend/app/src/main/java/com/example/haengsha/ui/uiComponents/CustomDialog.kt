@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -239,7 +240,7 @@ fun FilterDialog(
                         Spacer(modifier = Modifier.weight(1f))
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.calendar_icon),
-                            contentDescription = "Calendar icon",
+                            contentDescription = "start date Calendar icon",
                             modifier = Modifier.size(width = 22.dp, height = 20.dp),
                             tint = HaengshaBlue
                         )
@@ -286,7 +287,7 @@ fun FilterDialog(
                         Spacer(modifier = Modifier.weight(1f))
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.calendar_icon),
-                            contentDescription = "Calendar icon",
+                            contentDescription = "end date Calendar icon",
                             modifier = Modifier.size(width = 22.dp, height = 20.dp),
                             tint = HaengshaBlue
                         )
@@ -309,17 +310,26 @@ fun FilterDialog(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Box(modifier = Modifier.clickable {
-                            if (isFestival == 0) {
-                                boardViewModel.updateIsFestival(2)
-                            } else {
-                                if (isFestival == 1) {
-                                    Toasty.info(context, "최소 하나는 선택해주세요", Toasty.LENGTH_SHORT, true)
-                                        .show()
+                        Box(modifier = Modifier
+                            .clickable {
+                                if (isFestival == 0) {
+                                    boardViewModel.updateIsFestival(2)
+                                } else {
+                                    if (isFestival == 1) {
+                                        Toasty
+                                            .info(
+                                                context,
+                                                "최소 하나는 선택해주세요",
+                                                Toasty.LENGTH_SHORT,
+                                                true
+                                            )
+                                            .show()
+                                    }
+                                    boardViewModel.updateIsFestival(0)
                                 }
-                                boardViewModel.updateIsFestival(0)
                             }
-                        }) {
+                            .testTag("festival checkBox")
+                        ) {
                             CheckBox(
                                 color = if (boardUiState.isFestival == 0) Color.Transparent else ButtonBlue,
                                 size = 22
@@ -337,17 +347,26 @@ fun FilterDialog(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Box(modifier = Modifier.clickable {
-                            if (isFestival == 1) {
-                                boardViewModel.updateIsFestival(2)
-                            } else {
-                                if (isFestival == 0) {
-                                    Toasty.info(context, "최소 하나는 선택해주세요", Toasty.LENGTH_SHORT, true)
-                                        .show()
+                        Box(modifier = Modifier
+                            .clickable {
+                                if (isFestival == 1) {
+                                    boardViewModel.updateIsFestival(2)
+                                } else {
+                                    if (isFestival == 0) {
+                                        Toasty
+                                            .info(
+                                                context,
+                                                "최소 하나는 선택해주세요",
+                                                Toasty.LENGTH_SHORT,
+                                                true
+                                            )
+                                            .show()
+                                    }
+                                    boardViewModel.updateIsFestival(1)
                                 }
-                                boardViewModel.updateIsFestival(1)
                             }
-                        }) {
+                            .testTag("academic checkBox")
+                        ) {
                             CheckBox(
                                 color = if (boardUiState.isFestival == 1) Color.Transparent else ButtonBlue,
                                 size = 22

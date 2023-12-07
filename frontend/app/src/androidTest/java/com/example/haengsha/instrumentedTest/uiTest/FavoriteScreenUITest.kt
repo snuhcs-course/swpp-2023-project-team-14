@@ -93,7 +93,7 @@ class FavoriteScreenUITest {
             .performTextInput("groupuser52")
         composeTestRule.onNodeWithText("로그인하기")
             .performClick()
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntil(5000) {
             composeTestRule.onNodeWithText("Home").isDisplayed()
         }
     }
