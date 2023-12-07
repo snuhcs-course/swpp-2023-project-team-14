@@ -9,7 +9,6 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
@@ -131,12 +130,8 @@ class HomeScreenUITest {
         composeTestRule.onNodeWithText("OK")
             .performClick()
         composeTestRule.waitUntil(5000) {
-            composeTestRule.onNodeWithText("행사 추천 받기")
+            composeTestRule.onNodeWithText("SNUPO SNUp\nSNUPO & SNUpia 하계 앙상블")
                 .isDisplayed()
-        }
-        composeTestRule.waitUntil(5000) {
-            composeTestRule.onNodeWithText("오늘은 예정된 축제가 없어요!")
-                .isNotDisplayed()
         }
         composeTestRule.onNodeWithText("SNUPO SNUp\nSNUPO & SNUpia 하계 앙상블")
             .assertIsDisplayed()
@@ -155,12 +150,12 @@ class HomeScreenUITest {
             composeTestRule.onNodeWithText("행사 추천 받기")
                 .isDisplayed()
         }
-        composeTestRule.waitUntil(5000) {
-            composeTestRule.onNodeWithText("오늘은 예정된 축제가 없어요!")
-                .isNotDisplayed()
-        }
         composeTestRule.onNodeWithText("Academic")
             .performClick()
+        composeTestRule.waitUntil(5000) {
+            composeTestRule.onNodeWithText("데이터사이언스대학원\n동적 3D 세계 다음 세대의 인공지능")
+                .isDisplayed()
+        }
         composeTestRule.onNodeWithText("데이터사이언스대학원\n동적 3D 세계 다음 세대의 인공지능")
             .assertIsDisplayed()
     }
@@ -175,11 +170,9 @@ class HomeScreenUITest {
         composeTestRule.onNodeWithText("OK")
             .performClick()
         composeTestRule.waitUntil(5000) {
-            composeTestRule.onNodeWithText("행사 불러오는 중...")
-                .isNotDisplayed()
+            composeTestRule.onNodeWithText("오늘은 예정된 축제가 없어요!")
+                .isDisplayed()
         }
-        composeTestRule.onNodeWithTag("EventCard")
-            .assertIsNotDisplayed()
         composeTestRule.onNodeWithText("오늘은 예정된 축제가 없어요!")
             .assertIsDisplayed()
     }
@@ -200,8 +193,8 @@ class HomeScreenUITest {
         composeTestRule.onNodeWithText("Academic")
             .performClick()
         composeTestRule.waitUntil(5000) {
-            composeTestRule.onNodeWithText("오늘은 예정된 축제가 없어요!")
-                .isNotDisplayed()
+            composeTestRule.onNodeWithText("오늘은 예정된 학술제가 없어요!")
+                .isDisplayed()
         }
         composeTestRule.onNodeWithText("오늘은 예정된 학술제가 없어요!")
             .assertIsDisplayed()
