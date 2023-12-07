@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -124,10 +125,9 @@ fun BoardScreen(
                             color = HaengshaBlue,
                             shape = RoundedCornerShape(10.dp)
                         )
-                        .clickable {
-                            filterModal = true
-                        }
-                        .padding(horizontal = 8.dp),
+                        .clickable { filterModal = true }
+                        .padding(horizontal = 8.dp)
+                        .testTag("filter"),
                     contentAlignment = Alignment.Center
                 ) {
                     val filterDateText = if (startDate.isEmpty() && endDate.isEmpty()) {
