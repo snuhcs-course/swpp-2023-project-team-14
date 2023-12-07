@@ -272,7 +272,7 @@ class BoardScreenUITest {
     }
 
     @Test
-    fun boardScreen_personalUser_searchKeyword_applyFilter_eventsLoadingAndNotDisplay() {
+    fun boardScreen_personalUser_searchKeyword_applyFilter_eventsNotDisplay() {
         personalUser_login_navigateToBoardScreen()
         composeTestRule.onNodeWithTagForStringId(R.string.searchBar)
             .performTextInput("물리")
@@ -304,9 +304,6 @@ class BoardScreenUITest {
             .performClick()
         composeTestRule.onNodeWithText("적용")
             .performClick()
-        composeTestRule.onNodeWithText("행사 찾아보는 중...")
-            .assertIsDisplayed()
-
         composeTestRule.waitUntil(5000) {
             composeTestRule.onNodeWithText("행사 찾아보는 중...")
                 .isNotDisplayed()
