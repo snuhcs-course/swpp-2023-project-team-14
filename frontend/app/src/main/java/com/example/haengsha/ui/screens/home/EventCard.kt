@@ -1,7 +1,6 @@
 package com.example.haengsha.ui.screens.home
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
@@ -34,16 +34,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.example.haengsha.R
-import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.LikePink
 import com.example.haengsha.ui.theme.md_theme_light_surface
 import com.example.haengsha.ui.theme.poppins
-import com.example.haengsha.ui.uiComponents.CustomCircularProgressIndicator
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -87,34 +83,15 @@ fun EventCard(
                     .data(image)
                     .size(Size.ORIGINAL)
                     .build()
-                val painter = rememberAsyncImagePainter(model = imageModel)
                 AsyncImage(
                     model = imageModel,
                     contentDescription = "festival poster",
                     modifier = Modifier.fillMaxSize(),
-                    //contentScale = ContentScale.FillBounds
+                    contentScale = ContentScale.FillBounds
                 )
-                Log.d("test", "painter.state: ${painter.state}")
-                if (painter.state is AsyncImagePainter.State.Loading) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        CustomCircularProgressIndicator()
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Text(
-                            text = "이미지 불러오는 중...",
-                            fontFamily = poppins,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = HaengshaBlue
-                        )
-                    }
-                }
             } else {
                 Text(
-                    text = image.toString(),
+                    text = "(이미지 없음)",
                     fontFamily = poppins,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,

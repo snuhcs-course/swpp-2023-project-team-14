@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -35,10 +36,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -48,6 +51,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.haengsha.R
@@ -57,8 +61,10 @@ import com.example.haengsha.model.viewModel.home.HomeApiViewModel
 import com.example.haengsha.model.viewModel.home.HomeViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.LikePink
+import com.example.haengsha.ui.theme.md_theme_light_surface
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CustomCircularProgressIndicator
+import com.example.haengsha.ui.uiComponents.CustomHorizontalDivider
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -87,6 +93,10 @@ fun TabView(
     userUiState: UserUiState
 ) {
     val homeContext = LocalContext.current
+    val configuration = LocalConfiguration.current
+    val deviceWidth = configuration.screenWidthDp.dp
+    val deviceHeight = configuration.screenHeightDp.dp
+
     val academicItems by homeViewModel.academicItems.observeAsState()
     val festivalItems by homeViewModel.festivalItems.observeAsState()
     val recommendationApiUiState = homeApiViewModel.recommendationApiUiState
@@ -269,42 +279,21 @@ fun TabView(
     }
 
     if (showDialog) {
-        var recommendationTitle by remember { mutableStateOf("") }
+        var recommendationTitle by remember { mutableStateOf("\n") }
 
-        // Display the AlertDialog with "Here is popup"
-        AlertDialog(
-            onDismissRequest = {
-                // Close the dialog when clicked outside
-                showDialog = false
-            },
-            modifier = Modifier
-                .shadow(
-                    elevation = 10.dp,
-                    spotColor = Color(0x40000000),
-                    ambientColor = Color(0x40000000)
-                )
-                .width(if (userUiState.role == "Group") 300.dp else 500.dp)
-                .height(if (userUiState.role == "Group") 300.dp else 500.dp)
-                .background(color = Color.White),
-            containerColor = Color.White,
-            title = {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = recommendationTitle,
-                        fontSize = 16.sp,
-                        fontFamily = poppins,
-                        fontWeight = FontWeight(500),
-                        color = Color(0xFF000000),
-                        textAlign = TextAlign.Center,
-                    )
-                }
-            }, text = {
+        Dialog(onDismissRequest = { showDialog = false }) {
+            Column(
+                modifier = Modifier
+                    .width(if (userUiState.role == "Group") 300.dp else deviceWidth)
+                    .height(if (userUiState.role == "Group") 300.dp else deviceHeight - 130.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(md_theme_light_surface)
+            ) {
                 if (userUiState.role == "Group") {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(250.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -316,8 +305,24 @@ fun TabView(
                         )
                     }
                 } else {
+                    Text(
+                        text = recommendationTitle,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp),
+                        fontSize = 16.sp,
+                        fontFamily = poppins,
+                        fontWeight = FontWeight(500),
+                        color = Color(0xFF000000),
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    CustomHorizontalDivider(color = Color.Black.copy(0.3f))
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(deviceHeight - 250.dp)
+                            .background(Color.White),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -414,40 +419,25 @@ fun TabView(
                         }
                     }
                 }
-            },
-            confirmButton = {
-                Box(
-                    contentAlignment = Alignment.Center,
+                CustomHorizontalDivider(color = Color.Black.copy(0.3f))
+                Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(0.dp)
+                        .fillMaxSize()
+                        .clickable { showDialog = false },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Button(
-                        onClick = {
-                            showDialog = false
-                        },
-                        modifier = Modifier
-                            .wrapContentWidth()
-                            .wrapContentHeight()
-                            .padding(0.dp), // 패딩 제거
-
-                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(Color.White),
-
-                        ) {
-                        Text(
-                            text = "닫기",
-                            fontSize = 16.sp,
-                            fontFamily = poppins,
-                            fontWeight = FontWeight(500),
-                            color = Color(0xFF000000),
-                            textAlign = TextAlign.Center,
-                            textDecoration = TextDecoration.Underline,
-                            modifier = Modifier.padding(0.dp) // 텍스트 주위의 패딩 제거
-                        )
-                    }
+                    Text(
+                        text = "닫기",
+                        fontSize = 16.sp,
+                        fontFamily = poppins,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center,
+                        textDecoration = TextDecoration.Underline,
+                    )
                 }
             }
-        )
+        }
     }
 
     if (showEventCardPopup) {
@@ -533,10 +523,8 @@ fun TabView(
                     }
 
                     Column {
-
                         val startDateText = selectedEvent?.startDate?.let { formatDateToMMDD(it) }
                         val endDateText = selectedEvent?.endDate?.let { formatDateToMMDD(it) }
-
 
                         Text(
                             text = "주최 | " + selectedEvent?.organizer,

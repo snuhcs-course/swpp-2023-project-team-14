@@ -135,7 +135,7 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
     ) { innerPadding ->
         NavHost(
             navController = mainNavController,
-            startDestination = MainRoute.Home.route
+            startDestination = MainRoute.Login.route
         ) {
             composable(MainRoute.Login.route) {
                 navigationViewModel.updateRouteUiState("Main", MainRoute.Login.route)
