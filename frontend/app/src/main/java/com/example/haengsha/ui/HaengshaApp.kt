@@ -76,6 +76,12 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
                                     }
                                 }
                             }
+                        } else if (currentScreenType == "Home") {
+                            mainNavController.navigate(MainRoute.Home.route) {
+                                if (backStackEntry.value?.destination?.route == "Home") {
+                                    mainNavController.popBackStack()
+                                }
+                            }
                         } else {
                             mainNavController.navigate(MainRoute.Favorite.route) {
                                 if (backStackEntry.value?.destination?.route == "Favorite") {
@@ -192,6 +198,9 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
                 Home(
                     homeViewModel = homeViewModel,
                     homeApiViewModel = homeApiViewModel,
+                    boardApiViewModel = boardApiViewModel,
+                    boardViewModel = boardViewModel,
+                    navigationViewModel = navigationViewModel,
                     innerPadding = innerPadding,
                     userUiState = userUiState,
                 )
@@ -364,6 +373,9 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
                 is LoginApiUiState.Success -> {
                     userViewModel.resetUserData()
                     loginApiViewModel.resetLoginApiUiState()
+                    homeViewModel.initialEnter = true
+                    homeViewModel.selectionChanged = false
+                    homeViewModel.initialRecommendationState = true
                     boardViewModel.resetBoardUiState()
                     boardApiViewModel.resetBoardListUiStateToLoading()
                     mainNavController.navigate(MainRoute.Login.route) {
