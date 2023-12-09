@@ -234,6 +234,7 @@ fun HomeScreenList(
                                 startDate = item.startDate,
                                 endDate = item.endDate,
                                 likes = item.likes,
+                                eventType = item.eventType,
                                 homeContext = homeContext
                             )
                         }
@@ -329,6 +330,7 @@ fun HomeScreenList(
                                                 startDate = startDate,
                                                 endDate = endDate,
                                                 likes = event.likeCount,
+                                                eventType = if (event.isFestival) "Festival" else "Academic",
                                                 homeContext = homeContext
                                             )
                                         }

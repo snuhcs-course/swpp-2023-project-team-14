@@ -21,13 +21,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,9 +41,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.example.haengsha.R
+import com.example.haengsha.model.dataSource.SampleImage
 import com.example.haengsha.model.network.dataModel.BoardListResponse
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.HaengshaGrey
@@ -175,6 +183,7 @@ fun HomeListItem(
     startDate: LocalDate,
     endDate: LocalDate,
     likes: Int,
+    eventType: String,
     homeContext: Context
 ) {
     val configuration = LocalConfiguration.current
@@ -183,6 +192,9 @@ fun HomeListItem(
 
     val formatter = DateTimeFormatter.ofPattern("MM-dd")
     val eventDuration = startDate.format(formatter) + " ~ " + endDate.format(formatter)
+
+    val randomFestivalId by rememberSaveable { mutableIntStateOf((0..9).random()) }
+    val randomAcademicId by rememberSaveable { mutableIntStateOf((10..19).random()) }
 
     Row(
         modifier = Modifier
@@ -203,19 +215,42 @@ fun HomeListItem(
                     .data(image)
                     .size(Size.ORIGINAL)
                     .build()
-                AsyncImage(
-                    model = imageModel,
-                    contentDescription = "festival poster",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.FillBounds
-                )
+                val painter = rememberAsyncImagePainter(model = imageModel)
+                if (painter.state is AsyncImagePainter.State.Error) {
+                    Image(
+                        painter = painterResource(SampleImage.ImageAcademicDefault.id),
+                        contentDescription = "sample image",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(10.dp)),
+                        alignment = Alignment.Center,
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    AsyncImage(
+                        model = imageModel,
+                        contentDescription = "festival poster",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(10.dp)),
+                        alignment = Alignment.Center,
+                        contentScale = ContentScale.Crop
+                    )
+                }
             } else {
-                Text(
-                    text = "(이미지 없음)",
-                    fontFamily = poppins,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Gray.copy(0.5f)
+                val imageId = if (eventType == "Festival") {
+                    SampleImage.entries[randomFestivalId].id
+                } else {
+                    SampleImage.entries[randomAcademicId].id
+                }
+                Image(
+                    painter = painterResource(imageId),
+                    contentDescription = "sample image",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(10.dp)),
+                    alignment = Alignment.Center,
+                    contentScale = ContentScale.Crop
                 )
             }
         }
