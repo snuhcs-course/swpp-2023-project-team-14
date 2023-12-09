@@ -50,7 +50,6 @@ import com.kizitonwose.calendar.core.atStartOfMonth
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.core.yearMonth
 import java.text.SimpleDateFormat
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -59,7 +58,7 @@ import java.util.Date
 import java.util.Locale
 
 private val dateFormatter = DateTimeFormatter.ofPattern("dd")
-private val monthFormatter = DateTimeFormatter.ofPattern("MMMM")
+private val monthFormatter = DateTimeFormatter.ofPattern("MM")
 
 @Composable
 fun Home(
@@ -128,7 +127,9 @@ fun HomeScreen(
                     .align(Alignment.Center) // Align the Text to the center-left
             ) {
                 Text(
-                    text = monthFormatter.format(selection.month),
+                    modifier = Modifier.padding(top = 2.dp),
+                    text = monthFormatter.format(selection) + "월" + " "
+                            + dateFormatter.format(selection) + "일",
                     fontFamily = poppins,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium
@@ -268,7 +269,7 @@ private fun Day(date: LocalDate, isSelected: Boolean, onClick: (LocalDate) -> Un
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             Text(
-                text = date.dayOfWeek.displayText(),
+                text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Light,
             )
@@ -317,14 +318,14 @@ fun MyDatePickerDialog(
             }
 
             ) {
-                Text(text = "OK")
+                Text(text = "확인")
             }
         },
         dismissButton = {
             Button(onClick = {
                 onDismiss()
             }) {
-                Text(text = "Cancel")
+                Text(text = "취소")
             }
         }
     ) {
@@ -341,12 +342,6 @@ fun parseStringToDate(dateString: String): LocalDate? {
         LocalDate.parse(dateString, formatter)
     } catch (e: Exception) {
         null // Handle the case when the input string is not in the expected format
-    }
-}
-
-fun DayOfWeek.displayText(uppercase: Boolean = false): String {
-    return getDisplayName(TextStyle.SHORT, Locale.ENGLISH).let { value ->
-        if (uppercase) value.uppercase(Locale.ENGLISH) else value
     }
 }
 

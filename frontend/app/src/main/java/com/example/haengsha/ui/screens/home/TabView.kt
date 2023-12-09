@@ -206,6 +206,7 @@ fun TabView(
 
             ) {
                 Text(
+                    modifier = Modifier.padding(top = 2.dp),
                     text = "행사 추천 받기",
                     fontSize = 18.sp,
                     fontFamily = poppins,
