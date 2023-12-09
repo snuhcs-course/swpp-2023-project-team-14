@@ -1,6 +1,7 @@
 package com.example.haengsha.ui.screens.home
 
-import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,16 +32,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.haengsha.R
 import com.example.haengsha.model.network.dataModel.EventResponse
+import com.example.haengsha.model.route.HomeRoute
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.home.HomeApiUiState
+import com.example.haengsha.model.viewModel.NavigationViewModel
+import com.example.haengsha.model.viewModel.board.BoardApiViewModel
+import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.model.viewModel.home.HomeApiViewModel
 import com.example.haengsha.model.viewModel.home.HomeViewModel
+import com.example.haengsha.ui.screens.board.BoardDetailScreen
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CustomCircularProgressIndicator
@@ -57,27 +66,83 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-private val dateFormatter = DateTimeFormatter.ofPattern("dd")
-private val monthFormatter = DateTimeFormatter.ofPattern("MM")
-
 @Composable
 fun Home(
     homeViewModel: HomeViewModel,
     homeApiViewModel: HomeApiViewModel,
+    boardApiViewModel: BoardApiViewModel,
+    boardViewModel: BoardViewModel,
+    navigationViewModel: NavigationViewModel,
+    homeNavController: NavHostController = rememberNavController(),
     innerPadding: PaddingValues,
     userUiState: UserUiState
 ) {
-    HomeScreen(homeApiViewModel, innerPadding, userUiState, homeViewModel)
+    NavHost(
+        navController = homeNavController,
+        startDestination = HomeRoute.Home.route
+    ) {
+        composable(HomeRoute.Home.route) {
+            navigationViewModel.updateRouteUiState("Home", HomeRoute.Home.route)
+            HomeScreen(
+                homeApiViewModel = homeApiViewModel,
+                innerPadding = innerPadding,
+                userUiState = userUiState,
+                homeViewModel = homeViewModel,
+                boardViewModel = boardViewModel,
+                homeNavController = homeNavController,
+            )
+        }
+        composable(
+            HomeRoute.HomeDetail.route,
+            enterTransition = {
+                when (initialState.destination.route) {
+                    "Home" -> {
+                        slideIntoContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Left,
+                            animationSpec = tween(700)
+                        )
+                    }
+
+                    else -> null
+                }
+            },
+            exitTransition = {
+                when (targetState.destination.route) {
+                    "Home" -> {
+                        slideOutOfContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Right,
+                            animationSpec = tween(700)
+                        )
+                    }
+
+                    else -> null
+                }
+            }
+        ) {
+            navigationViewModel.updateRouteUiState("Home", HomeRoute.HomeDetail.route)
+            BoardDetailScreen(
+                innerPadding = innerPadding,
+                boardApiViewModel = boardApiViewModel,
+                boardViewModel = boardViewModel,
+                userUiState = userUiState,
+                eventId = boardViewModel.eventId.value
+            )
+        }
+    }
 }
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     homeApiViewModel: HomeApiViewModel,
     innerPadding: PaddingValues,
     userUiState: UserUiState,
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    boardViewModel: BoardViewModel,
+    homeNavController: NavController
 ) {
+    val dateFormatter = DateTimeFormatter.ofPattern("dd")
+    val monthFormatter = DateTimeFormatter.ofPattern("MM")
+
     val homeApiUiState = homeApiViewModel.homeApiUiState
     var selection by remember { mutableStateOf(LocalDate.now()) }
     val currentMonth = selection.yearMonth
@@ -181,7 +246,13 @@ fun HomeScreen(
 
                 homeViewModel.updateEventItems(festivalCardDataList, academicCardDataList)
                 homeViewModel.updateSelectedDate(selection)
-                TabView(homeViewModel, homeApiViewModel, userUiState)
+                TabView(
+                    homeViewModel = homeViewModel,
+                    homeApiViewModel = homeApiViewModel,
+                    homeNavController = homeNavController,
+                    boardViewModel = boardViewModel,
+                    userUiState = userUiState,
+                )
             }
 
             is HomeApiUiState.Loading -> {
@@ -256,6 +327,8 @@ fun HomeScreen(
 
 @Composable
 private fun Day(date: LocalDate, isSelected: Boolean, onClick: (LocalDate) -> Unit) {
+    val dateFormatter = DateTimeFormatter.ofPattern("dd")
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -362,6 +435,7 @@ fun EventResponse.toEventCardData(): EventCardData {
         eventType = "Academic"
     }
     return EventCardData(
+        id = id,
         organizer = author.nickname,
         eventTitle = title,
         startDate = startDate,
@@ -385,19 +459,4 @@ fun stringToDate(dateString: String): LocalDate {
         e.printStackTrace()
     }
     return LocalDate.now()
-}
-
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    val homeViewModel = viewModel<HomeViewModel>()
-    val homeApiViewModel: HomeApiViewModel =
-        viewModel(factory = HomeApiViewModel.Factory)
-
-    Home(
-        homeViewModel = homeViewModel,
-        homeApiViewModel = homeApiViewModel,
-        innerPadding = PaddingValues(0.dp),
-        userUiState = UserUiState("foo", "bar")
-    )
 }

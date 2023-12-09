@@ -1,7 +1,6 @@
 package com.example.haengsha.ui.screens.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,16 +13,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,24 +38,20 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import com.example.haengsha.R
+import androidx.navigation.NavController
+import com.example.haengsha.model.route.HomeRoute
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.home.RecommendationApiUiState
+import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.model.viewModel.home.HomeApiViewModel
 import com.example.haengsha.model.viewModel.home.HomeViewModel
 import com.example.haengsha.ui.theme.HaengshaBlue
-import com.example.haengsha.ui.theme.LikePink
 import com.example.haengsha.ui.theme.md_theme_light_surface
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CustomCircularProgressIndicator
@@ -73,6 +64,7 @@ data class TabItem(
 )
 
 data class EventCardData(
+    val id: Int,
     val organizer: String,
     val eventTitle: String,
     val startDate: LocalDate,
@@ -90,6 +82,8 @@ data class EventCardData(
 fun TabView(
     homeViewModel: HomeViewModel,
     homeApiViewModel: HomeApiViewModel,
+    homeNavController: NavController,
+    boardViewModel: BoardViewModel,
     userUiState: UserUiState
 ) {
     val homeContext = LocalContext.current
@@ -102,22 +96,13 @@ fun TabView(
     val recommendationApiUiState = homeApiViewModel.recommendationApiUiState
     var showDialog by remember { mutableStateOf(false) }
     var selectedEvent: EventCardData? by remember { mutableStateOf(null) }
-    var showEventCardPopup by remember { mutableStateOf(false) }
-    val tabItems = listOf(academicItems?.let {
-        TabItem(
-            title = "Academic", eventCards = it
-        )
-    }, festivalItems?.let {
-        TabItem(
-            title = "Festival", eventCards = it
-        )
-    })
-    // Remember the selected tab
+    val tabItems = listOf(
+        academicItems?.let { TabItem(title = "Academic", eventCards = it) },
+        festivalItems?.let { TabItem(title = "Festival", eventCards = it) }
+    )
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val coroutineScope = rememberCoroutineScope()
-    // Pager state
     val pagerState = rememberPagerState(pageCount = { tabItems.size })
-    val eventContext = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
@@ -226,7 +211,6 @@ fun TabView(
                 )
             }
         }
-        // Pager
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxWidth(),
@@ -234,7 +218,6 @@ fun TabView(
         ) { index ->
             selectedTabIndex = if (index == 1) 1 else 0
             val itemsToDisplay = if (index == 0) festivalItems else academicItems
-            // App content
 
             if (itemsToDisplay.isNullOrEmpty()) {
                 Box(
@@ -259,7 +242,8 @@ fun TabView(
                 ) {
                     items(itemsToDisplay) { item ->
                         Box(modifier = Modifier.clickable {
-                            showEventCardPopup = true
+                            boardViewModel.updateEventId(item.id)
+                            homeNavController.navigate(HomeRoute.HomeDetail.route)
                             selectedEvent = item
                         }) {
                             EventCard(
@@ -438,195 +422,6 @@ fun TabView(
                 }
             }
         }
-    }
-
-    if (showEventCardPopup) {
-        AlertDialog(
-            onDismissRequest = {
-                // Close the popup when clicked outside
-                showEventCardPopup = false
-            },
-            title = {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(
-                        8.dp, Alignment.CenterVertically
-                    ),
-                    horizontalAlignment = Alignment.Start,
-                ) {
-
-                    Text(
-                        text = selectedEvent?.eventTitle ?: "N/A",
-                        fontSize = 18.sp,
-                        lineHeight = 20.sp,
-                        fontFamily = FontFamily(Font(R.font.poppins_bold)),
-                        fontWeight = FontWeight(400),
-                        color = Color(0xFF343A40),
-                    )
-
-                    Row {
-
-                        Text(
-                            text = selectedEvent?.eventType ?: "N/A",
-                            fontSize = 11.sp,
-                            lineHeight = 17.sp,
-                            fontFamily = poppins,
-                            fontWeight = FontWeight(400),
-                            color = Color(0xFF868E96),
-                        )
-                        Text(
-                            text = " | ",
-                            fontSize = 11.sp,
-                            lineHeight = 17.sp,
-                            fontFamily = poppins,
-                            fontWeight = FontWeight(400),
-                            color = Color(0xFF868E96),
-                        )
-
-                        Text(
-                            text = selectedEvent?.organizer ?: "N/A",
-                            fontSize = 11.sp,
-                            lineHeight = 17.sp,
-                            fontFamily = poppins,
-                            fontWeight = FontWeight(400),
-                            color = Color(0xFF868E96),
-                        )
-                    }
-
-                }
-            },
-            text = {
-                // Use a Column to ensure proper spacing of text
-                Column {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp), // Adjust the padding as needed
-                        contentAlignment = Alignment.Center
-
-                    ) {
-                        /*Image(
-                            painter = painterResource(id = R.drawable.nudge_image),
-                            contentDescription = "image description",
-                            contentScale = ContentScale.Crop, // Maintain aspect ratio
-                            modifier = Modifier.fillMaxWidth()
-                        )*/
-                        if (selectedEvent?.image?.isNotEmpty() == true) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(context = eventContext)
-                                    .data(selectedEvent?.image)
-                                    .crossfade(true)
-                                    .build(),
-                                contentDescription = "poster",
-                                modifier = Modifier.size(360.dp)
-                            )
-                        }
-                    }
-
-                    Column {
-                        val startDateText = selectedEvent?.startDate?.let { formatDateToMMDD(it) }
-                        val endDateText = selectedEvent?.endDate?.let { formatDateToMMDD(it) }
-
-                        Text(
-                            text = "주최 | " + selectedEvent?.organizer,
-                            fontSize = 12.sp,
-                            lineHeight = 19.56.sp,
-                            fontFamily = poppins,
-                            fontWeight = FontWeight(500),
-                            color = Color(0xFF000000),
-                            textAlign = TextAlign.Center,
-                        )
-
-                        Text(
-                            text = "일자 | $startDateText - $endDateText",
-                            fontSize = 12.sp,
-                            lineHeight = 19.56.sp,
-                            fontFamily = poppins,
-                            fontWeight = FontWeight(500),
-                            color = Color(0xFF000000),
-                            textAlign = TextAlign.Center,
-                        )
-
-                        Text(
-                            text = "장소 | " + selectedEvent?.place,
-                            fontSize = 12.sp,
-                            lineHeight = 19.56.sp,
-                            fontFamily = poppins,
-                            fontWeight = FontWeight(500),
-                            color = Color(0xFF000000),
-                            textAlign = TextAlign.Center,
-                        )
-
-                        Text(
-                            text = "시간 | " + selectedEvent?.time,
-                            fontSize = 12.sp,
-                            lineHeight = 19.56.sp,
-                            fontFamily = poppins,
-                            fontWeight = FontWeight(500),
-                            color = Color(0xFF000000),
-                            textAlign = TextAlign.Center,
-                        )
-
-                        Row(modifier = Modifier.padding(top = 10.dp)) {
-                            Image(
-                                painter = painterResource(id = R.drawable.like_fill_icon),
-                                contentDescription = "image description",
-                            )
-
-                            Text(
-                                text = selectedEvent?.likes.toString(),
-                                fontSize = 10.sp,
-                                fontFamily = poppins,
-                                fontWeight = FontWeight(500),
-                                color = LikePink,
-                                textAlign = TextAlign.Center,
-                            )
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(0.dp)
-                ) {
-                    Button(
-                        onClick = {
-                            showEventCardPopup = false
-                        },
-                        modifier = Modifier
-                            .wrapContentWidth()
-                            .wrapContentHeight()
-                            .padding(0.dp), // 패딩 제거
-
-                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(Color.White),
-
-                        ) {
-                        Text(
-                            text = "닫기",
-                            fontSize = 13.sp,
-                            fontFamily = poppins,
-                            fontWeight = FontWeight(500),
-                            color = Color(0xFF000000),
-                            textAlign = TextAlign.Center,
-                            textDecoration = TextDecoration.Underline,
-                            modifier = Modifier.padding(0.dp) // 텍스트 주위의 패딩 제거
-                        )
-                    }
-                }
-            },
-            modifier = Modifier
-                .shadow(
-                    elevation = 10.dp,
-                    spotColor = Color(0x40000000),
-                    ambientColor = Color(0x40000000)
-                )
-                .width(300.dp)
-                .height(550.dp)
-                .background(color = Color(0xFFFFFFFF)),
-            containerColor = Color(0xFFFFFFFF)
-        )
     }
 }
 
