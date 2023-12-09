@@ -141,6 +141,7 @@ fun BoardScreen(
                     val filterText =
                         if (filterDateText.isEmpty()) filterCategoryText else "$filterDateText, $filterCategoryText"
                     Text(
+                        modifier = Modifier.padding(top = 2.dp),
                         text = "필터 : $filterText",
                         fontFamily = poppins,
                         fontSize = 12.sp,

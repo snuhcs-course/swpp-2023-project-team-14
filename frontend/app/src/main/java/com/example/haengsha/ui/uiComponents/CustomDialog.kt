@@ -49,6 +49,7 @@ import com.example.haengsha.model.uiState.board.BoardUiState
 import com.example.haengsha.model.viewModel.board.BoardViewModel
 import com.example.haengsha.ui.theme.BackgroundGrey
 import com.example.haengsha.ui.theme.ButtonBlue
+import com.example.haengsha.ui.theme.FieldStrokeRed
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.HaengshaGrey
 import com.example.haengsha.ui.theme.md_theme_light_onPrimary
@@ -189,14 +190,33 @@ fun FilterDialog(
                     .shadow(elevation = 5.dp, shape = RoundedCornerShape(15.dp))
                     .background(color = md_theme_light_onPrimary),
             ) {
-                Spacer(modifier = Modifier.height(20.dp))
-                Text(
+                Spacer(modifier = Modifier.height(25.dp))
+                Row(
                     modifier = Modifier.padding(horizontal = 15.dp),
-                    text = "필터 설정",
-                    fontFamily = poppins,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "필터 설정",
+                        fontFamily = poppins,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Box(
+                        modifier = Modifier
+                            .border(1.dp, FieldStrokeRed.copy(0.7f), RoundedCornerShape(6.dp))
+                            .clickable { boardViewModel.resetFilter() }
+                            .padding(start = 5.dp, end = 5.dp, top = 2.dp)
+                    ) {
+                        Text(
+                            text = "필터 초기화",
+                            fontFamily = poppins,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = FieldStrokeRed.copy(0.7f)
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.height(20.dp))
                 CustomHorizontalDivider(color = HaengshaGrey)
                 Spacer(modifier = Modifier.height(20.dp))
@@ -392,7 +412,10 @@ fun FilterDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     ModalCancelButton(
-                        onClick = onDismissRequest
+                        onClick = {
+                            onDismissRequest()
+                            boardViewModel.cancelFilter()
+                        }
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     ModalConfirmButton(
@@ -401,7 +424,6 @@ fun FilterDialog(
                             if (boardUiState.keyword.isEmpty()) {
                                 Toasty.warning(context, "검색 후 필터를 적용해주세요", Toast.LENGTH_SHORT, true)
                                     .show()
-                                boardViewModel.resetFilterInitialState()
                             } else if (!boardViewModel.isSearched.value) {
                                 Toasty.warning(
                                     context,
@@ -420,7 +442,7 @@ fun FilterDialog(
                                         boardUiState.endDate
                                     )
                                 )
-                                boardViewModel.updateFilterInitialState()
+                                boardViewModel.savePreviousFilter()
                             }
                             onDismissRequest()
                         }
