@@ -370,7 +370,8 @@ fun EventResponse.toEventCardData(): EventCardData {
         favorites = favoriteCount,
         eventType = eventType,
         place = place,
-        time = time ?: "wow"
+        time = time ?: "wow",
+        image = image ?: "image.jpg",
     )
 }
 

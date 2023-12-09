@@ -86,6 +86,7 @@ fun TabView(
     homeApiViewModel: HomeApiViewModel,
     userUiState: UserUiState
 ) {
+    val homeContext = LocalContext.current
     val academicItems by homeViewModel.academicItems.observeAsState()
     val festivalItems by homeViewModel.festivalItems.observeAsState()
     val recommendationApiUiState = homeApiViewModel.recommendationApiUiState
@@ -254,9 +255,11 @@ fun TabView(
                             EventCard(
                                 organizer = item.organizer,
                                 eventTitle = item.eventTitle,
+                                image = item.image,
                                 startDate = item.startDate,
                                 endDate = item.endDate,
                                 likes = item.likes,
+                                homeContext = homeContext
                             )
                         }
                     }
@@ -347,9 +350,11 @@ fun TabView(
                                         EventCard(
                                             organizer = event.author.nickname,
                                             eventTitle = event.title,
+                                            image = event.image,
                                             startDate = startDate,
                                             endDate = endDate,
                                             likes = event.likeCount,
+                                            homeContext = homeContext
                                         )
                                     }
                                 }
@@ -372,11 +377,13 @@ fun TabView(
                             is RecommendationApiUiState.HttpError -> {
                                 items(1) {
                                     Text(
-                                        text = "추천 행사를 불러오는 중 문제가 발생했어요!\n\n다시 시도해주세요.",
+                                        text = "추천 행사를 불러오는 중\n문제가 발생했어요!\n\n다시 시도해주세요.",
                                         fontFamily = poppins,
-                                        fontSize = 16.sp,
+                                        fontSize = 20.sp,
                                         fontWeight = FontWeight.SemiBold,
-                                        color = HaengshaBlue
+                                        color = Color.Black,
+                                        lineHeight = 25.sp,
+                                        textAlign = TextAlign.Center
                                     )
                                 }
                             }
