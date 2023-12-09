@@ -45,7 +45,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
-import com.example.haengsha.model.dataSource.EventCardData
 import com.example.haengsha.model.dataSource.TabItem
 import com.example.haengsha.model.route.HomeRoute
 import com.example.haengsha.model.uiState.UserUiState
@@ -78,8 +77,7 @@ fun HomeScreenList(
     val academicItems by homeViewModel.academicItems.observeAsState()
     val festivalItems by homeViewModel.festivalItems.observeAsState()
     val recommendationApiUiState = homeApiViewModel.recommendationApiUiState
-    var showDialog by remember { mutableStateOf(false) }
-    var selectedEvent: EventCardData? by remember { mutableStateOf(null) }
+    var showRecommendDialog by remember { mutableStateOf(false) }
     val tabItems = listOf(
         academicItems?.let { TabItem(title = "Academic", eventCards = it) },
         festivalItems?.let { TabItem(title = "Festival", eventCards = it) }
@@ -163,7 +161,7 @@ fun HomeScreenList(
         ) {
             Button(
                 onClick = {
-                    showDialog = true
+                    showRecommendDialog = true
                     if (userUiState.role != "Group") {
                         homeApiViewModel.getRecommendationList(token = userUiState.token)
                     }
@@ -228,7 +226,6 @@ fun HomeScreenList(
                         Box(modifier = Modifier.clickable {
                             boardViewModel.updateEventId(item.id)
                             homeNavController.navigate(HomeRoute.HomeDetail.route)
-                            selectedEvent = item
                         }) {
                             HomeListItem(
                                 organizer = item.organizer,
@@ -246,10 +243,10 @@ fun HomeScreenList(
         }
     }
 
-    if (showDialog) {
+    if (showRecommendDialog) {
         var recommendationTitle by remember { mutableStateOf("\n") }
 
-        Dialog(onDismissRequest = { showDialog = false }) {
+        Dialog(onDismissRequest = { showRecommendDialog = false }) {
             Column(
                 modifier = Modifier
                     .width(if (userUiState.role == "Group") 300.dp else deviceWidth)
@@ -320,15 +317,22 @@ fun HomeScreenList(
                                                 stringToDate(event.eventDurations[event.eventDurations.size - 1].eventDay)
                                         }
 
-                                        HomeListItem(
-                                            organizer = event.author.nickname,
-                                            eventTitle = event.title,
-                                            image = event.image,
-                                            startDate = startDate,
-                                            endDate = endDate,
-                                            likes = event.likeCount,
-                                            homeContext = homeContext
-                                        )
+                                        Box(modifier = Modifier.clickable {
+                                            boardViewModel.updateEventId(event.id)
+                                            showRecommendDialog = false
+                                            homeNavController.navigate(HomeRoute.HomeDetail.route)
+                                        }) {
+                                            HomeListItem(
+                                                organizer = event.author.nickname,
+                                                eventTitle = event.title,
+                                                image = event.image,
+                                                startDate = startDate,
+                                                endDate = endDate,
+                                                likes = event.likeCount,
+                                                homeContext = homeContext
+                                            )
+                                        }
+
                                     }
                                 }
                             }
@@ -391,7 +395,7 @@ fun HomeScreenList(
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
-                        .clickable { showDialog = false },
+                        .clickable { showRecommendDialog = false },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
