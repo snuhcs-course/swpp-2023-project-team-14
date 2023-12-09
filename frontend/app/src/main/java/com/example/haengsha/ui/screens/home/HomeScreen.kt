@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,14 +65,19 @@ fun HomeScreen(
     val fullFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     val homeApiUiState = homeApiViewModel.homeApiUiState
-    var selection by remember { mutableStateOf(LocalDate.now()) }
+    val selection = homeViewModel.selectedDate.collectAsState().value
     val currentMonth = selection.yearMonth
     val startDate = remember { currentMonth.minusMonths(100).atStartOfMonth() }
     val endDate = remember { currentMonth.plusMonths(100).atEndOfMonth() }
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() }
 
-    LaunchedEffect(selection) {
-        homeApiViewModel.getEventByDate(selection)
+    if (homeViewModel.initialEnter) {
+        LaunchedEffect(Unit) { homeApiViewModel.getEventByDate(selection) }
+        homeViewModel.initialEnter = false
+    } else {
+        if (homeViewModel.selectionChanged) {
+            LaunchedEffect(selection) { homeApiViewModel.getEventByDate(selection) }
+        }
     }
 
     val state = rememberWeekCalendarState(
@@ -88,7 +94,7 @@ fun HomeScreen(
     if (showDatePicker) {
         HomeDatePickerDialog(
             onDateSelected = { selectedDate ->
-                selection = LocalDate.parse(selectedDate, fullFormatter)
+                homeViewModel.updateSelectedDate(LocalDate.parse(selectedDate, fullFormatter))
                 showDatePicker = false
             },
             onDismiss = { showDatePicker = false }
@@ -147,9 +153,7 @@ fun HomeScreen(
             calendarScrollPaged = true,
             dayContent = { day ->
                 Day(day.date, isSelected = selection == day.date) { clicked ->
-                    if (selection != clicked) {
-                        selection = clicked
-                    }
+                    homeViewModel.updateSelectedDate(clicked)
                 }
             },
         )
@@ -163,7 +167,7 @@ fun HomeScreen(
                     homeApiUiState.festivalResponse?.map { it.toEventCardData() }
 
                 homeViewModel.updateEventItems(festivalCardDataList, academicCardDataList)
-                homeViewModel.updateSelectedDate(selection)
+                homeViewModel.selectionChanged = false
                 HomeScreenList(
                     homeViewModel = homeViewModel,
                     homeApiViewModel = homeApiViewModel,

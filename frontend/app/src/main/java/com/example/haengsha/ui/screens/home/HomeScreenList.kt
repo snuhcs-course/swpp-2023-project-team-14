@@ -162,8 +162,9 @@ fun HomeScreenList(
             Button(
                 onClick = {
                     showRecommendDialog = true
-                    if (userUiState.role != "Group") {
-                        homeApiViewModel.getRecommendationList(token = userUiState.token)
+                    if (userUiState.role != "Group" && homeViewModel.initialRecommendationState) {
+                        homeApiViewModel.getRecommendationList(userUiState.token)
+                        homeViewModel.initialRecommendationState = false
                     }
                 },
                 colors = androidx.compose.material3.ButtonDefaults.buttonColors(HaengshaBlue),

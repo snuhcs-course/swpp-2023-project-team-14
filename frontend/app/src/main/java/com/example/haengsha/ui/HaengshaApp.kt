@@ -373,6 +373,9 @@ fun HaengshaApp(mainNavController: NavHostController = rememberNavController()) 
                 is LoginApiUiState.Success -> {
                     userViewModel.resetUserData()
                     loginApiViewModel.resetLoginApiUiState()
+                    homeViewModel.initialEnter = true
+                    homeViewModel.selectionChanged = false
+                    homeViewModel.initialRecommendationState = true
                     boardViewModel.resetBoardUiState()
                     boardApiViewModel.resetBoardListUiStateToLoading()
                     mainNavController.navigate(MainRoute.Login.route) {
