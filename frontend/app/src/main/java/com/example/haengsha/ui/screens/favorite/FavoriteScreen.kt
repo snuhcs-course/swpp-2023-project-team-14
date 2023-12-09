@@ -38,7 +38,7 @@ import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CustomCircularProgressIndicator
 import com.example.haengsha.ui.uiComponents.CustomHorizontalDivider
-import com.example.haengsha.ui.uiComponents.listItem
+import com.example.haengsha.ui.uiComponents.boardListItem
 import es.dmoral.toasty.Toasty
 
 @Composable
@@ -184,7 +184,7 @@ fun FavoriteScreen(
                                     boardViewModel.updateEventId(event.id)
                                     favoriteNavController.navigate(FavoriteRoute.FavoriteDetail.route)
                                 }) {
-                                    listItem(
+                                    boardListItem(
                                         isFavorite = true,
                                         event = event
                                     )

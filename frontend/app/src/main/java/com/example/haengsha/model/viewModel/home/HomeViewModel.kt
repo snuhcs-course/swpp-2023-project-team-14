@@ -2,7 +2,7 @@ package com.example.haengsha.model.viewModel.home
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.haengsha.ui.screens.home.EventCardData
+import com.example.haengsha.model.dataSource.EventCardData
 import java.time.LocalDate
 
 class HomeViewModel : ViewModel() {

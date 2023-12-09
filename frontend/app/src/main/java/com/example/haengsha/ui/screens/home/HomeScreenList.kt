@@ -45,6 +45,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import com.example.haengsha.model.dataSource.EventCardData
+import com.example.haengsha.model.dataSource.TabItem
 import com.example.haengsha.model.route.HomeRoute
 import com.example.haengsha.model.uiState.UserUiState
 import com.example.haengsha.model.uiState.home.RecommendationApiUiState
@@ -56,30 +58,12 @@ import com.example.haengsha.ui.theme.md_theme_light_surface
 import com.example.haengsha.ui.theme.poppins
 import com.example.haengsha.ui.uiComponents.CustomCircularProgressIndicator
 import com.example.haengsha.ui.uiComponents.CustomHorizontalDivider
+import com.example.haengsha.ui.uiComponents.HomeListItem
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-
-data class TabItem(
-    val title: String, val eventCards: List<EventCardData>
-)
-
-data class EventCardData(
-    val id: Int,
-    val organizer: String,
-    val eventTitle: String,
-    val startDate: LocalDate,
-    val endDate: LocalDate,
-    val likes: Int,
-    val favorites: Int,
-    val eventType: String,
-    val place: String = "",
-    val time: String = "",
-    val image: String = ""
-)
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TabView(
+fun HomeScreenList(
     homeViewModel: HomeViewModel,
     homeApiViewModel: HomeApiViewModel,
     homeNavController: NavController,
@@ -246,7 +230,7 @@ fun TabView(
                             homeNavController.navigate(HomeRoute.HomeDetail.route)
                             selectedEvent = item
                         }) {
-                            EventCard(
+                            HomeListItem(
                                 organizer = item.organizer,
                                 eventTitle = item.eventTitle,
                                 image = item.image,
@@ -336,7 +320,7 @@ fun TabView(
                                                 stringToDate(event.eventDurations[event.eventDurations.size - 1].eventDay)
                                         }
 
-                                        EventCard(
+                                        HomeListItem(
                                             organizer = event.author.nickname,
                                             eventTitle = event.title,
                                             image = event.image,

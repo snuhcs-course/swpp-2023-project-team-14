@@ -456,7 +456,7 @@ fun FilterDialog(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomDatePickerDialog(
+fun BoardDatePickerDialog(
     onDismissRequest: () -> Unit,
     boardViewModel: BoardViewModel,
     type: String,
@@ -533,6 +533,39 @@ fun CustomDatePickerDialog(
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun MessageDialogPreview() {}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeDatePickerDialog(
+    onDateSelected: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val currentDate = LocalDate.now()
+    val initialDate = Calendar.getInstance()
+    initialDate.set(currentDate.year, currentDate.monthValue - 1, currentDate.dayOfMonth)
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = initialDate.timeInMillis,
+        yearRange = currentDate.year - 1..currentDate.year + 1
+    )
+    val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT)
+    val selectedDate = datePickerState.selectedDateMillis?.let {
+        formatter.format(Date(it))
+    } ?: ""
+
+    DatePickerDialog(
+        onDismissRequest = { onDismiss() },
+        confirmButton = {
+            Button(onClick = {
+                onDateSelected(selectedDate)
+                onDismiss()
+            }) { Text(text = "확인") }
+        },
+        dismissButton = {
+            Button(onClick = { onDismiss() }) { Text(text = "취소") }
+        }
+    ) {
+        DatePicker(
+            state = datePickerState,
+            showModeToggle = false
+        )
+    }
+}

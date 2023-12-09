@@ -56,12 +56,12 @@ import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.BoardDatePickerDialog
 import com.example.haengsha.ui.uiComponents.CustomCircularProgressIndicator
-import com.example.haengsha.ui.uiComponents.CustomDatePickerDialog
 import com.example.haengsha.ui.uiComponents.CustomHorizontalDivider
 import com.example.haengsha.ui.uiComponents.FilterDialog
 import com.example.haengsha.ui.uiComponents.SearchBar
-import com.example.haengsha.ui.uiComponents.listItem
+import com.example.haengsha.ui.uiComponents.boardListItem
 import es.dmoral.toasty.Toasty
 
 @Composable
@@ -269,7 +269,7 @@ fun BoardScreen(
                                         boardViewModel.updateEventId(event.id)
                                         boardNavController.navigate(BoardRoute.BoardDetail.route)
                                     }) {
-                                        listItem(
+                                        boardListItem(
                                             isFavorite = false,
                                             event = event
                                         )
@@ -315,7 +315,7 @@ fun BoardScreen(
         }
 
         if (startDatePick) {
-            CustomDatePickerDialog(
+            BoardDatePickerDialog(
                 onDismissRequest = { startDatePick = false },
                 boardViewModel = boardViewModel,
                 type = "startDate",
@@ -324,7 +324,7 @@ fun BoardScreen(
         }
 
         if (endDatePick) {
-            CustomDatePickerDialog(
+            BoardDatePickerDialog(
                 onDismissRequest = { endDatePick = false },
                 boardViewModel = boardViewModel,
                 type = "endDate",
