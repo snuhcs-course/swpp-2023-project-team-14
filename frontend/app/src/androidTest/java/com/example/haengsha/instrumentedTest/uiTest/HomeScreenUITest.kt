@@ -101,9 +101,9 @@ class HomeScreenUITest {
         personalUser_loginToHomeScreen()
         composeTestRule.onNodeWithContentDescription("calendar icon")
             .performClick()
-        composeTestRule.onNodeWithText("OK")
+        composeTestRule.onNodeWithText("확인")
             .performClick()
-        composeTestRule.onNodeWithText("OK")
+        composeTestRule.onNodeWithText("확인")
             .assertIsNotDisplayed()
     }
 
@@ -114,7 +114,7 @@ class HomeScreenUITest {
             .performClick()
         composeTestRule.onNodeWithText("Sunday, December 10, 2023")
             .performClick()
-        composeTestRule.onNodeWithText("OK")
+        composeTestRule.onNodeWithText("확인")
             .performClick()
         composeTestRule.onNodeWithText("행사 불러오는 중...")
             .isDisplayed()
@@ -127,7 +127,7 @@ class HomeScreenUITest {
             .performClick()
         composeTestRule.onNodeWithText("Sunday, December 10, 2023")
             .performClick()
-        composeTestRule.onNodeWithText("OK")
+        composeTestRule.onNodeWithText("확인")
             .performClick()
         composeTestRule.waitUntil(5000) {
             composeTestRule.onNodeWithText("SNUPO SNUp\nSNUPO & SNUpia 하계 앙상블")
@@ -144,7 +144,7 @@ class HomeScreenUITest {
             .performClick()
         composeTestRule.onNodeWithText("Sunday, December 10, 2023")
             .performClick()
-        composeTestRule.onNodeWithText("OK")
+        composeTestRule.onNodeWithText("확인")
             .performClick()
         composeTestRule.waitUntil(5000) {
             composeTestRule.onNodeWithText("행사 추천 받기")
@@ -167,7 +167,7 @@ class HomeScreenUITest {
             .performClick()
         composeTestRule.onNodeWithText("Friday, December 1, 2023")
             .performClick()
-        composeTestRule.onNodeWithText("OK")
+        composeTestRule.onNodeWithText("확인")
             .performClick()
         composeTestRule.waitUntil(5000) {
             composeTestRule.onNodeWithText("오늘은 예정된 축제가 없어요!")
@@ -184,7 +184,7 @@ class HomeScreenUITest {
             .performClick()
         composeTestRule.onNodeWithText("Friday, December 1, 2023")
             .performClick()
-        composeTestRule.onNodeWithText("OK")
+        composeTestRule.onNodeWithText("확인")
             .performClick()
         composeTestRule.waitUntil(5000) {
             composeTestRule.onNodeWithText("행사 불러오는 중...")

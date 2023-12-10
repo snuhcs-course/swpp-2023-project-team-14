@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.update
 class BoardViewModel : ViewModel() {
     private val _boardUiState = MutableStateFlow(BoardUiState())
     val boardUiState = _boardUiState.asStateFlow()
+    private val _tempBoardUiState = MutableStateFlow(BoardUiState())
 
     private val _boardPostUiState = MutableStateFlow(BoardPostUiState())
     val boardPostUiState = _boardPostUiState.asStateFlow()
@@ -79,13 +80,24 @@ class BoardViewModel : ViewModel() {
         updateSearchParameter(newEndDate, "endDate", "filter")
     }
 
-    fun updateFilterInitialState() {
-        updateSearchParameter("foo", "bar", "filter")
+    fun savePreviousFilter() {
+        _tempBoardUiState.value = _boardUiState.value
     }
 
-    fun resetFilterInitialState() {
+    fun cancelFilter() {
+        _boardUiState.value = _tempBoardUiState.value
+    }
+
+    fun resetFilter() {
         _boardUiState.update { currentState ->
-            currentState.copy(initialState = true)
+            currentState.copy(
+                token = currentState.token,
+                keyword = currentState.keyword,
+                isFestival = 2,
+                startDate = "",
+                endDate = "",
+                initialState = currentState.initialState
+            )
         }
     }
 
@@ -120,7 +132,7 @@ class BoardViewModel : ViewModel() {
                     isFestival = if (type == "isFestival") newParameter.toInt() else currentState.isFestival,
                     startDate = if (type == "startDate") newParameter else currentState.startDate,
                     endDate = if (type == "endDate") newParameter else currentState.endDate,
-                    initialState = false
+                    initialState = if (type == "keyword") false else currentState.initialState
                 )
             }
         }

@@ -75,10 +75,10 @@ import com.example.haengsha.ui.theme.ButtonBlue
 import com.example.haengsha.ui.theme.HaengshaBlue
 import com.example.haengsha.ui.theme.PlaceholderGrey
 import com.example.haengsha.ui.theme.poppins
+import com.example.haengsha.ui.uiComponents.BoardDatePickerDialog
 import com.example.haengsha.ui.uiComponents.CheckBox
 import com.example.haengsha.ui.uiComponents.ConfirmDialog
 import com.example.haengsha.ui.uiComponents.CustomCircularProgressIndicator
-import com.example.haengsha.ui.uiComponents.CustomDatePickerDialog
 import com.example.haengsha.ui.uiComponents.CustomHorizontalDivider
 import com.example.haengsha.ui.uiComponents.CustomVerticalDivider
 import com.example.haengsha.ui.uiComponents.customLargeTextField
@@ -575,7 +575,7 @@ fun BoardPostScreen(
     }
 
     if (startDatePick) {
-        CustomDatePickerDialog(
+        BoardDatePickerDialog(
             onDismissRequest = { startDatePick = false },
             boardViewModel = boardViewModel,
             type = "startDate",
@@ -584,7 +584,7 @@ fun BoardPostScreen(
     }
 
     if (endDatePick) {
-        CustomDatePickerDialog(
+        BoardDatePickerDialog(
             onDismissRequest = { endDatePick = false },
             boardViewModel = boardViewModel,
             type = "endDate",
